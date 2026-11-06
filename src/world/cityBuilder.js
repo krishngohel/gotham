@@ -407,7 +407,7 @@ function hut(ctx, x, y, z, rot) {
 function antenna(ctx, x, y, z, h) {
   solid(ctx, 'steel', cylinder(0.06, 0.1, h, x, y + h / 2, z, 6));
   for (let k = 1; k < 4; k++) ctx.buckets.add('steel', box(1.2 - k * 0.25, 0.04, 0.04, x, y + h * (k / 4), z));
-  const i = ctx.halos.add(x, y + h + 0.1, z, PALETTE.balloon, 2.2);
+  const i = ctx.halos.add(x, y + h + 0.1, z, PALETTE.crimson, 2.2);
   ctx.blinkers.push({ i, x, y: y + h + 0.1, z, size: 2.2, phase: ctx.rng.range(0, 3) });
 }
 

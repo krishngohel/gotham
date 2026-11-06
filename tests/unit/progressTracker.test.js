@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { sanitizeProgress, DISTRICT_IDS, BALLOON_COUNT } from '../../src/core/save.js';
+import { sanitizeProgress, DISTRICT_IDS, TROPHY_COUNT } from '../../src/core/save.js';
 import { STEPS } from '../../src/game/story.js';
 import { CHALLENGES } from '../../src/game/challenges.js';
-import { BALLOONS } from '../../src/config/balloonSpots.js';
+import { TROPHIES } from '../../src/config/trophySpots.js';
 import {
   tracker, createProgressRegistry, scoreProgress, BASE_CATEGORIES, BASE_MOVES, registerMoves, moveList, moveReachable,
-  milestonesCrossed, chapterOf, nextBalloonHint, storyCount,
+  milestonesCrossed, chapterOf, nextTrophyHint, storyCount,
 } from '../../src/game/progressTracker.js';
 
 const allGold = () => Object.fromEntries(CHALLENGES.map((c) => [c.id, { best: 1, medal: 'gold' }]));
 const finished = () => sanitizeProgress({
-  step: STEPS.length - 1, finished: true, balloons: [...Array(BALLOON_COUNT).keys()], challenges: allGold(),
+  step: STEPS.length - 1, finished: true, trophies: [...Array(TROPHY_COUNT).keys()], challenges: allGold(),
   crimes: { stopped: 10 }, moves: BASE_MOVES, districts: DISTRICT_IDS,
 });
 const part = (s, id) => s.parts.find((p) => p.id === id);
@@ -18,7 +18,7 @@ const part = (s, id) => s.parts.find((p) => p.id === id);
 describe('progress percentage', () => {
   it('uses the spec weights', () => {
     expect(BASE_CATEGORIES.map((c) => [c.id, c.weight])).toEqual([
-      ['story', 40], ['balloons', 20], ['challenges', 20], ['crimes', 10], ['moves', 5], ['districts', 5],
+      ['story', 40], ['trophies', 20], ['challenges', 20], ['crimes', 10], ['moves', 5], ['districts', 5],
     ]);
   });
   it('is 0 for an empty save', () => {
@@ -37,8 +37,8 @@ describe('progress percentage', () => {
     const expected = Math.floor(40 * (half / (STEPS.length - 1)));
     expect(tracker.score(sanitizeProgress({ step: half })).percent).toBe(expected);
   });
-  it('counts balloons and medal points', () => {
-    expect(tracker.score(sanitizeProgress({ balloons: [0, 1, 2, 3, 4, 5] })).percent).toBe(10);
+  it('counts trophies and medal points', () => {
+    expect(tracker.score(sanitizeProgress({ trophies: [0, 1, 2, 3, 4, 5] })).percent).toBe(10);
     const one = sanitizeProgress({ challenges: { [CHALLENGES[0].id]: { best: 1, medal: 'gold' } } });
     expect(part(tracker.score(one), 'challenges').done).toBe(3);
     expect(part(tracker.score(one), 'challenges').total).toBe(CHALLENGES.length * 3);
@@ -118,9 +118,9 @@ describe('helpers', () => {
     expect(storyCount(sanitizeProgress({ step: 3 }))).toEqual({ done: 3, total: STEPS.length - 1 });
     expect(storyCount(sanitizeProgress({ step: 999 })).done).toBe(STEPS.length - 1);
   });
-  it('hints at the next unfound balloon', () => {
-    expect(nextBalloonHint(sanitizeProgress({ balloons: [0, 1] }))).toBe(BALLOONS[2].where);
-    expect(nextBalloonHint(sanitizeProgress({ balloons: [...Array(12).keys()] }))).toBe(null);
+  it('hints at the next unfound trophy', () => {
+    expect(nextTrophyHint(sanitizeProgress({ trophies: [0, 1] }))).toBe(TROPHIES[2].where);
+    expect(nextTrophyHint(sanitizeProgress({ trophies: [...Array(12).keys()] }))).toBe(null);
   });
   it('lets Part D register more moves', () => {
     const undo = registerMoves(['silentTakedown', 'perchDrop', 'ladder']);
@@ -135,16 +135,16 @@ describe('helpers', () => {
       const at = (id) => STEPS.findIndex((s) => s.id === id);
       const moves = (p) => part(tracker.score(p), 'moves');
       // Before the rooms (or at the catwalks themselves): all 10 moves count.
-      for (const id of ['intro', 'n3', 'monarchBalcony', 'party', 'a3', 'aceCatwalks']) {
+      for (const id of ['intro', 'n3', 'monarchBalcony', 'rig', 'a3', 'aceCatwalks']) {
         expect(moves(sanitizeProgress({ step: at(id), moves: BASE_MOVES })).total, id).toBe(10);
       }
-      expect(moves(sanitizeProgress({ step: at('party'), moves: BASE_MOVES })).detail).toMatch(/silent takedown, perch drop$/);
+      expect(moves(sanitizeProgress({ step: at('rig'), moves: BASE_MOVES })).detail).toMatch(/silent takedown, perch drop$/);
       // Past the last room without them: the old 8, and nothing it can no longer do is promised.
-      const past = moves(sanitizeProgress({ step: at('cake'), moves: BASE_MOVES }));
+      const past = moves(sanitizeProgress({ step: at('antidote'), moves: BASE_MOVES }));
       expect(past).toMatchObject({ done: 8, total: 8, detail: 'All learned' });
       // Learned ones always count, even past the rooms.
       expect(moves(sanitizeProgress({ step: at('boss'), moves: [...BASE_MOVES, 'perchDrop'] }))).toMatchObject({ done: 9, total: 9 });
-      expect(moves(sanitizeProgress({ step: at('party'), moves: [...BASE_MOVES, 'perchDrop'] }))).toMatchObject({ done: 9, total: 10 });
+      expect(moves(sanitizeProgress({ step: at('rig'), moves: [...BASE_MOVES, 'perchDrop'] }))).toMatchObject({ done: 9, total: 10 });
       // A finished save from before Part D (migrated to the credits) still reads 100%.
       expect(tracker.score(finished()).percent).toBe(100);
       expect(moves(finished())).toMatchObject({ done: 8, total: 8 });

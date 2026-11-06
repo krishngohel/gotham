@@ -1,7 +1,6 @@
 // Draws a photo's frame, cover masthead and caption onto a 2D canvas. The same function draws
 // the on-screen preview and the saved PNG, so what you frame is what you save.
 import { frameLayout } from '../game/photoMath.js';
-import MANSI from '../mansi.config.js';
 
 const INK = '#0b0b12', PAPER = '#efe6cf', SIGNAL = '#f2d24b', RED = '#c8323c';
 
@@ -44,7 +43,7 @@ export function drawPhotoFrame(g, w, h, { frame = 'none', caption = '', issue = 
     g.lineWidth = L.border;
     g.strokeStyle = INK;
     g.strokeRect(m.x, m.y, m.w, m.h);
-    const title = `GOTHAM FOR ${MANSI.name.toUpperCase()}`;
+    const title = 'GOTHAM: THE LONG NIGHT';
     const size = fitFont(g, title, 'Bangers, Impact, sans-serif', m.h * 0.66, s.x - m.x - L.u * 6);
     g.textBaseline = 'middle';
     g.textAlign = 'left';

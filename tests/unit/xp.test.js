@@ -46,7 +46,7 @@ describe('sources', () => {
   });
   it('the story alone earns 6 to 12 points (pacing guard)', () => {
     const fights = 12 * (XP.fightDone + 5 * XP.ko + 2 * comboXp(12, 4) + 3 * XP.counter);
-    const story = fights + 12 * XP.balloon + 3 * 250 + 3 * 100 + 5 * chainXp(2, false) + 20 * XP.objectiveDone + 6 * XP.glassBroken;
+    const story = fights + 12 * XP.trophy + 3 * 250 + 3 * 100 + 5 * chainXp(2, false) + 20 * XP.objectiveDone + 6 * XP.glassBroken;
     expect(pointsEarned(story)).toBeGreaterThanOrEqual(6);
     expect(pointsEarned(story)).toBeLessThanOrEqual(12);
   });

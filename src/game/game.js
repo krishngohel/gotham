@@ -36,7 +36,7 @@ import { checkRooms } from '../stealth/roomCheck.js';
 import { ROOMS } from '../stealth/stealthRooms.js';
 import { createStealth } from '../stealth/stealthSystem.js';
 import { pickGrapplePoint } from '../world/grapple.js';
-import { createPickups, createNeonParty } from '../world/storyProps.js';
+import { createPickups, createNeonRelight } from '../world/storyProps.js';
 import { createCombat } from '../combat/combatSystem.js';
 import { createHud, SFX_WORDS } from '../ui/hud.js';
 import { createRadio } from '../ui/radio.js';
@@ -53,10 +53,10 @@ import { createWorld } from './world.js';
 import { createFollowCamera } from './camera.js';
 import { createBatwing } from '../vehicles/batwing.js';
 import { createCinematic } from '../ui/cinematic.js';
-import { createParty } from './party.js';
+import { createGcpdRoof } from './gcpdRoof.js';
 import { createGCPDLobby } from './gcpdLobby.js';
-import { guestsUpTo, celebrateAt } from './partyStory.js';
-import { CHECKLIST_TITLE, checklistAt } from './partyChecklist.js';
+import { guestsUpTo, celebrateAt } from './roofStory.js';
+import { CHECKLIST_TITLE, checklistAt } from './caseFile.js';
 import { createFx } from './fx.js';
 import { createStealthFx } from '../stealth/stealthFx.js';
 import { createGadgetFx } from '../gadgets/gadgetFx.js';
@@ -66,7 +66,7 @@ import { createSwarmFx } from './swarmFx.js';
 import { createEncounters } from './encounters.js';
 import { createNightwing } from '../allies/nightwing.js';
 import { createInteriors } from '../world/interiors.js';
-import { createBalloons } from './balloons.js';
+import { createTrophies } from './trophies.js';
 import { createFlow } from './flow.js';
 import { STEPS } from './story.js';
 import { migrateProgress } from './storyMigrate.js';
@@ -75,7 +75,7 @@ import { createBoss } from './boss.js';
 import { edgeGlyph } from '../ui/edgeGlyph.js';
 import { createVehicles } from '../vehicles/vehicles.js';
 import { tracker } from './progressTracker.js';
-import { goldStandardPages, fromKrishnPages } from './rewardPages.js';
+import { goldStandardPages, commendationPages } from './rewardPages.js';
 import { createFinale } from './finale.js';
 import { createSideContent } from './sideContent.js';
 import { createPhotoMode } from '../ui/photoMode.js';
@@ -211,7 +211,6 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
     camera.updateProjectionMatrix();
     ink.setSize(w, h);
     world.resize(h * renderer.getPixelRatio(), camera.fov);
-    game?.finale.resize(h * renderer.getPixelRatio(), camera.fov);
   }
   addEventListener('resize', resize);
 
@@ -350,9 +349,9 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
     const encounters = createEncounters({ spawn, despawn, combat, events, collision: world.collision, stealth });
     // ---- Part I: interiors (see src/world/interiors.js) ----
     const interiors = createInteriors({ hero, events, rain: world.rain, collision: world.collision });
-    const balloons = createBalloons(scene, progress.balloons);
+    const trophies = createTrophies(scene, progress.trophies);
     const pickups = createPickups(scene, world.halos, SITES);
-    const neonParty = createNeonParty(scene, world.halos);
+    const neonRelight = createNeonRelight(scene, world.halos);
     const comic = createComic(document.body, { onSound: (n) => audio.play(n), onVoice: (id) => voice.say(id) });
     // Tip cards wait out a takedown, a chain, the Bat Swarm or an action shot instead of covering
     // it (QUIET_CONTROLS, src/ui/prompts.js).
@@ -375,19 +374,19 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
     const beacon = createBeacon(scene);
     const boss = createBoss({ assets, scene, rng, combat, events, hud, spawn, despawn, hero, time, getDifficulty: () => settings.difficulty, collision: world.collision, effects });
     boss.joker.health = 999;
-    const finale = createFinale({ scene, world, hero, boss, camera, events, rng });
-    // ---- Finale rooftop party: src/game/party.js, wired to story progress (partyStory.js) ----
-    const party = createParty({ scene, assets, events, gfx, finale });
+    const finale = createFinale({ scene, world, hero, boss, camera, events });
+    // ---- GCPD roof at the finale: src/game/gcpdRoof.js, wired to story progress (roofStory.js) ----
+    const roof = createGcpdRoof({ scene, assets, events, finale });
     // A resumed save (or a completed one, past credits, which never re-fires 'step' below):
-    // every guest whose join step is already behind the current one joins immediately.
-    for (const id of guestsUpTo(progress.step ?? 0, STEPS)) party.addGuest(id);
-    if (celebrateAt(progress.step ?? 0, STEPS)) party.celebrate();
+    // everyone whose join step is already behind the current one is on the roof immediately.
+    for (const id of guestsUpTo(progress.step ?? 0, STEPS)) roof.addGuest(id);
+    if (celebrateAt(progress.step ?? 0, STEPS)) roof.celebrate();
     // Live progression: flow.js's enterStep() emits 'step' the moment each new step starts
     // (including, on a fresh run, the very first one), which is also when the finale cutscene
     // itself starts (s.type === 'cutscene' && s.scene === 'finale').
     events.on('step', ({ index }) => {
-      for (const id of guestsUpTo(index, STEPS)) party.addGuest(id);
-      if (celebrateAt(index, STEPS)) party.celebrate();
+      for (const id of guestsUpTo(index, STEPS)) roof.addGuest(id);
+      if (celebrateAt(index, STEPS)) roof.celebrate();
     });
     // ---- GCPD lobby dressing (goons behind bars, the trophy case): src/game/gcpdLobby.js ----
     const gcpdLobby = createGCPDLobby({ scene, assets, events, progress });
@@ -432,8 +431,8 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
     // Late-bound: side content needs the flow, and the flow asks side content three questions.
     const sideHooks = { holdStory: () => false, marker: () => null, onRespawn: () => null };
     const flow = createFlow({
-      hero, encounters, hud, events, progress, storage, comic, stage, prompts, waypoint, beacon, balloons, pickups, radio,
-      collision: world.collision, follow, boss, finale, neonParty, side: sideHooks,
+      hero, encounters, hud, events, progress, storage, comic, stage, prompts, waypoint, beacon, trophies, pickups, radio,
+      collision: world.collision, follow, boss, finale, neonRelight, side: sideHooks,
       onCredits: () => {
         document.exitPointerLock?.();
         input.setEnabled(false);
@@ -560,7 +559,7 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
       'claw-none': () => 'Aim the batclaw at a goon, a vent cover or a weak railing.',
       'claw-ground': () => 'Plant your feet to fire the batclaw.',
       'freeze-none': () => 'No goon in sight to freeze.',
-      'popper-ground': () => 'Plant your feet to throw the party popper.',
+      'flashbang-ground': () => 'Plant your feet to throw the flashbang.',
       gas: () => 'Laughing gas! Get out of the green cloud.',
       finish: () => `He is reeling! ${key('special')} Finish him!`,
       'perch-none': () => `Get right above a goon first. ${key('kick')} drops on him from the gargoyle.`,
@@ -608,10 +607,10 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
       hud.card(`NEW GADGET: ${g.name.toUpperCase()}`, g.cardText, 5000);
       prompts.show(['gadgetWheel', g.promptId]);
     });
-    // A returning save: one card for every gadget it already earned (the popper follows on its own).
+    // A returning save: one card for every gadget it already earned (the flashbang follows on its own).
     events.on('gadgetNews', ({ ids }) => {
       const c = gadgetNewsCard(ids, bindingLabel(settings.bindings, 'gadgetWheel'));
-      // Down a moment before the popper's card takes its place.
+      // Down a moment before the flashbang's card takes its place.
       hud.card(c.title, c.text, NEWS_CARD_S * 1000 - 700);
       prompts.show(['gadgetWheel']);
     });
@@ -621,7 +620,7 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
     events.on('swing', ({ kind, finisher }) => { prompts.done(kind === 'kick' ? 'kick' : 'punch'); if (finisher) prompts.done('finisher'); });
     events.on('step', ({ step }) => {
       if (step.id === 'toDocks') {
-        setTimeout(() => prompts.show(['detective', 'balloons']), 30000);
+        setTimeout(() => prompts.show(['detective', 'trophies']), 30000);
         setTimeout(() => prompts.show(['photo']), 120000);
       }
     });
@@ -665,7 +664,7 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
     const ctx = { input, cam: follow, grappleTarget: null, fx, chainFx, swarmFx };
     // ---- Part N: Nightwing (src/allies/nightwing.js) ----
     const nightwing = createNightwing({ assets, scene, collision: world.collision, events, combat, hero, rng, ctx });
-    events.on('crasherTaunt', ({ text }) => hud.card('PARTY CRASHER', text, 2500));
+    events.on('courierTaunt', ({ text }) => hud.card('MASKED COURIER', text, 2500));
     events.on('teamTakedown', ({ target }) => events.emit('word', { text: 'TEAM UP!', pos: target.ch.headWorld(new THREE.Vector3(), -0.3), big: true }));
     // ---- end Part N ----
     // ---- Harley Quinn (src/actors/harleyChar.js, src/combat/harleyLogic.js): HUD taunt card ----
@@ -813,15 +812,15 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
       ink.uniforms.uDetective.value = detective;
       if (flow.mode === 'finale') finale.update(real);
       else finale.update(state.paused ? 0 : real);
-      // Every frame, not only in play: the rooftop party is the finale's whole stage.
-      party.update(state.paused ? 0 : real, camera.position);
+      // Every frame, not only in play: the GCPD roof is the finale's whole stage.
+      roof.update(state.paused ? 0 : real, camera.position);
       flow.update(state.paused ? 0 : real, camera);
       sound.update(real, { hush: state.paused || comic.playing || photo.active || flow.mode !== 'play' });
     }
 
     const api = {
-      hero, follow, combat, hud, comicFx, flow, encounters, balloons, boss, finale, comic, grapple, update, spawn, despawn, side,
-      batwing, nightwing, radio, vehicles, cinematic, interiors, party, prompts,
+      hero, follow, combat, hud, comicFx, flow, encounters, trophies, boss, finale, comic, grapple, update, spawn, despawn, side,
+      batwing, nightwing, radio, vehicles, cinematic, interiors, roof, prompts,
       // Renders a posed shot of the live city (comic panels; scripts/clip-sheet.mjs films clips with it).
       stage,
       // Impact frames test hook: pin(ms) samples `ms` into the sequence the next fire() starts.
@@ -868,16 +867,16 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
   // Built fresh on every pause so the info line and the challenge button are current.
   function pauseOptions() {
     const side = game.side;
-    const party = checklistAt(progress.step ?? 0, STEPS);
+    const caseFile = checklistAt(progress.step ?? 0, STEPS);
     const opts = {
       onResume: resume,
       onRestart: () => { resume(); game.flow.respawn({ manual: true }); },
       onTitle: () => { side.save(); location.search = ''; },
-      info: { ...side.pauseInfo(), wayneFree: game.wayne.free, party: `${party.filter((c) => c.done).length}/${party.length}` },
+      info: { ...side.pauseInfo(), wayneFree: game.wayne.free, caseFile: `${caseFile.filter((c) => c.done).length}/${caseFile.length}` },
       onQuitChallenge: () => { side.challenges.quit(); resume(); },
       onChallenges: () => menus.challengesPage(side.challengesPage(), { onBack: () => menus.pause(opts), onRead: () => readPage('goldStandard', () => menus.pause(opts)) }),
-      onProgress: () => menus.progressPage(side.progressPage(), { onBack: () => menus.pause(opts), onRead: () => readPage('fromKrishn', () => menus.pause(opts)) }),
-      onParty: () => menus.partyPage({ title: CHECKLIST_TITLE, items: party }, { onBack: () => menus.pause(opts) }),
+      onProgress: () => menus.progressPage(side.progressPage(), { onBack: () => menus.pause(opts), onRead: () => readPage('commendation', () => menus.pause(opts)) }),
+      onCaseFile: () => menus.caseFilePage({ title: CHECKLIST_TITLE, items: caseFile }, { onBack: () => menus.pause(opts) }),
       onWayneTech: openWayneTech,
       onPhoto: () => { menus.hide(); game.photo.open(); },
     };
@@ -896,7 +895,7 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
   function readPage(kind, back) {
     menus.hide();
     const p = camera.position.clone(), q = camera.quaternion.clone();
-    const pages = kind === 'goldStandard' ? goldStandardPages(game.stage) : fromKrishnPages(game.stage);
+    const pages = kind === 'goldStandard' ? goldStandardPages(game.stage) : commendationPages(game.stage);
     camera.position.copy(p);
     camera.quaternion.copy(q);
     game.comic.play(pages).then(back);
@@ -1082,7 +1081,7 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
   // ?bench=1: the one-link benchmark for the player's own machine (loaded only when asked for).
   if (params.get('bench') === '1') import('../dev/perfBench.js').then(({ runPerfBench }) => runPerfBench({ renderer, ink, dynRes, quality, applyResolution, state, getGame: () => game, gpuName }));
   // Nightwing and Harley (see warmCast.js): warmed once, off-screen, on idle right after the
-  // first real frame instead of before it. Neither appears until minutes into a run (the Crasher
+  // first real frame instead of before it. Neither appears until minutes into a run (the Courier
   // in Act 1, Harley in Act 2), so this never risks a first-use hitch; it just keeps their shader
   // and texture cost off the loading screen.
   const warmLater = () => {

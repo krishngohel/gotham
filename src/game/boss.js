@@ -20,12 +20,12 @@ const WAVES = [
   [['grunt', -10, 4], ['knife', 10, 4], ['knife', 0, 9], ['brute', 0, 0]],
 ];
 const LINES = {
-  phase1: ['Welcome to the party, birthday bat!', 'Careful, the floor is ticklish!', 'Boys! Our guest of honor is here!', 'Is it hot up here, or is it just the buzzers?', 'I planned games. So many games!'],
+  phase1: ['Welcome to the show, Batsy!', 'Careful, the floor is ticklish!', 'Boys! The headliner has arrived!', 'Is it hot up here, or is it just the buzzers?', 'I planned games. So many games!'],
   drop: 'Fine! I will do it myself!',
-  phase2: ['Catch! Laughing gas! Doctor recommended!', 'Catch! HA HA!', 'Hold your breath, birthday bat!', 'Party favors for everyone!'],
+  phase2: ['Catch! Laughing gas! Doctor recommended!', 'Catch! HA HA!', 'Hold your breath, Batsy!', 'Free samples for everyone!'],
   stunned: ['Ow! Cheater!', 'That is not how we play!', 'My hat! I am not even wearing a hat!'],
   phase3: "Enough games. Let's dance!",
-  chain: ['Lucky!', 'Okay, okay, not bad!', 'You fight like a birthday cake. Sweet!'],
+  chain: ['Lucky!', 'Okay, okay, not bad!', 'Not bad for a flying rodent!'],
   hurt: ['Is that all?', 'Again! Again!'],
 };
 

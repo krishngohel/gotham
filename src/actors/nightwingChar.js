@@ -6,8 +6,8 @@
 // material posterizes to flat comic bands, exactly like classifySuitVertex does for Batman.
 //
 // mode 'ally': the real Nightwing suit plus two escrima sticks.
-// mode 'crasher': the same suit under a dark hooded cloak and a purple party mask, holding a
-// birthday gift box, for the Party Crasher misdirect (src/allies/nightwing.js drives the reveal).
+// mode 'courier': the same suit under a dark hooded cloak and a purple gang mask, holding a
+// stolen Wayne Tech crate, for the masked Courier misdirect (src/allies/nightwing.js drives the reveal).
 import * as THREE from 'three';
 import { PALETTE } from '../config/palette.js';
 import { toonMaterial, addHullOutline } from '../render/toon.js';
@@ -88,8 +88,8 @@ export function createNightwingCharacter(assets, mode = 'ally') {
   }
   ch.sticks = sticks;
 
-  if (mode === 'crasher') {
-    // Party Crasher disguise: a dark hooded cloak and a purple party mask over the same suit.
+  if (mode === 'courier') {
+    // Courier disguise: a dark hooded cloak and a purple gang mask over the same suit.
     const cloakMat = addRim(toonMaterial({ color: 0x171320, side: THREE.DoubleSide }));
     const cloakGeo = new THREE.ConeGeometry(lm.hipHalfWidth * 1.7, lm.neckY - lm.beltY + 0.55, 12, 1, true);
     const cloak = rigidMesh(cloakGeo, cloakMat, new THREE.Vector3(0, lm.beltY + (lm.neckY - lm.beltY) * 0.5, -0.02 * lm.fwd));
@@ -99,16 +99,16 @@ export function createNightwingCharacter(assets, mode = 'ally') {
     const hood = rigidMesh(new THREE.SphereGeometry(lm.headRadius * 1.3, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.62), hoodMat, lm.headCenter.clone().add(new THREE.Vector3(0, 0.06, -0.025 * lm.fwd)));
     attachRigid(body, 'Head', hood);
     addHullOutline(hood, 0.006);
-    const partyMaskMat = addRim(toonMaterial({ color: PALETTE.jokerPurple }));
-    const partyMaskGeo = new THREE.SphereGeometry(lm.headRadius * 1.12, 16, 10, Math.PI * 0.05, Math.PI * 0.9, Math.PI * 0.22, Math.PI * 0.48);
-    const partyMask = rigidMesh(partyMaskGeo, partyMaskMat, lm.headCenter.clone().add(new THREE.Vector3(0, -0.006, 0.016 * lm.fwd)), new THREE.Euler(0, lm.fwd < 0 ? Math.PI : 0, 0));
-    attachRigid(body, 'Head', partyMask);
-    addHullOutline(partyMask, 0.005);
-    ch.disguise = { cloak, hood, partyMask };
+    const gangMaskMat = addRim(toonMaterial({ color: PALETTE.jokerPurple }));
+    const gangMaskGeo = new THREE.SphereGeometry(lm.headRadius * 1.12, 16, 10, Math.PI * 0.05, Math.PI * 0.9, Math.PI * 0.22, Math.PI * 0.48);
+    const gangMask = rigidMesh(gangMaskGeo, gangMaskMat, lm.headCenter.clone().add(new THREE.Vector3(0, -0.006, 0.016 * lm.fwd)), new THREE.Euler(0, lm.fwd < 0 ? Math.PI : 0, 0));
+    attachRigid(body, 'Head', gangMask);
+    addHullOutline(gangMask, 0.005);
+    ch.disguise = { cloak, hood, gangMask };
 
-    // A birthday gift box, carried in front.
+    // A stolen Wayne Tech crate, carried in front.
     const box = new THREE.Group();
-    const boxMat = toonMaterial({ color: PALETTE.frosting });
+    const boxMat = toonMaterial({ color: 0x59634a });
     const lidMat = toonMaterial({ color: PALETTE.signal });
     const lid = new THREE.Mesh(new THREE.BoxGeometry(0.27, 0.05, 0.27), lidMat);
     lid.position.y = 0.145;
@@ -118,7 +118,7 @@ export function createNightwingCharacter(assets, mode = 'ally') {
     addHullOutline(lid, 0.004);
     box.position.set(0, -0.42, 0.32 * lm.fwd);
     attachRigid(body, 'spine_03', box);
-    ch.giftBox = box;
+    ch.cargoBox = box;
   }
 
   ch.mode = mode;

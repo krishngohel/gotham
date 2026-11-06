@@ -1,12 +1,11 @@
 // Photo mode maths: the free and orbit camera, filters and frames, caption text and file names.
 // Pure. Pitch is positive looking up; forward = (sin yaw cos pitch, sin pitch, cos yaw cos pitch).
-import MANSI from '../mansi.config.js';
 
 export const FILTERS = ['ink', 'noir', 'pop', 'sepia'];
 export const FRAMES = ['none', 'panel', 'cover'];
 export const FILTER_LABEL = { ink: 'Ink', noir: 'Noir', pop: 'Pop', sepia: 'Sepia' };
 export const FRAME_LABEL = { none: 'None', panel: 'Panel border', cover: 'Cover' };
-export const DEFAULT_CAPTION = `HAPPY BIRTHDAY ${MANSI.name.toUpperCase()}`;
+export const DEFAULT_CAPTION = 'THE LONG NIGHT';
 export const CAPTION_PRESETS = [DEFAULT_CAPTION, 'MEANWHILE, IN GOTHAM...', 'THE NIGHT BELONGS TO US', ''];
 export const PHOTO_LIMITS = {
   maxDist: 20, minFov: 20, maxFov: 100, maxRoll: Math.PI / 4, maxPitch: 1.45, speed: 6, lookRate: 0.0035,
@@ -104,5 +103,5 @@ export function sanitizeCaption(text) {
 
 const two = (n) => String(n).padStart(2, '0');
 export function photoFileName(d) {
-  return `gotham-for-mansi-${d.getFullYear()}${two(d.getMonth() + 1)}${two(d.getDate())}-${two(d.getHours())}${two(d.getMinutes())}${two(d.getSeconds())}.png`;
+  return `gotham-${d.getFullYear()}${two(d.getMonth() + 1)}${two(d.getDate())}-${two(d.getHours())}${two(d.getMinutes())}${two(d.getSeconds())}.png`;
 }

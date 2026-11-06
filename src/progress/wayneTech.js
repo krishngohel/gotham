@@ -1,4 +1,4 @@
-// WayneTech at run time: XP from play (fights, takedowns, chains, balloons, medals, crimes,
+// WayneTech at run time: XP from play (fights, takedowns, chains, trophies, medals, crimes,
 // caches, and Part H's crates and side missions), a level and an upgrade point every 1,000 XP,
 // buying upgrades, and applying their effects through the one effects object that combat, the
 // hero and the gadgets read. Also health recovery out of combat (Field Medic speeds it up).
@@ -6,12 +6,12 @@ import { XP, comboXp, chainXp, medalXp, levelOf, pointsFree, toNext, levelsCross
 import { TREES, UPGRADE_IDS, upgradeEffects, canBuy, upgradeStatus, regenStep } from './upgrades.js';
 
 // Events that pay a flat XP amount (the XP table key is the event name).
-const FLAT = ['ko', 'takedown', 'special', 'fightDone', 'objectiveDone', 'balloon', 'crimeStopped', 'glassBroken', 'wallBroken', 'crateOpened', 'missionDone', 'vanChaseStopped'];
+const FLAT = ['ko', 'takedown', 'special', 'fightDone', 'objectiveDone', 'trophy', 'crimeStopped', 'glassBroken', 'wallBroken', 'crateOpened', 'missionDone', 'vanChaseStopped'];
 
 export function createWayneTech({ events, progress, save, hero, combat, hud, effects, baseHealth, dev = false }) {
   // A dev run (?gadgets=all) still earns XP, levels and purchases for the session so testing
   // works, but never touches the real save: it works on its own copy, never the passed-in
-  // progress.wayne, so nothing else that later calls save() (crimes, balloons, side content's
+  // progress.wayne, so nothing else that later calls save() (crimes, trophies, side content's
   // periodic save) can carry the dev session's XP into the real file.
   const w = dev ? { xp: progress.wayne.xp, owned: [...progress.wayne.owned], medals: { ...progress.wayne.medals } } : progress.wayne;
   const persist = dev ? () => {} : save;

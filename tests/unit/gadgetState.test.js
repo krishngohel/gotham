@@ -8,7 +8,7 @@ const prog = (o = {}) => ({ step: 0, finished: false, ...o });
 
 describe('gadget registry', () => {
   it('has the eight gadgets in wheel order', () => {
-    expect(GADGET_IDS).toEqual(['batarang', 'remote', 'gel', 'smoke', 'launcher', 'claw', 'freeze', 'popper']);
+    expect(GADGET_IDS).toEqual(['batarang', 'remote', 'gel', 'smoke', 'launcher', 'claw', 'freeze', 'flashbang']);
     GADGETS.forEach((g, i) => expect(g.slot).toBe(i));
     expect(gadgetById('gel').name).toBe('Explosive Gel');
     expect(gadgetById('nope')).toBe(null);
@@ -19,15 +19,15 @@ describe('gadget registry', () => {
       for (const s of [g.name, g.unlockText, g.cardText]) expect(s).not.toMatch(/[–—]/);
     }
   });
-  it('unlocks follow the story, the popper waits for the credits', () => {
+  it('unlocks follow the story, the flashbang waits for the credits', () => {
     expect(unlockedIds(prog(), STEPS)).toEqual(['batarang']);
     expect(unlockedIds(prog({ step: stepOf('toYard') }), STEPS)).toEqual(['batarang', 'claw']);
     expect(unlockedIds(prog({ step: stepOf('toVat') }), STEPS)).toEqual(['batarang', 'remote', 'gel', 'smoke', 'launcher', 'claw', 'freeze']);
-    expect(isUnlocked(gadgetById('popper'), prog({ step: STEPS.length - 1 }), STEPS)).toBe(false);
+    expect(isUnlocked(gadgetById('flashbang'), prog({ step: STEPS.length - 1 }), STEPS)).toBe(false);
     expect(unlockedIds(prog({ finished: true }), STEPS)).toEqual(GADGET_IDS);
   });
   it('sticky unlocks survive a new game (step back to 0)', () => {
-    expect(unlockedIds(prog(), STEPS, ['gel', 'popper'])).toEqual(['batarang', 'gel', 'popper']);
+    expect(unlockedIds(prog(), STEPS, ['gel', 'flashbang'])).toEqual(['batarang', 'gel', 'flashbang']);
   });
 });
 
@@ -41,7 +41,7 @@ describe('gadget state', () => {
     expect(s.equipped).toBe('gel');
   });
   it('a saved equip of a locked gadget falls back to the batarang', () => {
-    expect(createGadgetState({ equipped: 'popper', unlocked: ['batarang'] }).equipped).toBe('batarang');
+    expect(createGadgetState({ equipped: 'flashbang', unlocked: ['batarang'] }).equipped).toBe('batarang');
   });
   it('the batarang is free', () => {
     const s = createGadgetState();

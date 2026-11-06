@@ -1,8 +1,5 @@
-// Places a loaded save on the story. Part S is a full reset (docs/superpowers/specs/2026-09-30-
-// birthday-night-design.md): progress now lives under a new key (src/core/save.js), so there is no
-// old data under it to migrate. A save's position comes only from its own stepId; nothing ever
-// falls back to reading a numeric index against an old step list, because the new key never held
-// one. (The old v1 key, and the numeric saves in it, are simply never read again.)
+// Places a loaded save on the story. A save's position comes only from its own stepId; nothing
+// ever falls back to reading a numeric index against an old step list.
 import { STEPS } from './story.js';
 import { registerProgressField } from '../core/save.js';
 

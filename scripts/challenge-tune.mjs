@@ -70,7 +70,7 @@ async function glideRun(id, n) {
 }
 
 async function arenaRun(n) {
-  await fresh('birthdayBash');
+  await fresh('bigTop');
   await page.mouse.click(640, 360);
   const pattern = ['Mouse0', 'Mouse0', 'KeyE', 'Mouse0', 'KeyG', 'KeyE', 'Mouse0', 'KeyQ'];
   for (let i = 0; i < 1500 && !(await done()); i++) {
@@ -93,10 +93,10 @@ async function arenaRun(n) {
       const k = pattern[i % pattern.length];
       if (k === 'Mouse0') await page.mouse.click(640, 360); else await page.keyboard.press(k);
     }
-    if (i === 60) await shot(`birthdayBash-${n}-mid`);
+    if (i === 60) await shot(`bigTop-${n}-mid`);
     await page.waitForTimeout(140);
   }
-  await shot(`birthdayBash-${n}-result`);
+  await shot(`bigTop-${n}-result`);
   return done();
 }
 

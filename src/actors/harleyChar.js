@@ -11,7 +11,7 @@ import { addRim } from './outfitParts.js';
 import { makeCharacter, paintRegions, rigidMesh } from './characters.js';
 
 export const HARLEY_COLORS = {
-  red: PALETTE.balloon, black: PALETTE.ink, belt: 0x2a2430, face: PALETTE.paper, mask: 0x14121a, hair: PALETTE.signal,
+  red: PALETTE.crimson, black: PALETTE.ink, belt: 0x2a2430, face: PALETTE.paper, mask: 0x14121a, hair: PALETTE.signal,
 };
 
 // Region classifier (bind-pose meters): a straight left/right split for the suit (the classic

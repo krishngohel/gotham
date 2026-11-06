@@ -38,7 +38,7 @@ export function createWarmCast(assets) {
   // sighting (a new hoop, the crime van) from uploading anything mid-play.
   [createPillar(), createRingMesh(), createVan(), createLootBags()].forEach((m, i) => { m.position.set(40 + i * 5, -50, 0); group.add(m); });
   add(createJoker(assets), (x += 2));
-  // Every gadget material and geometry (gel, ice, smoke, confetti, lines, debris, textured
+  // Every gadget material and geometry (gel, ice, smoke, sparks, lines, debris, textured
   // breakables): drawn once here so no gadget compiles a shader on first use.
   group.add(createGadgetWarm());
   // Predator stealth visuals (src/stealth/stealthFx.js): vision cones, laser sights, tracers and
@@ -60,7 +60,7 @@ export function createWarmCast(assets) {
 }
 
 // Nightwing (both looks) and Harley Quinn: not on the loading-screen critical path. Neither
-// appears until well into Act 1 (the Crasher) or Act 2 (Harley's fight), minutes of travel and
+// appears until well into Act 1 (the Courier) or Act 2 (Harley's fight), minutes of travel and
 // fighting away from the title screen, so warming them can happen once, off-screen, right after
 // the first real frame (game.js schedules this on idle) instead of before it. Same technique as
 // createWarmCast (drawn once at y = -50, nothing kept): the first real spawn of either still
@@ -70,7 +70,7 @@ export function createWarmCastLate(assets) {
   group.name = 'warmCastLate';
   const add = (ch, x) => { ch.root.position.set(x, -50, 0); group.add(ch.root); return ch; };
   add(createNightwingCharacter(assets, 'ally'), 0);
-  add(createNightwingCharacter(assets, 'crasher'), 2);
+  add(createNightwingCharacter(assets, 'courier'), 2);
   add(createHarleyCharacter(assets), 4);
   return group;
 }

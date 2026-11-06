@@ -365,7 +365,7 @@ export function storefrontTextures(rng) {
   e.fillStyle = '#000';
   e.fillRect(0, 0, W, H * R);
   const shops = STOREFRONT.shops, sw = W / shops;
-  const awnings = [PALETTE.balloon, PALETTE.containerBlue, PALETTE.containerGreen, PALETTE.jokerPurple, PALETTE.rust, 0x2f5a5a];
+  const awnings = [PALETTE.crimson, PALETTE.containerBlue, PALETTE.containerGreen, PALETTE.jokerPurple, PALETTE.rust, 0x2f5a5a];
   const names = [...SHOP_NAMES].sort(() => rng.next() - 0.5);
   const info = [];
   for (let s = 0; s < shops * R; s++) {

@@ -1,30 +1,30 @@
-// Drives the story: objectives, fights, pickups, cutscenes, balloons, checkpoints, death.
+// Drives the story: objectives, fights, pickups, cutscenes, trophies, checkpoints, death.
 import { STEPS, tutorialFor } from './story.js';
 import { FIGHTS } from './fights.js';
 import { SCENES } from './scenes.js';
 import { createObjectives, checkpointFor } from './objectives.js';
 import { bannerText, createGate } from './storyCues.js';
 import { createNudge } from './nudge.js';
-import { tickedBy, CHECKLIST, CHECKLIST_TITLE } from './partyChecklist.js';
+import { tickedBy, CHECKLIST, CHECKLIST_TITLE } from './caseFile.js';
 import { SITES } from '../world/mapData.js';
-import { saveProgress, BALLOON_COUNT } from '../core/save.js';
-import MANSI from '../mansi.config.js';
+import { saveProgress, TROPHY_COUNT } from '../core/save.js';
+import STORY from '../story.config.js';
 
 // Part S mission types: async beats that finish on their own event instead of a site radius. Each
 // tries the real system first (through window.__game, never captured at creation so it still works
 // however late that part attaches itself) and falls back to a short timer, so the story always
 // reaches credits with any subset of Vehicles, Batwing or Nightwing missing.
-const ASYNC_TYPES = new Set(['radio', 'chase', 'battle', 'armada', 'crasher', 'ally', 'board']);
+const ASYNC_TYPES = new Set(['radio', 'chase', 'battle', 'armada', 'courier', 'ally', 'board']);
 const DEGRADE_MS = 2200;
-// A plain travel step may still finish while Mansi is driving or flying (that is the point of
+// A plain travel step may still finish while Batman is driving or flying (that is the point of
 // getting there). Every other kind of beat needs her on foot first (coordinator guidance,
 // 2026-09-30): a cutscene, fight, boss, collect or any of these async ones except the three that
 // put her IN a vehicle on purpose (chase, battle, armada) or ask her to get into one herself
 // (board; forcing an exit here would fight its own "already driving? finish at once" check below).
-const EXIT_VEHICLE_TYPES = new Set(['cutscene', 'fight', 'boss', 'radio', 'crasher', 'ally', 'interior', 'collect']);
+const EXIT_VEHICLE_TYPES = new Set(['cutscene', 'fight', 'boss', 'radio', 'courier', 'ally', 'interior', 'collect']);
 
 export function createFlow(d) {
-  const { hero, encounters, hud, events, progress, storage, comic, stage, prompts, waypoint, beacon, balloons, pickups, collision, radio } = d;
+  const { hero, encounters, hud, events, progress, storage, comic, stage, prompts, waypoint, beacon, trophies, pickups, collision, radio } = d;
   const side = d.side ?? { holdStory: () => false, marker: () => null, onRespawn: () => null };
   const objectives = createObjectives(STEPS, progress.step);
   let mode = 'play';
@@ -87,7 +87,7 @@ export function createFlow(d) {
     switch (step.type) {
       case 'chase':
         if (!G.vehicles?.startChase) return false;
-        // Normal play: a 'board' step always runs first (see below), so Mansi is already driving
+        // Normal play: a 'board' step always runs first (see below), so Batman is already driving
         // the Batmobile by the time this fires and startChase never has to place her at all. The
         // teleport-and-summon inside startChase only fires as a last-resort fallback (an old save
         // resuming mid-mission, say), never on the path a player actually takes.
@@ -110,12 +110,12 @@ export function createFlow(d) {
           G.batwing.startArmada({ balloons: step.balloons ?? 12, region, onDone: (r) => done(r?.ok !== false) });
         }
         return true;
-      case 'crasher': {
-        if (!G.nightwing?.spawn || !G.nightwing?.crasherFlee) return false;
+      case 'courier': {
+        if (!G.nightwing?.spawn || !G.nightwing?.courierFlee) return false;
         const p = SITES[step.at] ?? target ?? hero.pos;
-        G.nightwing.spawn(p, 'crasher');
-        const off = events.on('crasherEscaped', () => { off(); done(true); });
-        setTimeout(() => G.nightwing?.crasherFlee(SITES[step.to] ?? p), 1200);
+        G.nightwing.spawn(p, 'courier');
+        const off = events.on('courierEscaped', () => { off(); done(true); });
+        setTimeout(() => G.nightwing?.courierFlee(SITES[step.to] ?? p), 1200);
         return true;
       }
       case 'ally':
@@ -125,7 +125,7 @@ export function createFlow(d) {
         return true;
       // A real, player-driven "get in the car" beat (no teleport): the Batmobile parks itself at
       // the step's own site (vehicles.park, a short slide-in for drama), and the step only
-      // completes once Mansi actually gets in it herself, at whatever pace she likes. Already
+      // completes once Batman actually gets in it himself, at whatever pace he likes. Already
       // driving it (a save resumed mid-mission, or she never got out after the last mission):
       // finish at once, nothing to walk up to.
       case 'board': {
@@ -275,7 +275,7 @@ export function createFlow(d) {
       radio?.skip();
       // mode stays 'play' through any cinematic first (same reason as the general cutscene branch
       // below): cinematic.update() only ticks under mode 'play'. Switch to 'finale' only once the
-      // cinematic (if any) has handed off to the fireworks sequence itself.
+      // cinematic (if any) has handed off to the finale sequence itself.
       playCinematicFor(s).then(() => {
         mode = 'finale';
         document.exitPointerLock?.();
@@ -283,8 +283,8 @@ export function createFlow(d) {
         return d.finale.play();
       }).then(() => { hud.setVisible(true); mode = 'play'; advance({ type: 'cutsceneDone', scene: 'finale' }); });
     } else if (s.type === 'cutscene') {
-      const REWARD = { presents: 'presents', party: 'party', cake: 'cake' };
-      if (s.scene === 'party') d.neonParty?.show();
+      const REWARD = { crates: 'crates', rig: 'rig', antidote: 'antidote' };
+      if (s.scene === 'rig') d.neonRelight?.show();
       // mode stays 'play' while any cinematic plays first: cinematic.update() (src/game/game.js)
       // only ticks under mode 'play', since it manages its own pause (hero.frozen) rather than
       // needing flow's own cutscene mode. playScene() below still sets mode to 'cutscene' itself,
@@ -377,19 +377,19 @@ export function createFlow(d) {
     mode = 'play';
   }
 
-  function collectBalloon(index) {
-    if (!progress.balloons.includes(index)) progress.balloons.push(index);
-    const n = progress.balloons.length;
-    const text = MANSI.balloonMessages[Math.min(n, BALLOON_COUNT) - 1];
-    hud.setBalloons(n, BALLOON_COUNT);
+  function collectTrophy(index) {
+    if (!progress.trophies.includes(index)) progress.trophies.push(index);
+    const n = progress.trophies.length;
+    const text = STORY.trophyMessages[Math.min(n, TROPHY_COUNT) - 1];
+    hud.setTrophies(n, TROPHY_COUNT);
     if (objectives.done || STEPS[objectives.index]?.type === 'credits') {
-      const left = BALLOON_COUNT - n;
-      hud.setObjective(left > 0 ? `Explore Gotham. ${left} birthday balloon${left === 1 ? '' : 's'} still hidden.` : 'All twelve found! The gold suit is waiting on the title screen.');
+      const left = TROPHY_COUNT - n;
+      hud.setObjective(left > 0 ? `Explore Gotham. ${left} Riddler trophy${left === 1 ? '' : 's'} still hidden.` : 'All twelve found! The Golden Knight suit is waiting on the title screen.');
     }
-    hud.card(`Balloon ${n} of ${BALLOON_COUNT}`, text);
-    if (n >= BALLOON_COUNT) progress.goldUnlocked = true;
+    hud.card(`Riddler trophy ${n} of ${TROPHY_COUNT}`, text);
+    if (n >= TROPHY_COUNT) progress.goldUnlocked = true;
     save();
-    events.emit('balloon', { index, count: n });
+    events.emit('trophy', { index, count: n });
   }
 
   return {
@@ -398,8 +398,8 @@ export function createFlow(d) {
     get target() { return target; },
     start() {
       if (objectives.done || STEPS[objectives.index]?.type === 'credits') {
-        hud.setBalloons(progress.balloons.length, BALLOON_COUNT);
-        pickups.restore(['presents', 'party', 'cake']);
+        hud.setTrophies(progress.trophies.length, TROPHY_COUNT);
+        pickups.restore(['crates', 'rig', 'antidote']);
         hero.teleport(SITES.start, hero.bat.yaw);
         this.freeRoam();
         return;
@@ -407,8 +407,8 @@ export function createFlow(d) {
       if (objectives.index > 0) hero.teleport(respawnPoint(), hero.bat.yaw);
       const got = STEPS.slice(0, objectives.index).filter((s) => s.type === 'collect').map((s) => s.item);
       pickups.restore(got);
-      if (got.includes('party')) d.neonParty?.show();
-      hud.setBalloons(progress.balloons.length, BALLOON_COUNT);
+      if (got.includes('rig')) d.neonRelight?.show();
+      hud.setTrophies(progress.trophies.length, TROPHY_COUNT);
       enterStep();
     },
     // Tip cards hold off while a goal is being announced (prompts.js quiet); side tips also wait
@@ -447,19 +447,19 @@ export function createFlow(d) {
       const showMarker = target && !near && !(s?.type === 'fight' && fightStarted) && s?.type !== 'cutscene' && s?.type !== 'boss';
       waypoint.update(side.marker() ?? (showMarker ? target : null), camera, hero.pos);
       beacon.update(t, hero.pos);
-      const b = balloons.update(t, hero.pos);
-      if (b >= 0) collectBalloon(b);
+      const b = trophies.update(t, hero.pos);
+      if (b >= 0) collectTrophy(b);
       pickups.update(t);
       prompts.update(dt);
       radio?.update(dt);
     },
-    // After the credits: roam the city, finish the balloon hunt, watch the fireworks.
+    // After the credits: roam the city, finish the trophy hunt, watch the searchlights sweep.
     freeRoam() {
       mode = 'play';
       target = null;
       beacon.set(null);
-      const left = BALLOON_COUNT - progress.balloons.length;
-      hud.setObjective(left > 0 ? `Explore Gotham. ${left} birthday balloon${left === 1 ? '' : 's'} still hidden.` : 'Gotham is safe. Enjoy the fireworks!');
+      const left = TROPHY_COUNT - progress.trophies.length;
+      hud.setObjective(left > 0 ? `Explore Gotham. ${left} Riddler trophy${left === 1 ? '' : 's'} still hidden.` : 'Gotham is quiet. For tonight.');
       if (left > 0) prompts.show(['detective']);
       d.finale.freeRoam();
     },

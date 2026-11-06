@@ -105,9 +105,9 @@ describe('perches', () => {
 });
 
 describe('canLook', () => {
-  it('is false while a goon is hit, down, held, frozen, dancing or out', () => {
+  it('is false while a goon is hit, down, held, frozen or out', () => {
     expect(canLook(enemy('a', 0, 0))).toBe(true);
-    for (const state of ['hit', 'stunned', 'down', 'getup', 'grabbed', 'chained', 'tied', 'frozen', 'dance', 'ko']) {
+    for (const state of ['hit', 'stunned', 'down', 'getup', 'grabbed', 'chained', 'tied', 'frozen', 'ko']) {
       expect(canLook(enemy('a', 0, 0, 0, { state })), state).toBe(false);
     }
     expect(canLook(enemy('a', 0, 0, 0, { stunned: true }))).toBe(false);

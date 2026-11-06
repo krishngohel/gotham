@@ -1,8 +1,8 @@
 // src/game/gcpdLobby.js
 // GCPD lobby dressing that needs live game state, not boot-time geometry: a few idle Joker goons
 // behind bars (reused character bodies, non-hostile: no combat hook at all) and the trophy case,
-// which fills in with the rescued gifts as party.js's own guests join (src/game/partyStory.js's
-// step-to-guest map, the same pure hook the party uses). The room shell itself (walls, the front
+// which fills in with a token for each rescued person as they reach the GCPD roof (src/game/roofStory.js's
+// step-to-guest map, the same pure hook the roof uses). The room shell itself (walls, the front
 // desk, the evidence board, the cell bars, the case's own glass shelf) is boot-time geometry in
 // src/world/interiors.js.
 import * as THREE from 'three';
@@ -10,7 +10,7 @@ import { createGoon } from '../actors/characters.js';
 import { toonMaterial, addHullOutline } from '../render/toon.js';
 import { PALETTE } from '../config/palette.js';
 import { createRng } from '../core/rng.js';
-import { guestsUpTo } from './partyStory.js';
+import { guestsUpTo } from './roofStory.js';
 import { STEPS } from './story.js';
 
 // Inside the three holding cells (src/world/interiors.js buildGCPDLobby: x 15.5 to 18, z bands
@@ -19,20 +19,20 @@ const CELL_SLOTS = [
   { x: 16.8, z: -7 }, { x: 16.8, z: -1.5 }, { x: 16.8, z: 3.5 },
 ];
 
-// One small, code-built trophy per guest: whatever they were rescued with, a stand-in for the
-// real prop (which stays wherever the story already put it). Shown once that guest has joined.
+// One small, code-built token per person: whatever they were rescued with, a stand-in for the
+// real prop (which stays wherever the story already put it). Shown once that person has joined.
 const mat = (color) => toonMaterial({ color });
 const trophyProp = (geo, color) => { const m = new THREE.Mesh(geo, mat(color)); addHullOutline(m, 0.008); return m; };
 const TROPHY_BUILDERS = {
-  dj: () => trophyProp(new THREE.TorusGeometry(0.16, 0.05, 8, 16), 0x4fe3ff), // a vinyl record
-  baker: () => trophyProp(new THREE.ConeGeometry(0.18, 0.22, 16), PALETTE.frosting), // a cake slice
-  band: () => trophyProp(new THREE.CylinderGeometry(0.02, 0.02, 0.4, 6), 0x5a3a24), // a drumstick
+  technician: () => trophyProp(new THREE.ConeGeometry(0.17, 0.2, 16), 0x4fe3ff), // a dish
+  chemist: () => trophyProp(new THREE.CylinderGeometry(0.05, 0.05, 0.3, 10), PALETTE.jokerGreen), // an antidote vial
+  newsCrew: () => trophyProp(new THREE.CylinderGeometry(0.1, 0.12, 0.16, 12), 0x1a1b1f), // a camera lens
   nightwing: () => trophyProp(new THREE.CircleGeometry(0.16, 3), PALETTE.detective), // a chevron
   gordon: () => trophyProp(new THREE.CylinderGeometry(0.12, 0.14, 0.06, 20), 0xd9a92c), // a badge
   alfred: () => trophyProp(new THREE.CylinderGeometry(0.16, 0.16, 0.03, 20), 0xd8dde6), // a tray
-  kids: () => trophyProp(new THREE.ConeGeometry(0.13, 0.3, 12), PALETTE.signal), // a party hat
+  civilians: () => trophyProp(new THREE.BoxGeometry(0.3, 0.05, 0.22), 0xd9a92c), // an emergency blanket
 };
-const TROPHY_ORDER = ['dj', 'baker', 'band', 'nightwing', 'gordon', 'alfred', 'kids'];
+const TROPHY_ORDER = ['technician', 'chemist', 'newsCrew', 'nightwing', 'gordon', 'alfred', 'civilians'];
 
 // The lobby sits inside the GCPD building, around the roof's centre (0, 0) at street level.
 export const LOBBY_VIEW_DIST = 60;

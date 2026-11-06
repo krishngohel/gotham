@@ -31,7 +31,7 @@ export const STEALTH = {
 };
 
 // States in which a goon can't look around or react: being hit, held, tied, frozen, dancing or out.
-export const BLIND = new Set(['hit', 'stunned', 'down', 'getup', 'grabbed', 'chained', 'tied', 'frozen', 'dance', 'ko']);
+export const BLIND = new Set(['hit', 'stunned', 'down', 'getup', 'grabbed', 'chained', 'tied', 'frozen', 'ko']);
 // States in which a goon can't be grabbed for a takedown.
 export const HELD = new Set(['grabbed', 'chained', 'tied', 'frozen', 'ko']);
 const SIGHT_ARG = { crouched: false, shadow: false };

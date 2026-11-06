@@ -1,8 +1,6 @@
-// Part S: a full reset for the new story (Mansi's Birthday Night). Everyone starts fresh under
-// this new key; settings (gotham-mansi-settings-v1) and bindings are untouched, and the old v1
-// key is simply never read again (it can stay in storage; nothing migrates from it).
-const KEY = 'gotham-mansi-progress-v2';
-export const BALLOON_COUNT = 12;
+// Progress lives under one key; settings (gotham-settings-v1) and bindings are stored apart.
+const KEY = 'gotham-progress-v1';
+export const TROPHY_COUNT = 12;
 export const DISTRICT_IDS = ['gcpd', 'docks', 'neon', 'ace', 'clock'];
 export const MEDALS = ['bronze', 'silver', 'gold'];
 export const MILESTONE_STEPS = [0, 25, 50, 75, 100];
@@ -12,7 +10,7 @@ const ID = /^[a-zA-Z][a-zA-Z0-9]{0,31}$/;
 
 export const DEFAULT_PROGRESS = {
   step: 0,
-  balloons: [],
+  trophies: [],
   suit: null,
   goldUnlocked: false,
   seenIntro: false,
@@ -63,12 +61,12 @@ function sanitizeStats(raw) {
 
 export function sanitizeProgress(raw = {}) {
   const r = isObj(raw) ? raw : {};
-  const balloons = Array.isArray(r.balloons)
-    ? [...new Set(r.balloons.filter((b) => Number.isInteger(b) && b >= 0 && b < BALLOON_COUNT))]
+  const trophies = Array.isArray(r.trophies)
+    ? [...new Set(r.trophies.filter((b) => Number.isInteger(b) && b >= 0 && b < TROPHY_COUNT))]
     : [];
   const out = {
     step: Number.isInteger(r.step) && r.step >= 0 ? r.step : 0,
-    balloons,
+    trophies,
     suit: ['m', 'f', 'gold'].includes(r.suit) ? r.suit : null,
     goldUnlocked: r.goldUnlocked === true,
     seenIntro: r.seenIntro === true,
@@ -85,7 +83,7 @@ export function sanitizeProgress(raw = {}) {
   return out;
 }
 
-// A new game restarts the story. Balloons, medals, stats and everything else found stay.
+// A new game restarts the story. Trophies, medals, stats and everything else found stay.
 export function newGameProgress(old) {
   const out = { ...sanitizeProgress(old), step: 0, suit: null, seenIntro: false, finished: false };
   for (const [key, fresh] of freshValues) out[key] = sanitizeProgress({ [key]: fresh })[key];

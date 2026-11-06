@@ -59,9 +59,9 @@ function signTex(g, w, h) {
   g.textBaseline = 'middle';
   g.lineWidth = 8;
   g.strokeStyle = '#0b0b12';
-  g.strokeText("JOKER'S PARTY!", w / 2, h / 2 + 4);
+  g.strokeText("JOKER'S SHOW!", w / 2, h / 2 + 4);
   g.fillStyle = '#6c3fa3';
-  g.fillText("JOKER'S PARTY!", w / 2, h / 2 + 4);
+  g.fillText("JOKER'S SHOW!", w / 2, h / 2 + 4);
   g.lineWidth = 10;
   g.strokeRect(5, 5, w - 10, h - 10);
 }
@@ -213,7 +213,7 @@ export function createBreakables({ scene, collision, climbables, progress, save,
     const floor = collision.groundBelow(item.center.x, item.center.y, item.center.z, 0.3);
     gfx.debris.burst(item.center, COLORS[item.kind], item.kind === 'glass' ? 16 : 22, item.kind === 'glass' ? 5 : 7, floor > -Infinity ? floor : item.center.y - 1.2);
     // A ?gadgets=all dev run breaks it for this session (collision, visuals, debris, events, the
-    // cache or balloon behind it) but must never touch the real save.
+    // cache or trophy behind it) but must never touch the real save.
     if (!dev) {
       if (!progress.gadgets.broken.includes(item.id)) progress.gadgets.broken.push(item.id);
       save();

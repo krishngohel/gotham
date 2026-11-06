@@ -9,11 +9,11 @@ describe("the title screen's What's new page", () => {
     expect(whatsNewHeadline()).not.toMatch(DASH);
     for (const line of whatsNewItems(DEFAULT_BINDINGS)) expect(line).not.toMatch(DASH);
   });
-  it('lists at least a handful of real, warm lines addressed to Mansi', () => {
+  it('lists at least a handful of real lines about the game', () => {
     const items = whatsNewItems(DEFAULT_BINDINGS);
     expect(items.length).toBeGreaterThanOrEqual(6);
     for (const line of items) expect(line.trim().length).toBeGreaterThan(0);
-    expect(whatsNewHeadline()).toContain('Mansi');
+    expect(whatsNewHeadline()).toContain('Long Night');
   });
   it('uses the live binding labels for the Batmobile and the Batwing, not a hardcoded key', () => {
     const batmobileLine = (bindings) => whatsNewItems(bindings).find((l) => l.includes('Batmobile'));
@@ -27,9 +27,9 @@ describe("the title screen's What's new page", () => {
     expect(batwingLine(rebound)).toContain('I');
     expect(batmobileLine(rebound)).not.toContain(bindingLabel(DEFAULT_BINDINGS, 'vehicle'));
   });
-  it('mentions the new parts the birthday night story added', () => {
+  it('mentions the main parts of the game', () => {
     const text = whatsNewItems(DEFAULT_BINDINGS).join(' ').toLowerCase();
-    for (const word of ['batmobile', 'batwing', 'nightwing', 'harley', 'funhouse', 'cinematic', 'party', 'grand prix', 'wing walk', 'impact']) {
+    for (const word of ['batmobile', 'batwing', 'nightwing', 'harley', 'funhouse', 'cinematic', 'riddler', 'grand prix', 'wing walk', 'impact']) {
       expect(text, word).toContain(word);
     }
   });

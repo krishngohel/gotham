@@ -10,7 +10,7 @@ import { STEPS } from '../game/story.js';
 import { bindingLabel } from '../core/bindings.js';
 import { promptText } from '../ui/prompts.js';
 
-// How long the returning-player summary card stays up before the party popper gets its own.
+// How long the returning-player summary card stays up before the flashbang gets its own.
 export const NEWS_CARD_S = 9;
 // Mouse pixels (pointer lock) for a full push toward a slot. Small, so a short trackpad swipe
 // (a MacBook in Safari) is enough: past the 0.35 dead zone after about 25 px.
@@ -58,7 +58,7 @@ export function createGadgetSystem(deps) {
 
   // Gadgets a returning save earned before they existed (a save past their unlock steps, or one
   // that finished the story): unlocked now, never announced. They are told on the first live play
-  // frame (one summary card, then the party popper's own card) and only then remembered, so the
+  // frame (one summary card, then the flashbang's own card) and only then remembered, so the
   // news never repeats. A ?gadgets=all run has no news and never writes.
   const news = devAll ? [] : [...state.unlocked].filter((id) => id !== 'batarang' && !saved.unlocked.includes(id));
   let newsT = 0;
@@ -83,16 +83,16 @@ export function createGadgetSystem(deps) {
     if (!news.length || !isPlaying()) return;
     newsT -= real;
     if (newsT > 0) return;
-    const popper = news.indexOf('popper');
-    const rest = news.length - (popper >= 0 ? 1 : 0);
+    const flashbang = news.indexOf('flashbang');
+    const rest = news.length - (flashbang >= 0 ? 1 : 0);
     if (rest > 1) {
-      const ids = news.filter((id) => id !== 'popper');
+      const ids = news.filter((id) => id !== 'flashbang');
       events.emit('gadgetNews', { ids });
       news.length = 0;
-      if (popper >= 0) { news.push('popper'); newsT = NEWS_CARD_S; }
+      if (flashbang >= 0) { news.push('flashbang'); newsT = NEWS_CARD_S; }
     } else {
-      // One gadget (the popper, or any other on its own) gets its normal unlock card.
-      const id = rest ? news.find((g) => g !== 'popper') : 'popper';
+      // One gadget (the flashbang, or any other on its own) gets its normal unlock card.
+      const id = rest ? news.find((g) => g !== 'flashbang') : 'flashbang';
       news.splice(news.indexOf(id), 1);
       events.emit('gadgetUnlocked', { id });
       if (news.length) newsT = NEWS_CARD_S;
@@ -247,7 +247,7 @@ export function createGadgetSystem(deps) {
     },
     handler: (id) => byId.get(id) ?? null,
     refresh() { hudCode = -1; },
-    // True until every returning-player gadget card (the WayneTech delivery, then the popper's own)
+    // True until every returning-player gadget card (the WayneTech delivery, then the flashbang's own)
     // has gone up, gaps between them included, so other one-off cards can wait their turn.
     get newsPending() { return news.length > 0; },
     get wheelOpen() { return wheel.open; },

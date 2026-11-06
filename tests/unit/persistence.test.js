@@ -65,18 +65,18 @@ describe('settings', () => {
 });
 
 describe('progress', () => {
-  it('round-trips and dedupes balloons', () => {
+  it('round-trips and dedupes trophies', () => {
     const st = memoryStorage();
-    saveProgress(st, { ...DEFAULT_PROGRESS, step: 7, balloons: [3, 3, 5], suit: 'f' });
+    saveProgress(st, { ...DEFAULT_PROGRESS, step: 7, trophies: [3, 3, 5], suit: 'f' });
     const p = loadProgress(st);
     expect(p.step).toBe(7);
-    expect(p.balloons).toEqual([3, 5]);
+    expect(p.trophies).toEqual([3, 5]);
     expect(p.suit).toBe('f');
   });
   it('rejects junk', () => {
-    const p = sanitizeProgress({ step: -4, balloons: [1, 'x', 99], suit: 'z', goldUnlocked: 1 });
+    const p = sanitizeProgress({ step: -4, trophies: [1, 'x', 99], suit: 'z', goldUnlocked: 1 });
     expect(p.step).toBe(0);
-    expect(p.balloons).toEqual([1]);
+    expect(p.trophies).toEqual([1]);
     expect(p.suit).toBe(null);
     expect(p.goldUnlocked).toBe(false);
   });

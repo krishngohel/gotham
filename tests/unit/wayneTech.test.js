@@ -16,10 +16,10 @@ function setup({ xp = 0, owned = [], dev = false } = {}) {
 }
 
 describe('XP from play', () => {
-  it('knockouts, balloons and chains pay', () => {
+  it('knockouts, trophies and chains pay', () => {
     const t = setup();
     for (let i = 0; i < 3; i++) t.events.emit('ko', {});
-    t.events.emit('balloon', { index: 0 });
+    t.events.emit('trophy', { index: 0 });
     t.events.emit('chainDone', { chain: 'rope', count: 3, stealth: false });
     expect(t.w.xp).toBe(30 + 150 + 150);
   });

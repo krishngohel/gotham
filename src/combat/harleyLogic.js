@@ -17,12 +17,12 @@ export const HARLEY_COOLDOWN = { slam: 3.4, sweep: 2.6, throw: 4 };
 
 // No dashes: player-visible text.
 export const HARLEY_TAUNTS = [
-  'Aw, is it your birthday, Bats? Mistah J got you a PRESENT!',
-  'Hold still, birthday girl!',
+  "Aw, didn't ya miss me, Bats? Mistah J sent a little something!",
+  'Hold still, Batsy!',
 ];
 
 // Which move Harley throws out next: the mallet slam and sweep only at melee range, the
-// pie/confetti throw only at a distance, each gated by its own cooldown (seconds remaining;
+// pie/gag throw only at a distance, each gated by its own cooldown (seconds remaining;
 // <= 0 is ready). `rng01` is a single already-rolled float in [0, 1) so this stays pure; picks
 // uniformly among whatever is currently both in range and off cooldown. Returns null when
 // nothing is ready (the caller should just keep closing or holding distance).

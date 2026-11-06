@@ -247,7 +247,7 @@ if (!only || only === 'stealth') {
   await p.keyboard.press('KeyV');
   await p.waitForTimeout(3000);
   await p.keyboard.press('KeyV');
-  // A silent takedown: both choke clips, the takedown camera, a balloon.
+  // A silent takedown: both choke clips and the takedown camera.
   await p.evaluate(() => { const g = window.__game, e = g.stealth.goons[2].e; g.hero.teleport({ x: e.pos.x - Math.sin(e.yaw) * 1.1, y: e.pos.y, z: e.pos.z - Math.cos(e.yaw) * 1.1 }, e.yaw); });
   await p.waitForTimeout(200);
   await label(p, 'stealth-takedown');
@@ -330,7 +330,7 @@ if (!only || only === 'gadgets') {
   });
   await row('claw', 'g:claw', () => p.keyboard.press('KeyR'));
   await row('freeze', 'g:freeze', async () => { await p.keyboard.press('KeyR'); await p.waitForTimeout(700); await p.mouse.click(640, 360); });
-  await row('popper', 'g:popper', () => p.keyboard.press('KeyR'), 7000);
+  await row('flashbang', 'g:flashbang', () => p.keyboard.press('KeyR'), 7000);
   // The Bat Swarm's own maximum (SWARM.maxTargets = 6): 4 grunts, a knife and a brute, the same
   // squad shape a real max-size swarm takedown would face.
   // The XP award and the upgrade purchases (level-up cards, sounds, saves) happen before the row's

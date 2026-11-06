@@ -1,5 +1,5 @@
 // Pure decision helpers behind Nightwing (src/allies/nightwingLogic.js): ally target choice,
-// the team-takedown conditions, the dodge/stagger threat scan, and the Party Crasher flee path.
+// the team-takedown conditions, the dodge/stagger threat scan, and the masked Courier flee path.
 // No three.js and no game harness: these take plain numbers and enemy-shaped records only.
 import { describe, it, expect } from 'vitest';
 import { pickAllyTarget, canTeamTakedown, nearestThreat, fleeStep, withinLeash } from '../../src/allies/nightwingLogic.js';

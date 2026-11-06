@@ -35,7 +35,7 @@ const PORTRAITS = {
     <circle cx="29" cy="40" r="2.4" fill="#c8323c"/><circle cx="43" cy="40" r="2.4" fill="#2b6fb8"/>
     <path d="M23 52 Q36 60 49 52 Q36 55 23 52 Z" fill="#c8323c" stroke="${INK}" stroke-width="2"/>`),
 
-  crasher: wrap('#2a1a3a', `
+  courier: wrap('#2a1a3a', `
     <ellipse cx="36" cy="42" rx="16" ry="17" fill="#3a2350" stroke="${INK}" stroke-width="2.5"/>
     <path d="M18 38 Q36 30 54 38 L52 46 Q36 40 20 46 Z" fill="${INK}"/>
     <circle cx="29" cy="40" r="2.4" fill="${PAPER}"/><circle cx="43" cy="40" r="2.4" fill="${PAPER}"/>
@@ -54,7 +54,7 @@ const PORTRAITS = {
     <circle cx="16" cy="48" r="3" fill="#c8323c" stroke="${INK}" stroke-width="1.5"/>
     <circle cx="29" cy="41" r="2" fill="${INK}"/><circle cx="43" cy="41" r="2" fill="${INK}"/>`),
 
-  mansi: wrap('#f2d24b', `
+  batman: wrap('#f2d24b', `
     <ellipse cx="36" cy="42" rx="16" ry="17" fill="#17181e" stroke="${INK}" stroke-width="2.5"/>
     <path d="M20 46 Q36 26 52 46 L52 40 Q36 30 20 40 Z" fill="#17181e"/>
     <path d="M14 36 Q10 24 22 22 Q26 30 20 38 Z" fill="#17181e" stroke="${INK}" stroke-width="2"/>

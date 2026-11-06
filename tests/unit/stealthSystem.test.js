@@ -6,7 +6,7 @@ import { createEvents } from '../../src/core/events.js';
 import { createRng } from '../../src/core/rng.js';
 import { LINES } from '../../src/stealth/brain.js';
 import { tracker, moveList, BASE_MOVES } from '../../src/game/progressTracker.js';
-import { sanitizeProgress, BALLOON_COUNT, DISTRICT_IDS } from '../../src/core/save.js';
+import { sanitizeProgress, TROPHY_COUNT, DISTRICT_IDS } from '../../src/core/save.js';
 import { STEPS } from '../../src/game/story.js';
 import { CHALLENGES } from '../../src/game/challenges.js';
 
@@ -380,12 +380,12 @@ describe('a predator room at run time', () => {
     const at = (id) => STEPS.findIndex((x) => x.id === id);
     expect(moveList()).toEqual([...BASE_MOVES, 'silentTakedown', 'perchDrop']);
     const done = sanitizeProgress({
-      step: at('credits'), finished: true, balloons: [...Array(BALLOON_COUNT).keys()],
+      step: at('credits'), finished: true, trophies: [...Array(TROPHY_COUNT).keys()],
       challenges: Object.fromEntries(CHALLENGES.map((c) => [c.id, { best: 1, medal: 'gold' }])),
       crimes: { stopped: 10 }, moves: BASE_MOVES, districts: DISTRICT_IDS,
     });
     expect(tracker.score(done).percent).toBe(100);
-    const early = tracker.score(sanitizeProgress({ step: at('party'), moves: BASE_MOVES })).parts.find((x) => x.id === 'moves');
+    const early = tracker.score(sanitizeProgress({ step: at('rig'), moves: BASE_MOVES })).parts.find((x) => x.id === 'moves');
     expect(early).toMatchObject({ done: 8, total: 10 });
   });
   it('a room that ends mid-takedown (a restart, a story jump) drops the takedown and lets go of the goon', () => {

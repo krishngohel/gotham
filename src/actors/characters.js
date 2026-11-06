@@ -497,7 +497,7 @@ export function createGoon(assets, { type = 'grunt', rng = null } = {}) {
   }
 
   if (look.hat === 'bandana') {
-    const band = rigidMesh(new THREE.CylinderGeometry(r * 1.03, r * 1.05, 0.06, 20, 1, true), toonMaterial({ color: PALETTE.balloon, side: THREE.DoubleSide }), lm.headCenter.clone().add(new THREE.Vector3(0, 0.045, 0)));
+    const band = rigidMesh(new THREE.CylinderGeometry(r * 1.03, r * 1.05, 0.06, 20, 1, true), toonMaterial({ color: PALETTE.crimson, side: THREE.DoubleSide }), lm.headCenter.clone().add(new THREE.Vector3(0, 0.045, 0)));
     attachRigid(body, 'Head', band);
   } else if (look.hat === 'beanie') {
     const beanie = rigidMesh(

@@ -1,4 +1,4 @@
-// Joker paste-ups drawn in code: the rooftop birthday billboard and the WANTED posters. One grin
+// Joker paste-ups drawn in code: the rooftop billboard and the WANTED posters. One grin
 // drawing serves both, so the city's villain has one recognisable mark.
 import * as THREE from 'three';
 import { PALETTE, hex } from '../config/palette.js';
@@ -80,11 +80,11 @@ export function jokerBillboardTexture() {
   g.fillRect(0, 0, 1024, 512);
   benDay(g, 1024, 512, 0.14);
   drawGrin(g, 512, 40, 340, 16);
-  // The birthday line in 64px Bangers, doubled up by the transform so it reads from the street.
+  // The billboard line in 64px Bangers, doubled up by the transform so it reads from the street.
   g.save();
   g.translate(512, 440);
   g.scale(2, 2);
-  letter(g, 'HA HA HAPPY BIRTHDAY', 0, 0, '64px Bangers, Impact, sans-serif', PAPER, INK, 7);
+  letter(g, 'HA HA HA GOOD EVENING', 0, 0, '64px Bangers, Impact, sans-serif', PAPER, INK, 7);
   g.restore();
   g.strokeStyle = INK;
   g.lineWidth = 18;
@@ -115,8 +115,8 @@ export function wantedPosterTexture() {
   drawGrin(g, 128, 78, 100, 6);
   g.restore();
   g.strokeStyle = INK; g.lineWidth = 5; g.strokeRect(34, 88, 188, 130);
-  letter(g, 'FOR CAKE THEFT', 128, 252, '34px Bangers, Impact, sans-serif', INK, INK, 1);
-  letter(g, 'reward: one slice', 128, 298, '26px "Patrick Hand SC", sans-serif', INK, INK, 0.5);
+  letter(g, 'FOR GRAND LARCENY', 128, 252, '34px Bangers, Impact, sans-serif', INK, INK, 1);
+  letter(g, 'reward: one smile', 128, 298, '26px "Patrick Hand SC", sans-serif', INK, INK, 0.5);
   posterTex = tex(c);
   return posterTex;
 }

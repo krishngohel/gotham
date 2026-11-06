@@ -8,7 +8,7 @@
   { "press": "Digit1" }, { "wait": 300 }, { "shot": "photo-sepia" },
   { "press": "Digit1" }, { "press": "Digit2" }, { "wait": 300 }, { "shot": "photo-panel" },
   { "press": "Digit2" }, { "wait": 300 }, { "shot": "photo-cover" },
-  { "press": "KeyT" }, { "type": "gotham loves mansi" }, { "press": "Enter" }, { "wait": 200 },
+  { "press": "KeyT" }, { "type": "gotham after midnight" }, { "press": "Enter" }, { "wait": 200 },
   { "hold": ["KeyW"], "ms": 4000 },
   { "eval": "(() => { const g = window.__game; const c = g.camera.position, h = g.hero.pos; return +Math.hypot(c.x - h.x, c.y - h.y - 1.2, c.z - h.z).toFixed(2); })()" },
   { "hold": ["KeyE"], "ms": 600 }, { "hold": ["KeyZ"], "ms": 800 },

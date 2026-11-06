@@ -72,7 +72,7 @@ export function createWorld(scene, quality) {
   backdrop.name = 'backdrop';
   scene.add(backdrop);
   for (const [x, y, z] of backdrop.userData.beacons) {
-    const i = ctx.halos.add(x, y, z, PALETTE.balloon, 7);
+    const i = ctx.halos.add(x, y, z, PALETTE.crimson, 7);
     ctx.blinkers.push({ i, size: 7, phase: x * 0.01 + z });
   }
   for (const [x, y, z] of backdrop.userData.bridgeLamps) ctx.halos.add(x, y, z, PALETTE.sodium, 9);
@@ -83,10 +83,10 @@ export function createWorld(scene, quality) {
   const rain = createRain(quality.rainCount);
   scene.add(rain.mesh);
   const pool = createLightPool(scene, ctx.lights, 4);
-  // The finale's firework flash, dark until then. It lives here so the number of lights (part of
+  // The finale's Batsignal flash, dark until then. It lives here so the number of lights (part of
   // every lit shader's compile key) never changes after boot.
-  const fireworkLight = new THREE.PointLight(0xfff0d0, 0, 400, 1.2);
-  scene.add(fireworkLight);
+  const flashLight = new THREE.PointLight(0xfff0d0, 0, 400, 1.2);
+  scene.add(flashLight);
   const streaks = createWetStreaks(ctx.reflect, { fogDensity: scene.fog.density });
   streaks.name = 'wetStreaks';
   scene.add(streaks);
@@ -117,7 +117,7 @@ export function createWorld(scene, quality) {
     signal,
     rain,
     moon,
-    fireworkLight,
+    flashLight,
     data,
     setFlash(k) { moon.intensity = MOON + 9 * k; backdrop.userData.setFlash(k); },
     update(t, dt, focus, camera, hero = null) {

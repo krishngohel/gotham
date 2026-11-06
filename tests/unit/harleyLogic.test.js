@@ -60,7 +60,7 @@ describe('glyph and timing windows', () => {
     expect(harleyGlyph('sweep')).toBe('red');
   });
 
-  it('the thrown pie/confetti has no telegraph glyph', () => {
+  it('the thrown pie/gag has no telegraph glyph', () => {
     expect(harleyGlyph('throw')).toBeNull();
   });
 

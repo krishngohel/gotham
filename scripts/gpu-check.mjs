@@ -2,7 +2,7 @@
 // user's browser) and reports the GPU in use, canvas resolution and real frame rate.
 // Usage: node scripts/gpu-check.mjs [url] [msedge|chrome]
 import { chromium } from 'playwright-core';
-const url = process.argv[2] ?? 'https://krishngohel.github.io/gotham-for-mansi/?at=start&god=1';
+const url = process.argv[2] ?? 'https://localhost:5200/?at=start&god=1';
 const channel = process.argv[3] ?? 'msedge';
 // Headless by default so it never takes over the screen or the mouse; HEADED=1 opens the old
 // visible maximized window (it grabs focus and the pointer while it runs).

@@ -101,7 +101,7 @@ describe('remote batarang handler', () => {
   });
 });
 
-// Final review I3: the claw and the popper may replace a strike mid-combo; the remote may not
+// Final review I3: the claw and the flashbang may replace a strike mid-combo; the remote may not
 // (Batman must stand still to steer), and its hint says so.
 describe('remote batarang handler: needs Batman free', () => {
   it('refuses mid-combo with the "finish your move" hint, and on the move with the ground hint', () => {

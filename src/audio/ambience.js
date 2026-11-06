@@ -152,7 +152,7 @@ export function createAmbience(ctx, out) {
       wind.whistle.gain.setTargetAtTime(glideLevel * glideLevel * 0.25, now, k);
       wind.hp.frequency.setTargetAtTime(1800 + 1600 * glideLevel, now, k);
     },
-    // One engine at a time: whichever vehicle Mansi is driving/flying. `kind` is 'batmobile',
+    // One engine at a time: whichever vehicle Batman is driving/flying. `kind` is 'batmobile',
     // 'car', 'wing' or null/falsy to fade out; `level` (0..1) is an overall presence/fade
     // multiplier (0 on enter before the fade-in finishes, 0 again after exit); `speedFrac` is
     // 0..1 of the vehicle's own top speed, for pitch and loudness; `opts.boost` layers the

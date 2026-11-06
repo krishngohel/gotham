@@ -99,7 +99,7 @@ const RAW = [
     ],
   },
   {
-    id: 'birthdayBash', name: "Joker's Birthday Bash", kind: 'arena',
+    id: 'bigTop', name: "Joker's Big Top", kind: 'arena',
     blurb: 'Three waves on the Monarch roof. Mix your moves, keep the combo, do not get hit.',
     start: { x: 190, y: SITES.monarchRoof.y, z: -48, yaw: Math.atan2(-10, -12) }, medals: { gold: 3300, silver: 2250, bronze: 1300 },
     // The Monarch roof has a duct unit close on the standard heading; a shorter side offset
@@ -112,7 +112,7 @@ const RAW = [
     // centrelines (src/vehicles/vehicles.js LINES: x = -210..210 and z = -210..210 by 60 m,
     // 14 m-wide streets). A rectangle around four blocks south of the GCPD/Ace/Clock compounds,
     // so every leg is a real, unobstructed street with only 90-degree turns at the corners.
-    // src/game/vehicleChallenges.js puts Mansi in the Batmobile (summon instant, then enter)
+    // src/game/vehicleChallenges.js puts Batman in the Batmobile (summon instant, then enter)
     // when this starts, and takes her out again when it ends.
     id: 'gothamGrandPrix', name: 'Gotham Grand Prix', kind: 'parkour',
     blurb: 'A Batmobile checkpoint race through the streets. Eight gates, then the finish.',
@@ -138,7 +138,7 @@ const RAW = [
     // in the city at 58 m) and passing close by the cathedral beside it. Center (-62, -160)
     // matches the hall's footprint in src/world/mapData.js. src/game/vehicleChallenges.js calls
     // the Batwing when this starts
-    // when this starts (Mansi needs to already be somewhere she can call it: the pillar sits on
+    // when this starts (Batman needs to already be somewhere he can call it: the pillar sits on
     // the clock tower roof) and ejects her into a glide when it ends.
     id: 'wingWalk', name: 'Wing Walk', kind: 'rings',
     blurb: 'Call the Batwing and fly the ring course around the clock tower.',
@@ -146,7 +146,7 @@ const RAW = [
     // glide-only ring courses) does not apply here.
     poweredFlight: true,
     // On the clock tower's own roof (the "hall" landmark, matching the arena site nearby), not
-    // in open air: the pillar has to be somewhere Mansi can actually walk up to on foot.
+    // in open air: the pillar has to be somewhere Batman can actually walk up to on foot.
     start: { x: -62, y: 58, z: -154, yaw: 0 },
     // Measured with a real-input scripted flight (scripts/challenge-tune.mjs's flyRun: WASD roll
     // and pitch, Shift boost, Space brake, through the actual Batwing controls), 3 clean laps:
@@ -168,7 +168,7 @@ export const CHALLENGES = RAW.map((c) => ({
 // line (the ground camera sits 3.4 m behind, directly on the "2 m straight behind" spot this used
 // to use). Walking up to it starts the challenge. A challenge can override the side distance
 // (`pillarSide`) or behind distance (`pillarBehind`) when the standard offset would land the
-// pillar inside nearby roof scenery; birthdayBash does, to clear a duct unit on the Monarch roof.
+// pillar inside nearby roof scenery; bigTop does, to clear a duct unit on the Monarch roof.
 const PILLAR_SIDE = 2.2;
 const PILLAR_BEHIND = 0.6;
 export function pillarPos(ch) {

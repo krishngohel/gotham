@@ -1,6 +1,6 @@
 import { ACTIONS, DEFAULT_BINDINGS } from './bindings.js';
 
-const KEY = 'gotham-mansi-settings-v1';
+const KEY = 'gotham-settings-v1';
 
 // Bumped when a default changes in a way that older saves should pick up once (see sanitizeSettings).
 export const SETTINGS_REV = 3;

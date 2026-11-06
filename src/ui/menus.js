@@ -4,7 +4,7 @@ import { saveSettings } from '../core/settings.js';
 import { promptText } from './prompts.js';
 import { drawProgressMap } from './progressMap.js';
 import { whatsNewItems, whatsNewHeadline } from './whatsNew.js';
-import MANSI from '../mansi.config.js';
+import STORY from '../story.config.js';
 import { MOVE_TABLE } from '../combat/moveSelect.js';
 
 const MOVING_AROUND = ['ladder', 'ledge', 'zip', 'wallrun', 'divebomb', 'takedown'];
@@ -66,14 +66,11 @@ export function createMenus({ root, settings, storage, input, sound = () => {}, 
     const { canContinue, percent = null, onContinue, onNew } = opts;
     const again = () => title(opts);
     const node = el('div', 'menu title-menu');
-    node.appendChild(el('div', 'logo', `<span class="kicker">A birthday special</span><span class="l1">Gotham needs you,</span><span class="l2">${MANSI.name}</span>`));
-    // The save reset (a new story key, see src/core/save.js): a comic burst so a returning player
-    // knows straight away that this is not the same game they left off in.
-    node.appendChild(el('div', 'new-burst', `<span>NEW!</span><i>Mansi's Birthday Night:<br>a brand new story</i>`));
+    node.appendChild(el('div', 'logo', `<span class="kicker">A comic-book Batman adventure</span><span class="l1">Gotham needs you,</span><span class="l2">Batman</span>`));
     const list = el('div', 'mlist');
     if (canContinue) list.appendChild(button(percent == null ? 'Continue' : `Continue, ${percent}%`, onContinue, 'primary'));
     list.appendChild(button(canContinue ? 'New game' : 'Start', onNew, canContinue ? '' : 'primary'));
-    list.appendChild(button("What's new", () => whatsNew(again)));
+    list.appendChild(button("What's inside", () => whatsNew(again)));
     list.appendChild(button('Settings', () => openSettings(again)));
     list.appendChild(button('Controls', () => help(again)));
     list.appendChild(button('Credits', () => credits({ onClose: again })));
@@ -90,7 +87,7 @@ export function createMenus({ root, settings, storage, input, sound = () => {}, 
     // Card art: front views from the suit reference sheets. The gold suit reuses Batman's card
     // with a CSS gold tint.
     const suits = [['m', 'The Bat', 'Grey suit, black cape, black bat.', 'card_m'], ['f', 'Bat, with style', 'Dark suit, gold bat, red hair.', 'card_f']];
-    if (gold) suits.push(['gold', 'Gold Birthday', 'Unlocked by finding all twelve balloons.', 'card_m']);
+    if (gold) suits.push(['gold', 'Golden Knight', 'Unlocked by finding all twelve Riddler trophies.', 'card_m']);
     for (const [id, name, desc, art] of suits) {
       const card = el('button', `suit-card suit-${id}`, `<div class="swatch"><img src="./assets/art/${art}.webp" alt="" draggable="false"></div><div class="sname">${name}</div><div class="sdesc">${desc}</div>`);
       card.addEventListener('click', () => { sound('uiSelect'); onPick(id); });
@@ -106,7 +103,7 @@ export function createMenus({ root, settings, storage, input, sound = () => {}, 
   // opts: { onResume, onRestart, onTitle, info?: { challenge, crimesStopped, percent },
   //         onQuitChallenge?, onChallenges?, onProgress?, onPhoto? }
   function pause(opts) {
-    const { onResume, onRestart, onTitle, info = {}, onQuitChallenge, onChallenges, onProgress, onParty, onPhoto, onWayneTech } = opts;
+    const { onResume, onRestart, onTitle, info = {}, onQuitChallenge, onChallenges, onProgress, onCaseFile, onPhoto, onWayneTech } = opts;
     const again = () => pause(opts);
     const node = el('div', 'menu pause-menu');
     node.appendChild(el('h2', '', 'Paused'));
@@ -115,7 +112,7 @@ export function createMenus({ root, settings, storage, input, sound = () => {}, 
     if (info.challenge && onQuitChallenge) list.appendChild(button('Quit challenge', onQuitChallenge));
     if (onChallenges) list.appendChild(button('Challenges', onChallenges));
     if (onProgress) list.appendChild(button(info.percent != null ? `Progress, ${info.percent}%` : 'Progress', onProgress));
-    if (onParty) list.appendChild(button(info.party ? `Party, ${info.party}` : 'Party', onParty));
+    if (onCaseFile) list.appendChild(button(info.caseFile ? `Case file, ${info.caseFile}` : 'Case file', onCaseFile));
     if (onWayneTech) list.appendChild(button(info.wayneFree ? `WayneTech, ${info.wayneFree} to spend` : 'WayneTech', onWayneTech, info.wayneFree ? 'glow' : ''));
     if (onPhoto) list.appendChild(button('Photo mode', onPhoto));
     list.appendChild(button('Controls', () => help(again)));
@@ -127,11 +124,11 @@ export function createMenus({ root, settings, storage, input, sound = () => {}, 
     show(node);
   }
 
-  // ---------- party checklist ----------
-  function partyPage(data, { onBack }) {
-    const node = el('div', 'menu party-menu');
+  // ---------- case file ----------
+  function caseFilePage(data, { onBack }) {
+    const node = el('div', 'menu case-menu');
     node.appendChild(el('h2', '', data.title));
-    const list = el('ul', 'party-list');
+    const list = el('ul', 'case-list');
     for (const c of data.items) {
       const li = el('li', c.done ? 'done' : '');
       li.textContent = c.label;
@@ -157,8 +154,8 @@ export function createMenus({ root, settings, storage, input, sound = () => {}, 
     }
     node.appendChild(list);
     node.appendChild(el('p', 'note', 'Walk into a glowing bat pillar to start. Detective vision shows every pillar through walls.'));
-    if (data.goldStandard) node.appendChild(button(`Read: ${MANSI.name}'s Gold Standard`, onRead, 'primary'));
-    else node.appendChild(el('p', 'note', `Gold in every challenge unlocks a comic page: ${MANSI.name}'s Gold Standard.`));
+    if (data.goldStandard) node.appendChild(button('Read: The Gold Standard', onRead, 'primary'));
+    else node.appendChild(el('p', 'note', 'Gold in every challenge unlocks a comic page: The Gold Standard.'));
     node.appendChild(button('Back', onBack, 'small'));
     show(node);
   }
@@ -183,7 +180,7 @@ export function createMenus({ root, settings, storage, input, sound = () => {}, 
     const stats = el('p', 'pg-stats');
     stats.textContent = data.statsLine;
     node.appendChild(stats);
-    if (data.fromKrishn) node.appendChild(button(`Read: From ${MANSI.fromName}`, onRead, 'primary'));
+    if (data.commendation) node.appendChild(button('Read: From Commissioner Gordon', onRead, 'primary'));
     node.appendChild(button('Back', onBack, 'small'));
     show(node);
     // Sized and drawn once the map is actually laid out, so the backing store matches its real
@@ -391,15 +388,14 @@ export function createMenus({ root, settings, storage, input, sound = () => {}, 
     show(node);
   }
 
-  // ---------- what's new ----------
+  // ---------- what's inside ----------
   function whatsNew(onBack) {
     const node = el('div', 'menu whatsnew-menu');
-    node.appendChild(el('h2', '', "What's new"));
+    node.appendChild(el('h2', '', "What's inside"));
     node.appendChild(el('p', 'wn-lead', whatsNewHeadline()));
     const list = el('div', 'wn-list');
     for (const line of whatsNewItems(settings.bindings)) list.appendChild(el('p', 'wn-row', line));
     node.appendChild(list);
-    node.appendChild(el('p', 'note', 'Every save from before tonight starts this story over, completely fresh: new balloons to find, new medals to win, same birthday girl.'));
     node.appendChild(button('Back', onBack, 'small'));
     show(node);
   }
@@ -409,22 +405,21 @@ export function createMenus({ root, settings, storage, input, sound = () => {}, 
     const node = el('div', `menu credits-menu ${final ? 'final' : ''}`);
     const roll = el('div', 'roll');
     roll.innerHTML = `
-      ${final ? `<h1>Happy birthday, ${MANSI.name}!</h1><p class="final-msg">${MANSI.finalMessage}</p><p class="from">From ${MANSI.fromName}</p>` : '<h2>Credits</h2>'}
-      <h3>Made for</h3><p>${MANSI.name}</p>
-      <h3>Made by</h3><p>${MANSI.fromName}</p>
-      <h3>New tonight</h3><p>A brand new three act story, the Batmobile and every street car, the Batwing, Nightwing, Harley Quinn, walk in interiors at Ace Chemicals and the Joker funhouse, in engine cinematics, the birthday party finale, and the Gotham Grand Prix and Wing Walk challenges.</p>
+      ${final ? `<h1>The Long Night</h1><p class="final-msg">${STORY.finalMessage}</p>` : '<h2>Credits</h2>'}
+      <h3>Made by</h3><p>Krishn Gohel</p>
+      <h3>In the game</h3><p>A three act story across Gotham, the Batmobile and every street car, the Batwing, Nightwing, Harley Quinn, walk in interiors at Ace Chemicals and the Joker funhouse, in engine cinematics, twelve hidden Riddler trophies, and the Gotham Grand Prix and Wing Walk challenges.</p>
       <h3>Characters and animation</h3><p>Universal Base Characters and Universal Animation Library 1 and 2 by Quaternius (CC0)</p>
       <h3>Type</h3><p>Bangers, Patrick Hand SC and Barlow Condensed via Google Fonts (SIL Open Font License)</p>
-      <h3>Music and voice</h3><p>Finale: "Happy Birthday To You" (orchestral) by Tom Kincaid / VOLE.wtf (CC0). The Joker's voice: Seed Audio 1.0 on Higgsfield.</p>
+      <h3>Music and voice</h3><p>The score is synthesised live in the browser. The Joker's voice: Seed Audio 1.0 on Higgsfield.</p>
       <h3>Everything else</h3><p>City, comics, score and sound effects are built in code, in the browser.</p>
-      <p class="legal">Batman, Batgirl, the Joker and Gotham City belong to DC. This is a non-commercial fan-made birthday gift.</p>`;
+      <p class="legal">Batman, Batgirl, the Joker and Gotham City belong to DC. This is a non-commercial fan-made tribute.</p>`;
     node.appendChild(roll);
     node.appendChild(button(final ? 'Keep exploring Gotham' : 'Back', onClose, final ? 'primary' : 'small'));
     show(node);
   }
 
   return {
-    title, suitSelect, pause, challengesPage, progressPage, partyPage, wayneTechPage, help, whatsNew, openSettings, credits, hide,
+    title, suitSelect, pause, challengesPage, progressPage, caseFilePage, wayneTechPage, help, whatsNew, openSettings, credits, hide,
     setGadgetHelp(fn) { gadgetHelp = fn; },
     get open() { return !!current; },
   };

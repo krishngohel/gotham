@@ -38,7 +38,7 @@ function flutter(ctx, out, t, p, { dur = 0.3, rate = 38, freq = 2200, to = null,
   return t + dur + 0.02;
 }
 
-// Random clicks on one noise gain: crackle for fireworks, electricity and drips.
+// Random clicks on one noise gain: crackle for electricity, sparks and drips.
 function crackle(ctx, out, t, { dur = 0.6, count = 30, freq = 3000, gain = 0.4, type = 'highpass' } = {}) {
   const g = ctx.createGain();
   g.gain.setValueAtTime(0, t);
@@ -286,6 +286,15 @@ export const SFX = {
     return t + 1.05;
   } },
 
+  // A Riddler trophy: a small electric zap, then a bright two-note question (rising, unresolved).
+  trophy: { wet: 0.3, max: 2, fn(ctx, out, t, p) {
+    const semi = 12 * Math.log2(p);
+    tone(ctx, out, t, { type: 'sawtooth', freq: 180 * p, to: 1400 * p, d: 0.09, gain: 0.12 });
+    bell(ctx, out, t + 0.07, 79 + semi, { gain: 0.22, d: 0.55, ratio: 2.01, index: 1.2 });
+    bell(ctx, out, t + 0.2, 86 + semi, { gain: 0.24, d: 0.9, ratio: 2.01, index: 1.4 });
+    return t + 1.2;
+  } },
+
   uiMove: { wet: 0, max: 2, fn(ctx, out, t, p) {
     return tone(ctx, out, t, { type: 'triangle', freq: 1500 * p, d: 0.04, gain: 0.25 });
   } },
@@ -348,28 +357,6 @@ export const SFX = {
     noiseSource(ctx, t, end - t).connect(filter(ctx, breath, 'highpass', 900, 0.5));
     [src, vib].forEach((n) => { n.start(t); n.stop(end); });
     return end;
-  } },
-
-  firework: { wet: 0.3, max: 3, fn(ctx, out, t, p) {
-    const up = 0.55;
-    const g = env(ctx, out, t, { a: up * 0.8, d: up * 0.2, peak: 0.12 });
-    const o = ctx.createOscillator();
-    o.frequency.setValueAtTime(700 * p, t);
-    o.frequency.exponentialRampToValueAtTime(2600 * p, t + up);
-    const lfo = ctx.createOscillator();
-    lfo.frequency.value = 18;
-    const lg = ctx.createGain();
-    lg.gain.value = 40;
-    lfo.connect(lg);
-    lg.connect(o.frequency);
-    o.connect(g);
-    [o, lfo].forEach((n) => { n.start(t); n.stop(t + up + 0.02); });
-    noise(ctx, out, t, { type: 'bandpass', freq: 3000 * p, Q: 3, a: up * 0.8, d: up * 0.2, gain: 0.12 });
-    const b = t + up + 0.03;
-    tone(ctx, out, b, { freq: 90 * p, to: 30, d: 0.5, gain: 0.7 });
-    noise(ctx, out, b, { type: 'lowpass', freq: 1500 * p, to: 200, d: 0.4, gain: 0.7 });
-    crackle(ctx, out, b + 0.08, { dur: 0.85, count: 60, freq: 2500, gain: 0.45 });
-    return b + 0.95;
   } },
 
   // Longer than most on purpose: a rolling rumble with an irregular swell pattern.
@@ -598,18 +585,14 @@ export const SFX = {
     return t + 0.85;
   } },
 
-  // Party popper: three pops, a crackle of confetti and a little fanfare. Pop gains trimmed
-  // (fix round 1): each of the three pops rendered near heavy's peak on its own, and the loudest
-  // still cleared it by more than 1 dB.
-  popper: { wet: 0.3, max: 1, fn(ctx, out, t, p) {
-    const semi = 12 * Math.log2(p);
-    for (const at of [0, 0.09, 0.2]) {
-      noise(ctx, out, t + at, { type: 'highpass', freq: 1500, d: 0.05, gain: 0.5 });
-      thump(ctx, out, t + at, p, { from: 320, to: 120, d: 0.06, gain: 0.34 });
-    }
-    crackle(ctx, out, t + 0.2, { dur: 0.8, count: 30, freq: 6500, gain: 0.2 });
-    [72, 76, 79, 84].forEach((m, i) => bell(ctx, out, t + 0.28 + i * 0.07, m + semi, { gain: 0.14, d: 0.5, ratio: 2, index: 1 }));
-    return t + 1.1;
+  // Flashbang: a hard crack and thump, a hiss of white noise, then a high ringing that fades.
+  flashbang: { wet: 0.35, max: 1, fn(ctx, out, t, p) {
+    noise(ctx, out, t, { type: 'highpass', freq: 1200, d: 0.09, gain: 0.7 });
+    thump(ctx, out, t, p, { from: 260, to: 70, d: 0.2, gain: 0.5 });
+    noise(ctx, out, t + 0.04, { type: 'highpass', freq: 5000, d: 0.5, gain: 0.22 });
+    crackle(ctx, out, t + 0.05, { dur: 0.5, count: 18, freq: 6500, gain: 0.14 });
+    bell(ctx, out, t + 0.06, 101 + 12 * Math.log2(p), { gain: 0.07, d: 1.3, ratio: 1.002, index: 0.2 });
+    return t + 1.4;
   } },
 
   // Level up: a rising bell arpeggio over brass.

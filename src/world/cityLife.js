@@ -115,7 +115,7 @@ function createBlimp(scene, halos) {
   light.rotation.z = 0.35;
   light.layers.set(LAYER_FX);
   g.add(hull, gondola, fins, light);
-  const blink = halos.add(0, 0, 0, PALETTE.balloon, 3);
+  const blink = halos.add(0, 0, 0, PALETTE.crimson, 3);
   scene.add(g);
   return {
     update(t) {

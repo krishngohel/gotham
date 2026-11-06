@@ -41,7 +41,7 @@ vec3 snapPalette(vec3 c, float amount) {
     float dd = dot(d, d);
     if (dd < bd) { bd = dd; best = pn; }
   }
-  // Saturated accents (signs, the Joker's suit, balloons) keep their own colour.
+  // Saturated accents (signs, the Joker's suit, trophies) keep their own colour.
   float sat = (max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b))) / max(max(c.r, max(c.g, c.b)), 1e-3);
   float k = amount * clamp((L - 0.02) / 0.06, 0.0, 1.0) * (1.0 - smoothstep(0.45, 0.7, sat));
   return mix(c, best * L, k);
@@ -165,7 +165,7 @@ void main() {
   if (uFilter > 0.5) {
     float Lf = pow(max(luma(col), 0.0), 1.0 / 2.2);
     if (uFilter < 1.5) {
-      // Noir: black, white and one accent colour (the balloon red).
+      // Noir: black, white and one accent colour (the crimson).
       float mx = max(col.r, max(col.g, col.b)), mn = min(col.r, min(col.g, col.b));
       float red = smoothstep(0.35, 0.6, (mx - mn) / max(mx, 1e-3)) * step(max(col.g, col.b), col.r * 0.7);
       vec3 bw = mix(uInk, uPaper, smoothstep(0.18, 0.42, Lf));
@@ -233,7 +233,7 @@ export function createInkPipeline(renderer, quality, { gpuTime = false } = {}) {
     uInk: { value: new THREE.Color(PALETTE.ink) },
     uPaper: { value: new THREE.Color(PALETTE.paper) },
     uDetectiveTint: { value: new THREE.Color(PALETTE.detective) },
-    uAccent: { value: new THREE.Color(PALETTE.balloon) },
+    uAccent: { value: new THREE.Color(PALETTE.crimson) },
     uFilter: { value: 0 },
     uWobble: { value: 0 }, uHatch: { value: 0 }, uMidDots: { value: 0 }, uSkyDots: { value: 0 },
     uColorEdges: { value: 0 }, uMisreg: { value: 0 }, uPaletteAmt: { value: 0 }, uPaperTex: { value: 0 },

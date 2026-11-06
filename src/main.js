@@ -1,10 +1,8 @@
 import './ui/style.css';
-import MANSI from './mansi.config.js';
 import { startGame } from './game/game.js';
 
 const params = new URLSearchParams(location.search);
 const loading = document.getElementById('loading');
-document.getElementById('loading-name').textContent = MANSI.name;
 
 const hasWebGL2 = (() => { try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; } })();
 

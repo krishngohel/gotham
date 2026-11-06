@@ -28,7 +28,7 @@ function landmarks() {
   const list = [];
   // GCPD headquarters: the Batsignal roof.
   // hollow + exteriorHoles: Part I (interiors), the GCPD lobby. Face 4 (+z, south, the storefront
-  // side) opens for the street doors; the roof (the Batsignal and the party) and every other face
+  // side) opens for the street doors; the roof (the Batsignal and the finale) and every other face
   // are untouched.
   list.push(B({ id: 'gcpd', x: 0, z: 0, w: 40, d: 40, h: 42, style: 'deco', props: 'none', district: 'gcpd', landmark: true, storefront: true, neon: [{ text: 'GCPD', face: 's', y: 33, color: 'cyan', big: true }], hollow: true, exteriorHoles: [4] }));
 
@@ -126,17 +126,17 @@ export function buildMapData(seed = 11) {
 export const SITES = {
   start: { x: 6, y: 42, z: 10 },
   signal: { x: -12, y: 42, z: -12 },
-  // 9 m south of the Batsignal lamp, facing south toward the Docks: the lamp sits behind her and
+  // 9 m south of the Batsignal lamp, facing south toward the Docks: the lamp sits behind Batman and
   // the camera (the beat after the playing card, see flow.js placeAt).
   signalView: { x: -12, y: 42, z: -3, yaw: 0 },
   wh3Roof: { x: -60, y: 16, z: 180 },
   yard: { x: 0, y: 0.15, z: 178 },
   freighter: { x: -44, y: 9, z: 238 },
-  presents: { x: -44, y: 9, z: 232 },
+  crates: { x: -44, y: 9, z: 232 },
   gazetteRoof: { x: 120, y: 30, z: 0 },
   neonStreet: { x: 150, y: 0, z: 62 },
   monarchRoof: { x: 180, y: 22, z: -60 },
-  party: { x: 186, y: 22, z: -66 },
+  rig: { x: 186, y: 22, z: -66 },
   aceYard: { x: 95, y: 0, z: -140 },
   // Batmobile parking spots (Part S's 'board' steps, src/game/story.js): real street tiles
   // (src/vehicles/vehicles.js's LINES) near the route the player already took on foot, so getting
@@ -150,7 +150,7 @@ export const SITES = {
   aceGateCar: { x: 95, y: 0.15, z: -105, yaw: Math.PI },
   factoryRoof: { x: 140, y: 25.1, z: -172 },
   vatDeck: { x: 180, y: 10, z: -118 },
-  cake: { x: 184, y: 10, z: -112 },
+  antidote: { x: 184, y: 10, z: -112 },
   arena: { x: -62, y: 58, z: -154 },
   // The Joker's balcony is on the tower's arena (south) face. It used to say z -176, which is
   // inside the tower itself (the tower spans z -180 to -166).
@@ -175,10 +175,10 @@ export const SITES = {
   aceHall: { x: 140, y: 0.15, z: -172 },
   // The plaza doors' outside landing (src/world/interiors.js's INTERIOR_ROOMS.funhouse.outside):
   // Part S's 'toFunhouse' step targets this, not the nave floor itself, so the travel waypoint
-  // leads Mansi up to the door instead of pointing through a solid wall from outside.
+  // leads Batman up to the door instead of pointing through a solid wall from outside.
   funhouseDoor: { x: -120, y: 0, z: -108 },
   // The Ace Chemicals loading dock's outside landing (src/world/interiors.js's
-  // INTERIOR_ROOMS.aceHall.outside): the Harley beat's 'toHarleyDoor' step targets this, so Mansi
+  // INTERIOR_ROOMS.aceHall.outside): the Harley beat's 'toHarleyDoor' step targets this, so Batman
   // walks up to the real door and through it instead of being dropped straight inside the hall.
   aceHallDoor: { x: 96, y: 0, z: -164 },
   // The GCPD headquarters lobby (Part I, src/world/interiors.js's INTERIOR_ROOMS.gcpd), just

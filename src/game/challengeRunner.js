@@ -1,7 +1,6 @@
 // Runs one challenge at a time: the start pillars, the 3-2-1 countdown, rings or checkpoints,
 // results and medals. The arena (arenaChallenge.js) plugs in through registerKind.
 import * as THREE from 'three';
-import MANSI from '../mansi.config.js';
 import {
   CHALLENGES, MEDAL_NAME, MOVE_LABEL, pillarPos, createRingRun, createCheckpointRun, recordResult, allGold, formatResult, formatTime,
 } from './challenges.js';
@@ -102,7 +101,7 @@ export function createChallengeRunner({ scene, hero, follow, events, ui, progres
     events.emit('challengeDone', { id: ch.id, value, medal: res.medal, newBest: res.newBest });
     if (unlocked) {
       events.emit('unlock', { id: 'goldStandard' });
-      setTimeout(() => ui.toast(`${MANSI.name}'s Gold Standard`, 'Gold in every challenge. A new comic page is waiting in the Challenges menu.', 8000), 7000);
+      setTimeout(() => ui.toast('The Gold Standard', 'Gold in every challenge. A new comic page is waiting in the Challenges menu.', 8000), 7000);
     }
     end();
   }

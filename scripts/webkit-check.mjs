@@ -11,7 +11,7 @@ const b = engine === 'firefox'
   : await webkit.launch();
 const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
 // WebKit has no --mute-audio (and Firefox's pref is belt and braces): start the game with master volume 0 (the owner uses this laptop while tests run).
-await p.addInitScript(() => { try { const k = 'gotham-mansi-settings-v1'; const s = JSON.parse(localStorage.getItem(k) || '{}'); s.volume = { ...(s.volume || {}), master: 0 }; localStorage.setItem(k, JSON.stringify(s)); } catch { /* storage blocked */ } });
+await p.addInitScript(() => { try { const k = 'gotham-settings-v1'; const s = JSON.parse(localStorage.getItem(k) || '{}'); s.volume = { ...(s.volume || {}), master: 0 }; localStorage.setItem(k, JSON.stringify(s)); } catch { /* storage blocked */ } });
 const errors = [];
 p.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 p.on('pageerror', (e) => errors.push(e.message));

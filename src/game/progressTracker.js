@@ -2,8 +2,8 @@
 // Categories register themselves, so later parts (Part D moves, the Part H post-game) add their
 // own without editing this file. See "Extending the tracker" in docs/superpowers/plans/2026-09-28-plan-3c-content.md.
 import { STEPS } from './story.js';
-import { BALLOON_COUNT, DISTRICT_IDS } from '../core/save.js';
-import { BALLOONS } from '../config/balloonSpots.js';
+import { TROPHY_COUNT, DISTRICT_IDS } from '../core/save.js';
+import { TROPHIES } from '../config/trophySpots.js';
 import { CHALLENGES } from './challenges.js';
 import { DISTRICT_LABEL } from './crimes.js';
 
@@ -98,9 +98,9 @@ export function chapterOf(stepIndex, steps = STEPS) {
   return { number: index + 1, of: CHAPTERS.length, name: CHAPTERS[index].name };
 }
 
-export function nextBalloonHint(p) {
-  const i = BALLOONS.findIndex((_, k) => !p.balloons.includes(k));
-  return i < 0 ? null : BALLOONS[i].where;
+export function nextTrophyHint(p) {
+  const i = TROPHIES.findIndex((_, k) => !p.trophies.includes(k));
+  return i < 0 ? null : TROPHIES[i].where;
 }
 
 const medalPoints = (p) => CHALLENGES.reduce((n, ch) => n + (MEDAL_POINTS[p.challenges[ch.id]?.medal] ?? 0), 0);
@@ -115,8 +115,8 @@ export const BASE_CATEGORIES = [
     },
   },
   {
-    id: 'balloons', label: 'Balloons', weight: 20, count: (p) => ({ done: p.balloons.length, total: BALLOON_COUNT }),
-    detail: (p) => { const h = nextBalloonHint(p); return h ? `Next: ${h}` : 'All twelve found'; },
+    id: 'trophies', label: 'Trophies', weight: 20, count: (p) => ({ done: p.trophies.length, total: TROPHY_COUNT }),
+    detail: (p) => { const h = nextTrophyHint(p); return h ? `Next: ${h}` : 'All twelve found'; },
   },
   {
     id: 'challenges', label: 'Challenge medals', weight: 20, count: (p) => ({ done: medalPoints(p), total: CHALLENGES.length * 3 }),

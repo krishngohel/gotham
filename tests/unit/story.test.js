@@ -4,17 +4,17 @@ import { STEPS } from '../../src/game/story.js';
 import { PROMPT_IDS } from '../../src/ui/prompts.js';
 import { FIGHTS } from '../../src/game/fights.js';
 import { SITES } from '../../src/world/mapData.js';
-import { BALLOONS } from '../../src/game/balloons.js';
-import MANSI from '../../src/mansi.config.js';
+import { TROPHIES } from '../../src/game/trophies.js';
+import STORY from '../../src/story.config.js';
 
 const DASH = new RegExp(`[${String.fromCharCode(0x2013, 0x2014)}]`);
-const ASYNC_TYPES = ['radio', 'chase', 'battle', 'armada', 'crasher', 'ally', 'board'];
+const ASYNC_TYPES = ['radio', 'chase', 'battle', 'armada', 'courier', 'ally', 'board'];
 
 const steps = [
   { id: 'a', type: 'cutscene', scene: 'intro' },
   { id: 'b', type: 'reach', site: 'x', checkpoint: 'cp1' },
   { id: 'c', type: 'fight', fight: 'f1' },
-  { id: 'd', type: 'collect', item: 'cake', checkpoint: 'cp2' },
+  { id: 'd', type: 'collect', item: 'antidote', checkpoint: 'cp2' },
   { id: 'e', type: 'boss' },
 ];
 
@@ -27,7 +27,7 @@ describe('objective runner', () => {
     expect(o.handle({ type: 'reached', step: 'b' })).toBe(true);
     expect(o.handle({ type: 'fightDone', id: 'nope' })).toBe(false);
     expect(o.handle({ type: 'fightDone', id: 'f1' })).toBe(true);
-    expect(o.handle({ type: 'collected', item: 'cake' })).toBe(true);
+    expect(o.handle({ type: 'collected', item: 'antidote' })).toBe(true);
     expect(o.handle({ type: 'bossDone' })).toBe(true);
     expect(o.done).toBe(true);
   });
@@ -42,8 +42,8 @@ describe('objective runner', () => {
     expect(checkpointFor(steps, 2)).toBe('cp1');
     expect(checkpointFor(steps, 4)).toBe('cp2');
   });
-  it('radio, crasher, ally and board only complete their own id; chase, battle and armada have none to check', () => {
-    for (const type of ['radio', 'crasher', 'ally', 'board']) {
+  it('radio, courier, ally and board only complete their own id; chase, battle and armada have none to check', () => {
+    for (const type of ['radio', 'courier', 'ally', 'board']) {
       const o = createObjectives([{ id: 'this-one', type }]);
       expect(o.handle({ type: `${type}Done`, id: 'some-other-step', ok: true }), type).toBe(false);
       expect(o.handle({ type: `${type}Done`, id: 'this-one', ok: true }), type).toBe(true);
@@ -75,7 +75,7 @@ describe('story data', () => {
     }
     expect(STEPS.at(-1).type).toBe('credits');
   });
-  it('the balloon run is gone and its Batwing tip moved to the plaza walk', () => {
+  it('the Batwing balloon run is gone and its Batwing tip moved to the plaza walk', () => {
     expect(STEPS.some((s) => s.id === 'armadaRun')).toBe(false);
     expect(STEPS.find((s) => s.id === 'toPlaza').tutorial).toContain('callBatwing');
   });
@@ -126,15 +126,15 @@ describe('story data', () => {
   });
 });
 
-describe('balloons and personal content', () => {
-  it('has 12 balloons and 12 non-empty messages', () => {
-    expect(BALLOONS).toHaveLength(12);
-    expect(MANSI.balloonMessages).toHaveLength(12);
-    for (const m of MANSI.balloonMessages) expect(m.trim().length).toBeGreaterThan(0);
-    expect(MANSI.finalMessage.trim().length).toBeGreaterThan(0);
+describe("trophies and written content", () => {
+  it('has 12 trophies and 12 non-empty messages', () => {
+    expect(TROPHIES).toHaveLength(12);
+    expect(STORY.trophyMessages).toHaveLength(12);
+    for (const m of STORY.trophyMessages) expect(m.trim().length).toBeGreaterThan(0);
+    expect(STORY.finalMessage.trim().length).toBeGreaterThan(0);
   });
-  it('personal text avoids em dashes', () => {
-    for (const m of [...MANSI.balloonMessages, MANSI.finalMessage]) expect(m).not.toMatch(DASH);
+  it('written text avoids em dashes', () => {
+    for (const m of [...STORY.trophyMessages, STORY.finalMessage]) expect(m).not.toMatch(DASH);
   });
 });
 

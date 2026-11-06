@@ -23,7 +23,7 @@ export const FIGHTS = {
   // Predator rooms (Part D): a squad on patrol routes that the stealth runtime drives.
   monarchBalcony: stealthFight('monarchBalcony'),
   aceCatwalks: stealthFight('aceCatwalks'),
-  // Part S (the birthday night story): the clock plaza ambush before the funhouse door, and the
+  // Act three: the clock plaza ambush before the funhouse door, and the
   // funhouse floor itself (site is a placeholder until Part I lands the real interior).
   // 'plaza' uses its own ground-level site (SITES.plaza, south of the tower) rather than the
   // boss's own rooftop arena, so the two fights don't feel identical; every spawn and the

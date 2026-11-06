@@ -5,7 +5,7 @@ import { chainHudKey } from '../combat/chains.js';
 const R = 50;
 const C = 2 * Math.PI * R;
 const BOLT = 'M22 2 L6 30 L17 30 L12 52 L32 20 L20 20 L26 2 Z';
-const BALLOON = '<svg width="16" height="22" viewBox="0 0 16 22"><ellipse cx="8" cy="8" rx="7" ry="8" fill="#c8323c" stroke="#0b0b12" stroke-width="1.5"/><path d="M8 16 q-2 3 0 6" stroke="#0b0b12" fill="none"/></svg>';
+const TROPHY = '<svg width="16" height="22" viewBox="0 0 16 22"><path d="M3.5 7 Q3.5 2.5 8 2.5 Q12.5 2.5 12.5 7 Q12.5 10 8 12.5 V15" stroke="#0b0b12" stroke-width="4.2" fill="none" stroke-linecap="round"/><path d="M3.5 7 Q3.5 2.5 8 2.5 Q12.5 2.5 12.5 7 Q12.5 10 8 12.5 V15" stroke="#3dff72" stroke-width="2.2" fill="none" stroke-linecap="round"/><circle cx="8" cy="19" r="2.2" fill="#3dff72" stroke="#0b0b12" stroke-width="1.2"/></svg>';
 
 // The comic sound-effect vocabulary, gathered from every events.emit('word', ...) call in the
 // game (combat hits, every gadget, vehicles, stealth takedowns, breakables, level-up and the Bat
@@ -102,7 +102,7 @@ export function createHud(root) {
   el.innerHTML = `
     <div class="hud-combo hidden"><span class="x">x</span><span class="n">0</span></div>
     <div class="hud-chains hidden">${CHAIN_ICON.map((p, i) => `<div class="chain-ico" data-n="${i + 1}"><svg viewBox="0 0 48 48">${p}</svg><b>${i + 1}</b></div>`).join('')}</div>
-    <div class="hud-caption"><div class="obj"></div><div class="balloons">${BALLOON}<span>0/12</span></div></div>
+    <div class="hud-caption"><div class="obj"></div><div class="trophies">${TROPHY}<span>0/12</span></div></div>
     <div class="hud-banner"></div>
     <svg class="hud-health" viewBox="0 0 120 120">
       <circle class="track" cx="60" cy="60" r="${R}" stroke-dasharray="${arcDash(1)}" transform="rotate(135 60 60)"/>
@@ -129,7 +129,7 @@ export function createHud(root) {
   const bannerEl = el.querySelector('.hud-banner');
   const BANNER_MS = 2300;
   let bannerUntil = 0;
-  const balloons = el.querySelector('.balloons span');
+  const trophyCount = el.querySelector('.trophies span');
   const layer = el.querySelector('.hud-layer');
   const glyphs = new Map();
   const hintEl = el.querySelector('.hud-hint');
@@ -217,7 +217,7 @@ export function createHud(root) {
     // (minMs on screen) comes down now instead of covering the view for the rest of its time.
     dismissCard(minMs = 1500) { cards.dismiss(minMs); },
     get cardShowing() { return cardEl.classList.contains('show'); },
-    setBalloons(n, total) { balloons.textContent = `${n}/${total}`; },
+    setTrophies(n, total) { trophyCount.textContent = `${n}/${total}`; },
     // edgeAngle: he is off screen and (x, y) is pinned to the screen edge (src/ui/edgeGlyph.js);
     // the bolt shrinks a little and a pointer faces him. null: over his head as usual.
     glyph(id, x, y, visible, color = 'blue', edgeAngle = null) {

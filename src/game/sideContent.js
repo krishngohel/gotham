@@ -15,13 +15,13 @@ import { CRIME_SPOTS, isCrimeId, crimeBlocked } from './crimes.js';
 import { createCrimeDirector } from './crimeDirector.js';
 import { vanChaseBlocked } from './sideVanChase.js';
 import { createVanChaseDirector } from './vanChaseDirector.js';
-import { BALLOONS } from '../config/balloonSpots.js';
+import { TROPHIES } from '../config/trophySpots.js';
 import { mapModel } from './mapModel.js';
 
 export const MILESTONE_TEXT = {
   25: 'A quarter of Gotham, handled. The Joker has started to notice.',
   50: 'Halfway there. Gotham is sleeping a little easier tonight.',
-  75: 'Three quarters done. This city owes you a very large cake.',
+  75: 'Three quarters done. Gotham owes you more than it will ever say.',
   100: 'One hundred percent. A page has been left for you in the Progress menu.',
 };
 
@@ -75,7 +75,7 @@ export function createSideContent(deps) {
     save();
     dirty = true;
   });
-  for (const ev of ['balloon', 'objectiveDone', 'challengeDone', 'crimeStopped', 'vanChaseStopped']) events.on(ev, () => { dirty = true; });
+  for (const ev of ['trophy', 'objectiveDone', 'challengeDone', 'crimeStopped', 'vanChaseStopped']) events.on(ev, () => { dirty = true; });
 
   // Captions at 25, 50, 75 and 100%. progress.milestone remembers the highest one shown, so a
   // new post-game category that lowers the percentage never replays them.
@@ -85,9 +85,9 @@ export function createSideContent(deps) {
     if (!crossed.length) return;
     const top = crossed[crossed.length - 1];
     progress.milestone = top;
-    if (top === 100 && !progress.unlocks.includes('fromKrishn')) {
-      progress.unlocks.push('fromKrishn');
-      events.emit('unlock', { id: 'fromKrishn' });
+    if (top === 100 && !progress.unlocks.includes('commendation')) {
+      progress.unlocks.push('commendation');
+      events.emit('unlock', { id: 'commendation' });
     }
     save();
     ui.toast(`${top}% complete`, MILESTONE_TEXT[top], 7000);
@@ -150,8 +150,8 @@ export function createSideContent(deps) {
         percent: s.percent,
         parts: s.parts,
         statsLine: formatStatsLine(progress.stats, { crimes: progress.crimes.stopped }),
-        fromKrishn: progress.unlocks.includes('fromKrishn'),
-        map: mapModel({ buildings, balloons: BALLOONS, challenges: CHALLENGES.map((ch) => ({ id: ch.id, ...pillarPos(ch) })), progress }),
+        commendation: progress.unlocks.includes('commendation'),
+        map: mapModel({ buildings, trophies: TROPHIES, challenges: CHALLENGES.map((ch) => ({ id: ch.id, ...pillarPos(ch) })), progress }),
       };
     },
   };

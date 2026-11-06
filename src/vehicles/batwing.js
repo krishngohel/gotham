@@ -1,5 +1,5 @@
 // src/vehicles/batwing.js
-// Part V2 contract (see docs/superpowers/specs/2026-09-30-birthday-night-design.md):
+// Contract:
 // createBatwing(deps) -> { call(), exit(), active, update(dt, real), startArmada({ balloons, onDone }) }
 // Events: wingEnter, wingExit, armadaDone { ok }. Hero control name while flying: 'fly'.
 import * as THREE from 'three';
@@ -19,7 +19,7 @@ const DART_POP_RADIUS = 2.1;
 const LAND_RADIUS = 26;    // near the GCPD roof: an easy auto-eject once grounded
 
 // A small HUD counter in the game's ink-comic style, built inline so this file stays self
-// contained (src/ui/hud.js already owns the 12 birthday balloons' counter).
+// contained (src/ui/hud.js already owns the 12 Riddler trophies' counter).
 function createArmadaHud(hudRoot) {
   const el = document.createElement('div');
   el.style.cssText = [

@@ -1,8 +1,10 @@
-# Gotham Needs You, Mansi
+# Gotham: The Long Night
 
-A comic-book Batman game that runs in the browser, made as a birthday gift. Glide over a rainy
-Gotham, brawl through the Joker's goons at the Docks, Neon Row and Ace Chemicals, take back the
-presents, the party and the cake, then settle things with the Joker on the clock tower.
+A comic-book Batman game that runs in the browser. Glide over a rainy Gotham, brawl through the
+Joker's goons at the Docks, Neon Row and Ace Chemicals, take apart his midnight plan (the
+hijacked Wayne Tech cargo, the pirate broadcast, the gas charges and the antidote), free the
+hostages, then settle things with the Joker on the clock tower. Twelve Riddler trophies hide
+around the city.
 
 Everything is built in code: the city, the comic panels, the music and the sound effects. The only
 downloaded art is the CC0 character and animation set by Quaternius.
@@ -34,18 +36,12 @@ Every key can be rebound in Settings > Controls.
 | Controls help | H |
 | Pause | Esc or P |
 
-## Make it personal
+## The story and its text
 
-Edit `src/mansi.config.js`:
-
-- `name`: shown everywhere in the story.
-- `finaleSignal`: what the Batsignal writes across the clouds at the end.
-- `balloonMessages`: twelve messages, one per hidden birthday balloon, in the order they are found.
-  The current ones are placeholders: swap in real memories and inside jokes.
-- `finalMessage`: rolls with the credits.
-- `fromName`: who it is from.
-
-`npm test` checks that there are exactly twelve non-empty messages.
+The story steps live in `src/game/story.js` (every radio line, objective and nudge). The Joker's
+comic pages are in `src/game/scenes.js`. `src/story.config.js` holds the twelve Riddler trophy
+taunts, the closing credits text and the commissioner's note on the 100% page.
+`npm test` checks that there are exactly twelve non-empty trophy messages.
 
 ## Build and deploy
 
@@ -54,9 +50,7 @@ npm run build      # static site in dist/
 npm run preview    # serve dist/ on http://localhost:5201
 ```
 
-`dist/` is a plain static site (about 11 MB) and works from any static host, including GitHub
-Pages. Note that a public repo makes the messages in `mansi.config.js` readable by anyone who
-finds it.
+`dist/` is a plain static site (about 11 MB) and works from any static host.
 
 ## Checks
 

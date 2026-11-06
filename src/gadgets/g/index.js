@@ -6,7 +6,7 @@ import { createSmokeHandler } from './smoke.js';
 import { createLauncherHandler } from './launcher.js';
 import { createClawHandler } from './claw.js';
 import { createFreezeHandler } from './freeze.js';
-import { createPopperHandler } from './popper.js';
+import { createFlashbangHandler } from './flashbang.js';
 
 export const HANDLER_FACTORIES = {
   batarang: createBatarangHandler,
@@ -16,5 +16,5 @@ export const HANDLER_FACTORIES = {
   launcher: createLauncherHandler,
   claw: createClawHandler,
   freeze: createFreezeHandler,
-  popper: createPopperHandler,
+  flashbang: createFlashbangHandler,
 };

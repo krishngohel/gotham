@@ -25,7 +25,7 @@ function gcpd(ctx) {
   solid(ctx, 'concrete', box(5, 3.2, 4, 12, y + 1.6, 12));
   ctx.buckets.add('roof', box(5.4, 0.2, 4.4, 12, y + 3.3, 12));
   solid(ctx, 'steel', cylinder(0.1, 0.2, 18, -15, y + 9, 14, 6));
-  const i = ctx.halos.add(-15, y + 18.2, 14, PALETTE.balloon, 3);
+  const i = ctx.halos.add(-15, y + 18.2, 14, PALETTE.crimson, 3);
   ctx.blinkers.push({ i, size: 3, phase: 0 });
   for (const [fx, fz] of [[-18, 18], [18, -18]]) {
     solid(ctx, 'steel', cylinder(0.08, 0.08, 2.2, fx, y + 1.1, fz, 6));
@@ -78,8 +78,8 @@ function radioMast(ctx, x, y, z, h) {
   // Dish, top light and a cap so the tip reads as a solid shape.
   ctx.buckets.add('painted', new THREE.SphereGeometry(0.9, 12, 6, 0, Math.PI * 2, 0, 0.9).rotateX(-1.2).rotateY(0.7).translate(x + 0.6, y + h * 0.6, z), 0x8c877d);
   ctx.buckets.add('steel', box(0.08, 2.4, 0.08, x, y + h + 1.2, z));
-  glow(ctx, box(0.36, 0.36, 0.36, x, y + h + 2.4, z), PALETTE.balloon);
-  const i = ctx.halos.add(x, y + h + 2.4, z, PALETTE.balloon, 3.6);
+  glow(ctx, box(0.36, 0.36, 0.36, x, y + h + 2.4, z), PALETTE.crimson);
+  const i = ctx.halos.add(x, y + h + 2.4, z, PALETTE.crimson, 3.6);
   ctx.blinkers.push({ i, size: 3.6, phase: 0.7 });
   ctx.collision.addBox(x - top, y + h - 0.1, z - top, x + top, y + h, z + top, 'mastTop');
 }
@@ -108,7 +108,7 @@ function crane(ctx, x) {
   const hook = ctx.rng.range(20, 34);
   ctx.buckets.add('steel', box(0.06, y - 12, 0.06, x, y - (y - 12) / 2, z0 + hook));
   ctx.buckets.add('steel', box(1.2, 0.8, 0.8, x, 12, z0 + hook));
-  const i = ctx.halos.add(x, y + 2.6, z0 + 36.5, PALETTE.balloon, 2.6);
+  const i = ctx.halos.add(x, y + 2.6, z0 + 36.5, PALETTE.crimson, 2.6);
   ctx.blinkers.push({ i, size: 2.6, phase: x });
   lightSpot(ctx, x, y - 1, z0 + 10, PALETTE.window, 30, 30);
   edgeGrapples(ctx, x, z0 + 14, 4, 46, y + 2.4, 10);
@@ -267,7 +267,7 @@ function docks(ctx) {
   }
   graffiti(ctx, -80.1, 8, 180, -1, 0, 8);
   // The yard's tag on the warehouse wall facing it, with the Joker's paste-ups either side.
-  graffiti(ctx, -40, 4.2, 178, 1, 0, 10, "WHERE'S THE CAKE, BAT?");
+  graffiti(ctx, -40, 4.2, 178, 1, 0, 10, "WHERE'S THE ANTIDOTE, BAT?");
   wantedPoster(ctx, -40, 2.1, 170, 1, 0, 0.05);
   wantedPoster(ctx, 40, 2.2, 176, -1, 0, -0.04);
 }
@@ -298,10 +298,10 @@ function neonRow(ctx) {
   lightSpot(ctx, 150, 6, 100, PALETTE.neonPink, 30, 26);
   graffiti(ctx, 140.1, 7, 30, 1, 0, 7);
   graffiti(ctx, 180, 22, -60, 0, 0, 8);
-  // The Joker's birthday billboard on the diner roof, facing the strip, and his tag on the diner
+  // The Joker's billboard on the diner roof, facing the strip, and his tag on the diner
   // wall below it (clear of the DINER and EAT signs).
   jokerBillboard(ctx, 163, 9, 60, -1, 0);
-  graffiti(ctx, 160, 6.4, 50, -1, 0, 7, "PARTY'S OVER!");
+  graffiti(ctx, 160, 6.4, 50, -1, 0, 7, "THE SHOW'S JUST STARTING!");
   wantedPoster(ctx, 160, 2.3, 74.2, -1, 0, 0.06, 0.22);
   wantedPoster(ctx, 160, 2.2, -47, -1, 0, -0.05, 0.22);
 }
@@ -355,7 +355,7 @@ function aceChemicals(ctx) {
   for (const x of [112, 126]) {
     solid(ctx, 'painted', cylinder(2.2, 2.8, 56, x, 28, -191, 16), { color: PALETTE.brick });
     for (let k = 0; k < 3; k++) ctx.buckets.add('painted', cylinder(2.3, 2.3, 1.2, x, 48 + k * 2.6, -191, 16, true), k % 2 ? PALETTE.stripe : PALETTE.containerRed);
-    const i = ctx.halos.add(x, 56.5, -191, PALETTE.balloon, 3.5);
+    const i = ctx.halos.add(x, 56.5, -191, PALETTE.crimson, 3.5);
     ctx.blinkers.push({ i, size: 3.5, phase: x });
     ctx.collision.addBox(x - 2.2, 55.6, -193.2, x + 2.2, 56, -188.8, 'stackTop');
     ctx.grapple.push({ x, y: 56, z: -191, nx: 0, nz: 1, perch: true });
@@ -528,7 +528,7 @@ function clockPlaza(ctx) {
     ctx.halos.add(hx + nx * 7.6, 86, hz + nz * 7.6, PALETTE.clockFace, 16);
   }
   lightSpot(ctx, hx, 86, hz + 12, PALETTE.clockFace, 60, 40);
-  const i = ctx.halos.add(hx, 124.4, hz, PALETTE.balloon, 4);
+  const i = ctx.halos.add(hx, 124.4, hz, PALETTE.crimson, 4);
   ctx.blinkers.push({ i, size: 4, phase: 1 });
   // Two gargoyles on the lower belt course, looking south over the arena and the balcony.
   for (const sx of [-1, 1]) addGargoyle(ctx, hx + sx * 7.82, 76.4, hz + 7.82, Math.atan2(sx, 1));
@@ -569,7 +569,7 @@ function clockPlaza(ctx) {
   }
   graffiti(ctx, -62, 58, -150, 0, 0, 10, 'HA HA HA');
   // The Joker's question on the hall's plaza wall, and a paste-up by the cathedral portal.
-  graffiti(ctx, -62, 5, -140, 0, 1, 12, 'BIRTHDAY? WHAT BIRTHDAY?');
+  graffiti(ctx, -62, 5, -140, 0, 1, 12, 'ONE LAST LAUGH, BAT');
   wantedPoster(ctx, -112.5, 2.3, -118, 0, 1, 0.05);
 
   // The cathedral portal: a tall pointed doorway with candlelight inside.

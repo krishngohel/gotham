@@ -101,7 +101,7 @@ function trafficLight(ctx, x, z, nx, nz, phase) {
   const hx = x + nx * (reach - 0.3), hz = z + nz * (reach - 0.3);
   ctx.buckets.add('painted', box(0.4, 1.15, 0.4, hx, 5.35, hz), 0x1e2026);
   ctx.buckets.add('painted', box(0.5, 0.05, 0.5, hx, 5.95, hz), 0x1e2026);
-  const lamps = [[PALETTE.balloon, 5.72], [PALETTE.sodium, 5.35], [PALETTE.neonCyan, 4.98]];
+  const lamps = [[PALETTE.crimson, 5.72], [PALETTE.sodium, 5.35], [PALETTE.neonCyan, 4.98]];
   const ids = lamps.map(([col, y]) => {
     for (const s of [-1, 1]) ctx.buckets.add('painted', box(Math.abs(nx) ? 0.22 : 0.02, 0.22, Math.abs(nz) ? 0.22 : 0.02, hx - nz * s * 0.21, y, hz + nx * s * 0.21), 0x0e0f13);
     return ctx.halos.add(hx, y, hz, col, 0.01);

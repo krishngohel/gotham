@@ -43,7 +43,7 @@ export const MOVES = {
   remote: { damage: 0, stun: 1.5, stunOnly: true },
   claw: { damage: 0, stun: 1.2, stunOnly: true },
   smoke: { damage: 0, stun: 3, stunOnly: true },
-  popper: { damage: 0, stun: 3, stunOnly: true },
+  flashbang: { damage: 0, stun: 3, stunOnly: true },
   shatter: { ko: true },
 };
 

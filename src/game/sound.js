@@ -1,13 +1,5 @@
 // Maps game events to the synthesized audio: effects, stingers and which music plays when.
 export function wireAudio({ audio, events, hero, combat, flow, voice = null, settings, stealth = null }) {
-  // The recorded orchestral Happy Birthday (CC0, VOLE.wtf) plays over the finale; the synth
-  // birthday waltz carries on afterwards.
-  const track = new Audio('./assets/music/birthday-orchestral.mp3');
-  // Fetched after the first minute of play, long before the finale needs it.
-  track.preload = 'none';
-  setTimeout(() => { track.preload = 'auto'; track.load(); }, 60000);
-  let trackPlaying = false;
-  track.addEventListener('ended', () => { trackPlaying = false; });
   const on = (ev, fn) => events.on(ev, fn);
   const vary = (p = 0.12) => 1 - p / 2 + Math.random() * p;
   let fighting = false;
@@ -53,13 +45,13 @@ export function wireAudio({ audio, events, hero, combat, flow, voice = null, set
   });
   on('heroHurt', ({ blocking }) => audio.play(blocking ? 'block' : 'hurt', { pitch: vary() }));
   on('heroDown', () => audio.stinger('death'));
-  on('balloon', () => { audio.play('pop'); setTimeout(() => audio.play('balloon'), 120); });
+  on('trophy', () => { audio.play('trophy'); });
   on('pickup', () => audio.play('pickup'));
   on('objectiveDone', ({ type }) => { if (type === 'reached' || type === 'fightDone') audio.stinger('objective'); });
   on('fightStart', () => { fighting = true; });
   on('fightDone', () => { fighting = false; });
   on('cutscene', ({ name, on: starting }) => {
-    if (starting && ['presents', 'party', 'cake'].includes(name)) audio.stinger('districtClear');
+    if (starting && ['crates', 'rig', 'antidote'].includes(name)) audio.stinger('districtClear');
   });
   on('signal', () => audio.play('signal'));
   on('chainStart', ({ stealth }) => audio.play('whoosh', { gain: stealth ? 0.5 : 0.8, pitch: 0.85 }));
@@ -70,21 +62,12 @@ export function wireAudio({ audio, events, hero, combat, flow, voice = null, set
   on('chainSmash', () => audio.play('konk'));
   on('chainStomp', () => audio.play('kick', { pitch: 1.35 }));
   on('tiedBreak', () => audio.play('konk', { pitch: 0.8 }));
-  on('finaleStart', () => {
-    const v = settings?.volume ?? { master: 0.8, music: 0.6 };
-    track.volume = Math.min(1, v.master * v.music * 1.4);
-    track.currentTime = 0;
-    trackPlaying = true;
-    audio.music('none');
-    track.play().catch(() => { trackPlaying = false; });
-  });
   on('thunder', () => audio.play('thunder', { gain: 0.8 }));
   on('bossPhase', () => audio.stinger('bossPhase'));
   on('laugh', () => { if (!voice || voice.speaking || !voice.say('laugh', { interrupt: false })) audio.play('laugh'); });
   on('jokerVoice', ({ id }) => voice?.say(id));
   on('gas', () => audio.play('gas'));
   on('buzzer', () => audio.play('buzzer'));
-  on('firework', () => audio.play('firework', { pitch: vary(0.3) }));
   on('rifleShot', () => audio.play('rifleShot', { pitch: vary(0.1) }));
   on('rifleAim', () => audio.play('laser'));
   on('silentStart', () => audio.play('choke'));
@@ -107,7 +90,7 @@ export function wireAudio({ audio, events, hero, combat, flow, voice = null, set
   on('clawRip', () => audio.play('block', { pitch: 0.6 }));
   on('freeze', () => audio.play('freeze'));
   on('iceShatter', () => audio.play('shatter'));
-  on('popper', () => audio.play('popper'));
+  on('flashbang', () => audio.play('flashbang'));
   on('glassBroken', () => audio.play('glass'));
   on('wallBroken', () => audio.play('wallBreak'));
   on('ventOpen', () => audio.play('block', { pitch: 1.3 }));
@@ -131,8 +114,8 @@ export function wireAudio({ audio, events, hero, combat, flow, voice = null, set
   on('shellHit', () => audio.play('shellBlast'));
   on('armorHit', () => audio.play('armorHit'));
   on('droneDestroyed', () => audio.play('droneBoom', { pitch: vary(0.1) }));
-  // The Batwing's balloon armada: reuses the existing 'pop' + 'balloon' pair (same sequence as
-  // the birthday balloons above), scaled a little by how many popped in one hit.
+  // The Batwing's balloon armada: the 'pop' + 'balloon' pair, scaled a little by how many popped
+  // in one hit.
   on('armadaPop', ({ count }) => {
     audio.play('pop', { gain: Math.min(1.3, 0.8 + 0.12 * count) });
     setTimeout(() => audio.play('balloon', { gain: Math.min(1.1, 0.7 + 0.08 * count) }), 120);
@@ -146,8 +129,7 @@ export function wireAudio({ audio, events, hero, combat, flow, voice = null, set
     update(real, { hush = false } = {}) {
       if (hush) { audio.setEngine(null); audio.setGlide(0); }
       const step = flow.objectives.step;
-      const want = trackPlaying ? 'none'
-        : step?.type === 'boss' ? 'boss'
+      const want = step?.type === 'boss' ? 'boss'
         : step?.scene === 'finale' || step?.type === 'credits' ? 'finale'
         : flow.mode === 'cutscene' ? 'title'
         : (fighting || combat.active) && !(stealth?.active && !stealth.alarm) ? 'combat' : 'explore';

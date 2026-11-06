@@ -271,7 +271,7 @@ describe('fix round 1', () => {
 });
 
 // Final review I1: a save from before gadgets existed (the live game) is past every unlock step,
-// or finished. It must hear about them once, with the party popper getting its own moment.
+// or finished. It must hear about them once, with the flashbang getting its own moment.
 describe('returning players', () => {
   const listen = (t) => {
     const log = [];
@@ -280,9 +280,9 @@ describe('returning players', () => {
     t.events.on('gadgetWheelTip', () => log.push(['tip']));
     return log;
   };
-  const others = GADGET_IDS.filter((id) => id !== 'batarang' && id !== 'popper');
+  const others = GADGET_IDS.filter((id) => id !== 'batarang' && id !== 'flashbang');
 
-  it('an old finished save gets exactly one summary, then the popper card, and neither repeats', () => {
+  it('an old finished save gets exactly one summary, then the flashbang card, and neither repeats', () => {
     const t = setup({ finished: true });
     const log = listen(t);
     // Nothing is announced or written until live play (a comic, the title, a pause).
@@ -295,12 +295,12 @@ describe('returning players', () => {
     expect(log).toEqual([['tip'], ['news', others]]);
     expect(t.progress.gadgets.unlocked).toEqual(others);
     expect(t.save).toHaveBeenCalled();
-    // The popper waits for the summary card to go.
+    // The flashbang waits for the summary card to go.
     for (let i = 0; i < NEWS_CARD_S - 1; i++) t.frame(1);
     expect(log.length).toBe(2);
     t.frame(1.5);
-    expect(log).toEqual([['tip'], ['news', others], ['unlocked', 'popper']]);
-    expect(t.progress.gadgets.unlocked).toContain('popper');
+    expect(log).toEqual([['tip'], ['news', others], ['unlocked', 'flashbang']]);
+    expect(t.progress.gadgets.unlocked).toContain('flashbang');
     for (let i = 0; i < 30; i++) t.frame(1);
     expect(log.length).toBe(3);
     // The next load of the same save: nothing new to tell.
@@ -316,11 +316,11 @@ describe('returning players', () => {
     expect(log).toEqual([['tip'], ['unlocked', 'claw']]);
     expect(t.progress.gadgets.unlocked).toEqual(['claw']);
   });
-  it('a finished save that already knew the other gadgets gets the popper card alone', () => {
+  it('a finished save that already knew the other gadgets gets the flashbang card alone', () => {
     const t = setup({ finished: true, unlocked: [...others] });
     const log = listen(t);
     t.frame();
-    expect(log.filter(([k]) => k !== 'tip')).toEqual([['unlocked', 'popper']]);
+    expect(log.filter(([k]) => k !== 'tip')).toEqual([['unlocked', 'flashbang']]);
   });
   it('a step change before the first live frame never writes the untold gadgets', () => {
     const t = setup({ finished: true });
@@ -410,10 +410,10 @@ describe('fix round: the boss fight and mid-combo gadgets', () => {
 
 describe('returning players: the gadget news card', () => {
   // game.js's wiring, in miniature: the gadget handlers show the WayneTech delivery for
-  // NEWS_CARD_S less 0.7 s, then the popper's own card for 7 s. (Part S dropped the predator-room
+  // NEWS_CARD_S less 0.7 s, then the flashbang's own card for 7 s. (Part S dropped the predator-room
   // notice that used to share this slot: it was a one-time message for saves from before Part D,
   // and Part S's full reset means no such save exists any more.)
-  it('newsPending covers the gap between the delivery and the popper, then clears', () => {
+  it('newsPending covers the gap between the delivery and the flashbang, then clears', () => {
     const t = setup({ finished: true });
     t.flags.playing = false;
     t.frame();
@@ -421,9 +421,9 @@ describe('returning players: the gadget news card', () => {
     t.flags.playing = true;
     t.frame();
     expect(t.sys.newsPending).toBe(true);
-    expect(t.progress.gadgets.unlocked).not.toContain('popper');
+    expect(t.progress.gadgets.unlocked).not.toContain('flashbang');
     for (let i = 0; i < NEWS_CARD_S + 1; i++) t.frame(1);
     expect(t.sys.newsPending).toBe(false);
-    expect(t.progress.gadgets.unlocked).toContain('popper');
+    expect(t.progress.gadgets.unlocked).toContain('flashbang');
   });
 });

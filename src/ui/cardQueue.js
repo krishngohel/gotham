@@ -1,6 +1,6 @@
-// The big centre card (a balloon message, LEVEL UP, a new gadget, a news flash) shows one at a
+// The big centre card (a trophy message, LEVEL UP, a new gadget, a news flash) shows one at a
 // time. A card that arrives while another has been up less than minRead waits its turn instead
-// of replacing it: popping a balloon pays XP, and a level-up card used to wipe the balloon's
+// of replacing it: finding a trophy pays XP, and a level-up card used to wipe the trophy's
 // message before it could be read. Pure, with the clock and timers passed in, so it is testable.
 export function createCardQueue({ render, hide, now = () => performance.now(), after = setTimeout, cancel = clearTimeout, minRead = 3500 }) {
   const waiting = [];

@@ -67,7 +67,7 @@ export function createLookTestSet(scene, quality, rng) {
   roof.add(cylinder(0.5, 0.5, 0.12, PALETTE.ink, 7, 1.26, -6, 16), cylinder(0.5, 0.5, 0.12, PALETTE.ink, 9.5, 1.26, -6, 16));
   roof.add(box(3.5, 3, 3, 0x3d4759, -10, 1.5, 7), box(1.1, 2.1, 0.05, PALETTE.ink, -10, 1.05, 8.53));
   roof.add(cylinder(0.05, 0.05, 7, 0x2d3340, 11, 3.5, 9, 6));
-  const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.12, 10, 8), new THREE.MeshBasicMaterial({ color: PALETTE.balloon }));
+  const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.12, 10, 8), new THREE.MeshBasicMaterial({ color: PALETTE.crimson }));
   beacon.position.set(11, 7.05, 9);
   roof.add(beacon);
 

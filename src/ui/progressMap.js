@@ -1,4 +1,4 @@
-// Inks the Progress page map: paper, hatched harbour, district-tinted blocks, balloon pins
+// Inks the Progress page map: paper, hatched harbour, district-tinted blocks, trophy pins
 // (filled when found, outlined once their district is visited) and bat medals for challenges.
 import { batOutline } from '../config/batShape.js';
 
@@ -36,7 +36,7 @@ export function drawProgressMap(canvas, m) {
     g.strokeStyle = INK;
     g.stroke();
   }
-  for (const p of m.balloons) {
+  for (const p of m.trophies) {
     g.beginPath();
     g.arc(p.u, p.v, 3.2, 0, Math.PI * 2);
     if (p.found) { g.fillStyle = RED; g.fill(); }

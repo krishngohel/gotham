@@ -48,7 +48,7 @@ export const INTERIOR_ROOMS = {
   },
   gcpd: {
     id: 'gcpd', name: 'GCPD Headquarters', building: 'gcpd',
-    // A single ground-floor lobby under the tower (the roof, the Batsignal and the party stay
+    // A single ground-floor lobby under the tower (the roof and the Batsignal stay
     // exactly as built): the clear floor, a little inset from the walls at x/z = +-20.
     bounds: { minX: -18, maxX: 18, minY: 0, maxY: 6, minZ: -18, maxZ: 18 },
     doors: [
@@ -99,7 +99,7 @@ function interiorMat(ctx, color) {
 // A dedicated, always-on fill light for one room: real ambient lift (not just baked halos), but
 // distance-limited so it never reaches the exterior city. Added once, at boot, alongside the rest
 // of the city (before ink.compileAsync), so it's part of the one-time shader compile, exactly like
-// world.js's fireworkLight (a light that exists from boot so the scene's light count never changes
+// world.js's flashLight (a light that exists from boot so the scene's light count never changes
 // mid-run).
 function roomFill(ctx, x, y, z, color, intensity, distance) {
   if (typeof THREE.PointLight !== 'function') return;
@@ -217,12 +217,12 @@ function jokerFacePlaque(ctx, x, y, z) {
     const len = Math.hypot(p2x - p1x, p2y - p1y);
     const seg = box(len + 0.3, 0.8, 0.12, x + (p1x + p2x) / 2, y - 2.1 + (p1y + p2y) / 2, z + 0.08);
     seg.rotateZ(Math.atan2(p2y - p1y, p2x - p1x));
-    put(seg, PALETTE.balloon);
+    put(seg, PALETTE.crimson);
   }
   for (let k = -3; k <= 3; k++) put(box(0.55, 0.8, 0.14, x + k * 0.8, y - 3, z + 0.12), 0xf3f3f3);
 }
 
-// A party bunting garland strung between two points: small triangular flags, alternating colour.
+// A carnival bunting garland strung between two points: small triangular flags, alternating colour.
 function bunting(ctx, x1, z1, x2, z2, y, colors) {
   const n = Math.max(4, Math.round(Math.hypot(x2 - x1, z2 - z1) / 1.4));
   for (let i = 0; i <= n; i++) {
@@ -260,7 +260,7 @@ function buildFunhouse(ctx) {
   // wall keeps its stripes plus the funhouse mirrors (below) as its own decoration.
   diagonalStripes(ctx, cx0, cz0 + 5, cz1 - 5, 1, 5.5, 0.5, [PALETTE.jokerPurple, PALETTE.paper]);
   harlequinBand(ctx, cx0, cz0 + 5, cz1 - 5, 12, 0.5, [PALETTE.jokerPurple, 0xf0e6c8]);
-  cardPanel(ctx, cx0, 6.5, -142, 0.5, 0xf0e6c8, PALETTE.balloon);
+  cardPanel(ctx, cx0, 6.5, -142, 0.5, 0xf0e6c8, PALETTE.crimson);
   cardPanel(ctx, cx0, 6.5, -158, 0.5, 0xf0e6c8, PALETTE.jokerPurple);
   harlequinBand(ctx, cx1, cz0 + 5, cz1 - 5, 15.5, -0.5, [PALETTE.jokerGreen, 0xf0e6c8]);
   // Ceiling: below the roof (h = 28), so the pitched roof deck people can stand on is untouched.
@@ -284,7 +284,7 @@ function buildFunhouse(ctx) {
   // Carnival lights strung between every pair of pillars down each side, sagging like real bulbs:
   // dense and bright, so the strings read as a glowing line, not scattered dots. A cross line
   // between the two rows too, so the middle of the room is strung with lights as well.
-  const BULB_COLORS = [PALETTE.balloon, PALETTE.chem, PALETTE.window, PALETTE.jokerPurple, PALETTE.signal];
+  const BULB_COLORS = [PALETTE.crimson, PALETTE.chem, PALETTE.window, PALETTE.jokerPurple, PALETTE.signal];
   const bulbLine = (x1, z1, x2, z2, y0) => {
     for (let t = 0; t <= 1; t += 0.09) {
       const xt = x1 + (x2 - x1) * t, zt = z1 + (z2 - z1) * t, sag = Math.sin(Math.PI * t) * 0.6;
@@ -332,29 +332,29 @@ function buildFunhouse(ctx) {
     spiral.userData.dynamic = true;
     ctx.scene.add(spiral);
     ctx.updaters.push((t) => { spiral.rotation.z = t * 0.6; });
-    // A big "HAPPY BIRTHDAY" banner strung right across the nave, at eye-catching height, facing
+    // A big welcome banner strung right across the nave, at eye-catching height, facing
     // both ways so it reads from the doors and from the stage.
-    const bannerTex = billboardTexture('HAPPY BIRTHDAY MANSI', 'COURTESY OF THE JOKER', PALETTE.jokerPurple);
+    const bannerTex = billboardTexture('WELCOME, BATSY', 'COURTESY OF THE JOKER', PALETTE.jokerPurple);
     const bannerMat = new THREE.MeshBasicMaterial({ map: bannerTex, transparent: true, side: THREE.DoubleSide });
     const banner = new THREE.Mesh(new THREE.PlaneGeometry(20, 7.4), bannerMat);
     banner.position.set(CX, 13.5, -148);
     ctx.scene.add(banner);
-    const banner2 = new THREE.Mesh(new THREE.PlaneGeometry(11, 4.4), new THREE.MeshBasicMaterial({ map: billboardTexture('GUESS WHO', 'HA HA HA HA', PALETTE.balloon), transparent: true, side: THREE.DoubleSide }));
+    const banner2 = new THREE.Mesh(new THREE.PlaneGeometry(11, 4.4), new THREE.MeshBasicMaterial({ map: billboardTexture('GUESS WHO', 'HA HA HA HA', PALETTE.crimson), transparent: true, side: THREE.DoubleSide }));
     banner2.position.set(CX, 16.6, -128);
     ctx.scene.add(banner2);
   }
-  bunting(ctx, cx0 + 3, -175, cx1 - 3, -175, 18.6, [PALETTE.balloon, PALETTE.chem, PALETTE.jokerPurple, PALETTE.signal]);
-  bunting(ctx, cx0 + 3, -132, cx1 - 3, -132, 18.6, [PALETTE.jokerPurple, PALETTE.chem, PALETTE.balloon, PALETTE.signal]);
+  bunting(ctx, cx0 + 3, -175, cx1 - 3, -175, 18.6, [PALETTE.crimson, PALETTE.chem, PALETTE.jokerPurple, PALETTE.signal]);
+  bunting(ctx, cx0 + 3, -132, cx1 - 3, -132, 18.6, [PALETTE.jokerPurple, PALETTE.chem, PALETTE.crimson, PALETTE.signal]);
 
   // Balloons scattered up near the ceiling, plus big clusters lower down by the pillars, right in
   // view from the middle of the room.
   for (let i = 0; i < 12; i++) {
     const bx = CX + rng.range(-9, 9), bz = CZ + rng.range(-25, 25), by = 15.5 + rng.range(-1, 2.2);
-    const col = rng.pick([PALETTE.balloon, PALETTE.chem, PALETTE.jokerPurple, PALETTE.signal]);
+    const col = rng.pick([PALETTE.crimson, PALETTE.chem, PALETTE.jokerPurple, PALETTE.signal]);
     ctx.buckets.add('painted', new THREE.SphereGeometry(0.5, 10, 8).translate(bx, by, bz), col);
     ctx.buckets.add('steel', box(0.03, 1.4, 0.03, bx, by - 1.2, bz));
   }
-  const CLUSTER_COLORS = [PALETTE.balloon, PALETTE.chem, PALETTE.jokerPurple, PALETTE.signal, PALETTE.neonPink];
+  const CLUSTER_COLORS = [PALETTE.crimson, PALETTE.chem, PALETTE.jokerPurple, PALETTE.signal, PALETTE.neonPink];
   for (const [cxc, czc] of [[CX - 7.6, -140], [CX + 7.6, -140], [CX - 7.6, -160], [CX + 7.6, -160], [CX, cz1 - 3]]) {
     for (let i = 0; i < 6; i++) {
       const a = (i / 6) * Math.PI * 2;
@@ -366,7 +366,7 @@ function buildFunhouse(ctx) {
   // Confetti scattered across the floor.
   for (let i = 0; i < 40; i++) {
     const fx = CX + rng.range(-10, 10), fz = CZ + rng.range(-26, 26);
-    const col = rng.pick([PALETTE.balloon, PALETTE.chem, PALETTE.jokerPurple, PALETTE.signal, PALETTE.paper]);
+    const col = rng.pick([PALETTE.crimson, PALETTE.chem, PALETTE.jokerPurple, PALETTE.signal, PALETTE.paper]);
     ctx.buckets.add('painted', new THREE.PlaneGeometry(0.3, 0.15).rotateX(-Math.PI / 2).rotateZ(rng.range(0, Math.PI * 2)).translate(fx, 0.12, fz), col);
   }
 
@@ -538,12 +538,12 @@ function cellBars(ctx, x0, x1, y0, y1, z, color = 0x2a2c32) {
 // taut string. Purely decorative (no per-card collision).
 function evidenceCard(ctx, x, y, z, wallX, color, to) {
   ctx.buckets.add('painted', box(0.02, 0.9, 0.7, wallX, y, z), color);
-  ctx.buckets.add('painted', cylinder(0.05, 0.05, 0.06, wallX + 0.05, y + 0.38, z), PALETTE.balloon);
+  ctx.buckets.add('painted', cylinder(0.05, 0.05, 0.06, wallX + 0.05, y + 0.38, z), PALETTE.crimson);
   if (!to) return;
   const len = Math.hypot(to.y - y, to.z - z);
   const string = box(0.015, len, 0.015, wallX + 0.06, (y + to.y) / 2, (z + to.z) / 2);
   string.rotateX(Math.atan2(to.z - z, to.y - y));
-  ctx.buckets.add('painted', string, PALETTE.balloon);
+  ctx.buckets.add('painted', string, PALETTE.crimson);
 }
 
 function buildGCPDLobby(ctx) {
@@ -566,14 +566,14 @@ function buildGCPDLobby(ctx) {
   wallLining(ctx, 'z', g0, g0, g1, GH, 0.3, PALETTE.deco);
   wallLining(ctx, 'z', g1, g0, g1, GH, -0.3, PALETTE.deco);
   // The tower above the lobby (from its own ceiling up to the real roof) still needs to be
-  // solid: it is what the roof (the Batsignal and the party, SITES.start/signal) actually
+  // solid: it is what the roof (the Batsignal and the finale, SITES.start/signal) actually
   // stands on. hollow: true dropped the single whole-volume box that used to cover this along
   // with the ground floor, so it is rebuilt here, floor to roof, minus the lobby's own footprint.
   ctx.collision.addBox(g0, CEIL, g0, g1, GH, g1, 'building');
 
   const b = r.bounds;
   // The lobby's own ceiling: caps the room well below the tower's real roof (the Batsignal and
-  // the party stay exactly as built above it).
+  // the finale stay exactly as built above it).
   solid(ctx, 'painted', box(b.maxX - b.minX, 0.5, b.maxZ - b.minZ, 0, CEIL - 0.25, 0), { color: 0x4a5060, tag: 'ceiling' });
   ctx.buckets.add('concrete', tiledBox(b.maxX - b.minX, 0.1, b.maxZ - b.minZ, 0, 0.05, 0, { uvScale: [9, 9] }));
   checkerFloor(ctx, -8, 8, -10, 10, 0.06, 2, 0x565b64, 0x3a3e46);
@@ -622,8 +622,8 @@ function buildGCPDLobby(ctx) {
   ctx.buckets.add('painted', new THREE.PlaneGeometry(0.16, 3.2).rotateY(Math.PI).translate(-0.85, 4.6, 17.5), PALETTE.detective);
   ctx.buckets.add('painted', new THREE.PlaneGeometry(0.16, 3.2).rotateY(Math.PI).translate(0.85, 4.6, 17.5), PALETTE.detective);
 
-  // ---- the trophy case: an empty glass shelf unit (the rescued gifts, src/game/gcpdLobby.js,
-  // show and hide inside it at runtime, tracking party guests as the story unlocks them) ----
+  // ---- the trophy case: an empty glass shelf unit (the rescued people's tokens, src/game/gcpdLobby.js,
+  // show and hide inside it at runtime, tracking the rescued as the story unlocks them) ----
   solid(ctx, 'painted', box(6.4, 0.15, 1.2, 0, 1.0, -2), { color: 0x5a606e, tag: 'furniture' });
   solid(ctx, 'painted', box(6.4, 0.15, 1.2, 0, 2.0, -2), { color: 0x5a606e, tag: 'furniture' });
   for (const s of [-1, 0, 1]) ctx.buckets.add('steel', box(0.06, 2.1, 0.06, s * 3.1, 1.6, -2));
@@ -636,17 +636,17 @@ function buildGCPDLobby(ctx) {
   const pins = [[-6, 2.6], [-3.8, 3.4], [-4.6, 1.8], [-1.6, 2.9], [0.6, 2.2], [-2.4, 1.4], [2.6, 3.1], [-6.4, 4.1]];
   const evCenter = { y: 3.0, z: -6.5 };
   for (const [z, y] of pins) evidenceCard(ctx, 0, y, z, evX, rng.pick([0xefe6cf, PALETTE.jokerPurple, PALETTE.jokerGreen]), evCenter);
-  evidenceCard(ctx, 0, evCenter.y, evCenter.z, evX, PALETTE.balloon, null);
+  evidenceCard(ctx, 0, evCenter.y, evCenter.z, evX, PALETTE.crimson, null);
   if (typeof document !== 'undefined') {
     const title = new THREE.Mesh(
       new THREE.PlaneGeometry(4.4, 1.4),
-      new THREE.MeshBasicMaterial({ map: billboardTexture('WHO IS THE', 'PARTY CRASHER?', PALETTE.balloon), transparent: true, side: THREE.DoubleSide }),
+      new THREE.MeshBasicMaterial({ map: billboardTexture('WHO IS THE', 'MASKED COURIER?', PALETTE.crimson), transparent: true, side: THREE.DoubleSide }),
     );
     title.position.set(evX + 0.03, 5.1, -6.5);
     title.rotation.y = Math.PI / 2;
     ctx.scene.add(title);
   }
-  ctx.halos.add(evX + 0.2, 3.5, -6.5, PALETTE.balloon, 6);
+  ctx.halos.add(evX + 0.2, 3.5, -6.5, PALETTE.crimson, 6);
   lightSpot(ctx, evX + 2, 5, -6.5, PALETTE.window, 20, 14);
 
   // ---- holding cells: the east wall, three barred cells (idle Joker goons, non-hostile, are

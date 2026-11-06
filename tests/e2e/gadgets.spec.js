@@ -21,7 +21,7 @@ test('the gadget wheel opens on Tab, 3 picks gel, and no chain fires', async ({ 
   const errors = await collectErrors(page);
   // at=signal: this test is about the gadget wheel over the GCPD-roof combat sandbox, not the
   // story; skips the intro's comic (and its optional cinematic) so the awakened ?fight=test squad
-  // can't land a free hit on Mansi during that handoff before the assertions below run.
+  // can't land a free hit on Batman during that handoff before the assertions below run.
   await boot(page, 'fight=test&god=1&gadgets=all&at=signal');
   await page.keyboard.down('Tab');
   await page.waitForTimeout(300);
@@ -36,7 +36,7 @@ test('the gadget wheel opens on Tab, 3 picks gel, and no chain fires', async ({ 
   expect(errors).toEqual([]);
 });
 
-test('explosive gel opens the Monarch booth and the balloon inside', async ({ page }) => {
+test('explosive gel opens the Monarch booth and the trophy inside', async ({ page }) => {
   const errors = await collectErrors(page);
   // No `gadgets=all` here: gel is already unlocked naturally at this step (its unlock, toNeon,
   // comes earlier in STEPS), and `gadgets=all` sets breakables' own `dev` flag (game.js), which
@@ -60,7 +60,7 @@ test('explosive gel opens the Monarch booth and the balloon inside', async ({ pa
   expect(await page.evaluate(() => window.__game.progress.gadgets.broken)).toContain('wallMonarchBooth');
   await page.evaluate(() => window.__game.hero.teleport({ x: 158.3, y: 0.15, z: -60 }, Math.PI / 2));
   await page.waitForTimeout(600);
-  expect(await page.evaluate(() => window.__game.progress.balloons)).toContain(6);
+  expect(await page.evaluate(() => window.__game.progress.trophies)).toContain(6);
   expect(errors).toEqual([]);
 });
 

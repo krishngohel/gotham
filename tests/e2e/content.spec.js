@@ -67,7 +67,7 @@ test('photo mode opens with O, cycles filters and saves a PNG', async ({ page })
   await page.keyboard.press('Digit1');
   expect(await page.evaluate(() => window.__game.ink.uniforms.uFilter.value)).toBe(1);
   const [download] = await Promise.all([page.waitForEvent('download'), page.keyboard.press('Enter')]);
-  expect(download.suggestedFilename()).toMatch(/^gotham-for-mansi-\d{8}-\d{6}\.png$/);
+  expect(download.suggestedFilename()).toMatch(/^gotham-\d{8}-\d{6}\.png$/);
   expect([...readFileSync(await download.path()).subarray(0, 8)]).toEqual([137, 80, 78, 71, 13, 10, 26, 10]);
   await page.keyboard.press('Escape');
   await expect(page.locator('.photo-panel')).toHaveCount(0);

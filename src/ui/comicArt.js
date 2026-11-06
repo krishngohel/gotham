@@ -1,5 +1,4 @@
 // Panel art drawn with canvas: the Joker on a hijacked TV, his calling card, halftone skies.
-import MANSI from '../mansi.config.js';
 
 const INK = '#0b0b12';
 
@@ -175,7 +174,7 @@ export function jokerCard({ w = 700, h = 520 } = {}) {
   g.fillText('JOKER', 0, ch * 0.2);
   g.fillStyle = INK;
   g.font = '22px "Patrick Hand SC", sans-serif';
-  const lines = [`Happy birthday, ${MANSI.name}!`, 'Your presents are on a boat', 'at the Docks. Hurry up!', 'XOXO, J'];
+  const lines = ['Wayne Tech cargo, one (1), is', 'on a boat at the Docks.', 'Tick tock, Batsy. XOXO, J'];
   lines.forEach((l, i) => g.fillText(l, 0, ch * 0.31 + i * 24 - 8 + (i === 3 ? 6 : 0)));
   g.restore();
   return c;

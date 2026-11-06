@@ -59,7 +59,7 @@ export function nearestThreat(x, z, enemies, radius, states) {
   return best;
 }
 
-// The Party Crasher's flee step: an eased run from `from` to `to` with an arc (the grapple's
+// The Courier's flee step: an eased run from `from` to `to` with an arc (the grapple's
 // rise) layered on top of the straight lerp. Pure: t and duration are seconds, from/to/{x,y,z}.
 export function fleeStep(from, to, t, duration = 1.4) {
   const k = Math.max(0, Math.min(1, t / duration));

@@ -47,7 +47,7 @@ test('clearing a predator room moves the story on', async ({ page }) => {
   const errors = await collectErrors(page);
   await enterRoom(page, 'aceCatwalks');
   await page.evaluate(() => window.__game.winFight());
-  await page.waitForFunction(() => window.__game.flow.objectives.step?.id === 'cake', null, { timeout: 10000 });
+  await page.waitForFunction(() => window.__game.flow.objectives.step?.id === 'antidote', null, { timeout: 10000 });
   expect(await page.evaluate(() => window.__game.stealth.active)).toBe(false);
   expect(errors).toEqual([]);
 });
@@ -56,11 +56,11 @@ test('a save under the new (v2) key resumes on its saved step id', async ({ page
   const errors = await collectErrors(page);
   await page.goto('/');
   await page.waitForFunction(ready, null, { timeout: 90000 });
-  await page.evaluate(() => localStorage.setItem('gotham-mansi-progress-v2', JSON.stringify({ stepId: 'cake', balloons: [], suit: 'm' })));
+  await page.evaluate(() => localStorage.setItem('gotham-progress-v1', JSON.stringify({ stepId: 'antidote', trophies: [], suit: 'm' })));
   await page.reload();
   await page.waitForFunction(ready, null, { timeout: 90000 });
   await page.evaluate(() => window.__game.begin('m', false));
   await page.waitForFunction(() => window.__game.flow?.objectives?.step, null, { timeout: 10000 });
-  expect(await page.evaluate(() => window.__game.flow.objectives.step.id)).toBe('cake');
+  expect(await page.evaluate(() => window.__game.flow.objectives.step.id)).toBe('antidote');
   expect(errors).toEqual([]);
 });

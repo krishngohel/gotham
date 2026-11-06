@@ -1,4 +1,4 @@
-// Joker's Birthday Bash: three waves on the Monarch roof through the encounter system, scored
+// Joker's Big Top: three waves on the Monarch roof through the encounter system, scored
 // by createArenaScore (hits times the multiplier, a bonus per new move type in a combo,
 // finishers and counters; getting hit resets the multiplier).
 import { ARENA_ID, ARENA_FIGHT, createArenaScore } from './challenges.js';

@@ -36,8 +36,8 @@ const ENTRIES = [
   ['batarang', (k) => `Press ${k('batarang')} to throw a batarang. It stuns goons and interrupts attacks from far away.`],
   ['special', (k) => `Build a big combo until it turns yellow. Press ${k('special')} for a special takedown.`],
   ['brute', (k) => `Brutes can't be countered: their bolt is red. Dodge with ${k('dodge')}, stun with ${k('cape')}, then pile on.`],
-  ['detective', (k) => `Press ${k('detective')} for detective vision. It reveals goons, your objective and hidden balloons.`],
-  ['balloons', () => `Twelve birthday balloons are hidden around Gotham. Each one holds a message.`],
+  ['detective', (k) => `Press ${k('detective')} for detective vision. It reveals goons, your objective and hidden Riddler trophies.`],
+  ['trophies', () => `Twelve Riddler trophies are hidden around Gotham. Each one holds a taunt.`],
   ['lowPower', () => (/Mac/.test(globalThis.navigator?.platform || globalThis.navigator?.userAgent || '')
     ? 'Your Mac is holding the game to 30 frames a second, which usually means Low Power Mode is on. Plug in, or turn it off in System Settings, Battery, for smoother play.'
     : 'Your browser is holding the game to 30 frames a second, usually a battery or energy saver mode. Plug in or turn it off for smoother play.')],
@@ -64,7 +64,7 @@ const ENTRIES = [
   ['gadgetLauncher', (k) => `Line launcher: ${k('batarang')} fires a line to the wall ahead, up to 40 m, and you ride it across. It works mid-glide too. ${k('jump')} lets go.`],
   ['gadgetClaw', (k) => `Batclaw: ${k('batarang')} yanks the goon you aim at right to you for a free punch. It rips brute armor off and tears down vent covers and weak railings.`],
   ['gadgetFreeze', (k) => `Freeze blast: ${k('batarang')} traps a goon in ice. One hit shatters it and knocks them out.`],
-  ['gadgetPopper', (k) => `Party popper: ${k('batarang')} throws a confetti bomb. Goons nearby forget the fight and dance.`],
+  ['gadgetFlashbang', (k) => `Flashbang: ${k('batarang')} throws a stun grenade. Goons nearby are blinded and stagger for a few seconds.`],
   ['crouch', (k) => `Press ${k('crouch')} to crouch. You move slower, your footsteps go quiet, and goons have to be much closer to spot you. Stay out of the lamplight.`],
   ['silent', (k) => `Sneak up behind a goon who hasn't seen you and press ${k('punch')} for a silent takedown. It takes two seconds, and anyone within three meters hears it.`],
   ['perch', (k) => `Grapple ${k('grapple')} to a gargoyle to watch from above. Goons never look up unless they are hunting you.`],

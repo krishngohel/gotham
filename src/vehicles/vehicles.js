@@ -1,5 +1,5 @@
 // Ground vehicles: the Batmobile, street cars you can commandeer, a Joker chase van and drone
-// tanks for the Ace Chemicals battle. Contract (docs/superpowers/specs/2026-09-30-birthday-night
+// tanks for the Ace Chemicals battle. Contract (see src/game/story.js
 // -design.md): createVehicles(deps) -> { summon, enter, exit, active, update, startChase,
 // startBattle, park }. Events: vehicleEnter{kind}, vehicleExit{kind}, chaseDone{ok}, battleDone{ok}.
 // The hero's control name while driving is 'drive'.
@@ -415,7 +415,7 @@ export function createVehicles(deps) {
       v.v.drift = 0;
       toast.show('Carjacked! Gordon will REALLY have questions.', 3200);
     } else if (v.kind === 'car') {
-      toast.show('Borrowed for the birthday. Gordon will explain.', 3200);
+      toast.show('Borrowed for the night. Gordon will explain.', 3200);
     }
     events.emit('vehicleEnter', { kind: v.kind });
   }
@@ -797,7 +797,7 @@ export function createVehicles(deps) {
     battle.active = false;
     battle = null;
   }
-  // The Batmobile's armour hit zero: Mansi is knocked out of it and the battle resets clean, so a
+  // The Batmobile's armour hit zero: Batman is knocked out of it and the battle resets clean, so a
   // casual player always gets a fair retry instead of a hard fail state.
   function disableBatmobile() {
     if (!battle?.active) return;

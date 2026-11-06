@@ -379,10 +379,10 @@ describe('gadget moves', () => {
     expect(resolveHit('gel', e('brute')).outcome).toBe('immune');
     expect(resolveHit('gel', e('brute', { stunned: true })).outcome).toBe('knockdown');
   });
-  it('remote, claw, smoke and popper only stun, even brutes', () => {
-    for (const m of ['remote', 'claw', 'smoke', 'popper']) expect(resolveHit(m, e('brute')).outcome, m).toBe('stun');
+  it('remote, claw, smoke and flashbang only stun, even brutes', () => {
+    for (const m of ['remote', 'claw', 'smoke', 'flashbang']) expect(resolveHit(m, e('brute')).outcome, m).toBe('stun');
     expect(resolveHit('smoke', e('grunt')).stun).toBe(3);
-    expect(resolveHit('popper', e('grunt')).stun).toBe(3);
+    expect(resolveHit('flashbang', e('grunt')).stun).toBe(3);
   });
   it('shatter knocks anyone out', () => {
     expect(resolveHit('shatter', e('brute')).outcome).toBe('ko');

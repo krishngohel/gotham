@@ -1,5 +1,5 @@
 // The Joker's recorded lines. One line at a time; music dips underneath while he talks.
-const LINES = ['intro1', 'intro2', 'presents', 'party', 'cake', 'bossIntro', 'drop', 'gas', 'stunned', 'dance', 'bossEnd', 'laugh'];
+const LINES = ['drop', 'gas', 'stunned', 'dance', 'laugh'];
 
 export function createVoice({ base = './assets/voice/', getVolume, duck = () => {} }) {
   const clips = new Map();

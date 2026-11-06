@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { BREAKABLES, BREAKABLE_IDS, CACHES, CACHE_IDS, cacheById, roomWalls, cageRoom, nearestLadder, roofEdgeRail, boxDistance, faceFromNormal } from '../../src/world/breakableSpots.js';
-import { BALLOONS } from '../../src/config/balloonSpots.js';
+import { TROPHIES } from '../../src/config/trophySpots.js';
 
 describe('breakable data', () => {
   it('has unique ids and the promised mix', () => {
@@ -8,7 +8,7 @@ describe('breakable data', () => {
     const count = (k) => BREAKABLES.filter((b) => b.kind === k).length;
     expect([count('weakWall'), count('glass'), count('vent'), count('railing')]).toEqual([6, 4, 3, 2]);
     const hides = (t) => BREAKABLES.filter((b) => b.hides?.type === t).length;
-    expect(hides('balloon')).toBe(1);
+    expect(hides('trophy')).toBe(1);
     expect(hides('shortcut')).toBe(2);
     expect(hides('cache')).toBe(6);
   });
@@ -34,16 +34,16 @@ describe('roomWalls', () => {
     expect(r.solid.some((b) => b.maxX === 1.5 && b.minX === 1.2)).toBe(false);
     expect(r.roof).toBe(null);
   });
-  it('the Monarch booth encloses balloon 7 and keeps it out of reach through the wall', () => {
-    const booth = BREAKABLES.find((b) => b.hides?.type === 'balloon');
-    const bal = BALLOONS[booth.hides.index];
+  it('the Monarch booth encloses trophy 7 and keeps it out of reach through the wall', () => {
+    const booth = BREAKABLES.find((b) => b.hides?.type === 'trophy');
+    const bal = TROPHIES[booth.hides.index];
     const { weak } = roomWalls(booth.room);
     const r = booth.room;
     expect(bal.x).toBeGreaterThan(weak.maxX);
     expect(bal.x).toBeLessThan(r.x + r.w / 2);
     expect(Math.abs(bal.z - r.z)).toBeLessThan(r.d / 2 - 0.3);
     expect(bal.y).toBeLessThan(r.y + r.h);
-    // Balloons pop inside 2.2 m (balloons.js); a hero pressed against the wall (radius 0.35)
+    // Trophies pop inside 2.2 m (trophies.js); a hero pressed against the wall (radius 0.35)
     // standing on the sidewalk must stay outside that.
     const hx = weak.minX - 0.35, dy = r.y + 1 - bal.y;
     expect((hx - bal.x) ** 2 + dy * dy * 0.5).toBeGreaterThan(2.2 * 2.2);

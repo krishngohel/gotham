@@ -12,8 +12,8 @@ export const GADGET_ICONS = {
   launcher: '<rect class="fill" x="4" y="19" width="14" height="11" rx="2"/><path d="M18 24.5 H40"/><path class="fill" d="M36 18 L45 24.5 L36 31 Z"/>',
   claw: '<path d="M5 42 L21 26"/><path class="fill" d="M21 26 L27 11 L30 13 L25 26 L37 17 L39 20 L27 29 L41 30 L40 33 L24 32 Z"/>',
   freeze: '<path d="M24 5 V43 M7.5 14.5 L40.5 33.5 M7.5 33.5 L40.5 14.5"/><path d="M19 8 L24 13 L29 8 M19 40 L24 35 L29 40"/>',
-  popper: '<path class="fill" d="M7 43 L17 17 L31 31 Z"/><path d="M24 13 L26 6 M33 19 L42 15 M35 28 L44 30"/>'
-    + '<circle class="fill pop" cx="39" cy="7" r="2.6"/><circle class="fill pop" cx="30" cy="4" r="1.8"/>',
+  flashbang: '<rect class="fill" x="15" y="19" width="16" height="24" rx="3"/><path d="M18 19 V13 H28 V19 M28 13 L36 9"/><path d="M7 11 L11 14 M38 26 L44 24 M5 28 L10 28"/>'
+    + '<circle class="fill pop" cx="39" cy="7" r="2.6"/><circle class="fill pop" cx="8" cy="6" r="1.8"/>',
 };
 
 // The Bat Swarm (chain 4): three bats of different sizes, drawn beside the chain icons.

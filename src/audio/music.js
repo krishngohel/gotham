@@ -133,78 +133,66 @@ function boss() {
   };
 }
 
-// ---- finale: Happy Birthday to You (public domain), then a gentle waltz variation ----
-const HB_INTRO = [[67, 3], [67, 1], [69, 4], [67, 4], [72, 4], [71, 8], [67, 3], [67, 1], [69, 4], [67, 4], [74, 4], [72, 8],
-  [67, 3], [67, 1], [79, 4], [76, 4], [72, 4], [71, 4], [69, 8], [77, 3], [77, 1], [76, 4], [72, 4], [74, 4], [72, 12]];
-const HB_LOOP = HB_INTRO.map(([n, l], k) => [n, k === 18 ? 4 : k === 24 ? 8 : l]); // no fermata, 96 steps
-const INTRO_CHORDS = [[0, 'C'], [16, 'G7'], [40, 'C'], [52, 'C7'], [64, 'F'], [80, 'C'], [88, 'G7'], [92, 'C'], [104, null]];
-const LOOP_CHORDS = [[0, 'C'], [16, 'G7'], [40, 'C'], [52, 'C7'], [64, 'F'], [76, 'C'], [84, 'G7'], [88, 'C'], [96, null]];
-const CHORD = { C: [0, 4, 7], G7: [-5, -1, 2, 5], C7: [0, 4, 7, 10], F: [0, 5, 9] };
-const BASS = { C: 0, G7: -5, C7: 0, F: -7 };
-const INTRO_LEN = 108;
-
-function timeline(mel, chords) {
-  const notes = new Map();
-  let x = 0;
-  for (const [n, l] of mel) { notes.set(x, [n, l]); x += l; }
-  const ch = new Map();
-  for (let k = 0; k < chords.length - 1; k++) ch.set(chords[k][0], [chords[k][1], chords[k + 1][0] - chords[k][0]]);
-  return { notes, ch };
-}
+// ---- finale: a slow, steady D minor theme for the quiet after the storm: dawn over Gotham ----
+// Eight bars at 72 bpm (16 sixteenth-note steps a bar). The intro plays the first four bars soft,
+// with a low drum and a brass swell at the turn; then it loops, strings and brass taking turns.
+const PROGRESSION = ['Dm', 'Bb', 'F', 'C', 'Dm', 'Bb', 'Gm', 'A'];
+const CHORDS = {
+  Dm: { tones: [62, 65, 69], bass: 38 }, Bb: { tones: [58, 62, 65], bass: 34 }, F: { tones: [65, 69, 72], bass: 41 },
+  C: { tones: [60, 64, 67], bass: 36 }, Gm: { tones: [55, 58, 62], bass: 43 }, A: { tones: [57, 61, 64], bass: 33 },
+};
+// [midi note, length in steps]; every bar sums to 16.
+const THEME = [[74, 6], [72, 2], [69, 8], [70, 6], [72, 2], [74, 8], [77, 8], [76, 4], [74, 4], [72, 12], [67, 4],
+  [74, 6], [72, 2], [69, 4], [72, 4], [70, 6], [74, 2], [77, 8], [79, 6], [77, 2], [74, 4], [70, 4], [69, 8], [73, 4], [76, 4]];
+const THEME_LEN = 128;
+const INTRO_LEN = 64;
 
 function finale() {
-  const sd = 60 / 96 / 4;
-  const T = 5; // transpose C major -> F major
-  const intro = timeline(HB_INTRO, INTRO_CHORDS);
-  const loop = timeline(HB_LOOP, LOOP_CHORDS);
-  let current = 'C';
+  const sd = 60 / 72 / 4;
+  const notes = new Map();
+  let x = 0;
+  for (const [n, l] of THEME) { notes.set(x, [n, l]); x += l; }
   return {
     stepDur: sd,
     step(m, i, t) {
       const isIntro = i < INTRO_LEN;
-      const s = isIntro ? i : (i - INTRO_LEN) % 96;
-      const pass = isIntro ? -1 : Math.floor((i - INTRO_LEN) / 96);
-      const tl = isIntro ? intro : loop;
-      const chord = tl.ch.get(s);
-      if (chord) {
-        const [name, len] = chord;
-        current = name;
-        const dur = len * sd;
-        CHORD[name].forEach((o) => m.strings(t, 53 + T - 5 + o, dur, { gain: isIntro ? 0.02 : 0.016, cutoff: 1400, a: 0.25, r: 0.5 }));
-        if (isIntro) m.brass(t, 41 + T - 5 + BASS[name], dur, { gain: 0.03, a: 0.2, r: 0.4, bright: 0.25 });
+      const s = isIntro ? i : (i - INTRO_LEN) % THEME_LEN;
+      const pass = isIntro ? -1 : Math.floor((i - INTRO_LEN) / THEME_LEN);
+      const chord = CHORDS[PROGRESSION[Math.floor(s / 16)]];
+      const b = s % 16;
+      if (b === 0) {
+        chord.tones.forEach((n) => m.strings(t, n - 12, 16 * sd, { gain: isIntro ? 0.02 : 0.016, cutoff: 1400, a: 0.3, r: 0.6 }));
+        if (isIntro) m.brass(t, chord.bass + 12, 16 * sd, { gain: 0.03, a: 0.3, r: 0.5, bright: 0.25 });
       }
-      const note = tl.notes.get(s);
+      if (b === 0 || b === 8) m.strings(t, chord.bass, 0.6, { gain: 0.06, cutoff: 600, a: 0.01, r: 0.3 });
+      const note = notes.get(s);
       if (note) {
         const [n, len] = note;
         const dur = len * sd;
         if (isIntro) {
-          m.bell(t, n + T + 12, { gain: 0.09, d: Math.max(0.9, dur * 1.6), ratio: 3.5, index: 1.6 });
-          m.strings(t, n + T, dur * 0.95, { gain: 0.03, cutoff: 2600, a: 0.03, r: 0.25 });
+          m.bell(t, n + 12, { gain: 0.09, d: Math.max(0.9, dur * 1.6), ratio: 3.5, index: 1.6 });
+          m.strings(t, n, dur * 0.95, { gain: 0.03, cutoff: 2600, a: 0.03, r: 0.25 });
         } else if (pass % 2 === 0) {
-          m.strings(t, n + T, dur * 0.95, { gain: 0.03, cutoff: 2400, a: 0.06, r: 0.3 });
+          m.strings(t, n, dur * 0.95, { gain: 0.03, cutoff: 2400, a: 0.06, r: 0.3 });
         } else {
-          m.brass(t, n + T, dur * 0.9, { gain: 0.022, a: 0.05, r: 0.3, bright: 0.4 });
+          m.brass(t, n, dur * 0.9, { gain: 0.022, a: 0.05, r: 0.3, bright: 0.4 });
         }
       }
       if (isIntro) {
         if (s === 0) m.cymbal(t, { gain: 0.05, a: 0.6, d: 1.6 });
-        if (s === 92) {
-          m.drum(t, { freq: mtof(41), d: 1.4, gain: 0.3, skin: 0.05 });
+        if (s === 56) {
+          m.drum(t, { freq: mtof(38), d: 1.4, gain: 0.3, skin: 0.05 });
           m.cymbal(t, { gain: 0.05, d: 2.2 });
-          [65, 69, 72].forEach((n) => m.brass(t, n, 1.6, { gain: 0.03, a: 0.08, r: 0.6, bright: 0.6 }));
+          [62, 65, 69].forEach((n) => m.brass(t, n, 1.6, { gain: 0.03, a: 0.08, r: 0.6, bright: 0.6 }));
         }
         return;
       }
-      // waltz: bass on beat one, soft chord on two and three, bell arpeggio in eighths
-      const beat = (s + 8) % 12; // bars begin 4 steps after the loop starts (pickup)
-      const tones = CHORD[current].slice(0, 3).map((o) => 60 + T + o);
-      if (beat === 0) m.strings(t, 41 + T - 5 + BASS[current], 0.4, { gain: 0.06, cutoff: 600, a: 0.01, r: 0.3 });
-      if (beat === 4 || beat === 8) tones.forEach((n) => m.strings(t, n - 12, 0.22, { gain: 0.012, cutoff: 1500, a: 0.02, r: 0.2 }));
-      if (beat % 2 === 0) {
-        const k = beat / 2;
-        m.bell(t, tones[k % 3] + 12 * Math.floor(k / 3), { gain: 0.026, d: 0.8, ratio: 3.5, index: 1.1 });
+      // After the intro: a slow bell arpeggio in eighths over the chord, and an occasional high glint.
+      if (b % 2 === 0) {
+        const k = b / 2;
+        m.bell(t, chord.tones[k % 3] + 12 * Math.floor(k / 3), { gain: 0.026, d: 0.8, ratio: 3.5, index: 1.1 });
       }
-      if (Math.random() < 0.05) m.bell(t, 84 + T + [0, 4, 7][Math.floor(Math.random() * 3)], { gain: 0.012, d: 0.6, ratio: 2, index: 1 });
+      if (Math.random() < 0.05) m.bell(t, 86 + chord.tones[Math.floor(Math.random() * 3)] % 12, { gain: 0.012, d: 0.6, ratio: 2, index: 1 });
     },
   };
 }

@@ -29,7 +29,7 @@ describe('side content progress fields', () => {
       'no spaces': { best: 1, medal: 'gold' },
       neonSlalom: { best: -1, medal: 'gold' },
       bellTowerDive: { best: 20, medal: 'platinum' },
-      birthdayBash: { best: Infinity },
+      bigTop: { best: Infinity },
     } });
     expect(p.challenges).toEqual({ signalToSea: { best: 12.5, medal: 'gold' }, bellTowerDive: { best: 20, medal: null } });
     expect(sanitizeProgress({ challenges: [1, 2] }).challenges).toEqual({});
@@ -56,14 +56,14 @@ describe('side content progress fields', () => {
     const st = memoryStorage();
     const p = sanitizeProgress({
       step: 4, challenges: { neonSlalom: { best: 9.5, medal: 'silver' } }, stats: { playTime: 100, kos: 4, longestCombo: 12, topGlideSpeed: 30, distanceGlided: 900, photos: 1 },
-      crimes: { stopped: 3 }, moves: ['zipline'], districts: ['gcpd'], milestone: 25, unlocks: ['fromKrishn'],
+      crimes: { stopped: 3 }, moves: ['zipline'], districts: ['gcpd'], milestone: 25, unlocks: ['commendation'],
     });
     saveProgress(st, p);
     expect(loadProgress(st)).toEqual(p);
   });
   it('new game restarts the story and keeps everything found', () => {
     const old = sanitizeProgress({
-      step: 20, finished: true, seenIntro: true, suit: 'f', balloons: [1, 2], goldUnlocked: true,
+      step: 20, finished: true, seenIntro: true, suit: 'f', trophies: [1, 2], goldUnlocked: true,
       challenges: { neonSlalom: { best: 9.5, medal: 'gold' } }, crimes: { stopped: 5 }, moves: ['ladder'], districts: ['neon'], milestone: 50, unlocks: ['goldStandard'],
       stats: { kos: 40 },
     });
@@ -72,7 +72,7 @@ describe('side content progress fields', () => {
     expect(p.finished).toBe(false);
     expect(p.seenIntro).toBe(false);
     expect(p.suit).toBe(null);
-    expect(p.balloons).toEqual([1, 2]);
+    expect(p.trophies).toEqual([1, 2]);
     expect(p.goldUnlocked).toBe(true);
     expect(p.challenges.neonSlalom.medal).toBe('gold');
     expect(p.crimes.stopped).toBe(5);
@@ -86,11 +86,11 @@ describe('side content progress fields', () => {
     const st = memoryStorage();
     // Shaped like a save written before Plan 3C: none of challenges, stats, crimes, moves,
     // districts, milestone or unlocks exist yet.
-    const legacy = { step: 17, balloons: [0, 3, 6], suit: 'gold', goldUnlocked: true, finished: false, seenIntro: true };
+    const legacy = { step: 17, trophies: [0, 3, 6], suit: 'gold', goldUnlocked: true, finished: false, seenIntro: true };
     saveProgress(st, legacy);
     const p = loadProgress(st);
     expect(p.step).toBe(17);
-    expect(p.balloons).toEqual([0, 3, 6]);
+    expect(p.trophies).toEqual([0, 3, 6]);
     expect(p.suit).toBe('gold');
     expect(p.goldUnlocked).toBe(true);
     expect(p.finished).toBe(false);

@@ -33,25 +33,25 @@ function setup() {
 describe('createCardQueue', () => {
   it('shows a card and takes it down when its time is up', () => {
     const { c, q, visible } = setup();
-    q.push('Balloon 1 of 12', 'Found one!', 7000);
-    expect(visible()).toBe('Balloon 1 of 12');
+    q.push('Trophy 1 of 12', 'Found one.', 7000);
+    expect(visible()).toBe('Trophy 1 of 12');
     c.advance(6999);
-    expect(visible()).toBe('Balloon 1 of 12');
+    expect(visible()).toBe('Trophy 1 of 12');
     c.advance(2);
     expect(visible()).toBeNull();
   });
-  it('a level-up on the same frame waits until the balloon message has been up long enough to read', () => {
+  it('a level-up on the same frame waits until the trophy message has been up long enough to read', () => {
     const { c, q, visible, shown } = setup();
-    q.push('Balloon 7 of 12', 'Seven.', 7000);
+    q.push('Trophy 7 of 12', 'Seven.', 7000);
     q.push('LEVEL 2!', 'WayneTech sent an upgrade.', 6500);
-    expect(visible()).toBe('Balloon 7 of 12');
+    expect(visible()).toBe('Trophy 7 of 12');
     c.advance(3400);
-    expect(visible()).toBe('Balloon 7 of 12');
+    expect(visible()).toBe('Trophy 7 of 12');
     c.advance(200);
     expect(visible()).toBe('LEVEL 2!');
     c.advance(6500);
     expect(visible()).toBeNull();
-    expect(shown).toEqual(['Balloon 7 of 12', 'LEVEL 2!']);
+    expect(shown).toEqual(['Trophy 7 of 12', 'LEVEL 2!']);
   });
   it('a card that has already been read gives way at once', () => {
     const { c, q, visible } = setup();

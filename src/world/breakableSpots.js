@@ -11,7 +11,7 @@ export function faceFromNormal(nx, nz) {
 
 export const BREAKABLES = [
   // Explosive gel: cracked walls.
-  { id: 'wallMonarchBooth', kind: 'weakWall', room: { x: 158.2, y: 0.15, z: -60, w: 3.6, d: 3, h: 3.2, open: 'w', against: 'e' }, hides: { type: 'balloon', index: 6 } },
+  { id: 'wallMonarchBooth', kind: 'weakWall', room: { x: 158.2, y: 0.15, z: -60, w: 3.6, d: 3, h: 3.2, open: 'w', against: 'e' }, hides: { type: 'trophy', index: 6 } },
   { id: 'wallColdStore', kind: 'weakWall', room: { x: -70, y: 22, z: 128, w: 3, d: 3, h: 2.6, open: 'e' }, hides: { type: 'cache', id: 'cacheColdStore' } },
   { id: 'wallDinerRoof', kind: 'weakWall', room: { x: 192, y: 9, z: 66, w: 3, d: 3, h: 2.6, open: 'w' }, hides: { type: 'cache', id: 'cacheDinerRoof' } },
   { id: 'wallDockBrick', kind: 'weakWall', room: { x: -189.3, y: 26, z: 108, w: 3, d: 3, h: 2.6, open: 'e' }, hides: { type: 'cache', id: 'cacheDockBrick' } },
@@ -22,7 +22,7 @@ export const BREAKABLES = [
   // (x, z, w, d, open, against from the ladder's own position and normal), floor raised to match.
   { id: 'wallBarEscape', kind: 'weakWall', room: { x: 81.7, y: 0.15, z: -8, w: 1.8, d: 2.2, h: 3, open: 'e', against: 'w', noRoof: true }, hides: { type: 'shortcut' } },
   { id: 'wallIcebergEscape', kind: 'weakWall', room: { x: 60.6, y: 0.15, z: -68, w: 1.6, d: 2.2, h: 3, open: 'e', against: 'w', noRoof: true }, hides: { type: 'shortcut' } },
-  // Remote batarang: the Joker's glass party signs hung over the street.
+  // Remote batarang: the Joker's glass signs hung over the street.
   { id: 'glassNeonNorth', kind: 'glass', box: { x: 150, y: 6.5, z: -30, w: 6, h: 1.6, d: 0.12 } },
   { id: 'glassNeonMid', kind: 'glass', box: { x: 150, y: 6.5, z: 30, w: 6, h: 1.6, d: 0.12 } },
   { id: 'glassNeonSouth', kind: 'glass', box: { x: 150, y: 6.5, z: 90, w: 6, h: 1.6, d: 0.12 } },

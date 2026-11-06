@@ -114,7 +114,7 @@ import { GADGETS } from '../../src/gadgets/gadgetDefs.js';
 describe('promptText: gadgets', () => {
   const IDS = {
     gadgetWheel: ['gadgetWheel', 'batarang'], gadgetRemote: ['batarang'], gadgetGel: ['batarang'], gadgetSmoke: ['batarang'],
-    gadgetLauncher: ['batarang', 'jump'], gadgetClaw: ['batarang'], gadgetFreeze: ['batarang'], gadgetPopper: ['batarang'],
+    gadgetLauncher: ['batarang', 'jump'], gadgetClaw: ['batarang'], gadgetFreeze: ['batarang'], gadgetFlashbang: ['batarang'],
   };
   for (const [id, actions] of Object.entries(IDS)) {
     it(`${id} shows its keys and has no dashes`, () => {

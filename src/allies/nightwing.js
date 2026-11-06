@@ -1,5 +1,5 @@
 // Nightwing (Part N): createNightwing(deps) builds a Nightwing actor that can fight beside
-// Batman (spawn(p, 'ally')) or play the masked Party Crasher (spawn(p, 'crasher')). Decision
+// Batman (spawn(p, 'ally')) or play the masked Courier (spawn(p, 'courier')). Decision
 // logic that doesn't need three.js lives in nightwingLogic.js so it can be unit tested directly;
 // this file is the wiring: the character, its little state machine, and the hooks into combat's
 // existing hit/critical/event pipeline so Nightwing's blows land exactly like Batman's.
@@ -28,7 +28,7 @@ export function createNightwing({ assets, scene, collision, events, combat, hero
   // it moves the character directly, and reading ch.root.position always sees the same numbers.
   let pos = null;
   let ch = null;
-  let mode = null; // 'ally' | 'crasher' | null (not spawned)
+  let mode = null; // 'ally' | 'courier' | null (not spawned)
   let target = null;
   let state = 'idle';
   let stateT = 0;
@@ -51,7 +51,7 @@ export function createNightwing({ assets, scene, collision, events, combat, hero
     pos = ch.root.position;
     scene.add(ch.root);
     place(p, Math.atan2(hero.pos.x - p.x, hero.pos.z - p.z));
-    state = mode === 'crasher' ? 'crasher-idle' : 'idle';
+    state = mode === 'courier' ? 'courier-idle' : 'idle';
     stateT = 0;
     target = null;
     fleeFrom = fleeTo = null;
@@ -222,23 +222,23 @@ export function createNightwing({ assets, scene, collision, events, combat, hero
     ch.animator.update(dt);
   }
 
-  function crasherFlee(to) {
-    if (!ch || mode !== 'crasher') return;
+  function courierFlee(to) {
+    if (!ch || mode !== 'courier') return;
     fleeFrom = { x: pos.x, y: pos.y, z: pos.z };
     fleeTo = { x: to.x, y: to.y, z: to.z };
     fleeT = 0;
-    state = 'crasher-flee';
-    events.emit('crasherTaunt', { text: 'Too slow, birthday girl!' });
+    state = 'courier-flee';
+    events.emit('courierTaunt', { text: 'Too slow, Bat!' });
   }
 
-  function updateCrasher(dt) {
-    if (state === 'crasher-flee' && fleeFrom && fleeTo) {
+  function updateCourier(dt) {
+    if (state === 'courier-flee' && fleeFrom && fleeTo) {
       fleeT += dt;
       const s = fleeStep(fleeFrom, fleeTo, fleeT, 1.4);
       pos.set(s.x, s.y, s.z);
       const dx = fleeTo.x - fleeFrom.x, dz = fleeTo.z - fleeFrom.z;
       if (Math.hypot(dx, dz) > 0.01) ch.face(Math.atan2(dx, dz));
-      if (s.done) { events.emit('crasherEscaped'); despawn(); return; }
+      if (s.done) { events.emit('courierEscaped'); despawn(); return; }
       return;
     }
     ch.animator.update(dt);
@@ -248,11 +248,11 @@ export function createNightwing({ assets, scene, collision, events, combat, hero
     spawn,
     despawn,
     get actor() { return ch; },
-    crasherFlee,
+    courierFlee,
     update(dt) {
       if (!ch) return;
       if (mode === 'ally') updateAlly(dt);
-      else if (mode === 'crasher') updateCrasher(dt);
+      else if (mode === 'courier') updateCourier(dt);
       else if (mode === 'pose') {
         // 'pose' (a story moment, the reveal): stays exactly where he was put, unmasked, idling and
         // turning to keep facing Batman. No following, no fighting.

@@ -1,5 +1,5 @@
 // Free-roam Joker van chases: optional, repeatable side content. A van appears on a real street
-// within a few hundred metres every so often; Mansi can chase it down (ram it 3 times, same rule
+// within a few hundred metres every so often; Batman can chase it down (ram it 3 times, same rule
 // as the story's own Batmobile chases) for XP, or ignore it and it drives off on its own. This
 // file only decides *when* to try spawning one (pure timing, like src/game/crimes.js's
 // createCrimeScheduler); src/vehicles/vehicles.js owns *where* (a real street, via its own

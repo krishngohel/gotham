@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { bannerText, createGate } from '../../src/game/storyCues.js';
 
 describe('bannerText', () => {
-  it('fires for goals, not for radio, cutscene, crasher or ally beats', () => {
+  it('fires for goals, not for radio, cutscene, courier or ally beats', () => {
     expect(bannerText({ text: 'Go' }, null)).toBe('Go');
     for (const type of ['fight', 'collect', 'board', 'chase', 'battle', 'interior', 'boss']) expect(bannerText({ type, text: 'X' }, null)).toBe('X');
-    for (const type of ['radio', 'cutscene', 'crasher', 'ally', 'credits']) expect(bannerText({ type, text: 'X' }, null)).toBe(null);
+    for (const type of ['radio', 'cutscene', 'courier', 'ally', 'credits']) expect(bannerText({ type, text: 'X' }, null)).toBe(null);
   });
   it('does not repeat the goal already shown, and needs text', () => {
     expect(bannerText({ text: 'Same' }, 'Same')).toBe(null);

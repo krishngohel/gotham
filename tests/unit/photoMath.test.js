@@ -15,7 +15,7 @@ describe('photo camera', () => {
     expect(c.yaw).toBeCloseTo(0);
     expect(c.pitch).toBeCloseTo(0);
     expect(createPhotoCam({ position: { x: 0, y: 0, z: 0 }, target: { x: 3, y: 0, z: 0 }, fov: 60 }).yaw).toBeCloseTo(Math.PI / 2);
-    expect(DEFAULT_CAPTION).toBe('HAPPY BIRTHDAY MANSI');
+    expect(DEFAULT_CAPTION).toBe('THE LONG NIGHT');
   });
   it('flies but stays within 20 m of Batman', () => {
     const c = stepPhotoCam(cam0(), { moveY: 1 }, 10, anchor);
@@ -82,11 +82,11 @@ describe('filters, frames and captions', () => {
     }
   });
   it('cleans captions', () => {
-    expect(sanitizeCaption('  happy   birthday \u2014 mansi  ')).toBe('HAPPY BIRTHDAY - MANSI');
+    expect(sanitizeCaption('  the   long \u2014 night  ')).toBe('THE LONG - NIGHT');
     expect(sanitizeCaption('x'.repeat(60))).toHaveLength(48);
     expect(sanitizeCaption(null)).toBe('');
   });
   it('names the file with the date and time', () => {
-    expect(photoFileName(new Date(2026, 8, 28, 21, 5, 9))).toBe('gotham-for-mansi-20260928-210509.png');
+    expect(photoFileName(new Date(2026, 8, 28, 21, 5, 9))).toBe('gotham-20260928-210509.png');
   });
 });

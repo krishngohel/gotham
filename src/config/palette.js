@@ -22,7 +22,8 @@ export const PALETTE = {
   wood: 0x5a4636,
   window: 0xe8a653,
   windowCool: 0xcfd7e6,
-  balloon: 0xc8323c,
+  crimson: 0xc8323c,
+  riddler: 0x3dff72,
   // City materials
   brick: 0x6b3f33,
   stone: 0x74706a,
@@ -45,8 +46,6 @@ export const PALETTE = {
   neonCyan: 0x4fe3ff,
   chem: 0x7dff4a,
   clockFace: 0xf3e7b3,
-  cake: 0xf1d9c0,
-  frosting: 0xff9ec8,
 };
 
 export const hex = (n) => '#' + n.toString(16).padStart(6, '0');

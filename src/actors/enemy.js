@@ -58,7 +58,7 @@ export function createEnemy({ id, type, assets, scene, collision, rng, events = 
     guard: rng.pick(GUARDS), tauntT: 0, tauntCd: rng.range(3, 8), locoName: null, locoT: 0,
     glyph: null,
     tiedWith: null, tiedT: 0,
-    frozenT: 0, danceT: 0, lostT: 0, shattered: false,
+    frozenT: 0, lostT: 0, shattered: false,
     // Harley Quinn only (type 'harley'): per-move cooldowns and her cartwheel dodge tic.
     harleyCd: { slam: 0, sweep: 0, throw: 0 }, cartwheelCd: rng.range(0.6, 1.6), harleySlammed: false,
     // Predator stealth (src/stealth/stealthSystem.js): where the goon walks or looks, which room it
@@ -188,16 +188,15 @@ export function createEnemy({ id, type, assets, scene, collision, rng, events = 
     setState(e.aware ? 'engage' : 'idle');
   };
 
-  // Party popper: stunned and dancing for `sec`. A hit ends the dance early.
-  e.dance = (sec) => {
+  // Flashbang: blinded and staggering for `sec` (the stun state; a hit ends it early).
+  e.dazzle = (sec) => {
     if (!e.alive || e.down || e.air || e.def.boss) return false;
     const was = e.state === 'windup' || e.state === 'attack';
     e.glyph = null;
     e.stunned = true;
     e.stunT = Math.max(e.stunT, sec);
-    e.danceT = sec;
-    setState('dance');
-    play('Dance_Loop', { fade: 0.15 });
+    setState('stunned');
+    play('Idle_Shield_Break', { once: true, timeScale: 0.8, fade: 0.15 });
     return was;
   };
 
@@ -279,7 +278,7 @@ export function createEnemy({ id, type, assets, scene, collision, rng, events = 
       e.glyph = 'red';
       play('Rifle_Aim', { fade: 0.1 });
     } else if (type === 'harley') {
-      // Mallet slam and sweep at melee range, an occasional pie/confetti throw at a distance;
+      // Mallet slam and sweep at melee range, an occasional pie/gag throw at a distance;
       // src/combat/harleyLogic.js picks which and gates it on her own per-move cooldowns.
       const dx0 = hero.pos.x - pos.x, dz0 = hero.pos.z - pos.z;
       const dist0 = Math.hypot(dx0, dz0);
@@ -528,7 +527,7 @@ export function createEnemy({ id, type, assets, scene, collision, rng, events = 
           if (!e.hitDone && dist < 1.5 * scale && level) { e.hitDone = true; ctx.onAttackLand(e, 'charge'); }
           if (e.t > 0.75) { setState('recover'); ctx.onAttackEnd(e); }
         } else if (e.attackKind === 'harleyThrow') {
-          // A thrown pie/confetti bomb: stands her ground and tosses it, no lunge.
+          // A thrown pie/gag bomb: stands her ground and tosses it, no lunge.
           faceHero(hero, 10, dt);
           if (!e.hitDone && e.t > 0.22) {
             e.hitDone = true;
@@ -565,10 +564,6 @@ export function createEnemy({ id, type, assets, scene, collision, rng, events = 
       case 'tied':
         e.tiedT -= dt;
         if (e.tiedT <= 0) { e.tiedWith = null; setState('getup'); getUp(); }
-        break;
-      case 'dance':
-        e.danceT -= dt;
-        if (e.danceT <= 0) { e.stunned = false; e.stunT = 0; setState(e.aware ? 'engage' : 'idle'); }
         break;
       case 'cartwheel': {
         // Harley Quinn only: a quick hop-roll away from Batman. Flavor, not a hard i-frame.

@@ -1,6 +1,6 @@
 // Which GPU the browser is drawing with, for the FPS overlay, and a one-time hint when that looks
 // like integrated graphics (laptops often hand the browser the weak GPU by default).
-const HINT_KEY = 'gotham-mansi-gpu-hint-v1';
+const HINT_KEY = 'gotham-gpu-hint-v1';
 
 // Raw WEBGL_debug_renderer_info string, e.g. "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU
 // (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)".
