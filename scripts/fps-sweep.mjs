@@ -1,0 +1,383 @@
+// Uncapped frame-time sweep in a visible, maximized Edge at native resolution. Reports median,
+// p95 and max frame time per scenario plus draw calls, and lists every hitch (> 25 ms) after the
+// first 5 s of play, so hitches show up and not just averages.
+//
+// Scenarios: five fixed spots (with a separate "arrive" window right after each teleport), a
+// long glide across districts, goons spawned mid-play, the ?fight=test sandbox with the hero
+// kicking, the boss arena (?at=boss), a predator stealth room (patrols, detective vision, a
+// silent takedown, the alarm), and a gadgets page (a row per gadget, the wheel, the swarm and
+// breakables).
+//
+// Usage: node scripts/fps-sweep.mjs [baseUrl] [high|low]
+// Env:   OUT=<file.json> writes the raw result; SHOTS=<dir> saves a screenshot at each spot;
+//        ONLY=main|fight|boss|side|stealth|gadgets runs one page only; EXTRA=<query> replaces the default extra URL params (dynres=0).
+//        FRAMES=1 adds every frame ({ page, l, dt, calls, tris, t }) to the OUT file, to see when a spike lands.
+import { chromium } from 'playwright-core';
+import { writeFileSync, mkdirSync } from 'node:fs';
+
+const base = process.argv[2] ?? 'http://localhost:5202/';
+const q = process.argv[3] ?? 'high';
+// Dynamic resolution off by default: with vsync off there is no refresh budget to aim for.
+const extra = `&${process.env.EXTRA ?? 'dynres=0'}`;
+const only = process.env.ONLY ?? '';
+const shots = process.env.SHOTS ?? '';
+if (shots) mkdirSync(shots, { recursive: true });
+
+const spots = [
+  ['gcpd roof', { x: 6, y: 42, z: 10 }, 2.6],
+  ['docks yard', { x: 0, y: 0.15, z: 178 }, 0.2],
+  ['neon street', { x: 150, y: 0, z: 10 }, 0],
+  ['ace yard', { x: 95, y: 0, z: -140 }, Math.PI],
+  ['clock plaza', { x: -62, y: 58, z: -148 }, Math.PI],
+];
+
+// Headless by default so it never takes over the screen or the mouse (it still renders on the
+// real GPU, but its frame times read higher than a visible window: compare builds A/B headless).
+// HEADED=1 opens the old
+// visible maximized window (it grabs focus and the pointer while it runs).
+const b = await chromium.launch({ channel: 'msedge', headless: !process.env.HEADED, args: ['--mute-audio', ...(process.env.HEADED ? ['--start-maximized'] : ['--window-size=1600,900', '--use-angle=d3d11', '--ignore-gpu-blocklist']), '--disable-gpu-vsync', '--disable-frame-rate-limit'] });
+const ctx = await b.newContext({ viewport: null });
+
+// Records every rAF delta with the current scenario label, and the draw calls/triangles of the
+// whole frame (all passes: shadow, colour, normal, ink quad). The game's own rAF callback is
+// registered first, so this one runs right after the frame has been drawn.
+async function openGame(query) {
+  const p = await ctx.newPage();
+  const errors = [];
+  p.on('pageerror', (e) => errors.push(String(e)));
+  await p.goto(`${base}?${query}&q=${q}${extra}`);
+  await p.waitForFunction(() => window.__game?.comic, null, { timeout: 120000 });
+  // PRE=<js>: an expression run in the page once the game is up (A/B experiments, e.g. hiding a system).
+  if (process.env.PRE) await p.evaluate(process.env.PRE);
+  await p.evaluate(() => {
+    const r = window.__game.renderer;
+    r.info.autoReset = false;
+    const rec = window.__rec = { label: 'boot', frames: [], t0: performance.now() };
+    let last = performance.now();
+    const f = (n) => {
+      rec.frames.push([rec.label, n - last, r.info.render.calls, r.info.render.triangles, n - rec.t0]);
+      r.info.reset();
+      last = n;
+      requestAnimationFrame(f);
+    };
+    requestAnimationFrame(f);
+  });
+  return { p, errors };
+}
+const label = (p, l) => p.evaluate((l) => { window.__rec.label = l; }, l);
+// A cutscene can open with an in-engine cinematic before its comic starts, so skip that (and the
+// radio) too, and keep going until a few passes in a row find nothing left to skip.
+const skipComic = async (p) => {
+  for (let i = 0, quiet = 0; i < 40 && quiet < 4; i++) {
+    const busy = await p.evaluate(() => {
+      const G = window.__game;
+      if (G.cinematic?.active) { G.cinematic.skip(); return true; }
+      if (G.comic.playing) { G.comic.skip(); return true; }
+      if (G.radio?.playing) { G.radio.skip(); return true; }
+      return false;
+    });
+    quiet = busy ? 0 : quiet + 1;
+    await p.waitForTimeout(300);
+  }
+};
+async function collect(p, page) {
+  const frames = await p.evaluate(() => window.__rec.frames);
+  return frames.map(([l, dt, calls, tris, t]) => ({ page, l, dt, calls, tris, t }));
+}
+
+const all = [];
+const meta = {};
+
+if (!only || only === 'main') {
+  const { p, errors } = await openGame('at=start&god=1');
+  await p.waitForTimeout(1500);
+  await skipComic(p);
+  meta.canvas = await p.evaluate(() => [innerWidth, innerHeight, devicePixelRatio, window.__game.renderer.getPixelRatio()]);
+  meta.gpu = await p.evaluate(() => { const gl = window.__game.renderer.getContext(); const d = gl.getExtension('WEBGL_debug_renderer_info'); return d ? gl.getParameter(d.UNMASKED_RENDERER_WEBGL) : '?'; });
+  await label(p, 'warmup');
+  await p.waitForTimeout(5000);
+  for (const [name, pos, yaw] of spots) {
+    await label(p, `arrive:${name}`);
+    await p.evaluate(([pos, yaw]) => { window.__game.hero.teleport(pos, yaw); window.__game.follow.snapBehind?.(yaw); }, [pos, yaw]);
+    await p.waitForTimeout(1500);
+    await label(p, name);
+    await p.waitForTimeout(3000);
+    if (shots) {
+      await label(p, 'shot');
+      await p.screenshot({ path: `${shots}/${name.replace(/ /g, '-')}.png` });
+    }
+  }
+  // A long glide from the docks across the city centre toward Ace Chemicals.
+  await label(p, 'arrive:glide');
+  await p.evaluate(() => { const g = window.__game; g.hero.teleport({ x: -170, y: 125, z: 190 }, 2.4); g.follow.snapBehind(2.4); });
+  await p.waitForTimeout(300);
+  await p.keyboard.down('Space');
+  await p.waitForTimeout(1200);
+  await label(p, 'glide');
+  await p.waitForTimeout(7000);
+  if (shots) { await label(p, 'shot'); await p.screenshot({ path: `${shots}/gliding.png` }); await label(p, 'glide'); }
+  await p.waitForTimeout(7000);
+  await p.keyboard.up('Space');
+  meta.glideEnd = await p.evaluate(() => { const h = window.__game.hero; return [h.pos.x, h.pos.y, h.pos.z].map(Math.round).concat(h.state); });
+  // Goons spawned mid-play (the first time each enemy type appears).
+  await p.evaluate(() => { const g = window.__game; g.hero.teleport({ x: 0, y: 0.15, z: 178 }, 0.2); g.follow.snapBehind(0.2); });
+  await p.waitForTimeout(1500);
+  await label(p, 'spawn');
+  await p.evaluate(() => {
+    const g = window.__game;
+    const h = g.hero.pos;
+    const list = ['grunt', 'knife', 'brute', 'rifle'].map((t, i) => g.spawn(t, { x: h.x - 6 + i * 4, y: h.y, z: h.z + 7 }));
+    g.combat.setEnemies([...g.combat.enemies, ...list]);
+    for (const e of list) e.wake();
+  });
+  for (let i = 0; i < 12; i++) { await p.keyboard.press('KeyE'); await p.waitForTimeout(500); }
+  all.push(...await collect(p, 'main'));
+  meta.errorsMain = errors;
+  await p.close();
+}
+
+if (!only || only === 'fight') {
+  const { p, errors } = await openGame('fight=test&god=1');
+  await p.waitForTimeout(1500);
+  await skipComic(p);
+  // Part N: NW=1 spawns Nightwing as an ally into the fight scenario, so a sweep can include his
+  // AI and materials. Off by default so every other scenario/part is unaffected.
+  if (process.env.NW === '1') {
+    await p.evaluate(() => {
+      const g = window.__game;
+      g.nightwing?.spawn({ x: g.hero.pos.x - 2, y: g.hero.pos.y, z: g.hero.pos.z - 3 }, 'ally');
+    });
+  }
+  await label(p, 'warmup');
+  await p.waitForTimeout(5000);
+  await label(p, 'fight');
+  for (let i = 0; i < 20; i++) { await p.keyboard.press(i % 3 ? 'KeyE' : 'KeyW'); await p.waitForTimeout(400); }
+  // Chain takedowns: each chain once on fresh goons (first use of every chain clip, the tether
+  // line, the tie wraps and each finisher's slow motion). Each row clears the goons before it
+  // (the sandbox squad first), so every chain plays against a realistic 3-goon scene.
+  await p.evaluate(() => { window.__chainGoons = [...window.__game.combat.enemies]; });
+  for (const key of ['Digit1', 'Digit2', 'Digit3']) {
+    await p.evaluate(() => {
+      const g = window.__game, h = g.hero.pos;
+      // despawn(), not a bare remove(): it also drops the goon from the reveal queue (see clearGoons).
+      for (const e of window.__chainGoons) g.despawn(e);
+      const list = ['grunt', 'grunt', 'knife'].map((t, i) => g.spawn(t, { x: h.x - 2 + i * 2, y: h.y, z: h.z + 4 }));
+      window.__chainGoons = list;
+      g.combat.setEnemies(list);
+      for (const e of list) e.wake();
+      for (let i = 0; i < 12; i++) g.combat.combo.hit();
+    });
+    await p.waitForTimeout(200);
+    await label(p, 'chain');
+    await p.keyboard.press(key);
+    await p.waitForTimeout(3500);
+  }
+  if (shots) { await label(p, 'shot'); await p.screenshot({ path: `${shots}/fight.png` }); }
+  all.push(...await collect(p, 'fight'));
+  meta.errorsFight = errors;
+  await p.close();
+}
+
+if (!only || only === 'boss') {
+  const { p, errors } = await openGame('at=boss&god=1');
+  await p.waitForTimeout(1500);
+  await skipComic(p);
+  await label(p, 'warmup');
+  await p.waitForTimeout(5000);
+  await label(p, 'boss');
+  for (let i = 0; i < 20; i++) { await p.keyboard.press('KeyE'); await p.waitForTimeout(400); }
+  if (shots) { await label(p, 'shot'); await p.screenshot({ path: `${shots}/boss.png` }); }
+  all.push(...await collect(p, 'boss'));
+  meta.errorsBoss = errors;
+  await p.close();
+}
+if (!only || only === 'side') {
+  const { p, errors } = await openGame('at=toNeon&god=1&new=1');
+  await p.waitForTimeout(1500);
+  await skipComic(p);
+  await label(p, 'warmup');
+  await p.waitForTimeout(5000);
+  // A glide challenge with its hoops up.
+  await label(p, 'challenge');
+  await p.evaluate(() => window.__game.side.challenges.start('neonSlalom'));
+  await p.waitForTimeout(2600);
+  await p.keyboard.down('KeyW');
+  await p.waitForTimeout(350);
+  await p.keyboard.down('Space');
+  await p.waitForTimeout(6000);
+  if (shots) { await label(p, 'shot'); await p.screenshot({ path: `${shots}/side-challenge.png` }); await label(p, 'challenge'); }
+  await p.keyboard.up('Space');
+  await p.keyboard.up('KeyW');
+  await p.evaluate(() => window.__game.side.challenges.quit());
+  // A street crime: the squad arrives, the civilian cowers, the fight.
+  await label(p, 'arrive:crime');
+  await p.evaluate(() => window.__game.side.crimes.force({ kind: 'mugging', spotId: 'neonNorth' }));
+  await p.waitForTimeout(500);
+  await p.evaluate(() => { const g = window.__game; g.hero.teleport({ x: 150, y: 0, z: -8 }, Math.PI); g.follow.snapBehind(Math.PI); });
+  await p.waitForTimeout(1500);
+  await label(p, 'crime');
+  for (let i = 0; i < 12; i++) { await p.keyboard.press(i % 3 ? 'KeyE' : 'KeyW'); await p.waitForTimeout(400); }
+  // Photo mode: every filter and frame.
+  await label(p, 'photo');
+  await p.evaluate(() => window.__game.photo.open());
+  for (let i = 0; i < 4; i++) { await p.keyboard.press('Digit1'); await p.waitForTimeout(700); }
+  for (let i = 0; i < 3; i++) { await p.keyboard.press('Digit2'); await p.waitForTimeout(700); }
+  if (shots) { await label(p, 'shot'); await p.screenshot({ path: `${shots}/side-photo.png` }); await label(p, 'photo'); }
+  await p.evaluate(() => window.__game.photo.close());
+  all.push(...await collect(p, 'side'));
+  meta.errorsSide = errors;
+  await p.close();
+}
+if (!only || only === 'stealth') {
+  const { p, errors } = await openGame('at=aceCatwalks&god=1');
+  await p.waitForTimeout(1500);
+  await skipComic(p);
+  await label(p, 'warmup');
+  // Since main's merge, the first click while the pointer isn't locked only acquires the lock
+  // and swallows the action it buffered (game.js's canvas click handler, for Safari); spend that
+  // click here so the real one below (the silent takedown) fires on its own first try.
+  await p.mouse.click(640, 360);
+  await p.waitForTimeout(5000);
+  // Patrols, line-of-sight rays, awareness rings and the steam vent, from the catwalk overlook.
+  await p.evaluate(() => { const g = window.__game; g.hero.teleport({ x: 150, y: 0.15, z: -96 }, Math.PI * 1.25); g.follow.snapBehind(Math.PI * 1.25); });
+  await label(p, 'stealth');
+  await p.waitForTimeout(4000);
+  // Detective vision: cones, x-ray state colours, the armed counter.
+  await label(p, 'stealth-detective');
+  await p.keyboard.press('KeyV');
+  await p.waitForTimeout(3000);
+  await p.keyboard.press('KeyV');
+  // A silent takedown: both choke clips, the takedown camera, a balloon.
+  await p.evaluate(() => { const g = window.__game, e = g.stealth.goons[2].e; g.hero.teleport({ x: e.pos.x - Math.sin(e.yaw) * 1.1, y: e.pos.y, z: e.pos.z - Math.cos(e.yaw) * 1.1 }, e.yaw); });
+  await p.waitForTimeout(200);
+  await label(p, 'stealth-takedown');
+  await p.mouse.click(640, 360);
+  await p.waitForTimeout(3000);
+  // Spotted: the alarm, rifles aiming and firing, lasers, tracers and flashes.
+  await p.evaluate(() => { const g = window.__game, e = g.stealth.goons[3].e; g.hero.teleport({ x: e.pos.x + Math.sin(e.yaw) * 7, y: e.pos.y, z: e.pos.z + Math.cos(e.yaw) * 7 }, e.yaw + Math.PI); });
+  await label(p, 'stealth-alarm');
+  await p.waitForTimeout(6000);
+  if (shots) { await label(p, 'shot'); await p.screenshot({ path: `${shots}/stealth.png` }); }
+  all.push(...await collect(p, 'stealth'));
+  meta.errorsStealth = errors;
+  await p.close();
+}
+
+if (!only || only === 'gadgets') {
+  // new=1: the pages share one browser context, so without it this page would load the stealth
+  // page's save (Ace Catwalks), start that predator room and orphan the fight=test squad.
+  const { p, errors } = await openGame('new=1&fight=test&god=1&gadgets=all');
+  await p.waitForTimeout(1500);
+  await skipComic(p);
+  await label(p, 'warmup');
+  await p.waitForTimeout(5000);
+  // The fight=test sandbox's own squad counts as this "row 0"'s goons, so the first clearGoons()
+  // call clears it too: a real fight never has more than a handful of goons on screen at once,
+  // and nothing despawns a KO'd fight=test goon's mesh on its own, so leaving every row's goons
+  // in the scene piled draw calls and triangles up across the page (907K tris at g:wheel to
+  // 2.9M by g:swarm).
+  await p.evaluate(() => { window.__sweepGoons = [...window.__game.combat.enemies]; });
+  // Clears whatever's tracked in window.__sweepGoons through the game's own despawn() (game.js,
+  // exposed on window.__game next to spawn()), not a bare Enemy.remove(): despawn() also splices
+  // the goon out of the one-per-frame reveal queue (toReveal), which scene.remove() alone skips.
+  // Shared by fresh() and the pre-breakables clear so there's one cleanup path, not two copies.
+  const clearGoons = () => p.evaluate(() => {
+    const g = window.__game;
+    for (const e of window.__sweepGoons) g.despawn(e);
+    window.__sweepGoons = [];
+  });
+  // Fresh goons in front of Batman on the GCPD roof, every gadget ready. Clears the previous
+  // row's goons first so every row plays out against a realistic 3-to-6-goon scene, not an
+  // ever-growing crowd.
+  const fresh = async (id, types = ['grunt', 'grunt', 'knife']) => {
+    await clearGoons();
+    await p.evaluate(([id, types]) => {
+      const g = window.__game;
+      g.hero.teleport({ x: 6, y: 42, z: 10 }, Math.PI);
+      g.follow.snapBehind(Math.PI, 0.15);
+      const list = types.map((t, i) => g.spawn(t, { x: 4 + i * 2, y: 42, z: 5 }));
+      window.__sweepGoons = list;
+      g.combat.setEnemies(list);
+      for (const e of list) e.wake();
+      g.gadgets.equip(id);
+      g.gadgets.state.tick(30);
+    }, [id, types]);
+  };
+  const row = async (id, name, act, hold = 3000, types) => {
+    await fresh(id, types);
+    await p.waitForTimeout(300);
+    await label(p, name);
+    await act();
+    await p.waitForTimeout(hold);
+  };
+  // The wheel: open it, walk the pick through all eight slots, close.
+  await label(p, 'g:wheel');
+  await p.keyboard.down('Tab');
+  for (const k of ['Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit1']) { await p.keyboard.press(k); await p.waitForTimeout(250); }
+  await p.keyboard.up('Tab');
+  await p.waitForTimeout(1000);
+  await row('batarang', 'g:batarang', () => p.keyboard.press('KeyR'));
+  await row('remote', 'g:remote', () => p.keyboard.press('KeyR'), 3800);
+  await row('gel', 'g:gel', async () => {
+    for (let i = 0; i < 3; i++) { await p.keyboard.press('KeyR'); await p.waitForTimeout(250); }
+    await p.keyboard.down('KeyR'); await p.waitForTimeout(500); await p.keyboard.up('KeyR');
+  });
+  await row('smoke', 'g:smoke', () => p.keyboard.press('KeyR'), 6500);
+  await row('launcher', 'g:launcher', async () => {
+    await p.evaluate(() => { const g = window.__game; g.teleport({ x: 152, y: 0.15, z: 72 }); g.hero.bat.face(-Math.PI / 2); g.follow.snapBehind(-Math.PI / 2, 0.1); });
+    await p.waitForTimeout(600);
+    await p.keyboard.press('KeyR');
+  });
+  await row('claw', 'g:claw', () => p.keyboard.press('KeyR'));
+  await row('freeze', 'g:freeze', async () => { await p.keyboard.press('KeyR'); await p.waitForTimeout(700); await p.mouse.click(640, 360); });
+  await row('popper', 'g:popper', () => p.keyboard.press('KeyR'), 7000);
+  // The Bat Swarm's own maximum (SWARM.maxTargets = 6): 4 grunts, a knife and a brute, the same
+  // squad shape a real max-size swarm takedown would face.
+  // The XP award and the upgrade purchases (level-up cards, sounds, saves) happen before the row's
+  // label, so g:swarm times the swarm itself, not a burst of level-ups.
+  await p.evaluate(() => {
+    const g = window.__game;
+    g.wayne.award(20000, 'sweep');
+    for (const id of ['reflexes', 'flow', 'efficient', 'fastFinish', 'swarm']) g.wayne.buy(id);
+  });
+  await p.waitForTimeout(2500);
+  await row('batarang', 'g:swarm', async () => {
+    await p.evaluate(() => { for (let i = 0; i < 15; i++) window.__game.combat.combo.hit(); });
+    await p.waitForTimeout(200);
+    await p.keyboard.press('Digit4');
+  }, 3500, ['grunt', 'grunt', 'grunt', 'grunt', 'knife', 'brute']);
+  // Breakables: a cracked wall and a glass sign go (first debris, first collision removal). No
+  // goons needed here, so the swarm's squad is cleared rather than left piled up off camera.
+  await clearGoons();
+  await label(p, 'g:breakables');
+  await p.evaluate(() => {
+    const g = window.__game, w = g.breakables.items.find((i) => i.id === 'wallMonarchBooth');
+    g.teleport({ x: w.center.x - 5, y: 0.15, z: w.center.z }); g.hero.bat.face(Math.PI / 2); g.follow.snapBehind(Math.PI / 2, 0.15);
+  });
+  await p.waitForTimeout(1500);
+  await p.evaluate(() => { const g = window.__game; for (const id of ['wallMonarchBooth', 'glassNeonNorth']) g.breakables.smash(g.breakables.items.find((i) => i.id === id), g.hero.pos); });
+  await p.waitForTimeout(2500);
+  if (shots) { await label(p, 'shot'); await p.screenshot({ path: `${shots}/gadgets.png` }); }
+  all.push(...await collect(p, 'gadgets'));
+  meta.errorsGadgets = errors;
+  await p.close();
+}
+await b.close();
+
+// ---- summary ----
+const stat = (fr) => {
+  const d = fr.map((f) => f.dt).sort((a, b) => a - b);
+  const c = fr.map((f) => f.calls).sort((a, b) => a - b);
+  const t = fr.map((f) => f.tris).sort((a, b) => a - b);
+  return { n: d.length, medMs: +d[d.length >> 1].toFixed(2), p95Ms: +d[Math.floor(d.length * 0.95)].toFixed(2), maxMs: +d[d.length - 1].toFixed(1), fps: Math.round(1000 / d[d.length >> 1]), calls: c[c.length >> 1], tris: t[t.length >> 1] };
+};
+const labels = [...new Set(all.map((f) => f.l))].filter((l) => l !== 'boot' && l !== 'shot');
+const rows = {};
+for (const l of labels) rows[l] = stat(all.filter((f) => f.l === l));
+// Hitches: any frame over 25 ms once the warmup is over (screenshots excluded).
+const hitches = all.filter((f) => !['boot', 'warmup', 'shot'].includes(f.l) && f.dt > 25).map((f) => ({ page: f.page, l: f.l, ms: +f.dt.toFixed(1), at: +(f.t / 1000).toFixed(2) }));
+const result = { quality: q, extra, meta, rows, hitches, frames: process.env.FRAMES ? all : undefined };
+console.log(JSON.stringify({ quality: q, ...meta }));
+for (const [l, r] of Object.entries(rows)) console.log(`${l.padEnd(20)} med ${String(r.medMs).padStart(6)}  p95 ${String(r.p95Ms).padStart(6)}  max ${String(r.maxMs).padStart(6)}  fps ${String(r.fps).padStart(4)}  calls ${r.calls}  tris ${r.tris}`);
+console.log(`hitches >25ms after warmup: ${hitches.length}`, JSON.stringify(hitches.slice(0, 30)));
+if (process.env.OUT) writeFileSync(process.env.OUT, JSON.stringify(result, null, 1));

@@ -1,0 +1,1133 @@
+// Freeflow combat: turns hero input into moves against enemies and resolves enemy attacks on the hero.
+import * as THREE from 'three';
+import { resolveHit, DIFFICULTY, inShockwave, shouldDiveBomb } from './rules.js';
+import { selectTarget, selectAttackTarget } from './targeting.js';
+import { createCombo } from './combo.js';
+import { createDirector } from './director.js';
+import { createInputBuffer } from './inputBuffer.js';
+import { MOCAP_SPEED, MOCAP_START, MOCAP_BEATS } from '../config/mocap.js';
+import { rootMotionAt } from './reach.js';
+import { CHAIN_RULES, chainForAction, chainAvailability, selectChainTargets, chainCost, tiedGroup, chainOutcome } from './chains.js';
+import { SWARM, swarmTargets, swarmAvailability, swarmTimeline, createSwarmControl } from './batSwarm.js';
+import { buildChainTimeline } from './chainTimeline.js';
+import { createStrikeChooser } from './strikeChoice.js';
+import { classifyDir, selectMove } from './moveSelect.js';
+import { createChainControl, CHAIN_SHOTS } from './chainControl.js';
+import { BASE_EFFECTS, hurtDamage } from '../progress/upgrades.js';
+
+const PUNCHES = ['Punch_Jab', 'Punch_Cross', 'Punch_Jab'];
+// Which punch or kick plays next (variety, finishers): src/combat/strikeChoice.js. The
+// code-authored strikes themselves live in src/actors/strikes.js.
+// Playback speed for the code-authored strikes (authored at real time; freeflow wants them snappy).
+// Where each strike lands, for the goon's reaction (src/actors/reactions.js).
+const REACT = {
+  Punch_Jab: 'head', Punch_Cross: 'head', Elbow_Strike: 'head', Punch_Uppercut: 'head',
+  Punch_Hook_L: 'spin', Melee_Hook: 'spin', Kick_Round: 'spin', Kick_Side: 'gut', Kick_Low: 'sweep',
+  Kick_Front: 'gut', Knee_Strike: 'gut',
+  Punch_BodyJab: 'gut', Punch_BodyHook: 'gut', Punch_ShortHook: 'spin', Punch_LeadUppercut: 'head', Elbow_Head: 'head',
+  Kick_Push: 'gut', Knee_Muay: 'gut',
+};
+const STRIKE_SPEED = { Punch_Uppercut: 1.45, Punch_Hook_L: 1.4, Elbow_Strike: 1.45, Punch_Backfist: 1.35, Punch_Hammer: 1.3, Kick_Side: 1.35, Kick_Axe: 1.3, Kick_Low: 1.4 };
+// Regular kicks alternate the front push kick and the roundhouse (the front kick alone at
+// point-blank range, where the roundhouse's step would only slide); the chain finisher is
+// the lunge spin kick. All are mocap clips from public/assets/anims_mocap.glb.
+
+const KICK_SPEED = MOCAP_SPEED;
+// A mocap clip's own playback speed wins over the code-posed clip's of the same name.
+const strikeSpeed = (clip, fallback) => MOCAP_SPEED[clip] ?? STRIKE_SPEED[clip] ?? fallback;
+// Hit-stop per kind of blow (seconds of frozen time for both fighters).
+const STOP = { punch: 0.05, kick: 0.065, heavy: 0.11, finisher: 0.13, counter: 0.1 };
+const WORDS = {
+  counter: ['KRAK!', 'WHAM!'], kick: ['THWACK!', 'WHUMP!'], ko: ['POW!', 'BLAM!', 'KAPOW!'], special: ['THWAMP!'],
+  dive: ['KRUNCH!'], uppercut: ['UPPERCUT!', 'KA-POW!'], heavy: ['KA-BOOM!', 'WHAMMO!'], spin: ['SWOOSH-THWACK!', 'KRAKOOM!'], slam: ['BADOOM!'], throw: ['WHEEE-CRASH!', 'YOINK!'],
+};
+// Strikes in a row on the same chain before the finisher lands.
+const CHAIN = 4;
+// Clip beats the chain timelines don't carry themselves: the mocap kicks (Kick_Front, Kick_Flying).
+const BEATS = MOCAP_BEATS;
+
+export function createCombat({ hero, follow, time, events, rng, getDifficulty, reach = {}, effects = BASE_EFFECTS, getChainDiscount = () => effects.chainDiscount, useGadget = null, stealthStart = null, stealthHold = null }) {
+  // Combos are easy to keep (owner, 2026-10-08): 3 s between hits, and one hit taken is free
+  // (WayneTech Steady Flow adds another).
+  const combo = createCombo({ timeout: 3.0, ready: effects.specialAt, shield: effects.comboShield + 1 });
+  let difficulty = getDifficulty();
+  const director = createDirector({ ...DIFFICULTY[difficulty], rng });
+  let enemies = [];
+  const inputBuffer = createInputBuffer(0.45);
+  let punchChain = 0, kickChain = 0, chainT = 0;
+  // The goon being fought: attacks stay on him unless the stick points at another goon.
+  let focus = null;
+  // Which regular kick and which beatdown strike comes next (variety only; not chain state).
+  let beatIdx = 0, counterIdx = 0;
+  const COUNTERS = ['Melee_Hook', 'Elbow_Strike', 'Kick_Front', 'Punch_Uppercut'];
+  const choose = createStrikeChooser({ has: (c) => !!reach[c], random: () => rng.next() });
+  const tmp = new THREE.Vector3(), dir = new THREE.Vector3(), chest = new THREE.Vector3();
+  const push = new THREE.Vector3();
+  // What the chain icons show; refreshed every 0.1 s of game time or when the combo changes.
+  let chainAvail = chainAvailability({ combo: 0, origin: hero.pos, enemies: [] });
+  // The Bat Swarm icon (chain 4, WayneTech): refreshed with chainAvail.
+  let swarmAvail = { show: false, affordable: false, cost: SWARM.cost };
+  let availT = 0, availCombo = -1;
+  // The chain in progress: its control, its targets, and whether it finished on its own.
+  let chainRun = null;
+  const pick = (a) => a[Math.floor(rng.next() * a.length)];
+
+  const word = (kind) => pick(WORDS[kind] ?? WORDS.ko);
+  const alive = () => enemies.filter((e) => e.alive);
+  const engaged = () => enemies.filter((e) => e.alive && e.aware);
+
+  // Stick direction relative to the camera; without input, melee uses the hero's facing and
+  // ranged throws use where the camera looks.
+  function inputDir(ctx, ranged = false) {
+    const f = follow.forward(tmp), r = follow.right(new THREE.Vector3());
+    const m = ctx.input.move;
+    dir.set(f.x * m.y + r.x * m.x, 0, f.z * m.y + r.z * m.x);
+    if (dir.lengthSq() < 0.04) {
+      if (ranged) dir.set(f.x, 0, f.z);
+      else dir.set(Math.sin(hero.bat.yaw), 0, Math.cos(hero.bat.yaw)).multiplyScalar(0.5);
+    }
+    return dir;
+  }
+
+  // Line of sight from Batman's chest to the target's: no hitting through walls and containers.
+  const eye = new THREE.Vector3(), aim = new THREE.Vector3();
+  function canSee(e) {
+    eye.set(hero.pos.x, hero.pos.y + 1.2, hero.pos.z);
+    aim.set(e.pos.x - eye.x, e.pos.y + 1.1 - eye.y, e.pos.z - eye.z);
+    const d = aim.length();
+    if (d < 0.8) return true;
+    const hit = hero.collision.raycast(eye, aim.divideScalar(d), d);
+    return !hit || hit.t > d - 0.45;
+  }
+  // Lunges slide along walls instead of passing through them.
+  function moveHero(to, prevY) {
+    hero.pos.copy(to);
+    hero.collision.resolveCylinder(hero.pos, 0.35, 1.8, { prevY });
+  }
+
+  function faceTo(target) {
+    hero.bat.face(Math.atan2(target.pos.x - hero.pos.x, target.pos.z - hero.pos.z));
+  }
+
+  // A critical hit: slow motion, a big word, and an action camera shot from the side. `shot`
+  // frames the camera (see follow.actionShot); `variant` picks the speed lines.
+  function critical(target, { slow = 0.55, scale = 0.28, shot, variant, impact } = {}) {
+    time.slowMo(slow, scale);
+    target.ch.headWorld(chest, -0.4);
+    follow.actionShot?.(chest.clone(), hero.pos.clone(), slow + 0.35, shot);
+    events.emit('critical', { target, variant, impact });
+  }
+
+  // assist: an ally's blow (Nightwing). It adds to a combo she has going but never starts one,
+  // and the hit-stop, shake and last-goon action shot are hers: his get them only close to her.
+  const ASSIST_FEEL = 9;
+  function landHit(move, target, { word: w, power = 1, stopTime = 0.06, launch = 0, crit = false, react = null, assist = false } = {}) {
+    if (target.state === 'tied') return breakTied(target);
+    if (target.state === 'frozen') return shatter(target);
+    const result = resolveHit(move, target);
+    const wasAttacking = target.applyHit(result, hero.pos, { power, launch, react });
+    if (wasAttacking) director.release(target.id);
+    target.ch.headWorld(chest, -0.3);
+    events.emit('impact', { pos: chest.clone(), move, outcome: result.outcome, target, crit });
+    if (result.outcome === 'parried' || result.outcome === 'immune') {
+      time.hitStop(0.04);
+      follow.addShake(0.05);
+      events.emit('blocked', { move, target, outcome: result.outcome });
+      return result;
+    }
+    if (!assist || combo.value > 0) combo.hit();
+    const felt = !assist || target.pos.distanceTo(hero.pos) < ASSIST_FEEL;
+    const big = result.outcome === 'ko' || result.outcome === 'knockdown';
+    // Freeze both fighters on the contact frame, longer for a knockdown or a critical.
+    if (felt) {
+      time.hitStop(Math.max(stopTime, big ? 0.12 : 0, crit ? 0.14 : 0));
+      follow.addShake(result.outcome === 'hit' ? 0.07 : 0.16);
+      follow.hitKick?.(big || crit ? 5 : 2.5);
+    }
+    if (w || result.outcome === 'ko') events.emit('word', { text: w ?? word('ko'), pos: chest.clone(), big: crit });
+    const lastOne = felt && result.outcome === 'ko' && engaged().length === 0;
+    if (result.outcome === 'ko') events.emit('ko', { target });
+    if (lastOne) { events.emit('lastHit', { target }); critical(target, { slow: 0.9, scale: 0.22 }); }
+    else if (crit && result.outcome !== 'hit') critical(target);
+    else if (crit) critical(target, { slow: 0.35, scale: 0.4 });
+    return result;
+  }
+
+  // One goon's part in a chain (or a tied bundle) ends: knocked out, or only knocked down for a
+  // brute. Same bookkeeping as landHit: director slot, combo, impact and ko events.
+  function finishTarget(e, { power = 1, launch = 0 } = {}) {
+    if (!e.alive) return null;
+    const outcome = chainOutcome(e);
+    if (outcome === 'ko') e.health = 0;
+    e.tiedWith = null;
+    e.applyHit({ outcome, damage: 0, stun: 0 }, hero.pos, { power, launch });
+    director.release(e.id);
+    combo.hit();
+    e.ch.headWorld(chest, -0.3);
+    events.emit('impact', { pos: chest.clone(), move: 'chain', outcome, target: e, crit: false });
+    if (outcome === 'ko') events.emit('ko', { target: e });
+    return outcome;
+  }
+
+  // Any hit on a tied goon knocks the whole bundle out (brutes only go down).
+  function breakTied(target) {
+    const group = tiedGroup(target);
+    let kos = 0;
+    for (const e of group) if (finishTarget(e, { power: 1.4, launch: 2.5 }) === 'ko') kos += 1;
+    time.hitStop(0.12);
+    follow.addShake(0.18);
+    target.ch.headWorld(chest, 0.2);
+    events.emit('word', { text: 'KAPOW!', pos: chest.clone(), big: true });
+    events.emit('tiedBreak', { count: group.length });
+    critical(target, { slow: 0.6, scale: 0.3, variant: 'rope', shot: CHAIN_SHOTS.kapow, impact: 2 });
+    if (kos && engaged().length === 0) events.emit('lastHit', { target });
+    return { outcome: kos ? 'ko' : 'knockdown', damage: 0, stun: 0 };
+  }
+
+  // Freeze blast: any hit on the ice knocks the goon out (enemy.applyHit does the same for hits
+  // that don't come through landHit, like the dive-bomb shockwave).
+  function shatter(target) {
+    target.applyHit({ outcome: 'ko', damage: 0, stun: 0 }, hero.pos, { power: 1.2, launch: 2 });
+    director.release(target.id);
+    combo.hit();
+    time.hitStop(0.12);
+    follow.addShake(0.16);
+    target.ch.headWorld(chest, -0.3);
+    events.emit('impact', { pos: chest.clone(), move: 'shatter', outcome: 'ko', target, crit: true });
+    events.emit('iceShatter', { target, pos: chest.clone() });
+    events.emit('word', { text: 'KRSSSH!', pos: chest.clone(), big: true });
+    events.emit('ko', { target });
+    if (engaged().length === 0) { events.emit('lastHit', { target }); critical(target, { slow: 0.9, scale: 0.22 }); }
+    return { outcome: 'ko', damage: 0, stun: 0 };
+  }
+
+  // Knocks down every goon in reach of `center` with `move` (explosive gel). Brutes shrug it off
+  // unless stunned (resolveHit), the Joker is never touched, ice shatters, and a goon held in a
+  // chain takedown stays in the chain's hands. Returns how many went down.
+  function areaBlast(center, radius, move, { power = 1.6, launch = 6, dy = 2.5 } = {}) {
+    let n = 0;
+    for (const e of enemies) {
+      if (!e.alive || e.def.boss || e.state === 'chained') continue;
+      if (Math.hypot(e.pos.x - center.x, e.pos.z - center.z) > radius || Math.abs(e.pos.y - center.y) > dy) continue;
+      if (e.state === 'frozen') { shatter(e); n += 1; continue; }
+      if (e.down) continue;
+      const r = landHit(move, e, { power, launch });
+      if (r.outcome !== 'immune' && r.outcome !== 'parried') n += 1;
+    }
+    return n;
+  }
+
+  // ---- moves (hero.control objects) ----
+
+  // How to land `clip` on `target`: the reach table says where the striking limb is on the
+  // clip's contact frame (relative to the root, in the root's facing) and how much root
+  // motion the clip carries by then. From that: the yaw that lines the limb up with the
+  // target, the lunge that puts the limb 0.15 m (scaled) inside the target's body without
+  // the bodies overlapping, and how much of the clip's own root motion fits before it would
+  // carry the body through the target. `place(t)` moves the hero along that plan.
+  // travel: a long lunge (over 3 m: auto-attach reaches 14) takes the time it needs instead of
+  // being squeezed before the clip's contact frame. `delay` is how long the hero sprints before
+  // the strike clip should start; the returned impactAt already includes it. Counters pass
+  // travel: false and keep their snap.
+  function approach(target, clip, speed, start = 0, { fallbackReach = 0.9, fallbackContact = 0.15, maxLunge = 14, travel = true, lungeSpeed = 20 } = {}) {
+    const entry = reach[clip];
+    const from = hero.pos.clone();
+    const dx = target.pos.x - from.x, dz = target.pos.z - from.z;
+    const d = Math.hypot(dx, dz);
+    const baseYaw = Math.atan2(dx, dz);
+    const inside = 0.15 * target.scale;
+    const radius = target.radius ?? 0.42 * target.scale;
+    let limbX = 0, limbZ = fallbackReach, contactClip = start + fallbackContact * speed;
+    const rmStart = [0, 0], rmContact = [0, 0], rmNow = [0, 0];
+    let rmx = 0, rmz = 0;
+    if (entry) {
+      contactClip = entry.contact;
+      limbX = entry.reach.x;
+      limbZ = entry.reach.z;
+      rootMotionAt(entry, start, rmStart);
+      rootMotionAt(entry, entry.contact, rmContact);
+      rmx = rmContact[0] - rmStart[0];
+      rmz = rmContact[1] - rmStart[1];
+    }
+    const clipImpact = Math.max(0.03, (contactClip - start) / speed);
+    // Scale the clip's step down when the target is closer than the step plus the limb.
+    let k = 1;
+    let lungeDist = d - inside - limbZ - rmz;
+    if (lungeDist < 0 && rmz > 0.05) { k = THREE.MathUtils.clamp((d - inside - limbZ) / rmz, 0, 1); lungeDist = d - inside - limbZ - k * rmz; }
+    // Bodies never overlap: the root stays a step outside the target's radius, so a short
+    // reach (a knee, a jab) stops short instead of standing inside the goon.
+    const standOff = d - (radius + 0.25);
+    lungeDist = THREE.MathUtils.clamp(Math.min(lungeDist, standOff), -0.35, maxLunge);
+    if (rmz > 0.05 && lungeDist + k * rmz > standOff) k = THREE.MathUtils.clamp((standOff - lungeDist) / rmz, 0, 1);
+    const yaw = baseYaw - Math.atan2(limbX + k * rmx, limbZ + k * rmz);
+    const quick = Math.min(THREE.MathUtils.clamp(Math.abs(lungeDist) / 20, 0.05, 0.24), Math.max(0.03, clipImpact - 0.03));
+    // About 20 m/s on a smooth start and stop (the quick lunge's ease-out peaks at twice its
+    // average: 12 m in a quarter second read as a teleport).
+    const long = travel && Math.abs(lungeDist) > 3;
+    const lungeT = long ? Math.max(quick, Math.abs(lungeDist) / lungeSpeed) : quick;
+    const delay = long ? Math.max(0, lungeT + 0.03 - clipImpact) : 0;
+    const impactAt = clipImpact + delay;
+    const sx = Math.sin(baseYaw), sz = Math.cos(baseYaw), fx = Math.sin(yaw), fz = Math.cos(yaw);
+    // The target keeps staggering while the blow is on its way: follow that drift so the
+    // limb still lands where the target is on the contact frame. The drift is frozen on
+    // contact, so the hero never rides the target's own knockback afterwards.
+    const tx0 = target.pos.x, tz0 = target.pos.z;
+    let driftX = 0, driftZ = 0, frozen = false;
+    // The plan is applied as per-frame deltas on top of the resolved position, so a wall
+    // push-out is kept rather than recomputed through the wall, and a step that would leave
+    // the roof is refused (same guard as the dodge roll).
+    const planned = from.clone(), prev = new THREE.Vector3();
+    return {
+      yaw, impactAt, lungeDist, k, from, delay,
+      place(t) {
+        const e = Math.min(1, t / lungeT);
+        const l = lungeDist * (long ? e * e * (3 - 2 * e) : 1 - (1 - e) * (1 - e));
+        if (!frozen) {
+          const track = Math.min(1, t / impactAt);
+          driftX = (target.pos.x - tx0) * track;
+          driftZ = (target.pos.z - tz0) * track;
+          if (t >= impactAt) frozen = true;
+        }
+        let mx = driftX, mz = driftZ;
+        if (entry && k > 0) {
+          rootMotionAt(entry, start + Math.max(0, t - delay) * speed, rmNow);
+          const rx = (rmNow[0] - rmStart[0]) * k, rz = (rmNow[1] - rmStart[1]) * k;
+          // Clip-space x is the character's left.
+          mx += fz * rx + fx * rz;
+          mz += -fx * rx + fz * rz;
+        }
+        const px = from.x + sx * l + mx, pz = from.z + sz * l + mz;
+        prev.copy(hero.pos);
+        hero.pos.x += px - planned.x;
+        hero.pos.z += pz - planned.z;
+        hero.pos.y = from.y;
+        planned.set(px, from.y, pz);
+        const r = hero.collision.resolveCylinder(hero.pos, 0.35, 1.8, { prevY: from.y });
+        if (r && r.groundY < from.y - 0.5) hero.pos.copy(prev);
+      },
+    };
+  }
+  const clipLength = (clip) => reach[clip]?.duration ?? 1;
+
+  // The first time each movement move lands, its name is the comic word ("FLYING KNEE!").
+  const movesSeen = new Set();
+  function landMove(mv, target) {
+    const first = !movesSeen.has(mv.id);
+    movesSeen.add(mv.id);
+    landHit(mv.kind, target, { word: first ? mv.name.toUpperCase() + '!' : mv.word, power: mv.power, launch: mv.launch, crit: mv.crit, stopTime: STOP[mv.stop] ?? STOP.kick, react: mv.react });
+    events.emit('moveLanded', { id: mv.id, name: mv.name });
+  }
+  // The held direction (relative to the target), sprint and airborne state pick a movement move.
+  function pickMove(action, target, ctx, air) {
+    const m = ctx.input.move;
+    const held = Math.hypot(m.x, m.y) > 0.2;
+    const to = { x: target.pos.x - hero.pos.x, z: target.pos.z - hero.pos.z };
+    return selectMove({
+      action, air,
+      dir: held ? classifyDir(inputDir(ctx), to) : 'none',
+      airFromSprint: !!hero.airFromSprint,
+      sprint: !air && (!!ctx.input.down?.('sprint') || hero.speed > 8),
+      targetDown: !air && target.down && target.alive && !target.air,
+      has: (c) => !!hero.bat.animator.has?.(c),
+    });
+  }
+  // mv: a movement move from src/combat/moveSelect.js (sprint, away, side, stomp), or null for
+  // the punch / kick rotation.
+  function strike(kind, target, mv = null) {
+    const isKick = kind === 'kick';
+    const ground = target.down && target.alive && !target.air;
+    const beatdown = target.type === 'brute' && target.stunned;
+    const juggle = !!target.air;
+    // Chains: the fourth punch is a heavy haymaker, the third kick the lunge spin kick.
+    chainT = 2.0;
+    focus = target;
+    let finisher = null;
+    if (!ground && !beatdown && !juggle) {
+      if (isKick) { kickChain += 1; punchChain = 0; if (kickChain >= 3) { finisher = 'spinKick'; kickChain = 0; } }
+      else { punchChain += 1; kickChain = 0; if (punchChain >= CHAIN) { finisher = 'heavy'; punchChain = 0; } }
+    }
+    // A movement move counts toward the chain but replaces the finisher it would have been.
+    if (mv) finisher = null;
+    const move = mv ? mv.kind : ground ? 'punch' : beatdown ? 'beatdown' : finisher ?? kind;
+    const range = Math.hypot(target.pos.x - hero.pos.x, target.pos.z - hero.pos.z);
+    let clip, speed;
+    // A goon on the floor: the two-fisted hammer straight down onto him (it used to borrow a
+    // sword swing, with no sword).
+    if (mv) { clip = mv.clip; speed = strikeSpeed(clip, 1.3); }
+    else if (ground) { clip = reach.Punch_Hammer ? 'Punch_Hammer' : 'Sword_Attack'; speed = clip === 'Punch_Hammer' ? 1.5 : 1.8; }
+    else if (move === 'heavy') { clip = choose.punchFinisher(); speed = strikeSpeed(clip, 1.35); }
+    else if (move === 'spinKick') { clip = choose.kickFinisher(); speed = strikeSpeed(clip, 1.3); }
+    else if (isKick) { clip = choose.kick(range); speed = strikeSpeed(clip, 1.3); }
+    else if (beatdown) { clip = beatIdx++ % 2 ? 'Knee_Strike' : PUNCHES[(beatIdx >> 1) % PUNCHES.length]; speed = clip === 'Knee_Strike' ? KICK_SPEED.Knee_Strike : 2.6; }
+    else { clip = choose.punch(punchChain, range); speed = strikeSpeed(clip, 1.8); }
+    const start = MOCAP_START[clip] ?? 0;
+    const spin = !mv && move === 'spinKick';
+    const ap = approach(target, clip, speed, start, { fallbackReach: 1.0 * target.scale, fallbackContact: 0.11 });
+    const impactAt = ap.impactAt;
+    const clipEnd = (clipLength(clip) - start) / speed + ap.delay;
+    const end = mv ? Math.min(clipEnd, impactAt + (mv.stop === 'finisher' ? 0.45 : mv.stop === 'heavy' ? 0.32 : 0.28))
+      : beatdown ? impactAt + 0.12
+      : Math.min(clipEnd, impactAt + (spin ? 0.45 : move === 'heavy' ? 0.32 : isKick ? 0.35 : 0.22));
+    let t = 0, hit = false, refaced = false;
+    // Big moves can't be interrupted (Arkham style): a goon's blow landing mid spin or mid flip
+    // would have to blend her from upside down to a flinch, which has no clean path.
+    if (mv || spin || move === 'heavy') hero.invulnerable = Math.max(hero.invulnerable, end + 0.05);
+    hero.bat.face(ap.yaw);
+    // A long lunge sprints first; the strike starts so its contact lands on arrival.
+    let swung = false;
+    const swing = () => { swung = true; hero.bat.animator.play(clip, { once: true, timeScale: speed, fade: start ? 0.1 : 0.08, startAt: start }); };
+    if (ap.delay > 0.02) hero.bat.animator.play('Sprint_Loop', { fade: 0.08, timeScale: 1.3 });
+    else swing();
+    events.emit('swing', { kind, finisher: mv ? mv.crit : move === 'heavy' || spin });
+    return {
+      name: 'strike', combat: true,
+      canChain: () => hit && t > impactAt + 0.04,
+      // A buffered block may cut in before contact to counter an incoming attack.
+      interruptible: () => !hit && t < impactAt - 0.02,
+      update(dt) {
+        t += dt;
+        if (!swung && t >= ap.delay) swing();
+        ap.place(t);
+        // Once the hit-stop has passed, square up to where the target actually is (a step
+        // with lateral root motion leaves the body off the line), so the next target pick
+        // starts fair. Not on the contact frame itself: that would swing the limb off target.
+        if (hit && !refaced && t > impactAt + 0.06) { refaced = true; if (target.alive) faceTo(target); }
+        if (!hit && t >= impactAt) {
+          hit = true;
+          if (!target.alive) return false;
+          if (mv) { landMove(mv, target); return t >= end; }
+          // Each finisher lands its own way: the hammer and the axe kick drive the goon straight
+          // down, the backfist and the spin kick send him flying, the haymaker lifts him.
+          if (move === 'heavy') {
+            const f = clip === 'Punch_Hammer' ? { word: 'BADOOM!', launch: 0.4 } : clip === 'Punch_Backfist' ? { word: word('spin'), launch: 4.5 } : { word: word('heavy'), launch: 3 };
+            landHit('heavy', target, { ...f, power: 1.8, crit: true, stopTime: STOP.heavy });
+          }
+          // The flip kick comes down from the top of a front flip: the biggest launch of all.
+          else if (spin) landHit('spinKick', target, clip === 'Kick_Axe'
+            ? { word: 'KRUNCH!', power: 2.2, launch: 0.5, crit: true, stopTime: STOP.finisher }
+            : clip === 'Kick_Flip' ? { word: 'WHAM!', power: 2.4, launch: 8, crit: true, stopTime: STOP.finisher }
+            : { word: word('spin'), power: 2.2, launch: 6.5, crit: true, stopTime: STOP.finisher });
+          else if (juggle) landHit(isKick ? 'kick' : 'punch', target, { word: rng.chance(0.4) ? 'JUGGLE!' : null, power: 1.2, stopTime: isKick ? STOP.kick : STOP.punch });
+          // The uppercut pops the goon up off his feet, ready for a juggle; an elbow hits a bit harder.
+          else if (clip === 'Punch_Uppercut') landHit(move, target, { word: rng.chance(0.6) ? word('uppercut') : null, power: 1.3, launch: 3.4, stopTime: STOP.kick, react: 'head' });
+          else landHit(move, target, { word: isKick && rng.chance(0.4) ? word('kick') : clip === 'Elbow_Strike' && rng.chance(0.5) ? 'KRAK!' : null, power: clip === 'Kick_Push' ? 2.4 : isKick ? 1.6 : clip === 'Elbow_Strike' || clip === 'Elbow_Head' ? 1.2 : 1, launch: isKick ? (clip === 'Kick_Low' ? 1 : clip === 'Kick_Side' ? 3 : 2) : 0, stopTime: isKick ? STOP.kick : STOP.punch, react: REACT[clip] ?? null });
+        }
+        return t >= end;
+      },
+    };
+  }
+
+  function whiff() {
+    let t = 0;
+    hero.bat.animator.play('Punch_Jab', { once: true, timeScale: 1.8, fade: 0.1 });
+    // A swing at nothing no longer costs the combo (owner: combos way easier to keep).
+    punchChain = kickChain = 0;
+    events.emit('whiff');
+    return { name: 'whiff', combat: true, canChain: () => t > 0.2, update(dt) { t += dt; return t > 0.3; } };
+  }
+
+  function counter(targets) {
+    let i = 0, t = 0, hit = false;
+    const bigCounter = combo.value >= 5 || targets.length > 1;
+    let ap = null, hitAt = 0.12, stepEnd = 0.3, swung = true, swingClip = null;
+    const setup = () => {
+      const target = targets[i];
+      // Rotate through a hook, an elbow, an uppercut and a front kick (a fresh one each counter),
+      // each lunging so it connects on its contact frame.
+      const usable = COUNTERS.filter((c) => c === 'Kick_Front' || c === 'Melee_Hook' || reach[c]);
+      const clip = usable[counterIdx++ % usable.length];
+      // Counters are quicker than the same blow in freeflow, and start past the wind-up (mocap).
+      const speed = clip === 'Kick_Front' ? 2.2 : strikeSpeed(clip, 1.6) * 1.35;
+      const start = reach[clip]?.root ? (clip === 'Kick_Front' ? 0.3 : MOCAP_START[clip] ?? 0) : 0;
+      // A far counter (up to 7.5 m) closes at 30 m/s instead of in one blink, then strikes.
+      ap = approach(target, clip, speed, start, { fallbackReach: 1.1 * target.scale, fallbackContact: 0.12, lungeSpeed: 30 });
+      hitAt = ap.impactAt;
+      stepEnd = Math.max(0.3, hitAt + 0.14);
+      hero.invulnerable = Math.max(hero.invulnerable, hitAt + 0.15);
+      hero.bat.face(ap.yaw);
+      swingClip = () => hero.bat.animator.play(clip, { once: true, timeScale: speed, fade: 0.06, startAt: start });
+      if (ap.delay > 0.02) { swung = false; hero.bat.animator.play('Sprint_Loop', { fade: 0.06, timeScale: 1.4 }); }
+      else { swung = true; swingClip(); }
+      t = 0; hit = false;
+    };
+    // Countered attackers freeze mid-windup until the counter lands, and Batman can't be hit
+    // while he works through them.
+    for (const target of targets) { target.glyph = null; target.countered = true; target.counterT = 0; director.release(target.id); }
+    hero.invulnerable = Math.max(hero.invulnerable, 0.32 * targets.length + 0.15);
+    time.slowMo(0.18, 0.35);
+    events.emit('counter', { count: targets.length });
+    setup();
+    return {
+      name: 'counter', combat: true,
+      canChain: () => i === targets.length - 1 && hit && t > 0.2,
+      update(dt) {
+        t += dt;
+        if (!swung && t >= ap.delay) { swung = true; swingClip(); }
+        ap.place(t);
+        if (!hit && t >= hitAt) {
+          hit = true;
+          const target = targets[i];
+          const last = i === targets.length - 1;
+          if (target.alive) landHit('counter', target, { word: word('counter'), power: 1.3, stopTime: STOP.counter, launch: 2.5, crit: bigCounter && last });
+        }
+        if (t >= stepEnd) {
+          i += 1;
+          if (i >= targets.length) return true;
+          setup();
+        }
+        return false;
+      },
+    };
+  }
+
+  function capeStun() {
+    let t = 0, done = false;
+    hero.bat.animator.play('Sword_Regular_B', { once: true, timeScale: 1.7, fade: 0.05 });
+    events.emit('cape');
+    return {
+      name: 'cape', combat: true,
+      canChain: () => t > 0.3,
+      update(dt) {
+        t += dt;
+        if (!done && t > 0.12) {
+          done = true;
+          const fx = Math.sin(hero.bat.yaw), fz = Math.cos(hero.bat.yaw);
+          let n = 0;
+          for (const e of alive()) {
+            const dx = e.pos.x - hero.pos.x, dz = e.pos.z - hero.pos.z;
+            const d = Math.hypot(dx, dz);
+            if (d > 3.8 || (dx * fx + dz * fz) / (d || 1) < 0.2) continue;
+            landHit('cape', e);
+            if (e.state === 'windup' || e.state === 'attack') director.release(e.id);
+            n++;
+          }
+          if (!n) events.emit('whiff');
+        }
+        return t > 0.42;
+      },
+    };
+  }
+
+  function batarang(targets, fx) {
+    let t = 0, thrown = 0;
+    faceTo(targets[0]);
+    hero.bat.animator.play('OverhandThrow', { once: true, timeScale: 1.9, fade: 0.05 });
+    const end = 0.35 + (targets.length - 1) * 0.05;
+    return {
+      name: 'batarang', combat: true,
+      canChain: () => t > 0.25 + (targets.length - 1) * 0.05,
+      update(dt) {
+        t += dt;
+        while (thrown < targets.length && t > 0.14 + thrown * 0.05) {
+          const target = targets[thrown++];
+          hero.bat.bone('hand_r').getWorldPosition(chest);
+          if (thrown === 1) events.emit('batarangThrow', { count: targets.length });
+          fx.batarang(chest.clone(), (out) => target.ch.headWorld(out, -0.25), () => {
+            if (!target.alive) return;
+            const r = landHit('batarang', target);
+            if (target.state === 'windup' || target.state === 'attack') director.release(target.id);
+            events.emit('batarangHit', { target, result: r });
+          });
+        }
+        return t > end;
+      },
+    };
+  }
+
+  function dodge(ctx) {
+    const d = inputDir(ctx).clone().normalize();
+    const from = hero.pos.clone();
+    const to = from.clone().addScaledVector(d, 4.5);
+    let t = 0;
+    const over = alive().some((e) => {
+      const ex = e.pos.x - from.x, ez = e.pos.z - from.z;
+      const along = ex * d.x + ez * d.z;
+      return along > 0 && along < 3 && Math.abs(ex * d.z - ez * d.x) < 0.9;
+    });
+    hero.bat.face(Math.atan2(d.x, d.z));
+    hero.bat.animator.play(over ? 'NinjaJump_Start' : 'Roll', { once: true, timeScale: over ? 1.4 : 1.5, fade: 0.05 });
+    hero.invulnerable = 0.45;
+    events.emit('dodge');
+    return {
+      name: 'dodge', combat: true,
+      canChain: () => t > 0.35,
+      update(dt) {
+        t += dt;
+        const k = Math.min(1, t / 0.42);
+        const px = from.x + (to.x - from.x) * (1 - (1 - k) * (1 - k));
+        const pz = from.z + (to.z - from.z) * (1 - (1 - k) * (1 - k));
+        const before = hero.pos.clone();
+        hero.pos.set(px, from.y + (over ? Math.sin(k * Math.PI) * 1.6 : 0), pz);
+        const r = hero.collision.resolveCylinder(hero.pos, 0.35, 1.8);
+        if (!over && r.groundY < from.y - 0.5) { hero.pos.copy(before); return true; }
+        if (k >= 1) { hero.pos.y = Math.max(r.groundY, from.y); return true; }
+        return false;
+      },
+    };
+  }
+
+  function special(target) {
+    let t = 0, hit = false;
+    if (!target.finishable) combo.spend();
+    hero.invulnerable = 1;
+    const start = MOCAP_START.Kick_Round ?? 0, speed = 1.3;
+    const ap = approach(target, 'Kick_Round', speed, start, { fallbackReach: 1.1, fallbackContact: 0.3, travel: false });
+    const contact = ap.impactAt;
+    hero.bat.face(ap.yaw);
+    hero.bat.animator.play('Kick_Round', { once: true, timeScale: speed, fade: 0.05, startAt: start });
+    events.emit('special', { target });
+    for (const e of alive()) { if (e.state === 'windup') { director.release(e.id); e.glyph = null; e.state = 'engage'; } }
+    // Slow the run-up; the critical (stinger, action shot) fires once, on the contact frame.
+    time.slowMo(0.8, 0.28);
+    return {
+      name: 'special', combat: true,
+      canChain: () => hit && t > contact + 0.3,
+      update(dt) {
+        t += dt;
+        ap.place(t);
+        if (!hit && t >= contact) {
+          hit = true;
+          if (target.alive) landHit('special', target, { word: word('special'), power: 2.2, stopTime: 0.15, launch: 5, crit: true });
+        }
+        return t > Math.max(0.75, contact + 0.45);
+      },
+    };
+  }
+
+  function airKick(target, kind, mv = null) {
+    const from = hero.pos.clone();
+    const d = from.distanceTo(target.pos);
+    focus = target;
+    // Stop where the kick's foot (from the reach table) ends inside the target. A movement move
+    // (axe kick, hurricane, backflip kick, leaping smash) plays its own clip.
+    const clip = mv ? mv.clip : 'Kick_Flying';
+    const fly = reach[clip];
+    const stop = fly ? 0.15 * target.scale + fly.reach.z + 0.25 : 1.0;
+    const to = new THREE.Vector3().lerpVectors(from, target.pos, Math.max(0, (d - stop) / (d || 1)));
+    to.y = target.pos.y;
+    const dur = kind === 'diveBomb' ? Math.max(0.25, d / 30) : Math.max(0.28, d / 22);
+    let t = 0, hit = false;
+    hero.invulnerable = Math.max(hero.invulnerable, dur + 0.3);
+    const baseYaw = Math.atan2(target.pos.x - from.x, target.pos.z - from.z);
+    hero.bat.face(fly ? baseYaw - Math.atan2(fly.reach.x, fly.reach.z) : baseYaw);
+    hero.cape.setWings(false);
+    hero.bat.tilt.rotation.set(0, 0, 0);
+    // Play the flying kick so its extension frame arrives exactly when the flight ends.
+    const start = MOCAP_START[clip] ?? 0;
+    const contact = fly?.contact ?? 0.3;
+    hero.bat.animator.play(clip, { once: true, timeScale: THREE.MathUtils.clamp((contact - start) / dur, 0.7, 2.5), fade: 0.12, startAt: start });
+    events.emit(kind === 'diveBomb' ? 'diveBomb' : 'jumpKick');
+    return {
+      name: kind, combat: true,
+      canChain: () => hit && t > dur + 0.15,
+      update(dt) {
+        t += dt;
+        const k = Math.min(1, t / dur);
+        hero.pos.lerpVectors(from, to, k);
+        if (!hit && k >= 1) {
+          hit = true;
+          if (target.alive && mv) landMove(mv, target);
+          else if (target.alive) landHit(kind, target, { word: kind === 'diveBomb' ? word('dive') : word('kick'), power: 1.8, stopTime: 0.1, launch: 4.5, crit: kind === 'diveBomb' });
+          if (kind === 'diveBomb') for (const e of alive()) if (e !== target && e.pos.distanceTo(hero.pos) < 3) landHit('diveBomb', e, { power: 1.3, launch: 3 });
+          hero.vel.set(0, 0, 0);
+          hero.grounded = true;
+          hero.state = 'ground';
+        }
+        return t > dur + 0.3;
+      },
+    };
+  }
+
+  // Punch in the air: drop like a hammer and knock down everyone around the landing point.
+  function airSlam() {
+    const from = hero.pos.clone();
+    const ground = hero.collision.groundBelow(from.x, from.y, from.z, 0.3);
+    const floorY = ground > -Infinity ? ground : from.y;
+    const fall = Math.max(0, from.y - floorY);
+    const dur = THREE.MathUtils.clamp(fall / 26, 0.12, 0.5);
+    let t = 0, hit = false;
+    hero.cape.setWings(false);
+    hero.bat.tilt.rotation.set(0, 0, 0);
+    hero.bat.animator.play('NinjaJump_Land', { once: true, timeScale: 0.9, fade: 0.05 });
+    events.emit('slamStart');
+    return {
+      name: 'slam', combat: true,
+      canChain: () => hit && t > dur + 0.25,
+      update(dt) {
+        t += dt;
+        const k = Math.min(1, t / dur);
+        hero.pos.set(from.x, from.y + (floorY - from.y) * k * k, from.z);
+        if (!hit && k >= 1) {
+          hit = true;
+          hero.vel.set(0, 0, 0);
+          hero.grounded = true;
+          hero.state = 'ground';
+          follow.addShake(0.3);
+          events.emit('slam', { pos: hero.pos.clone() });
+          let n = 0;
+          for (const e of alive()) {
+            if (e.pos.distanceTo(hero.pos) > 3.6 || Math.abs(e.pos.y - hero.pos.y) > 1.5) continue;
+            landHit('slam', e, { power: 1.6, launch: 4, word: n === 0 ? word('slam') : null, crit: n === 1 });
+            n++;
+          }
+          if (!n) time.hitStop(0.06);
+        }
+        return t > dur + 0.4;
+      },
+    };
+  }
+
+  // Grab the nearest goon, spin, and hurl them in the stick direction. They bowl over anyone they hit.
+  function grabThrow(target, ctx) {
+    const result = resolveHit('throw', target);
+    if (result.outcome === 'immune') {
+      target.applyHit(result, hero.pos);
+      events.emit('blocked', { move: 'throw', target, outcome: 'immune' });
+      return null;
+    }
+    // Undo the damage for now; it lands when they hit the ground.
+    target.health += result.damage;
+    director.release(target.id);
+    target.glyph = null;
+    target.state = 'grabbed';
+    faceTo(target);
+    const yaw0 = hero.bat.yaw;
+    const aim = inputDir(ctx, true).clone().setY(0).normalize();
+    let t = 0, thrown = false;
+    hero.bat.animator.play('Sword_Heavy_Combo', { once: true, timeScale: 1.6, fade: 0.05 });
+    events.emit('grab', { target });
+    return {
+      name: 'throw', combat: true,
+      canChain: () => thrown && t > 0.7,
+      update(dt) {
+        t += dt;
+        if (!thrown) {
+          // Swing them around once.
+          const s = Math.min(1, t / 0.38);
+          const a = yaw0 + s * Math.PI * 2 * 0.9;
+          hero.bat.face(a);
+          target.pos.set(hero.pos.x + Math.sin(a) * 1.1, hero.pos.y + 0.35 + Math.sin(s * Math.PI) * 0.5, hero.pos.z + Math.cos(a) * 1.1);
+          target.ch.face(a + Math.PI);
+          if (s >= 1) {
+            thrown = true;
+            hero.bat.face(Math.atan2(aim.x, aim.z));
+            target.state = 'down';
+            target.down = true;
+            target.downT = 2.4;
+            target.launch(aim.x * 12, 5.5, aim.z * 12, { thrown: true });
+            target.thrownHits = new Set();
+            target.pendingThrow = true;
+            combo.hit();
+            time.hitStop(0.08);
+            follow.addShake(0.12);
+            events.emit('throwRelease', { target });
+            target.ch.headWorld(chest, -0.3);
+            events.emit('word', { text: word('throw'), pos: chest.clone(), big: true });
+          }
+        }
+        return thrown && t > 0.85;
+      },
+    };
+  }
+
+  // Thrown goons hurt whoever they fly into, and themselves on landing.
+  function onThrownFly(e) {
+    for (const o of alive()) {
+      // Horizontal reach, with some vertical slack: a body in flight is above the other's feet.
+      if (o === e || e.thrownHits?.has(o.id) || Math.hypot(o.pos.x - e.pos.x, o.pos.z - e.pos.z) > 1.4 || Math.abs(o.pos.y - e.pos.y) > 2.2) continue;
+      e.thrownHits.add(o.id);
+      landHit('thrownInto', o, { power: 1.5, launch: 3.5, crit: e.thrownHits.size === 2 });
+    }
+  }
+  function onLanded(e, drop) {
+    if (e.pendingThrow) {
+      e.pendingThrow = false;
+      if (e.alive) landHit('throw', e, { power: 0.5 });
+    }
+    if (drop > 4 && e.alive) {
+      // Knocked off a roof: out of the fight.
+      e.health = 0;
+      e.applyHit({ outcome: 'ko' }, e.pos);
+      events.emit('ko', { target: e });
+      events.emit('word', { text: 'WHUMP!', pos: e.pos.clone().setY(e.pos.y + 1) });
+      if (engaged().length === 0) events.emit('lastHit', { target: e });
+    }
+  }
+
+  function stagger(anim, dur, name = 'stagger') {
+    let t = 0;
+    // A blend long enough to unwind whatever she was mid-way through (a spinning kick turns her
+    // half round) without the whole body whipping round in three frames.
+    hero.bat.animator.play(anim, { once: true, timeScale: 1.3, fade: 0.12 });
+    return { name, combat: true, canChain: () => false, update(dt) { t += dt; return t > dur; } };
+  }
+
+  // The one way Batman goes down, whatever did it.
+  function killHero() {
+    if (hero.dead) return;
+    hero.dead = true;
+    hero.health = 0;
+    hero.control = stagger('Death01', 99);
+    events.emit('heroDown');
+  }
+
+  // ---- enemy attacks landing on the hero ----
+  function onAttackLand(e, kind) {
+    if (hero.dead) return;
+    if (hero.invulnerable > 0) { events.emit('evaded', { e }); return; }
+    const blocking = hero.blocking && kind !== 'charge';
+    const dmg = hurtDamage(kind, { difficulty, blocking }, effects);
+    hero.health = Math.max(0, hero.health - dmg);
+    combo.damaged();
+    punchChain = kickChain = 0;
+    follow.addShake(blocking ? 0.08 : 0.2);
+    if (hero.control?.knockOff) { hero.control.knockOff(); hero.control = null; }
+    events.emit('heroHurt', { kind, blocking, damage: dmg, from: e });
+    if (hero.health <= 0) { killHero(); return; }
+    if (blocking) { hero.control = stagger('Idle_Shield_Break', 0.28, 'blockStagger'); return; }
+    if (kind === 'charge') {
+      hero.invulnerable = 1.6;
+      const s = stagger('Hit_Knockback', 1.1);
+      const origUpdate = s.update;
+      let t = 0;
+      s.update = (dt) => { t += dt; if (t > 0.9 && t - dt <= 0.9) hero.bat.animator.play('LayToIdle', { once: true, timeScale: 1.6 }); return origUpdate(dt) && t > 1.6; };
+      hero.control = s;
+    } else if (!hero.control || hero.control.combat) {
+      hero.control = stagger(rng.chance(0.5) ? 'Hit_Chest' : 'Hit_Head', 0.38);
+    }
+  }
+  function onAttackEnd(e) { director.release(e.id); }
+
+  // A rifle goon fires (enemy.js): muzzle and aim point for the tracer and the crack. The vectors
+  // are reused on every shot, so listeners copy them. `lands` is enemy.js's own gate (it sees
+  // Batman and he is within 32 m): hit is true exactly when onAttackLand will deal damage.
+  const shotFrom = new THREE.Vector3(), shotTo = new THREE.Vector3();
+  const shot = { from: shotFrom, to: shotTo, target: null, hit: false };
+  function onRifleFire(e, lands = true) {
+    // Batman is down: the squad holds its fire (no tracer, no crack) until he is back up.
+    if (hero.dead) return;
+    if (e.ch.muzzle) e.ch.muzzle.getWorldPosition(shotFrom);
+    else e.ch.headWorld(shotFrom, -0.2);
+    shotTo.set(hero.pos.x, hero.pos.y + (hero.crouched ? 0.7 : 1.1), hero.pos.z);
+    shot.target = e;
+    shot.hit = lands && !hero.dead && hero.invulnerable <= 0;
+    // A miss (a warning shot, or out of range) goes wide: past his shoulder, not through him.
+    if (!lands) {
+      const dx = shotTo.x - shotFrom.x, dz = shotTo.z - shotFrom.z, d = Math.hypot(dx, dz) || 1;
+      shotTo.x += (-dz / d) * 0.8;
+      shotTo.z += (dx / d) * 0.8;
+      shotTo.y += 0.35;
+    }
+    events.emit('rifleShot', shot);
+  }
+
+  function tryStart(action, ctx) {
+    const chain = chainForAction(action);
+    if (chain) return startChain(chain, ctx);
+    if (action === 'chain4') return startSwarm(ctx);
+    // The fire key uses whatever gadget is equipped (src/gadgets/gadgetSystem.js).
+    if (action === 'batarang' && useGadget) return useGadget(ctx, { inAir: hero.state === 'air' || hero.state === 'glide' });
+    // Predator stealth (src/stealth/stealthSystem.js): a silent takedown from behind, or a perch drop.
+    if (stealthStart && (action === 'punch' || action === 'kick') && stealthStart(action, ctx)) return true;
+    const inAir = hero.state === 'air' || hero.state === 'glide';
+    const all = alive().filter((e) => e.state !== 'grabbed');
+    const list = action === 'block' ? all : all.filter(canSee);
+    if (action === 'block') {
+      const windups = list.filter((e) => e.state === 'windup' && e.def.counterable && e.pos.distanceTo(hero.pos) < 7.5)
+        .sort((a, b) => a.pos.distanceTo(hero.pos) - b.pos.distanceTo(hero.pos)).slice(0, 2);
+      if (windups.length && !inAir) { hero.control = counter(windups); return true; }
+      const brute = list.find((e) => e.state === 'windup' && !e.def.counterable && e.pos.distanceTo(hero.pos) < 7.5);
+      if (brute) events.emit('hint', { id: 'brute-counter' });
+      return false;
+    }
+    if (action === 'punch' || action === 'kick') {
+      if (inAir) {
+        const target = selectAttackTarget(hero.pos, inputDir(ctx), list, { range: 16, focus });
+        if (target && target.pos.y <= hero.pos.y + 1) {
+          const mv = hero.state === 'air' ? pickMove(action, target, ctx, true) : null;
+          if (mv?.air) { hero.control = airKick(target, 'jumpKick', mv); return true; }
+          if (hero.state === 'glide' || action === 'kick') {
+            hero.control = airKick(target, hero.state === 'glide' ? 'diveBomb' : 'jumpKick');
+            return true;
+          }
+        }
+        // Punch in the air with nobody to kick: hammer down.
+        if (action === 'punch' && hero.state === 'air' && engaged().length) { hero.control = airSlam(); return true; }
+        return false;
+      }
+      // Auto-attach: any goon within 14 m is fair game, so a press never whiffs in a fight.
+      const target = selectAttackTarget(hero.pos, inputDir(ctx), list, { range: 14, focus, allowDown: true });
+      if (!target) { if (engaged().length) { hero.control = whiff(); return true; } return false; }
+      // Predator stealth: in a quiet room, a punch on a goon who hasn't noticed Batman is swallowed.
+      if (stealthHold && stealthHold(action, target)) return true;
+      if (target.down && target.alive && !target.air && action === 'punch') events.emit('groundTakedown', { target });
+      hero.control = strike(action, target, pickMove(action, target, ctx, false));
+      return true;
+    }
+    if (action === 'throw' && !inAir) {
+      const target = selectTarget(hero.pos, inputDir(ctx), list.filter((e) => !e.down), { range: 3.2, maxAngle: 1.6 });
+      if (!target) return false;
+      const ctl = grabThrow(target, ctx);
+      if (ctl) { hero.control = ctl; return true; }
+      return false;
+    }
+    if (action === 'cape' && !inAir) { hero.control = capeStun(); return true; }
+    if (action === 'batarang') {
+      const target = selectTarget(hero.pos, inputDir(ctx, true), list, { range: 26, maxAngle: 1.2 });
+      if (target) { hero.control = batarang([target], ctx.fx); return true; }
+      return false;
+    }
+    if (action === 'dodge' && !inAir) { hero.control = dodge(ctx); return true; }
+    if (action === 'special') {
+      const finisher = list.find((e) => e.finishable && e.pos.distanceTo(hero.pos) < 9);
+      if (finisher) { hero.control = special(finisher); return true; }
+      if (!combo.ready) { events.emit('hint', { id: 'special-locked' }); return false; }
+      const target = selectTarget(hero.pos, inputDir(ctx), list.filter((e) => !e.def.boss), { range: 9 });
+      if (target) { hero.control = special(target); return true; }
+    }
+    return false;
+  }
+
+  const ACTIONS = ['block', 'punch', 'kick', 'throw', 'cape', 'batarang', 'dodge', 'special', 'chain1', 'chain2', 'chain3', 'chain4'];
+  const inAirNow = () => hero.state === 'air' || hero.state === 'glide';
+
+  // A dive-bomb impact: knocks down every downable goon in range. Armored enemies (brutes)
+  // shrug it off via the same immunity resolveHit already gives them (unless stunned), and
+  // the boss is excluded outright so neither can be one-shot by it.
+  function shockwave(center, radius = 4, { crit = true, word } = {}) {
+    let n = 0;
+    let first = null;
+    for (const e of enemies) {
+      if (!e.alive || e.down || e.def.boss || !inShockwave(center, e.pos, radius)) continue;
+      const result = resolveHit('diveBomb', e);
+      const wasAttacking = e.applyHit(result, center, { power: 1.6, launch: 6 });
+      if (wasAttacking) director.release(e.id);
+      if (result.outcome === 'immune' || result.outcome === 'parried') continue;
+      if (!first) first = e;
+      n += 1;
+    }
+    events.emit('diveImpact', { pos: center.clone(), count: n, word });
+    if (first && crit) critical(first);
+    return n;
+  }
+
+  // An instant KO from a ledge, drop, perch or silent takedown: no fight, just (unless it is a
+  // quiet one) an action shot. Same wasAttacking/director.release bookkeeping as landHit, so a
+  // takedown on a goon that was mid-windup or mid-attack still frees its director slot.
+  function takedown(e, kind, { crit = true } = {}) {
+    if (!e?.alive) return false;
+    e.health = 0;
+    const wasAttacking = e.applyHit({ outcome: 'ko' }, hero.pos);
+    if (wasAttacking) director.release(e.id);
+    if (crit) critical(e, { slow: 0.7 });
+    events.emit('takedown', { kind, pos: e.pos.clone(), target: e });
+    return true;
+  }
+
+  // ---- chain takedowns ----
+
+  // The hooks a chain lands its steps through (chainControl.js), so chains share this file's hit
+  // bookkeeping: director slots, combo, impact events, hit-stop, critical and shockwave.
+  // `run` is optional: a caller with no run of its own gets a no-op for the run bookkeeping below
+  // rather than a throw. startChain and startSwarm (the Bat Swarm, Plan 5FG) both pass theirs, so
+  // checkChainDropped can tell a finished run from one cut short.
+  function chainApi(ctx, run = null) {
+    return {
+      events, time, collision: hero.collision, fx: ctx.chainFx ?? null,
+      enemies: () => enemies,
+      hold(e) { e.chainHold(); director.release(e.id); },
+      // Only a chain that plays to its end releases its targets itself.
+      release(e) { if (run) run.over = true; e.chainRelease(); },
+      stagger(e) {
+        push.set(e.pos.x - hero.pos.x, 0, e.pos.z - hero.pos.z);
+        if (push.lengthSq() > 1e-6) e.pos.addScaledVector(push.normalize(), 0.25);
+        hero.collision.resolveCylinder(e.pos, e.radius, 1.8 * e.scale);
+        e.ch.animator.play(rng.chance(0.5) ? 'Hit_Chest' : 'Hit_Head', { once: true, timeScale: 1.4, fade: 0.05 });
+        combo.hit();
+        follow.addShake(0.08);
+        e.ch.headWorld(chest, -0.3);
+        events.emit('impact', { pos: chest.clone(), move: 'chain', outcome: 'hit', target: e, crit: false });
+      },
+      finish: finishTarget,
+      tie(list) {
+        // No combo.hit() here: the stagger hits already paid for landing the chain, and a tie
+        // that refunded its own cost too made Rope-a-Dope net free (ruling: chains always cost
+        // something).
+        for (const e of list) { e.tie(list, CHAIN_RULES.tiedTime); director.release(e.id); }
+        events.emit('chainTied', { count: list.length });
+      },
+      critical,
+      shockwave,
+      // chainControl passes a vector it reuses: the event gets its own copy.
+      word(text, pos, big = false) { events.emit('word', { text, pos: pos.clone(), big }); },
+    };
+  }
+
+  // Returns true when the press is used up: a chain started, or a hint said why not.
+  function startChain(chain, ctx) {
+    if (hero.state !== 'ground' || !hero.grounded) return false;
+    const discount = getChainDiscount();
+    const k = chain.n - 1;
+    const avail = chainAvailability({ combo: combo.value, origin: hero.pos, enemies, discount });
+    if (!avail.affordable[k]) {
+      const why = !avail.show ? 'chain-locked' : !avail.stealth && combo.value < avail.costs[k] ? 'chain-cost' : 'chain-targets';
+      // The costs behind the hint, so a future discount doesn't leave the copy hardcoded (5FG).
+      events.emit('hint', { id: why, arg: avail.costs });
+      return true;
+    }
+    const targets = selectChainTargets(hero.pos, inputDir(ctx), enemies, { canSee, onlyUnaware: avail.stealth });
+    if (!targets) { events.emit('hint', { id: 'chain-targets' }); return true; }
+    if (!avail.stealth) combo.take(chainCost(chain, discount));
+    const timeline = buildChainTimeline(chain.id, targets.length, BEATS);
+    // Everyone else waits: wind-ups in progress are called off and nobody starts one mid-chain.
+    // A boss never shares `enemies` with goons today, but skip it on principle: its state is its
+    // own fight's, never the chain's to rewrite.
+    for (const e of alive()) {
+      if (targets.includes(e) || e.def?.boss) continue;
+      if (e.state === 'windup') { director.release(e.id); e.glyph = null; e.state = 'engage'; }
+      director.hold(e.id, timeline.duration + 0.6);
+    }
+    // `prior`: Batman's invulnerability before the chain raised it; `t`: game time since the start.
+    const run = { ctl: null, chain: chain.id, targets, over: false, prior: hero.invulnerable, t: 0 };
+    run.ctl = createChainControl(hero, chainApi(ctx, run), { chain, targets, stealth: avail.stealth, timeline });
+    hero.control = run.ctl;
+    chainRun = run;
+    events.emit('chainStart', { chain: chain.id, count: targets.length, stealth: avail.stealth, ids: targets.map((e) => e.id) });
+    return true;
+  }
+
+  // The Bat Swarm (chain 4, WayneTech). Returns true when the press is used up. It runs as a chain
+  // run too, so a swarm cut short (a teleport, a respawn) lets its goons go like any chain.
+  function startSwarm(ctx) {
+    if (!effects.batSwarm) { events.emit('hint', { id: 'swarm-locked' }); return true; }
+    if (hero.state !== 'ground' || !hero.grounded) return false;
+    const cost = chainCost(SWARM, getChainDiscount());
+    if (combo.value < cost) { events.emit('hint', { id: 'swarm-cost', arg: cost }); return true; }
+    const targets = swarmTargets(hero.pos, enemies, { canSee });
+    if (!targets) { events.emit('hint', { id: 'swarm-targets' }); return true; }
+    combo.take(cost);
+    const timeline = swarmTimeline(targets.length);
+    // As in startChain: a boss's state is its own fight's, never the swarm's to rewrite.
+    for (const e of alive()) {
+      if (targets.includes(e) || e.def?.boss) continue;
+      if (e.state === 'windup') { director.release(e.id); e.glyph = null; e.state = 'engage'; }
+      director.hold(e.id, timeline.duration + 0.6);
+    }
+    const run = { ctl: null, chain: SWARM.id, targets, over: false, prior: hero.invulnerable, t: 0 };
+    hero.invulnerable = Math.max(hero.invulnerable, timeline.duration + 0.2);
+    run.ctl = createSwarmControl(hero, chainApi(ctx, run), { targets, timeline, fx: ctx.swarmFx ?? null });
+    hero.control = run.ctl;
+    chainRun = run;
+    events.emit('swarmStart', { count: targets.length });
+    return true;
+  }
+
+  // Something took hero.control away from a chain before it finished (a teleport after a fall
+  // into the water, a respawn, the finale): let go of every goon still held, rather than leave
+  // them frozen until enemy.js's 5 s failsafe.
+  function checkChainDropped() {
+    if (!chainRun || hero.control === chainRun.ctl) return;
+    const run = chainRun;
+    chainRun = null;
+    // A swarm's bats leave with it, however it ended.
+    run.ctl.fx?.stop();
+    if (run.over) return;
+    for (const e of run.targets) e.chainRelease();
+    // Give back only what the chain added (what he had before, less the time since, or the usual
+    // 0.3 s grace). A control that took over owns its own invulnerability: leave it alone.
+    if (!hero.control) hero.invulnerable = Math.min(hero.invulnerable, Math.max(run.prior - run.t, 0.3));
+    events.emit('chainBroken', { chain: run.chain });
+  }
+
+  return {
+    combo,
+    director,
+    shockwave,
+    takedown,
+    // Clears a buffered press early when a traversal control (ledge takedown, glide dive-bomb)
+    // already acted on it itself, so it can't also fire a real strike/kick once that control
+    // hands hero.control back.
+    consumeInput(action) { inputBuffer.consume(action); },
+    // What gadgets land their hits through: the same bookkeeping as every other move.
+    gadgetApi: { landHit, areaBlast, canSee, inputDir, alive, director, critical, batarang, faceTo },
+    // Re-read the WayneTech effects after a purchase.
+    applyEffects() { combo.setReady(effects.specialAt); combo.setShield(effects.comboShield + 1); },
+    get enemies() { return enemies; },
+    setEnemies(list) {
+      enemies = list;
+      director.clear();
+      for (const e of list) director.hold(e.id, 1 + rng.next() * 1.6);
+    },
+    setDifficulty(d) { difficulty = d; director.configure(DIFFICULTY[d]); },
+    killHero,
+    get active() { return engaged().length > 0; },
+    get cameraMode() { return hero.control?.camera ?? (engaged().some((e) => e.pos.distanceTo(hero.pos) < 14) ? 'combat' : null); },
+    get chains() { return chainAvail; },
+    get swarm() { return swarmAvail; },
+    update(dt, ctx) {
+      checkChainDropped();
+      if (chainRun) chainRun.t += dt;
+      // Spec Part E1: a chain spends that much combo and keeps the rest. The 1.5 s window on its
+      // own can't tell "the player stopped hitting things" from "a Rope-a-Dope's tether-and-yank
+      // lead-in is playing", so pausing the timeout for the length of the chain control (name
+      // 'chain') is what actually keeps the rest, rather than relying on every chain's contact
+      // hits to happen to land inside 1.5 s of each other. It resumes the moment the chain ends
+      // or is dropped, since hero.control stops being 'chain' either way before this runs.
+      // The Bat Swarm (control name 'swarm', Plan 5FG) is a chain run too and keeps the rest the
+      // same way.
+      const ctlName = hero.control?.name;
+      if (ctlName !== 'chain' && ctlName !== 'swarm') combo.tick(dt);
+      availT -= dt;
+      if (availT <= 0 || combo.value !== availCombo) {
+        availT = 0.1;
+        availCombo = combo.value;
+        chainAvail = chainAvailability({ combo: combo.value, origin: hero.pos, enemies, discount: getChainDiscount() });
+        swarmAvail = swarmAvailability({ owned: effects.batSwarm, combo: combo.value, origin: hero.pos, enemies, discount: getChainDiscount() });
+      }
+      chainT -= dt;
+      if (chainT <= 0) { punchChain = 0; kickChain = 0; }
+      const d = getDifficulty();
+      if (d !== difficulty) { difficulty = d; director.configure(DIFFICULTY[d]); }
+      // Buffer the latest press so freeflow chains feel responsive, e.g. a block/counter tap
+      // or an attack press during a grapple, ladder, zip or wall run fires the moment that
+      // control lets go. A press a traversal control acts on itself (the ledge takedown's own
+      // punch, the glide dive-bomb's kick) is cleared via consumeInput() right where that
+      // control consumes it, so it can't also fire a real move later.
+      // Nothing is buffered while the gadget wheel is open (ctx.lockInput).
+      if (!ctx.lockInput) for (const a of ACTIONS) if (ctx.input.pressed(a)) inputBuffer.press(a);
+      inputBuffer.tick(dt);
+      const buffer = inputBuffer.value;
+      const ctl = hero.control;
+      // A block tapped during a strike's wind-up counters an incoming attack instead of
+      // waiting for the strike to finish: the strike is dropped before its contact frame.
+      const counterCut = buffer === 'block' && ctl?.name === 'strike' && ctl.interruptible?.() && !inAirNow()
+        && alive().some((e) => e.state === 'windup' && e.def.counterable && e.pos.distanceTo(hero.pos) < 7.5);
+      const free = !hero.dead && (!ctl || (ctl.combat && ctl.canChain()) || counterCut);
+      // A buffered kick belongs to hero.js's own dive trigger (not the old target-seeking
+      // jump-kick/diveBomb here) only when the dive will actually fire this frame, or while
+      // one is already in progress. Below the height threshold the old air kick still runs.
+      const glideKick = buffer === 'kick' && (shouldDiveBomb(hero.state, hero.heightAboveGround()) || ctl?.name === 'dive');
+      if (!ctx.lockInput && buffer && free && hero.state !== 'roll' && ctl?.name !== 'grapple' && !glideKick) {
+        if (tryStart(buffer, ctx)) inputBuffer.consume(buffer);
+      }
+      // Hold block to guard when nothing else is going on (not under the open gadget wheel).
+      hero.blocking = !ctx.lockInput && (!hero.control || hero.control.name === 'blockStagger') && hero.grounded && ctx.input.down('block') && engaged().length > 0;
+
+      // Enemy AI and the attack director.
+      const ectx = { hero, others: enemies, onAttackLand, onAttackEnd, onThrownFly, onLanded, onRifleFire };
+      const ready = [];
+      for (const e of enemies) {
+        e.update(dt, ectx);
+        if (e.aware) ready.push({ id: e.id, ready: e.ready(hero) && !hero.dead && !['ladder', 'ledge', 'zip', 'wallrun'].includes(hero.control?.name) });
+      }
+      for (const id of director.tick(dt, ready)) {
+        const e = enemies.find((x) => x.id === id);
+        if (e) {
+          e.startWindup(DIFFICULTY[difficulty].windup + (e.def.counterable ? effects.counterWindow : 0), hero);
+          if (e.def.ranged) events.emit('rifleAim', { target: e });
+        }
+      }
+      for (const e of enemies) if (!e.alive || (e.state !== 'windup' && e.state !== 'attack')) { if (director.active.has(e.id) && e.state !== 'attack') director.release(e.id); }
+    },
+  };
+}

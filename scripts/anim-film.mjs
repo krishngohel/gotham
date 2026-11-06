@@ -1,0 +1,161 @@
+// Films the hero's moves frame by frame, with real key presses, from a camera that tracks him
+// side-on, and tiles each move into one contact sheet: <outDir>/<move>.png (needs Python + Pillow
+// for the sheet; the single frames stay either way). Moves: glide, land, ledge, wallrun, zip,
+// grapple, punch, kick, counter, roll, carIn, carOut, run.
+// usage: node scripts/anim-film.mjs <url> <outDir> [move ...]   (muted)
+import { chromium } from 'playwright-core';
+import { mkdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+
+const [url, out, ...only] = process.argv.slice(2);
+mkdirSync(out, { recursive: true });
+const b = await chromium.launch({ args: ['--mute-audio', '--ignore-gpu-blocklist', '--use-angle=d3d11'] });
+const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
+await p.goto(url + (url.includes('?') ? '&' : '?') + 'fight=test&god=1');
+await p.waitForFunction(() => window.__game?.state?.ready && window.__game.state.frame > 30, null, { timeout: 90000 });
+for (let i = 0; i < 25; i++) { await p.evaluate(() => { const G = window.__game; G.cinematic?.active && G.cinematic.skip(); G.comic.playing && G.comic.skip(); G.radio?.playing && G.radio.skip(); }); await p.waitForTimeout(150); }
+await p.mouse.click(640, 360); await p.waitForTimeout(200); await p.mouse.click(640, 360); await p.waitForTimeout(300);
+await p.evaluate(() => {
+  const G = window.__game;
+  for (const el of document.querySelectorAll('.hud, .waypoint, .fps')) el.style.display = 'none';
+  // A tracking side camera: `window.__cam = { side, up, back }` relative to the hero's facing.
+  const cam = G.camera, render = G.renderer.render.bind(G.renderer);
+  window.__cam = null;
+  G.renderer.render = (s, c) => {
+    const k = window.__cam;
+    if (c === cam && k && k.at) { cam.position.set(...k.at); cam.lookAt(...k.look3); cam.fov = 45; cam.updateProjectionMatrix(); cam.updateMatrixWorld(); }
+    else if (c === cam && k) {
+      const h = G.hero.pos, yaw = G.hero.bat.yaw, fx = Math.sin(yaw), fz = Math.cos(yaw), rx = -fz, rz = fx;
+      cam.position.set(h.x + rx * k.side - fx * k.back, h.y + k.up, h.z + rz * k.side - fz * k.back);
+      cam.lookAt(h.x, h.y + (k.look ?? 1), h.z); cam.fov = 45; cam.updateProjectionMatrix(); cam.updateMatrixWorld();
+    }
+    return render(s, c);
+  };
+});
+const clearGoons = () => p.evaluate(() => { const G = window.__game; for (const e of [...G.combat.enemies]) G.despawn(e); G.combat.setEnemies([]); });
+const goons = (n = 1) => p.evaluate((n) => { const G = window.__game, h = G.hero.pos, yaw = G.hero.bat.yaw; const list = []; for (let i = 0; i < n; i++) list.push(G.spawn('grunt', { x: h.x + Math.sin(yaw) * 2.2 + i * 1.5, y: h.y, z: h.z + Math.cos(yaw) * 2.2 })); G.combat.setEnemies(list); list.forEach((e) => e.wake()); return list.length; }, n);
+const place = (x, y, z, yaw) => p.evaluate(([x, y, z, yaw]) => { const G = window.__game; G.vehicles.active && G.vehicles.exit(); G.hero.control = null; G.hero.teleport({ x, y, z }, yaw); G.hero.bat.face(yaw); G.follow.snapBehind(yaw); }, [x, y, z, yaw]);
+const cam = (c) => p.evaluate((c) => { window.__cam = c; }, c);
+// Takes `n` frames `ms` apart into <move>-NN.png.
+async function film(move, n, ms, act) {
+  const files = [];
+  let started = false;
+  for (let i = 0; i < n; i++) {
+    if (!started && act) { started = true; act(); }
+    await p.waitForTimeout(ms);
+    const f = `${out}/${move}-${String(i).padStart(2, '0')}.png`;
+    await p.screenshot({ path: f, clip: { x: 340, y: 60, width: 600, height: 600 } });
+    files.push(f);
+  }
+  try {
+    execFileSync('python', ['-c', `
+import sys
+from PIL import Image, ImageDraw
+fs=sys.argv[2:]; ims=[Image.open(f).resize((300,300)) for f in fs]
+cols=min(6,len(ims)); rows=(len(ims)+cols-1)//cols
+m=Image.new('RGB',(300*cols,300*rows),'white'); d=ImageDraw.Draw(m)
+for i,im in enumerate(ims): m.paste(im,((i%cols)*300,(i//cols)*300)); d.text(((i%cols)*300+4,(i//cols)*300+4),str(i),fill='yellow')
+m.save(sys.argv[1])`, `${out}/${move}.png`, ...files]);
+  } catch { /* frames stay */ }
+  console.log(move, 'filmed');
+}
+const key = (k, ms) => p.keyboard.down(k).then(() => p.waitForTimeout(ms)).then(() => p.keyboard.up(k));
+
+const MOVES = {
+  run: async () => { await clearGoons(); await place(6, 42.2, 10, Math.PI); await cam({ side: 4.5, up: 1.2, back: 0 }); await film('run', 12, 120, async () => { await key('KeyW', 500); await p.keyboard.down('ShiftLeft'); await key('KeyW', 900); await p.keyboard.up('ShiftLeft'); }); },
+  glide: async () => { await clearGoons(); await place(6, 42.2, 10, Math.PI); await cam({ side: 5, up: 1.4, back: 1 }); await film('glide', 12, 160, async () => { await p.keyboard.down('KeyW'); await p.waitForTimeout(700); await p.keyboard.down('Space'); await p.waitForTimeout(1600); await p.keyboard.up('Space'); await p.keyboard.up('KeyW'); }); },
+  glideAir: async () => { await clearGoons(); await place(6, 70, 10, Math.PI); await p.evaluate(() => { const G = window.__game; G.hero.vel.set(0, 0, -12); }); await cam({ side: 5, up: 0.8, back: 0, look: 0.6 }); await film('glideAir', 12, 140, async () => { await p.waitForTimeout(250); await p.keyboard.down('Space'); await p.keyboard.down('KeyW'); await p.waitForTimeout(1500); await p.keyboard.up('KeyW'); await p.keyboard.up('Space'); }); },
+  glideBack: async () => { await clearGoons(); await place(6, 70, 10, Math.PI); await p.evaluate(() => { const G = window.__game; G.hero.vel.set(0, 0, -12); }); await cam({ side: 0.6, up: 1.6, back: 4.5, look: 1 }); await film('glideBack', 6, 220, async () => { await p.waitForTimeout(250); await p.keyboard.down('Space'); await p.waitForTimeout(1300); await p.keyboard.up('Space'); }); },
+  fallBack: async () => { await clearGoons(); await place(6, 90, 10, Math.PI); await cam({ side: 3.5, up: 0.8, back: 3, look: 1 }); await film('fallBack', 6, 200); },
+  land: async () => { await clearGoons(); await place(6, 52, 10, Math.PI); await cam({ side: 5, up: 1.2, back: 0, look: 0.6 }); await film('land', 12, 90); },
+  punch: async () => { await clearGoons(); await place(6, 42.2, 10, Math.PI); await goons(1); await cam({ side: 4.5, up: 1.4, back: -0.8 }); await film('punch', 12, 80, async () => { for (let i = 0; i < 3; i++) { await p.mouse.click(640, 360); await p.waitForTimeout(260); } }); },
+  kick: async () => { await clearGoons(); await place(6, 42.2, 10, Math.PI); await goons(1); await cam({ side: 4.5, up: 1.4, back: -0.8 }); await film('kick', 12, 80, async () => { for (let i = 0; i < 2; i++) { await p.keyboard.press('KeyE'); await p.waitForTimeout(380); } }); },
+  // Every new strike, played straight on a goon (not through the combo, which picks at random).
+  strikes: async () => {
+    for (const clip of ['Punch_Uppercut', 'Punch_Hook_L', 'Elbow_Strike', 'Punch_Backfist', 'Punch_Hammer', 'Kick_Side', 'Kick_Axe', 'Kick_Low']) {
+      await clearGoons(); await place(6, 42.2, 10, Math.PI); await goons(1); await cam({ side: 4.2, up: 1.3, back: -0.9 });
+      console.log(clip, 'reach', JSON.stringify(await p.evaluate((c) => window.__game.reach?.[c] ? { contact: window.__game.reach[c].contact, z: window.__game.reach[c].reach.z } : null, clip)));
+      await film(clip, 8, 330, () => p.evaluate((c) => { const G = window.__game; let t = 0; G.hero.control = { name: 'film', update(dt) { t += dt; return t > 5; } }; G.hero.bat.animator.play(c, { once: true, timeScale: 0.22, fade: 0.05 }); }, clip));
+    }
+  },
+  punches: async () => {
+    for (const clip of ['Punch_Uppercut', 'Punch_Hook_L', 'Elbow_Strike']) {
+      await clearGoons(); await place(6, 42.2, 10, Math.PI); await cam({ side: 2.2, up: 1.4, back: -3.2, look: 1.2 });
+      await film(clip + '-front', 8, 300, () => p.evaluate((c) => { const G = window.__game; let t = 0; G.hero.control = { name: 'film', update(dt) { t += dt; return t > 5; } }; G.hero.bat.animator.play(c, { once: true, timeScale: 0.22, fade: 0.05 }); }, clip));
+    }
+  },
+  // A real combo with the real buttons: records which clip each strike played.
+  combo: async () => {
+    await clearGoons(); await place(6, 42.2, 10, Math.PI); await goons(3); await cam({ side: 4.5, up: 1.6, back: -1.5 });
+    await p.evaluate(() => { const G = window.__game, a = G.hero.bat.animator, o = a.play.bind(a); window.__clips = []; a.play = (n, opt) => { if (/Punch|Kick|Elbow|Knee|Melee|Hammer|Backfist/.test(n)) window.__clips.push(n); return o(n, opt); }; });
+    await film('combo', 18, 160, async () => {
+      for (let i = 0; i < 6; i++) { await p.mouse.click(640, 360); await p.waitForTimeout(330); }
+      for (let i = 0; i < 4; i++) { await p.keyboard.press('KeyE'); await p.waitForTimeout(420); }
+    });
+    console.log('clips played:', JSON.stringify(await p.evaluate(() => window.__clips)));
+  },
+  finishers: async () => {
+    for (let r = 0; r < 3; r++) {
+      await clearGoons(); await place(6, 42.2, 10, Math.PI);
+      await p.evaluate(() => { const G = window.__game, h = G.hero.pos; const list = [0, 1, 2].map((i) => G.spawn('grunt', { x: h.x - 1.5 + i * 1.5, y: h.y, z: h.z - 2.2 })); G.combat.setEnemies(list); list.forEach((e) => e.wake()); });
+      const seen = [];
+      const grab = async () => { await p.waitForTimeout(120); seen.push(await p.evaluate(() => window.__game.hero.bat.animator.currentName)); };
+      for (let i = 0; i < 4; i++) { await p.mouse.click(640, 360); await grab(); await p.waitForTimeout(260); }
+      await p.waitForTimeout(600);
+      for (let i = 0; i < 3; i++) { await p.keyboard.press('KeyE'); await grab(); await p.waitForTimeout(330); }
+      console.log('round', r, JSON.stringify(seen));
+    }
+  },
+  // Goons: each type's attack and hit reactions, played straight on the goon at quarter speed.
+  goons: async () => {
+    const shots = [['grunt', 'attack'], ['knife', 'attack'], ['brute', 'attack'], ['brute', 'charge'], ['grunt', 'hit'], ['grunt', 'ko']];
+    for (const [type, act] of shots) {
+      await clearGoons(); await place(6, 42.2, 10, Math.PI);
+      await p.evaluate((type) => { const G = window.__game, h = G.hero.pos; const e = G.spawn(type, { x: h.x, y: h.y, z: h.z - 3 }); G.combat.setEnemies([e]); window.__g = e; e.ch.root.rotation.y = 0; }, type);
+      await p.evaluate(() => { const G = window.__game; G.hero.bat.root.visible = false; G.hero.cape.mesh.visible = false; });
+      await cam({ at: [9.5, 43.6, 7], look3: [6, 43, 7] });
+      const name = `goon-${type}-${act}`;
+      await film(name, 8, 260, () => p.evaluate(([type, act]) => {
+        const e = window.__g, a = e.ch.animator;
+        const clip = act === 'hit' ? 'Hit_Chest' : act === 'ko' ? 'Death01' : type === 'grunt' ? 'Punch_Cross' : type === 'knife' ? 'Sword_Regular_A' : act === 'charge' ? 'Shield_Dash' : 'Sword_Heavy_Combo';
+        e.update = () => {}; a.play(clip, { once: true, timeScale: 0.3, fade: 0.05 });
+        const tick = () => { a.update(1 / 60); if (!window.__stopG) requestAnimationFrame(tick); }; window.__stopG = false; tick();
+      }, [type, act]));
+      await p.evaluate(() => { window.__stopG = true; });
+    }
+  },
+  // Nightwing and Harley: idle from the front and side, then each one's attack.
+  allies: async () => {
+    await clearGoons(); await place(6, 42.2, 10, Math.PI);
+    await p.evaluate(() => { const G = window.__game, h = G.hero.pos; G.hero.bat.root.visible = false; G.hero.cape.mesh.visible = false; G.nightwing.spawn({ x: h.x, y: h.y, z: h.z - 3 }, 'ally'); const e = G.spawn('harley', { x: h.x + 2.4, y: h.y, z: h.z - 3 }); G.combat.setEnemies([]); window.__h = e; });
+    await p.waitForTimeout(1500);
+    await cam({ at: [7.2, 43.4, 2.5], look3: [7.2, 43.1, 7] });
+    await film('allies-front', 2, 300);
+    await cam({ at: [12, 43.4, 7], look3: [7.2, 43, 7] });
+    await film('allies-side', 2, 300);
+    await p.evaluate(() => { const G = window.__game; const nw = G.nightwing.actor; nw.animator.play('Punch_Cross', { once: true, timeScale: 0.3 }); window.__h.ch.animator.play('Sword_Heavy_Combo', { once: true, timeScale: 0.3 }); });
+    await cam({ at: [7.2, 43.4, 2.5], look3: [7.2, 43.1, 7] });
+    await film('allies-attack', 6, 260);
+  },
+  reactions: async () => {
+    for (const [who, clip] of [['hero', 'Gadget_Aim'], ['hero', 'Gadget_Toss'], ['goon', 'Hit_Head_Snap'], ['goon', 'Hit_Gut_Fold'], ['goon', 'Hit_Spin']]) {
+      await clearGoons(); await place(6, 42.2, 10, Math.PI);
+      await p.evaluate((who) => { const G = window.__game, h = G.hero.pos; if (who === 'goon') { const e = G.spawn('grunt', { x: h.x, y: h.y, z: h.z - 3 }); G.combat.setEnemies([e]); window.__g = e; G.hero.bat.root.visible = false; G.hero.cape.mesh.visible = false; } else { G.hero.bat.root.visible = true; } }, who);
+      if (who === 'goon') await cam({ at: [9.8, 43.5, 6.2], look3: [6, 43, 7] }); else await cam({ at: [10, 43.5, 8.5], look3: [6, 43.1, 10] });
+      await film(clip, 8, 260, () => p.evaluate(([who, c]) => {
+        const G = window.__game;
+        if (who === 'goon') { const e = window.__g, a = e.ch.animator; e.update = () => {}; a.play(c, { once: true, timeScale: 0.28, fade: 0.04 }); window.__stopG = false; const tick = () => { a.update(1 / 60); if (!window.__stopG) requestAnimationFrame(tick); }; tick(); }
+        else { let t = 0; G.hero.control = { name: 'film', update(dt) { t += dt; return t > 5; } }; G.hero.bat.animator.play(c, { once: true, timeScale: 0.28, fade: 0.04 }); }
+      }, [who, clip]));
+      await p.evaluate(() => { window.__stopG = true; });
+    }
+  },
+  roll: async () => { await clearGoons(); await place(6, 42.2, 10, Math.PI); await cam({ side: 4.5, up: 1.2, back: 0 }); await film('roll', 10, 70, async () => { await p.keyboard.down('KeyW'); await p.keyboard.press('KeyC'); await p.waitForTimeout(600); await p.keyboard.up('KeyW'); }); },
+  ledge: async () => { await clearGoons(); const l = await p.evaluate(() => { const G = window.__game; const pts = G.world.grapplePoints.filter((g) => !g.perch && g.y > 8 && g.y < 30); const g = pts[3]; G.hero.teleport({ x: g.x + g.nx * 0.6, y: g.y + 1.2, z: g.z + g.nz * 0.6 }, Math.atan2(-g.nx, -g.nz)); return g; }); await cam({ side: 3.5, up: 0.4, back: -1.8, look: 0.6 }); await film('ledge', 12, 140, async () => { await p.waitForTimeout(600); await key('KeyA', 700); await key('KeyW', 300); }); },
+  zip: async () => { await clearGoons(); await p.evaluate(() => { const G = window.__game; const z = G.world.grapplePoints.find((g) => g.zip); if (z) { G.hero.teleport({ x: z.x, y: z.y + 0.2, z: z.z }); } }); await cam({ side: 5, up: 0.5, back: 0, look: 0 }); await film('zip', 8, 150, async () => { await p.keyboard.press('KeyF'); }); },
+  wallrun: async () => { await clearGoons(); await place(-120, 0.2, -102, 0); await cam({ side: -5, up: 1.4, back: 0 }); await film('wallrun', 12, 110, async () => { await p.keyboard.down('ShiftLeft'); await p.keyboard.down('KeyW'); await p.waitForTimeout(500); await p.keyboard.press('Space'); await p.waitForTimeout(900); await p.keyboard.up('KeyW'); await p.keyboard.up('ShiftLeft'); }); },
+  carIn: async () => { await clearGoons(); await place(-93, 0.2, 60, 0.4); await p.evaluate(() => { const G = window.__game; G.vehicles.summon('batmobile', { instant: true }); const b = G.vehicles.batmobile.group; b.position.set(-90, 0, 64); G.vehicles.batmobile.v.yaw = 0; b.rotation.y = 0; }); await cam({ at: [-81, 2.6, 58], look3: [-90.5, 1, 62] }); await film('carIn', 10, 60, async () => { await p.keyboard.press('KeyT'); }); },
+  carOut: async () => { await p.waitForTimeout(400); await cam({ at: [-81, 2.6, 58], look3: [-90.5, 1, 62] }); await film('carOut', 10, 70, async () => { await p.keyboard.press('KeyT'); }); },
+};
+for (const [name, fn] of Object.entries(MOVES)) { if (only.length && !only.includes(name)) continue; try { await fn(); } catch (e) { console.log(name, 'failed:', e.message.split('\n')[0]); } }
+await b.close();
