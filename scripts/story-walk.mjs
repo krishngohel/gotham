@@ -23,10 +23,12 @@ const log = [];
 const shot = async (tag) => { const f = `${String(n++).padStart(3, '0')}-${tag}.png`; await page.screenshot({ path: `${out}/${f}` }); return f; };
 
 const startAt = process.env.START;
-await page.goto(base + (startAt ? `?at=${startAt}&god=1` : '?new=1&god=1'));
+// [story] NIGHT=n2 walks a campaign night (from its first step, or START inside it).
+const night = process.env.NIGHT;
+await page.goto(base + (night ? `?new=1&night=${night}${startAt ? `&at=${startAt}` : ''}&god=1` : startAt ? `?at=${startAt}&god=1` : '?new=1&god=1'));
 await page.waitForFunction(() => window.__game?.state?.ready && window.__game.state.frame > 20, null, { timeout: 90000 });
 await page.waitForTimeout(1500);
-if (!startAt) {
+if (!startAt && !night) {
   await shot('title');
   await page.evaluate(() => document.querySelector('.mbtn.primary').click());
   await page.waitForTimeout(800);
@@ -60,6 +62,11 @@ await page.evaluate(() => {
     if (st?.type !== 'fight' && st?.type !== 'boss') window.__strayCombo.push({ step: st?.id, alive: G.combat.enemies.filter((e) => e.alive).map((e) => `${e.type}@${Math.round(e.pos.distanceTo(G.hero.pos))}m`), from: new Error().stack.split(String.fromCharCode(10)).slice(2, 7).map((l) => l.trim()).join(' < ') });
     hit();
   };
+  // [story] Pacing, measured: comic scenes and cinematics the walk passes through.
+  window.__pace = { comics: 0, cinematics: 0, comicPanels: 0 };
+  G.events.on('cutscene', ({ on }) => { if (on) window.__pace.comics += 1; });
+  let cineWas = false;
+  setInterval(() => { const a = !!G.cinematic?.active; if (a && !cineWas) window.__pace.cinematics += 1; cineWas = a; const n = document.querySelectorAll('.comic.show .panel').length; if (n > (window.__pace.lastPanels ?? 0)) window.__pace.comicPanels += n - (window.__pace.lastPanels ?? 0); window.__pace.lastPanels = n; }, 100);
   for (const ev of ['heroDown', 'vehicleEnter', 'vehicleExit', 'wingEnter', 'wingExit', 'chaseDone', 'battleDone', 'armadaDone']) G.events.on(ev, () => window.__events.push([ev, G.flow.objectives.step?.id]));
 });
 // Marks a window in which a big move is this script's doing, not the game's.
@@ -71,7 +78,7 @@ const state = () => page.evaluate(() => {
     id: s?.id ?? null, type: s?.type ?? null, mode: G.flow.mode, text: document.querySelector('.hud-objective, .objective')?.textContent?.trim().slice(0, 140) ?? s?.text ?? '',
     site: G.flow.target ? { x: G.flow.target.x, y: G.flow.target.y, z: G.flow.target.z } : null,
     hero: [G.hero.pos.x, G.hero.pos.y, G.hero.pos.z].map((v) => +v.toFixed(1)),
-    comic: G.comic.playing, cine: !!G.cinematic?.active, radio: !!G.radio?.playing, veh: G.vehicles?.active?.kind ?? null, fly: G.batwing?.active ?? false,
+    boss: s?.boss ?? null, night: G.flow.story?.night?.id ?? 'n1', comic: G.comic.playing, cine: !!G.cinematic?.active, radio: !!G.radio?.playing, veh: G.vehicles?.active?.kind ?? null, fly: G.batwing?.active ?? false,
   };
 });
 
@@ -80,6 +87,8 @@ for (let guard = 0; guard < 900; guard++) {
   await page.waitForTimeout(300);
   let s = await state();
   if (!s.id && s.mode !== 'credits') break;
+  if (night && s.night !== night) break;
+  if (night && s.type === 'nightEnd') { await page.waitForTimeout(1500); await shot(`${s.id}-end`); break; }
   if (s.id !== lastStep) {
     // A new step: the player's view as it begins.
     await page.waitForTimeout(900);
@@ -104,6 +113,12 @@ for (let guard = 0; guard < 900; guard++) {
   }
   if (s.mode === 'finale') { await page.waitForTimeout(3000); await shot('finale-a'); await page.waitForTimeout(8000); await shot('finale-b'); await page.waitForTimeout(11000); continue; }
   if (s.mode === 'credits') { await shot('credits'); break; }
+  if (s.type === 'boss' && s.boss && s.boss !== 'joker') {
+    await page.waitForTimeout(1500); await shot(`${s.id}-boss`);
+    await page.evaluate(() => window.__game.winFight()); await page.waitForTimeout(1200);
+    await page.evaluate(() => window.__game.bosses?.debugWin?.()); await page.waitForTimeout(2500);
+    continue;
+  }
   if (s.type === 'boss') {
     await shot(`${s.id}-phase`);
     await page.evaluate(() => window.__game.winFight());
@@ -115,6 +130,9 @@ for (let guard = 0; guard < 900; guard++) {
     await page.waitForTimeout(1400);
     continue;
   }
+  // [story] Campaign step types: photograph, then solve them like scripts/playthrough.mjs does.
+  if (['scan', 'traverse', 'puzzle', 'fork', 'fear'].includes(s.type)) { await page.waitForTimeout(600); await shot(`${s.id}-${s.type}`); await mine(20000); await solveStep(page); await page.waitForTimeout(600); continue; }
+  if (s.type === 'wait') { await page.waitForTimeout(800); continue; }
   if (s.type === 'board') {
     await page.waitForFunction(() => !window.__game.vehicles?.batmobile?.arriving, null, { timeout: 5000 }).catch(() => {});
     await shot(`${s.id}-car-waiting`);
@@ -159,6 +177,9 @@ for (let guard = 0; guard < 900; guard++) {
 }
 const end = await state();
 const extra = await page.evaluate(() => ({ cuts: window.__cuts, events: window.__events, strayCombo: window.__strayCombo }));
+// [story] The pacing report for the steps walked (src/story/pacing.js), plus what the walk saw.
+const pace = await page.evaluate(async () => { let r = {}; try { const m = await import('/src/story/pacing.js'); r = m.pacingReport(window.__game.flow.steps ?? []); delete r.stops; } catch { /* an older build */ } return { ...r, seen: { comics: window.__pace.comics, comicPanels: window.__pace.comicPanels, cinematics: window.__pace.cinematics } }; });
+console.log('pacing:', JSON.stringify(pace));
 writeFileSync(`${out}/walk.json`, JSON.stringify({ end, steps: log, ...extra, errors }, null, 1));
 console.log('ended at', end.id, end.mode, '| shots', n, '| steps', log.length);
 console.log('cuts (hero jumps the script did not make):', JSON.stringify(extra.cuts));
@@ -166,3 +187,24 @@ console.log('events:', JSON.stringify(extra.events));
 console.log('combo hits outside a fight:', extra.strayCombo.length ? JSON.stringify(extra.strayCombo, null, 1) : 'none');
 console.log(errors.length ? 'ERRORS:\n' + errors.join('\n') : 'no console errors');
 await browser.close();
+
+async function solveStep(page) {
+  const steps = await page.evaluate(() => {
+    const G = window.__game, s = G.flow.objectives.step, site = (x) => G.flow.story.site(x);
+    const P = (p) => { const q = typeof p === 'string' ? site(p) : p; return q ? { x: q.x, y: q.y, z: q.z } : null; };
+    if (s.type === 'scan') return (s.points ?? [{ site: s.site }]).map((p) => ({ at: P(p.site ?? p.at), hold: (s.hold ?? 1.2) + 0.6 }));
+    if (s.type === 'traverse') return s.gates.map((g) => ({ at: P(g), hold: 0.4, up: 2.8 }));
+    if (s.type === 'puzzle') return s.order.map((id) => { const pl = s.plates.find((p) => p.id === id); return { at: P(pl.site ?? pl.at), hold: 0.5, off: true }; });
+    if (s.type === 'fork') return [{ at: P(s.options[0].site), hold: 0.5 }];
+    if (s.type === 'fear') return [{ at: P(s.site), hold: 0.6 }];
+    return [];
+  });
+  await page.evaluate(() => { window.__game.state.detectiveOn = true; });
+  for (const st of steps) {
+    if (!st.at) continue;
+    await page.evaluate((p) => { const G = window.__game; if (G.vehicles?.active) G.vehicles.exit(); G.teleport({ x: p.at.x, y: p.at.y + (p.up ?? 0), z: p.at.z }); }, st);
+    await page.waitForTimeout(st.hold * 1000);
+    if (st.off) { await page.evaluate((p) => window.__game.teleport({ x: p.at.x + 4, y: p.at.y, z: p.at.z + 4 }), st); await page.waitForTimeout(300); }
+  }
+  await page.evaluate(() => { window.__game.state.detectiveOn = false; });
+}

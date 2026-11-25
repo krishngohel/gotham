@@ -147,34 +147,37 @@ void main() {
 const FLASH = { value: 0 };
 const INK = { value: new THREE.Color(PALETTE.ink) };
 
-function towerLayer(rng, tex, { count, minDist, maxDist, color, lit, mist, sector = null, tall = 0.12, scale = 2.2, low = [18, 70], high = [80, 150] }) {
+function towerLayer(rng, tex, { count, minDist, maxDist, color, lit, mist, sector = null, tall = 0.12, scale = 2.2, low = [18, 70], high = [80, 150], sink = 40, k = 1 }) {
   const geos = [];
   const beacons = [];
   for (let i = 0; i < count; i++) {
     let a = rng.range(0, Math.PI * 2);
     if (sector) a = rng.range(sector[0], sector[1]);
     else if (Math.sin(a) > 0.25) a = -a; // keep the bay open to the south
-    const dist = rng.range(minDist, maxDist);
+    // ...and the lake open to the east (Long Night 2, H2): the same draw, mirrored to the west, so
+    // the rng sequence (and everything drawn after it) is unchanged.
+    if (!sector && Math.cos(a) > 0.5) a = Math.PI - a;
+    const dist = rng.range(minDist, maxDist) * k;
     const x = Math.cos(a) * dist, z = Math.sin(a) * dist;
-    const w = rng.range(7, 18) * scale, d = rng.range(7, 18) * scale;
+    const w = rng.range(7, 18) * scale * k, d = rng.range(7, 18) * scale * k;
     const isTall = rng.chance(tall);
     const first = geos.length;
     // Only some towers are awake: lit windows cluster instead of dusting every wall.
     const awake = rng.chance(isTall ? 0.75 : 0.35) ? 1 : 0;
-    const top = isTall ? rng.range(high[0], high[1]) : rng.range(low[0], low[1]);
-    const h = top + 40;
+    const top = (isTall ? rng.range(high[0], high[1]) : rng.range(low[0], low[1])) * k;
+    const h = top + sink * k;
     geos.push(tower(w, h, d).translate(x, top - h / 2, z));
     let peak = top;
     if (rng.chance(isTall ? 0.8 : 0.3)) {
-      const h2 = rng.range(6, 18);
+      const h2 = rng.range(6, 18) * k;
       geos.push(tower(w * 0.6, h2, d * 0.6).translate(x, top + h2 / 2, z));
       peak = top + h2;
       if (rng.chance(0.4)) { geos.push(tower(w * 0.35, h2 * 0.6, d * 0.35).translate(x, peak + h2 * 0.3, z)); peak += h2 * 0.6; }
-      if (rng.chance(0.5)) { geos.push(flatUV(new THREE.ConeGeometry(w * 0.2, 14, 4)).rotateY(Math.PI / 4).translate(x, peak + 7, z)); peak += 14; }
+      if (rng.chance(0.5)) { geos.push(flatUV(new THREE.ConeGeometry(w * 0.2, 14 * k, 4)).rotateY(Math.PI / 4).translate(x, peak + 7 * k, z)); peak += 14 * k; }
     } else if (rng.chance(0.35)) {
       // Water tower on a low roof.
-      geos.push(flatUV(new THREE.CylinderGeometry(3, 3, 5, 8)).translate(x + w * 0.2, top + 4.5, z));
-      geos.push(flatUV(new THREE.ConeGeometry(3.3, 2.5, 8)).translate(x + w * 0.2, top + 8.2, z));
+      geos.push(flatUV(new THREE.CylinderGeometry(3 * k, 3 * k, 5 * k, 8)).translate(x + w * 0.2, top + 4.5 * k, z));
+      geos.push(flatUV(new THREE.ConeGeometry(3.3 * k, 2.5 * k, 8)).translate(x + w * 0.2, top + 8.2 * k, z));
     }
     if (isTall) beacons.push([x, peak + 1, z]);
     for (let k = first; k < geos.length; k++) geos[k].setAttribute('aLit', new THREE.BufferAttribute(new Float32Array(geos[k].attributes.position.count).fill(awake * lit), 1));
@@ -259,28 +262,63 @@ function bridge(color) {
   return { mesh, lines, lamps };
 }
 
-export function createBackdrop(rng) {
+// The horizon: rings of painted towers and bands of mist, now centred on the camera and pushed
+// out past the whole planned city (Long Night 2: the old rings at 340-980 m from the origin would
+// stand inside the new districts). Distances and sizes are the old ones times HORIZON_K, so each
+// ring keeps its old apparent size; the rng draws are exactly the old ones (same count, same
+// order), so everything drawn from the shared world rng afterwards (traffic) is unchanged.
+// group.userData.follow(cameraPosition) moves the rings with the camera; the suspension bridge
+// across the bay stays put in the world.
+export const HORIZON_K = 2.05;
+export const PARALLAX = 0.86;
+
+export function createBackdrop(rng, { k = HORIZON_K } = {}) {
   const group = new THREE.Group();
+  const rings = new THREE.Group();
   const tex = windowTexture(rng, 0.14);
   const mist = PALETTE.fog;
   const layers = [
-    { count: 120, minDist: 340, maxDist: 430, color: 0x192233, lit: 0.8, mist, tall: 0.1, low: [10, 50], high: [60, 105] },
-    { count: 110, minDist: 470, maxDist: 590, color: 0x202a3e, lit: 0.55, mist: 0x243048, tall: 0.12 },
-    { count: 100, minDist: 640, maxDist: 780, color: 0x283349, lit: 0.3, mist: 0x2b3650, tall: 0.1 },
+    { count: 120, minDist: 340, maxDist: 430, color: 0x192233, lit: 0.8, mist, tall: 0.1, low: [10, 50], high: [60, 105], k },
+    { count: 110, minDist: 470, maxDist: 590, color: 0x202a3e, lit: 0.55, mist: 0x243048, tall: 0.12, k },
+    { count: 100, minDist: 640, maxDist: 780, color: 0x283349, lit: 0.3, mist: 0x2b3650, tall: 0.1, k: Math.min(k, 1.75) },
     // The far shore, across the bay to the south.
-    { count: 90, minDist: 820, maxDist: 980, color: 0x2e3a50, lit: 0.25, mist: 0x303b52, tall: 0.1, sector: [0.35, Math.PI - 0.35] },
+    { count: 90, minDist: 820, maxDist: 980, color: 0x2e3a50, lit: 0.25, mist: 0x303b52, tall: 0.1, sector: [0.35, Math.PI - 0.35], k: Math.min(k, 1.4) },
   ];
   const { mesh: towers, beacons } = towerLayers(rng, tex, layers);
-  group.add(towers);
-  group.add(mistRings([[450, 70, PALETTE.fog, 0.75], [610, 90, 0x243048, 0.7], [800, 110, 0x2b3650, 0.65]]));
+  rings.add(towers);
+  rings.add(mistRings([[450 * k, 70 * k, PALETTE.fog, 0.75], [610 * k, 90 * k, 0x243048, 0.7], [Math.min(800 * k, 1380), 110 * k, 0x2b3650, 0.65]]));
+  // Dark ground under the whole horizon, below every street and deck (y -9): land no region
+  // covers yet reads as distant city lost in the fog instead of open sky below the horizon.
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(1450, 48).rotateX(-Math.PI / 2).translate(0, -9, 0), new THREE.MeshBasicMaterial({ color: 0x161c27 }));
+  ground.name = 'horizonGround';
+  rings.add(ground);
+  rings.matrixAutoUpdate = false;
+  group.add(rings);
   const br = bridge(0x1c2638);
   group.add(br.mesh, br.lines);
   // Too far for ink lines anyway: keep the backdrop out of the normal pass.
   group.traverse((o) => o.layers.set(LAYER_FX));
   const bridgeColor = new THREE.Color(0x1c2638);
+  const at = new THREE.Vector3(NaN, 0, NaN);
   group.userData = {
+    // Beacon positions relative to the camera (follow() keeps world copies in beaconsWorld).
     beacons,
+    beaconsWorld: beacons.map((b) => [...b]),
     bridgeLamps: br.lamps,
+    // Re-centres the rings on the camera (only when it has moved a metre). Returns true then.
+    // [env] Parallax: the rings follow the camera at PARALLAX of its motion, so the horizon slides
+    // a little against the city as you travel (it used to be glued to the camera). The lag stays
+    // well outside the draw distance anywhere in the world (rings start at ~700 m).
+    follow(cam) {
+      const x = cam.x * PARALLAX, z = cam.z * PARALLAX;
+      if (Math.abs(x - at.x) < 1 && Math.abs(z - at.z) < 1) return false;
+      at.set(x, 0, z);
+      rings.position.set(x, 0, z);
+      rings.updateMatrix();
+      rings.updateMatrixWorld(true);
+      beacons.forEach((b, i) => { const w = group.userData.beaconsWorld[i]; w[0] = b[0] + x; w[2] = b[2] + z; });
+      return true;
+    },
     setFlash(k) {
       FLASH.value = k;
       br.mesh.material.color.copy(bridgeColor).lerp(INK.value, k);

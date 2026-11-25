@@ -1,0 +1,19 @@
+== pt-camp: env BASE=http://localhost:5860/ OUT=~/AppData/Local/Temp/claude/9519414f725d5b3e/fa0efec5-d6d5-43fd-b20d-c13ef3059827/scratchpad/checks2/pt-camp CAMPAIGN=1 QUALITY=potato node scripts/playthrough.mjs
+night n1
+night n2
+night n3
+night n4
+night n5
+night n6
+night n7
+night n8
+night n9
+ended at {"id":"n9End","type":"nightEnd","mode":"play","site":null,"phase":4,"joker":"knocked","night":"n9","boss":null,"last":true}
+nights played: n1 > n2 > n3 > n4 > n5 > n6 > n7 > n8 > n9
+comic pages captured: 44
+no console errors
+gadgets unlocked in order: ["claw","gel","smoke","remote","launcher","freeze","flashbang","sonic","disruptor","tracker","hack","glue","bolas","shock","emp","decoy","drone"]
+abilities unlocked in order: ["grapple","zipline","batmobile","carRadio","batmobileCall","diveBomb","dodge","throw","moveStrikes","comboFinisher","aerialAttacks","groundPound","wallRun","capeStun","silentTakedown","perch","detective","policeAttention","beatdown","eject","ledgeTakedown","batwing","fastTravel","takeCar","hailTaxi","specialTakedown","grappleBoost","battleMode","chainTakedown","reGrapple","wingsuit","batSwarm","grapplePull"]
+ABILITIES: story order OK
+saved gadget unlocks: ["claw","gel","smoke","remote","launcher","freeze","flashbang","sonic","disruptor","tracker","hack","glue","bolas","shock","emp","decoy","drone"] wayne: {"xp":14530,"level":15}
+== exit 0 after 619 s

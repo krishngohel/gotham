@@ -34,6 +34,10 @@ uniform vec3 uTop, uHorizon, uGlow, uSignal, uInk, uSignalDir, uMoonDir, uPaper;
 uniform float uSignalSize, uSignalOn, uSignalAspect;
 uniform sampler2D tBat;
 uniform float uTime;
+// Time of day and weather (world.clock / world.weather via src/env/envSystem.js). At night under
+// full cloud (uCloudCut 0.52, uStars 0, uDay 0, uFlashSky 0) the dome is exactly the old sky.
+uniform float uCloudCut, uStars, uDay, uFlashSky;
+uniform vec3 uSunDir;
 varying vec3 vDir;
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -58,11 +62,29 @@ void main() {
   float c = fbm(cp);
   float fade = smoothstep(0.02, 0.2, h);
   // Two flat tones per cloud and an inked rim where the cloud shape ends.
-  float body = step(0.52, c), core = step(0.64, c);
-  float rim = (1.0 - smoothstep(0.0, 0.018, abs(c - 0.52))) * fade;
+  float body = step(uCloudCut, c), core = step(uCloudCut + 0.12, c);
+  float rim = (1.0 - smoothstep(0.0, 0.018, abs(c - uCloudCut))) * fade;
   float cloud = (body * 0.6 + core * 0.4) * fade;
   vec3 lit = mix(uHorizon * 1.6, uGlow * 1.2, 1.0 - smoothstep(0.05, 0.45, h)); // lit from below by the city
+  // By day the clouds are lit from above: pale tops, a grey underside.
+  lit = mix(lit, mix(uHorizon * 1.15, vec3(0.86, 0.86, 0.84), 0.45), uDay);
   vec3 cloudCol = mix(lit * 0.75, lit, core);
+  // Stars between the clouds on a clear night: a sparse grid of paper-white points.
+  if (uStars > 0.0) {
+    vec2 sp = d.xz / max(d.y, 0.08) * 26.0;
+    vec2 sc = floor(sp);
+    float sh = hash(sc);
+    vec2 jit = (vec2(hash(sc + 3.1), hash(sc + 7.7)) - 0.5) * 0.6;
+    float star = step(0.985, sh) * (1.0 - smoothstep(0.05, 0.16, length(fract(sp) - 0.5 - jit)));
+    col = mix(col, uPaper, star * uStars * smoothstep(0.08, 0.3, h) * (0.6 + 0.4 * sin(uTime * 2.0 + sh * 40.0)));
+  }
+  // The sun behind the overcast: a pale disc and glow, swallowed by thick cloud.
+  if (uDay > 0.0) {
+    float sdist = acos(clamp(dot(d, normalize(uSunDir)), -1.0, 1.0));
+    float sdisc = smoothstep(0.075, 0.07, sdist);
+    float sglow = smoothstep(0.6, 0.0, sdist) * 0.35;
+    col = mix(col, uPaper, (sdisc * (1.0 - cloud * 0.7) + sglow * (1.0 - cloud * 0.4)) * uDay);
+  }
   col = mix(col, cloudCol, cloud * 0.9);
   col = mix(col, uInk, rim * 0.85);
 
@@ -71,6 +93,8 @@ void main() {
   float disc = smoothstep(0.062, 0.058, md);
   float ring = step(0.5, fract(md * 38.0)) * smoothstep(0.26, 0.07, md) * (1.0 - disc) * 0.18;
   float moonRim = (1.0 - smoothstep(0.0, 0.004, abs(md - 0.06)));
+  float nightK = 1.0 - uDay;
+  disc *= nightK; ring *= nightK; moonRim *= nightK;
   col = mix(col, uPaper * 0.92, disc * (1.0 - cloud * 0.6));
   col = mix(col, uPaper, ring * (1.0 - cloud));
   col = mix(col, uInk, moonRim * (1.0 - cloud * 0.6));
@@ -90,6 +114,8 @@ void main() {
   col = mix(col, uSignal * 0.6, wedge * 0.22 * (0.5 + cloud));
   col = mix(col, mix(uSignal, uInk, bat), inside * (0.6 + 0.4 * cloud));
 
+  // Lightning lights the cloud bodies from inside.
+  col = mix(col, uPaper, uFlashSky * cloud * 0.55);
   gl_FragColor = vec4(col, 1.0);
   #include <colorspace_fragment>
 }
@@ -110,6 +136,8 @@ export function createSkyDome() {
     uPaper: { value: new THREE.Color(PALETTE.paper) },
     tBat: { value: batTexture() },
     uTime: { value: 0 },
+    uCloudCut: { value: 0.52 }, uStars: { value: 0 }, uDay: { value: 0 }, uFlashSky: { value: 0 },
+    uSunDir: { value: new THREE.Vector3(0, 1, 0) },
   };
   const mesh = new THREE.Mesh(
     new THREE.SphereGeometry(450, 48, 24),

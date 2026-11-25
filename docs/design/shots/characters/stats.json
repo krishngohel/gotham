@@ -1,0 +1,4548 @@
+{
+ "bat-m": {
+  "characters": 1,
+  "colorCalls": 13,
+  "normalCalls": 4,
+  "calls": 17,
+  "triangles": 36444,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": {
+    "color": 1513502,
+    "options": {
+     "cols": 13,
+     "rows": 14,
+     "topWidth": 0.6,
+     "bottomWidth": 1.34,
+     "length": 1.28,
+     "pointDrop": 0.17
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "suit": 10528174,
+    "cowl": 1513502,
+    "skin": 13212284,
+    "belt": 14264620,
+    "glove": 1513502,
+    "boot": 1513502,
+    "emblem": 723730,
+    "cape": 1513502
+   }
+  }
+ },
+ "bat-f": {
+  "characters": 1,
+  "colorCalls": 19,
+  "normalCalls": 6,
+  "calls": 25,
+  "triangles": 49452,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": {
+    "color": 1513502,
+    "options": {}
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "suit": 2894650,
+    "cowl": 1513502,
+    "skin": 13212284,
+    "belt": 14264620,
+    "glove": 14264620,
+    "boot": 1513502,
+    "emblem": 15913547,
+    "cape": 1513502
+   }
+  }
+ },
+ "bat-gold": {
+  "characters": 1,
+  "colorCalls": 13,
+  "normalCalls": 4,
+  "calls": 17,
+  "triangles": 36444,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": {
+    "color": 3811850,
+    "options": {
+     "cols": 13,
+     "rows": 14,
+     "topWidth": 0.6,
+     "bottomWidth": 1.34,
+     "length": 1.28,
+     "pointDrop": 0.17
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "suit": 14264620,
+    "cowl": 3811850,
+    "skin": 13212284,
+    "belt": 15913547,
+    "glove": 3811850,
+    "boot": 3811850,
+    "emblem": 723730,
+    "cape": 3811850
+   }
+  }
+ },
+ "bat-year-one": {
+  "characters": 1,
+  "colorCalls": 13,
+  "normalCalls": 4,
+  "calls": 17,
+  "triangles": 36316,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": {
+    "color": 2500397,
+    "options": {
+     "cols": 13,
+     "rows": 14,
+     "topWidth": 0.6,
+     "bottomWidth": 1.05,
+     "length": 1.1,
+     "pointDrop": 0.2
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "suit": 9277590,
+    "cowl": 2763569,
+    "skin": 13212284,
+    "belt": 8018490,
+    "glove": 2763569,
+    "boot": 2763569,
+    "emblem": 1908260,
+    "cape": 2500397
+   }
+  }
+ },
+ "bat-armoured": {
+  "characters": 1,
+  "colorCalls": 13,
+  "normalCalls": 4,
+  "calls": 17,
+  "triangles": 38056,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": {
+    "color": 1776674,
+    "options": {
+     "cols": 13,
+     "rows": 14,
+     "topWidth": 0.6,
+     "bottomWidth": 1.34,
+     "length": 1.28,
+     "pointDrop": 0.17
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "suit": 5923181,
+    "cowl": 1316122,
+    "skin": 13212284,
+    "belt": 10133416,
+    "glove": 1316122,
+    "boot": 1316122,
+    "emblem": 723730,
+    "cape": 1776674
+   }
+  }
+ },
+ "bat-stealth": {
+  "characters": 1,
+  "colorCalls": 13,
+  "normalCalls": 4,
+  "calls": 17,
+  "triangles": 36444,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": {
+    "color": 1184536,
+    "options": {
+     "cols": 13,
+     "rows": 14,
+     "topWidth": 0.6,
+     "bottomWidth": 1.34,
+     "length": 1.28,
+     "pointDrop": 0.17
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "suit": 2764086,
+    "cowl": 1052949,
+    "skin": 13212284,
+    "belt": 3158844,
+    "glove": 1052949,
+    "boot": 1052949,
+    "emblem": 1052949,
+    "cape": 1184536
+   }
+  }
+ },
+ "bat-arctic": {
+  "characters": 1,
+  "colorCalls": 13,
+  "normalCalls": 4,
+  "calls": 17,
+  "triangles": 37756,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": {
+    "color": 4872820,
+    "options": {
+     "cols": 13,
+     "rows": 14,
+     "topWidth": 0.6,
+     "bottomWidth": 1.34,
+     "length": 1.15,
+     "pointDrop": 0.17
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "suit": 13883616,
+    "cowl": 3883600,
+    "skin": 13212284,
+    "belt": 8031912,
+    "glove": 3883600,
+    "boot": 3883600,
+    "emblem": 3883600,
+    "cape": 4872820
+   }
+  }
+ },
+ "bat-classic": {
+  "characters": 1,
+  "colorCalls": 13,
+  "normalCalls": 4,
+  "calls": 17,
+  "triangles": 41516,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": {
+    "color": 3033734,
+    "options": {
+     "cols": 13,
+     "rows": 14,
+     "topWidth": 0.6,
+     "bottomWidth": 1.34,
+     "length": 1.28,
+     "pointDrop": 0.17
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "suit": 10265261,
+    "cowl": 3033734,
+    "skin": 13212284,
+    "belt": 15913547,
+    "glove": 3033734,
+    "boot": 3033734,
+    "emblem": 723730,
+    "cape": 3033734
+   }
+  }
+ },
+ "bat-noir": {
+  "characters": 1,
+  "colorCalls": 13,
+  "normalCalls": 4,
+  "calls": 17,
+  "triangles": 36444,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": {
+    "color": 1447446,
+    "options": {
+     "cols": 13,
+     "rows": 14,
+     "topWidth": 0.6,
+     "bottomWidth": 1.34,
+     "length": 1.28,
+     "pointDrop": 0.17
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "suit": 12171705,
+    "cowl": 1184274,
+    "skin": 11906212,
+    "belt": 6974058,
+    "glove": 1184274,
+    "boot": 1184274,
+    "emblem": 1184274,
+    "cape": 1447446
+   }
+  }
+ },
+ "nightwing": {
+  "characters": 1,
+  "colorCalls": 12,
+  "normalCalls": 7,
+  "calls": 19,
+  "triangles": 27156,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "sticks",
+   "traversal": "acrobat",
+   "palette": {
+    "suit": 1184280,
+    "wing": 4830463,
+    "hair": 789524,
+    "skin": 13212284,
+    "boot": 789522,
+    "belt": 2303024
+   }
+  }
+ },
+ "nightwing-red": {
+  "characters": 1,
+  "colorCalls": 12,
+  "normalCalls": 7,
+  "calls": 19,
+  "triangles": 27156,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "sticks",
+   "traversal": "acrobat",
+   "palette": {
+    "suit": 1184280,
+    "wing": 13776447,
+    "hair": 789524,
+    "skin": 13212284,
+    "boot": 789522,
+    "belt": 2303024
+   }
+  }
+ },
+ "nightwing-tactical": {
+  "characters": 1,
+  "colorCalls": 12,
+  "normalCalls": 7,
+  "calls": 19,
+  "triangles": 27892,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "sticks",
+   "traversal": "acrobat",
+   "palette": {
+    "suit": 1184280,
+    "wing": 9348031,
+    "hair": 789524,
+    "skin": 13212284,
+    "boot": 789522,
+    "belt": 2303024
+   }
+  }
+ },
+ "nightwing-courier": {
+  "characters": 1,
+  "colorCalls": 14,
+  "normalCalls": 7,
+  "calls": 21,
+  "triangles": 28692,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "sticks",
+   "traversal": "acrobat",
+   "palette": {
+    "suit": 1184280,
+    "wing": 4830463,
+    "hair": 789524,
+    "skin": 13212284,
+    "boot": 789522,
+    "belt": 2303024
+   }
+  }
+ },
+ "goon-grunt": {
+  "characters": 1,
+  "colorCalls": 16,
+  "normalCalls": 3,
+  "calls": 19,
+  "triangles": 34464,
+  "bones": 65,
+  "meta": null
+ },
+ "goon-knife": {
+  "characters": 1,
+  "colorCalls": 18,
+  "normalCalls": 5,
+  "calls": 23,
+  "triangles": 44284,
+  "bones": 65,
+  "meta": null
+ },
+ "goon-brute": {
+  "characters": 1,
+  "colorCalls": 16,
+  "normalCalls": 2,
+  "calls": 18,
+  "triangles": 47780,
+  "bones": 65,
+  "meta": null
+ },
+ "goon-rifle": {
+  "characters": 1,
+  "colorCalls": 26,
+  "normalCalls": 8,
+  "calls": 34,
+  "triangles": 45328,
+  "bones": 65,
+  "meta": null
+ },
+ "goon-civilian": {
+  "characters": 1,
+  "colorCalls": 14,
+  "normalCalls": 3,
+  "calls": 17,
+  "triangles": 33760,
+  "bones": 65,
+  "meta": null
+ },
+ "joker": {
+  "characters": 1,
+  "colorCalls": 16,
+  "normalCalls": 4,
+  "calls": 20,
+  "triangles": 31532,
+  "bones": 65,
+  "meta": null
+ },
+ "harley": {
+  "characters": 1,
+  "colorCalls": 17,
+  "normalCalls": 9,
+  "calls": 26,
+  "triangles": 26928,
+  "bones": 65,
+  "meta": null
+ },
+ "robin": {
+  "characters": 1,
+  "colorCalls": 7,
+  "normalCalls": 4,
+  "calls": 11,
+  "triangles": 27376,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9,
+   "cape": {
+    "color": 14264620,
+    "options": {
+     "topWidth": 0.4,
+     "bottomWidth": 0.78,
+     "length": 0.7,
+     "pointDrop": 0.04
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "traversal": "acrobat",
+   "palette": {
+    "skin": 13212284,
+    "tunic": 13120060,
+    "sleeves": 4169306,
+    "legs": 3111494,
+    "glove": 4169306,
+    "boot": 1710623,
+    "belt": 15913547,
+    "disc": 15913547,
+    "mark": 723730,
+    "trunks": 3111494,
+    "cape": 14264620
+   }
+  }
+ },
+ "robin-winter": {
+  "characters": 1,
+  "colorCalls": 7,
+  "normalCalls": 4,
+  "calls": 11,
+  "triangles": 27668,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9,
+   "cape": {
+    "color": 1915430,
+    "options": {
+     "topWidth": 0.4,
+     "bottomWidth": 0.78,
+     "length": 0.7,
+     "pointDrop": 0.04
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "traversal": "acrobat",
+   "palette": {
+    "skin": 13212284,
+    "tunic": 13120060,
+    "sleeves": 4169306,
+    "legs": 3111494,
+    "glove": 4169306,
+    "boot": 1710623,
+    "belt": 15913547,
+    "disc": 15913547,
+    "mark": 723730,
+    "trunks": 3111494,
+    "cape": 1915430
+   }
+  }
+ },
+ "robin-shadow": {
+  "characters": 1,
+  "colorCalls": 7,
+  "normalCalls": 4,
+  "calls": 11,
+  "triangles": 27376,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9,
+   "cape": {
+    "color": 1447709,
+    "options": {
+     "topWidth": 0.4,
+     "bottomWidth": 0.78,
+     "length": 0.7,
+     "pointDrop": 0.04
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "traversal": "acrobat",
+   "palette": {
+    "skin": 13212284,
+    "tunic": 13120060,
+    "sleeves": 4169306,
+    "legs": 3111494,
+    "glove": 4169306,
+    "boot": 1710623,
+    "belt": 15913547,
+    "disc": 15913547,
+    "mark": 723730,
+    "trunks": 3111494,
+    "cape": 1447709
+   }
+  }
+ },
+ "robin-modern": {
+  "characters": 1,
+  "colorCalls": 7,
+  "normalCalls": 4,
+  "calls": 11,
+  "triangles": 30444,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9,
+   "cape": {
+    "color": 1842468,
+    "options": {
+     "topWidth": 0.42,
+     "bottomWidth": 0.8,
+     "length": 0.82,
+     "pointDrop": 0.06
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "traversal": "acrobat",
+   "palette": {
+    "skin": 13212284,
+    "tunic": 11020850,
+    "panel": 1842468,
+    "sleeves": 1842468,
+    "legs": 1842468,
+    "glove": 1842468,
+    "guard": 11020850,
+    "boot": 1316122,
+    "belt": 14264620,
+    "disc": 14264620,
+    "mark": 723730,
+    "trunks": 1842468,
+    "cape": 1842468
+   }
+  }
+ },
+ "robin-staff": {
+  "characters": 1,
+  "colorCalls": 9,
+  "normalCalls": 5,
+  "calls": 14,
+  "triangles": 27952,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9,
+   "cape": {
+    "color": 1447709,
+    "options": {
+     "topWidth": 0.4,
+     "bottomWidth": 0.78,
+     "length": 0.7,
+     "pointDrop": 0.04
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "staff",
+   "traversal": "acrobat",
+   "palette": {
+    "skin": 13212284,
+    "tunic": 8003112,
+    "sleeves": 1447709,
+    "legs": 1447709,
+    "glove": 1447709,
+    "boot": 2760472,
+    "belt": 15913547,
+    "collar": 1447709,
+    "stripe": 15913547,
+    "cape": 1447709
+   }
+  }
+ },
+ "batgirl": {
+  "characters": 1,
+  "colorCalls": 9,
+  "normalCalls": 5,
+  "calls": 14,
+  "triangles": 36704,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": {
+    "color": 2234928,
+    "options": {
+     "topWidth": 0.44,
+     "bottomWidth": 0.95,
+     "length": 0.95,
+     "pointDrop": 0.12
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "traversal": "glide",
+   "palette": {
+    "suit": 5584254,
+    "cape": 2234928
+   }
+  }
+ },
+ "red-hood": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 2,
+  "calls": 6,
+  "triangles": 31648,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.01,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "pistols",
+   "traversal": "grapple",
+   "palette": {
+    "jacket": 5913126,
+    "helmet": 12068398
+   }
+  }
+ },
+ "future-bat": {
+  "characters": 1,
+  "colorCalls": 6,
+  "normalCalls": 3,
+  "calls": 9,
+  "triangles": 30064,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.02,
+   "cape": null,
+   "wings": "membrane",
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "traversal": "glide",
+   "palette": {
+    "suit": 1184536,
+    "emblem": 13641263
+   }
+  }
+ },
+ "gaslight-bat": {
+  "characters": 1,
+  "colorCalls": 7,
+  "normalCalls": 4,
+  "calls": 11,
+  "triangles": 36548,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": {
+    "color": 2763312,
+    "options": {
+     "topWidth": 0.6,
+     "bottomWidth": 1,
+     "length": 0.62,
+     "pointDrop": 0.03
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "traversal": "glide",
+   "palette": {
+    "suit": 4540238,
+    "coat": 2763312,
+    "cape": 2763312
+   }
+  }
+ },
+ "superman": {
+  "characters": 1,
+  "colorCalls": 6,
+  "normalCalls": 4,
+  "calls": 10,
+  "triangles": 31920,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.03,
+   "cape": {
+    "color": 12067371,
+    "options": {
+     "topWidth": 0.58,
+     "bottomWidth": 1.15,
+     "length": 1.35,
+     "pointDrop": 0
+    }
+   },
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "traversal": "flight",
+   "palette": {
+    "suit": 2905776,
+    "cape": 12067371
+   }
+  }
+ },
+ "villain-crimeBoss": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 2,
+  "calls": 6,
+  "triangles": 36840,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.82,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "bossUmbrella",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 15262938,
+    "stripe": 14212582,
+    "skin": 15253664,
+    "hair": 2761760,
+    "brow": 2761760,
+    "stubble": 15253664,
+    "top": 15921384,
+    "outer": 1118486,
+    "outer2": 1842212,
+    "vest": 5909098,
+    "bottom": 1118486,
+    "shoes": 526348,
+    "hat": 1118486,
+    "hat2": 5909098,
+    "accent": 5909098
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "tailcoat",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "thinning",
+    "hat": "tophat",
+    "extras": [
+     "monocle",
+     "bowtie",
+     "gloves"
+    ]
+   },
+   "umbrella": false,
+   "name": "The Penguin-like boss"
+  }
+ },
+ "villain-puzzler": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 2,
+  "calls": 6,
+  "triangles": 36564,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "cane",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 12106948,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 6963107,
+    "stripe": 14212582,
+    "skin": 14724230,
+    "hair": 11032106,
+    "brow": 11032106,
+    "stubble": 14724230,
+    "top": 3811914,
+    "outer": 3115578,
+    "outer2": 2388014,
+    "bottom": 3115578,
+    "shoes": 1710623,
+    "hat": 3115578,
+    "hat2": 1118486,
+    "accent": 8257354
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "blazer",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "short",
+    "hat": "bowler",
+    "extras": [
+     "questionmark",
+     "glasses",
+     "gloves"
+    ]
+   },
+   "umbrella": false,
+   "name": "The Riddler-like puzzler"
+  }
+ },
+ "villain-scarecrow": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 40476,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.04,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 9075282,
+    "metal": 12106948,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 3813410,
+    "stripe": 14212582,
+    "skin": 14200976,
+    "hair": 3811866,
+    "brow": 3811866,
+    "stubble": 14200976,
+    "top": 6969914,
+    "outer": 4865836,
+    "outer2": 3813410,
+    "bottom": 4143660,
+    "shoes": 2760472,
+    "hat": 12098146,
+    "accent": 8022596
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "coat",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "bald",
+    "extras": [
+     "burlap",
+     "gloves",
+     "belt"
+    ]
+   },
+   "umbrella": false,
+   "name": "The Scarecrow-like doctor"
+  }
+ },
+ "villain-twoFace": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 40568,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 12106948,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 14724230,
+    "hair": 2761760,
+    "brow": 2761760,
+    "stubble": 14724230,
+    "top": 15262422,
+    "outer": 14736592,
+    "outer2": 1447708,
+    "bottom": 14736592,
+    "shoes": 1118486,
+    "accent": 6953510,
+    "scar": 10111594
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "blazer",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "slick",
+    "extras": [
+     "split",
+     "splitface",
+     "tie"
+    ]
+   },
+   "umbrella": false,
+   "name": "The two-faced DA"
+  }
+ },
+ "villain-coldScientist": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 33340,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.08,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 8378623,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 12578815,
+    "glove": 3820122,
+    "stripe": 14212582,
+    "skin": 12110040,
+    "hair": 10131088,
+    "brow": 10131088,
+    "stubble": 12110040,
+    "top": 11057352,
+    "vest": 5929626,
+    "bottom": 9083560,
+    "shoes": 3820122
+   },
+   "cut": {
+    "top": "sweater",
+    "sleeves": "long",
+    "outer": "tactical",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "bald",
+    "extras": [
+     "colddome",
+     "goggles",
+     "kneepads",
+     "gloves"
+    ]
+   },
+   "umbrella": false,
+   "name": "The cold-suit scientist"
+  }
+ },
+ "villain-clayBrute": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 28636,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.3,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15258170,
+    "iris": 2763280,
+    "belt": 1972760,
+    "metal": 12106948,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 9075298,
+    "hair": 6969926,
+    "brow": 6969926,
+    "stubble": 9075298,
+    "bottom": 3816000,
+    "shoes": 6969926
+   },
+   "cut": {
+    "top": "bare",
+    "bottom": "shorts",
+    "shoes": "boots",
+    "hair": "bald",
+    "extras": []
+   },
+   "umbrella": false,
+   "name": "The clay brute"
+  }
+ },
+ "villain-venomBrute": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 35550,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.32,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 5917226,
+    "metal": 12106948,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 13212284,
+    "hair": 1710623,
+    "brow": 1710623,
+    "stubble": 13212284,
+    "bottom": 1710623,
+    "shoes": 1710623,
+    "hat": 1710623,
+    "hat2": 2763312,
+    "accent": 6472001
+   },
+   "cut": {
+    "top": "bare",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "bald",
+    "extras": [
+     "mercmask",
+     "vines",
+     "belt"
+    ]
+   },
+   "umbrella": false,
+   "name": "The venom brute"
+  }
+ },
+ "villain-catBurglar": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 36796,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.98,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 3816000,
+    "metal": 12106948,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 6982202,
+    "glove": 921106,
+    "stripe": 14212582,
+    "skin": 14724230,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 14724230,
+    "top": 1447452,
+    "bottom": 1447452,
+    "shoes": 921106,
+    "hat": 1447452
+   },
+   "cut": {
+    "top": "turtleneck",
+    "sleeves": "long",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "bob",
+    "extras": [
+     "catears",
+     "goggles",
+     "gloves",
+     "belt"
+    ]
+   },
+   "umbrella": false,
+   "name": "The cat burglar"
+  }
+ },
+ "villain-mercenary": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 2,
+  "calls": 6,
+  "triangles": 37844,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.04,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "sword",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 12106948,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1118486,
+    "stripe": 14212582,
+    "skin": 13212284,
+    "hair": 14210252,
+    "brow": 14210252,
+    "stubble": 13212284,
+    "top": 2763312,
+    "vest": 1714762,
+    "bottom": 2763312,
+    "shoes": 1118486,
+    "hat": 13658668,
+    "hat2": 1118486
+   },
+   "cut": {
+    "top": "sweater",
+    "sleeves": "long",
+    "outer": "tactical",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "bald",
+    "extras": [
+     "mercmask",
+     "kneepads",
+     "gloves",
+     "holster",
+     "belt"
+    ]
+   },
+   "umbrella": false,
+   "name": "The masked mercenary"
+  }
+ },
+ "villain-jester": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 36296,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.04,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2771498,
+    "belt": 1972760,
+    "metal": 12106948,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 9396175,
+    "stripe": 14212582,
+    "skin": 16052712,
+    "hair": 4169268,
+    "brow": 4169268,
+    "stubble": 16052712,
+    "top": 15241786,
+    "outer": 7094179,
+    "outer2": 4860536,
+    "vest": 6472001,
+    "bottom": 7094179,
+    "shoes": 3811876,
+    "accent": 6472001
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "tailcoat",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "swept",
+    "extras": [
+     "bowtie",
+     "gloves"
+    ]
+   },
+   "umbrella": false,
+   "name": "The Joker (figure)"
+  }
+ },
+ "villain-harlequin": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 2,
+  "calls": 6,
+  "triangles": 36268,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.97,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "mallet",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 2761776,
+    "metal": 12106948,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1447452,
+    "stripe": 14212582,
+    "skin": 16183526,
+    "hair": 15913547,
+    "brow": 15913547,
+    "stubble": 16183526,
+    "top": 13120060,
+    "outer2": 1447452,
+    "bottom": 13120060,
+    "shoes": 1447452
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "long",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "ponytail",
+    "extras": [
+     "split",
+     "gloves",
+     "belt"
+    ]
+   },
+   "umbrella": false,
+   "name": "Harley (figure)"
+  }
+ },
+ "enemy-shield": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 1,
+  "calls": 5,
+  "triangles": 33476,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "shield",
+   "palette": {
+    "skin": 14724230,
+    "hair": 1709586,
+    "brow": 1709586,
+    "stubble": 14724230,
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 10133672,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1710623,
+    "stripe": 14212582,
+    "shoes": 1447450,
+    "hat2": 1447450,
+    "bag": 2763312,
+    "outer2": 1973796,
+    "top": 15262422,
+    "outer": 1973796,
+    "bottom": 1973796,
+    "vest": 2763312,
+    "hat": 1118486,
+    "head": "bowler",
+    "accent": 5909098
+   },
+   "cut": {
+    "top": "sweater",
+    "outer": "tactical",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "buzz",
+    "hat": "bowler",
+    "extras": [
+     "kneepads",
+     "gloves"
+    ]
+   },
+   "umbrella": false,
+   "role": "shield",
+   "gang": "penguin"
+  }
+ },
+ "enemy-baton": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 1,
+  "calls": 5,
+  "triangles": 37680,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "baton",
+   "palette": {
+    "skin": 14724230,
+    "hair": 1709586,
+    "brow": 1709586,
+    "stubble": 14724230,
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 10133672,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1710623,
+    "stripe": 14212582,
+    "shoes": 1447450,
+    "hat2": 1447450,
+    "bag": 2763312,
+    "outer2": 6472001,
+    "top": 7094179,
+    "outer": 6472001,
+    "bottom": 4860536,
+    "vest": 3963434,
+    "hat": 7094179,
+    "head": "clownmask",
+    "accent": 13120060
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "short",
+    "outer": "jacket",
+    "bottom": "jeans",
+    "shoes": "boots",
+    "hair": "short",
+    "hat": null,
+    "extras": [
+     "gloves",
+     "clownmask"
+    ]
+   },
+   "umbrella": false,
+   "role": "baton",
+   "gang": "joker"
+  }
+ },
+ "enemy-heavy": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 37572,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.18,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 14724230,
+    "hair": 1709586,
+    "brow": 1709586,
+    "stubble": 14724230,
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 10133672,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1710623,
+    "stripe": 14212582,
+    "shoes": 1447450,
+    "hat2": 1447450,
+    "bag": 2763312,
+    "outer2": 1118486,
+    "top": 2763312,
+    "outer": 1118486,
+    "bottom": 1118486,
+    "vest": 1710623,
+    "hat": 723728,
+    "head": "mercmask",
+    "accent": 9050650
+   },
+   "cut": {
+    "top": "tank",
+    "outer": "tactical",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "bald",
+    "hat": null,
+    "extras": [
+     "kneepads",
+     "gloves",
+     "mercmask"
+    ]
+   },
+   "umbrella": false,
+   "role": "heavy",
+   "gang": "blackMask"
+  }
+ },
+ "enemy-gunner": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 1,
+  "calls": 5,
+  "triangles": 37748,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "rifle",
+   "palette": {
+    "skin": 14724230,
+    "hair": 1709586,
+    "brow": 1709586,
+    "stubble": 14724230,
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 10133672,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1710623,
+    "stripe": 14212582,
+    "shoes": 1447450,
+    "hat2": 1447450,
+    "bag": 2763312,
+    "outer2": 14736592,
+    "top": 15262422,
+    "outer": 1447708,
+    "bottom": 1447708,
+    "vest": 3816000,
+    "hat": 1447708,
+    "head": "split",
+    "accent": 6953510
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "rolled",
+    "outer": "tactical",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "short",
+    "hat": "cap",
+    "extras": [
+     "holster",
+     "gloves",
+     "split"
+    ]
+   },
+   "umbrella": false,
+   "role": "gunner",
+   "gang": "twoFace"
+  }
+ },
+ "enemy-sniper": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 1,
+  "calls": 5,
+  "triangles": 31076,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "sniper",
+   "palette": {
+    "skin": 14724230,
+    "hair": 1709586,
+    "brow": 1709586,
+    "stubble": 14724230,
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 10133672,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1710623,
+    "stripe": 14212582,
+    "shoes": 1447450,
+    "hat2": 1447450,
+    "bag": 2763312,
+    "outer2": 3115578,
+    "top": 2767402,
+    "outer": 3115578,
+    "bottom": 2303278,
+    "vest": 2388014,
+    "hat": 3115578,
+    "head": "bowler",
+    "accent": 8257354
+   },
+   "cut": {
+    "top": "sweater",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "short",
+    "hat": "bowler",
+    "extras": [
+     "goggles",
+     "backpack",
+     "gloves"
+    ]
+   },
+   "umbrella": false,
+   "role": "sniper",
+   "gang": "riddler"
+  }
+ },
+ "enemy-ninja": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 1,
+  "calls": 5,
+  "triangles": 41804,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "sword",
+   "palette": {
+    "skin": 14724230,
+    "hair": 1709586,
+    "brow": 1709586,
+    "stubble": 14724230,
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 10133672,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1710623,
+    "stripe": 14212582,
+    "shoes": 1447450,
+    "hat2": 1447450,
+    "bag": 2763312,
+    "outer2": 4865836,
+    "top": 5917234,
+    "outer": 4865836,
+    "bottom": 4143660,
+    "vest": 5917234,
+    "hat": 12098146,
+    "head": "burlap",
+    "accent": 8022596
+   },
+   "cut": {
+    "top": "tunic",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "bald",
+    "hat": "hood",
+    "extras": [
+     "ninja",
+     "belt",
+     "gloves",
+     "burlap"
+    ]
+   },
+   "umbrella": false,
+   "role": "ninja",
+   "gang": "scarecrow"
+  }
+ },
+ "enemy-medic": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 1,
+  "calls": 5,
+  "triangles": 34430,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "medkit",
+   "palette": {
+    "skin": 14724230,
+    "hair": 1709586,
+    "brow": 1709586,
+    "stubble": 14724230,
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 10133672,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1710623,
+    "stripe": 14212582,
+    "shoes": 1447450,
+    "hat2": 1447450,
+    "bag": 2763312,
+    "outer2": 5929626,
+    "top": 11057352,
+    "outer": 5929626,
+    "bottom": 6978186,
+    "vest": 15263968,
+    "hat": 14213352,
+    "head": "goggles",
+    "accent": 13120060
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "hivis",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "short",
+    "hat": "cap",
+    "extras": [
+     "redcross",
+     "armband",
+     "backpack",
+     "gloves",
+     "goggles"
+    ]
+   },
+   "umbrella": false,
+   "role": "medic",
+   "gang": "freeze"
+  }
+ },
+ "enemy-baton-firefly": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 1,
+  "calls": 5,
+  "triangles": 34984,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "baton",
+   "palette": {
+    "skin": 14724230,
+    "hair": 1709586,
+    "brow": 1709586,
+    "stubble": 14724230,
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 10133672,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1710623,
+    "stripe": 14212582,
+    "shoes": 1447450,
+    "hat2": 1447450,
+    "bag": 2763312,
+    "outer2": 6961690,
+    "top": 4864554,
+    "outer": 6961690,
+    "bottom": 3815984,
+    "vest": 12081690,
+    "hat": 3815984,
+    "head": "welder",
+    "accent": 15764004
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "short",
+    "outer": "jacket",
+    "bottom": "jeans",
+    "shoes": "boots",
+    "hair": "short",
+    "hat": null,
+    "extras": [
+     "gloves",
+     "welder"
+    ]
+   },
+   "umbrella": false,
+   "role": "baton",
+   "gang": "firefly"
+  }
+ },
+ "enemy-baton-ivy": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 1,
+  "calls": 5,
+  "triangles": 36298,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "baton",
+   "palette": {
+    "skin": 14724230,
+    "hair": 1709586,
+    "brow": 1709586,
+    "stubble": 14724230,
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 10133672,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1710623,
+    "stripe": 14212582,
+    "shoes": 1447450,
+    "hat2": 1447450,
+    "bag": 2763312,
+    "outer2": 2771490,
+    "top": 3824170,
+    "outer": 2771490,
+    "bottom": 2767394,
+    "vest": 3824170,
+    "hat": 2771490,
+    "head": "vines",
+    "accent": 5941306
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "short",
+    "outer": "jacket",
+    "bottom": "jeans",
+    "shoes": "boots",
+    "hair": "short",
+    "hat": "beanie",
+    "extras": [
+     "gloves",
+     "vines"
+    ]
+   },
+   "umbrella": false,
+   "role": "baton",
+   "gang": "ivy"
+  }
+ },
+ "enemy-baton-croc": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 1,
+  "calls": 5,
+  "triangles": 35192,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "baton",
+   "palette": {
+    "skin": 14724230,
+    "hair": 1709586,
+    "brow": 1709586,
+    "stubble": 14724230,
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 10133672,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1710623,
+    "stripe": 14212582,
+    "shoes": 1447450,
+    "hat2": 1447450,
+    "bag": 2763312,
+    "outer2": 3820090,
+    "top": 4868666,
+    "outer": 3820090,
+    "bottom": 3815978,
+    "vest": 5921338,
+    "hat": 2763298,
+    "head": "lamp",
+    "accent": 6974026
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "short",
+    "outer": "jacket",
+    "bottom": "jeans",
+    "shoes": "boots",
+    "hair": "short",
+    "hat": null,
+    "extras": [
+     "gloves",
+     "lamp"
+    ]
+   },
+   "umbrella": false,
+   "role": "baton",
+   "gang": "croc"
+  }
+ },
+ "alfred-butler": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 2,
+  "calls": 6,
+  "triangles": 37552,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.02,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "tray",
+   "palette": {
+    "skin": 15120534,
+    "hair": 12105392,
+    "brow": 10131088,
+    "stubble": 13805188,
+    "eyeWhite": 15657696,
+    "iris": 3820122,
+    "top": 15921384,
+    "outer": 1447708,
+    "outer2": 2237226,
+    "vest": 5921894,
+    "bottom": 2763571,
+    "shoes": 921106,
+    "accent": 2761270,
+    "belt": 1447708,
+    "metal": 13158592,
+    "white": 16777215,
+    "ink": 723730,
+    "lens": 2767434
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "tailcoat",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "thinning",
+    "extras": [
+     "tie",
+     "pocketsquare",
+     "moustache"
+    ]
+   },
+   "umbrella": false,
+   "name": "Alfred"
+  }
+ },
+ "alfred-shirtsleeves": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 2,
+  "calls": 6,
+  "triangles": 34236,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.02,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "medkit",
+   "palette": {
+    "skin": 15120534,
+    "hair": 12105392,
+    "brow": 10131088,
+    "stubble": 13805188,
+    "eyeWhite": 15657696,
+    "iris": 3820122,
+    "top": 15921384,
+    "outer": 1447708,
+    "outer2": 2237226,
+    "vest": 5921894,
+    "bottom": 2763571,
+    "shoes": 921106,
+    "accent": 2761270,
+    "belt": 1447708,
+    "metal": 13158592,
+    "white": 16777215,
+    "ink": 723730,
+    "lens": 2767434
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "rolled",
+    "outer": "waistcoat",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "thinning",
+    "extras": [
+     "tie",
+     "moustache",
+     "glasses"
+    ]
+   },
+   "umbrella": false,
+   "name": "Alfred"
+  }
+ },
+ "alfred-overcoat": {
+  "characters": 1,
+  "colorCalls": 4,
+  "normalCalls": 2,
+  "calls": 6,
+  "triangles": 35776,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.02,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "umbrella",
+   "palette": {
+    "skin": 15120534,
+    "hair": 12105392,
+    "brow": 10131088,
+    "stubble": 13805188,
+    "eyeWhite": 15657696,
+    "iris": 3820122,
+    "top": 15921384,
+    "outer": 2303278,
+    "outer2": 1447708,
+    "vest": 5921894,
+    "bottom": 2763571,
+    "shoes": 921106,
+    "accent": 5909034,
+    "belt": 1447708,
+    "metal": 13158592,
+    "white": 16777215,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1709072
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "coat",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "thinning",
+    "extras": [
+     "scarf",
+     "gloves",
+     "moustache"
+    ]
+   },
+   "umbrella": false,
+   "name": "Alfred"
+  }
+ },
+ "bruce-tux": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 36344,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.02,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 14264450,
+    "hair": 1183764,
+    "brow": 1183764,
+    "stubble": 12619884,
+    "eyeWhite": 15657696,
+    "iris": 2767434,
+    "belt": 1118486,
+    "metal": 13158592,
+    "white": 16777215,
+    "ink": 723730,
+    "lens": 2767434,
+    "bruise": 14264450,
+    "lip": 14264450,
+    "top": 16184558,
+    "outer": 1118486,
+    "outer2": 1842212,
+    "vest": 1118486,
+    "bottom": 1118486,
+    "shoes": 526348,
+    "accent": 526348
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "tux",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "slick",
+    "extras": [
+     "bowtie",
+     "pocketsquare",
+     "injuries"
+    ]
+   },
+   "umbrella": false,
+   "name": "Bruce Wayne"
+  }
+ },
+ "bruce-suit": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 36204,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.02,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 14264450,
+    "hair": 1183764,
+    "brow": 1183764,
+    "stubble": 12619884,
+    "eyeWhite": 15657696,
+    "iris": 2767434,
+    "belt": 1118486,
+    "metal": 13158592,
+    "white": 16777215,
+    "ink": 723730,
+    "lens": 2767434,
+    "bruise": 14264450,
+    "lip": 14264450,
+    "top": 14673647,
+    "outer": 2765122,
+    "outer2": 2304568,
+    "bottom": 2765122,
+    "shoes": 1708558,
+    "accent": 6953510
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "blazer",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "slick",
+    "extras": [
+     "tie",
+     "injuries"
+    ]
+   },
+   "umbrella": false,
+   "name": "Bruce Wayne"
+  }
+ },
+ "bruce-casual": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 35480,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.02,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 14264450,
+    "hair": 1183764,
+    "brow": 1183764,
+    "stubble": 12619884,
+    "eyeWhite": 15657696,
+    "iris": 2767434,
+    "belt": 1118486,
+    "metal": 13158592,
+    "white": 16777215,
+    "ink": 723730,
+    "lens": 2767434,
+    "bruise": 14264450,
+    "lip": 14264450,
+    "top": 1973796,
+    "outer": 6969924,
+    "outer2": 4865584,
+    "bottom": 3356223,
+    "shoes": 2760472
+   },
+   "cut": {
+    "top": "turtleneck",
+    "outer": "coat",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "swept",
+    "extras": [
+     "injuries"
+    ]
+   },
+   "umbrella": false,
+   "name": "Bruce Wayne"
+  }
+ },
+ "bruce-training": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 29704,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.02,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 14264450,
+    "hair": 1183764,
+    "brow": 1183764,
+    "stubble": 12619884,
+    "eyeWhite": 15657696,
+    "iris": 2767434,
+    "belt": 1118486,
+    "metal": 13158592,
+    "white": 16777215,
+    "ink": 723730,
+    "lens": 2767434,
+    "bruise": 14264450,
+    "lip": 14264450,
+    "top": 2763828,
+    "bottom": 1973796,
+    "shoes": 2763312,
+    "glove": 15262938
+   },
+   "cut": {
+    "top": "tank",
+    "bottom": "trousers",
+    "shoes": "sneakers",
+    "hair": "swept",
+    "extras": [
+     "gloves",
+     "injuries"
+    ]
+   },
+   "umbrella": false,
+   "name": "Bruce Wayne"
+  }
+ },
+ "bruce-injured": {
+  "characters": 1,
+  "colorCalls": 6,
+  "normalCalls": 3,
+  "calls": 9,
+  "triangles": 30180,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.02,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 14264450,
+    "hair": 1183764,
+    "brow": 1183764,
+    "stubble": 12619884,
+    "eyeWhite": 15657696,
+    "iris": 2767434,
+    "belt": 1118486,
+    "metal": 13158592,
+    "white": 16777215,
+    "ink": 723730,
+    "lens": 2767434,
+    "bruise": 14264450,
+    "lip": 14264450,
+    "top": 2763828,
+    "bottom": 1973796,
+    "shoes": 2763312,
+    "glove": 15262938
+   },
+   "cut": {
+    "top": "tank",
+    "bottom": "trousers",
+    "shoes": "sneakers",
+    "hair": "swept",
+    "extras": [
+     "gloves",
+     "injuries"
+    ]
+   },
+   "umbrella": false,
+   "name": "Bruce Wayne"
+  }
+ },
+ "look-gcpd": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 33060,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 13212284,
+    "hair": 2825492,
+    "brow": 2825492,
+    "stubble": 13212284,
+    "top": 2899558,
+    "vest": 1975347,
+    "bottom": 1975347,
+    "shoes": 1118486,
+    "hat": 1975347,
+    "hat2": 1118486
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "tactical",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "short",
+    "hat": "police",
+    "extras": [
+     "badge",
+     "radio",
+     "holster",
+     "belt"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "look-gcpdF": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 35320,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.95,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 9263675,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 9263675,
+    "top": 2899558,
+    "vest": 1975347,
+    "bottom": 1975347,
+    "shoes": 1118486,
+    "hat": 1975347,
+    "hat2": 1118486
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "tactical",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "bun",
+    "hat": "police",
+    "extras": [
+     "badge",
+     "radio",
+     "holster",
+     "belt"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "look-swat": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 32532,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.02,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2771562,
+    "glove": 1118486,
+    "stripe": 14212582,
+    "skin": 11565912,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 11565912,
+    "top": 2764342,
+    "vest": 1711396,
+    "bottom": 2764342,
+    "shoes": 1118486,
+    "hat": 1711396
+   },
+   "cut": {
+    "top": "sweater",
+    "sleeves": "long",
+    "outer": "tactical",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "buzz",
+    "hat": "swat",
+    "extras": [
+     "kneepads",
+     "gloves",
+     "radio",
+     "holster"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "look-doctor": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 38684,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.96,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 14724230,
+    "hair": 10131088,
+    "brow": 10131088,
+    "stubble": 14724230,
+    "top": 8036552,
+    "outer": 15790314,
+    "outer2": 14737626,
+    "bottom": 3817294,
+    "shoes": 1972244
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "labcoat",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "bun",
+    "extras": [
+     "stethoscope",
+     "glasses",
+     "lanyard"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "look-reporter": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 39152,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.97,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 15845542,
+    "hair": 13149290,
+    "brow": 13149290,
+    "stubble": 15845542,
+    "top": 1973796,
+    "outer": 12098154,
+    "outer2": 9072712,
+    "bottom": 2303278,
+    "shoes": 1972244
+   },
+   "cut": {
+    "top": "turtleneck",
+    "outer": "trench",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "bob",
+    "extras": [
+     "camera",
+     "lanyard"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "look-photographer": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 35984,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.98,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 9263675,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 9263675,
+    "top": 9083560,
+    "vest": 5921338,
+    "bottom": 3099246,
+    "shoes": 3811866,
+    "hat": 2763312,
+    "hat2": 1710623,
+    "bag": 3815984
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "rolled",
+    "outer": "waistcoat",
+    "bottom": "jeans",
+    "shoes": "boots",
+    "hair": "curly",
+    "hat": "cap",
+    "extras": [
+     "camera",
+     "stubble",
+     "bag"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "look-commissioner": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 37532,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.98,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 14921868,
+    "hair": 11559482,
+    "brow": 11559482,
+    "stubble": 14921868,
+    "top": 15262422,
+    "outer": 9075290,
+    "outer2": 6969920,
+    "bottom": 4868690,
+    "shoes": 2760472,
+    "accent": 6957610
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "trench",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "thinning",
+    "extras": [
+     "glasses",
+     "moustache",
+     "tie"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "look-detective": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 36796,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.98,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 11565912,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 11565912,
+    "top": 14080995,
+    "outer": 2894387,
+    "bottom": 2894387,
+    "shoes": 1118486
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "jacket",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hair": "ponytail",
+    "extras": [
+     "badge",
+     "holster"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "look-techExpert": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 38128,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.95,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 15845542,
+    "hair": 11022879,
+    "brow": 11022879,
+    "stubble": 15845542,
+    "top": 5925434,
+    "bottom": 2765638,
+    "shoes": 15263976
+   },
+   "cut": {
+    "top": "sweater",
+    "sleeves": "long",
+    "bottom": "trousers",
+    "shoes": "sneakers",
+    "hair": "long",
+    "extras": [
+     "glasses",
+     "headset"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "look-engineer": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 38200,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 7029033,
+    "hair": 12104876,
+    "brow": 12104876,
+    "stubble": 7029033,
+    "top": 15262422,
+    "outer": 3817294,
+    "outer2": 2764346,
+    "bottom": 3817294,
+    "shoes": 1709072,
+    "accent": 8006202
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "blazer",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "buzz",
+    "extras": [
+     "glasses",
+     "beard",
+     "tie",
+     "pocketsquare"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "look-ward": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 34636,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 14266508,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 14266508,
+    "top": 2771578,
+    "outer": 3811876,
+    "bottom": 2636376,
+    "shoes": 1710623
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "short",
+    "outer": "jacket",
+    "bottom": "jeans",
+    "shoes": "sneakers",
+    "hair": "swept",
+    "extras": []
+   },
+   "umbrella": false
+  }
+ },
+ "look-mayor": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 36480,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.97,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 14724230,
+    "hair": 10131088,
+    "brow": 10131088,
+    "stubble": 14724230,
+    "top": 15722191,
+    "outer": 1976892,
+    "outer2": 1450030,
+    "bottom": 1976892,
+    "shoes": 1118486,
+    "accent": 13120060
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "blazer",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "slick",
+    "extras": [
+     "tie",
+     "pocketsquare",
+     "badge"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "look-socialite": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 36904,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.98,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 13212284,
+    "hair": 2825492,
+    "brow": 2825492,
+    "stubble": 13212284,
+    "top": 6953514,
+    "outer": 6953514,
+    "bottom": 6953514,
+    "shoes": 1710623
+   },
+   "cut": {
+    "top": "tank",
+    "outer": "gown",
+    "bottom": "longskirt",
+    "shoes": "shoes",
+    "hair": "bun",
+    "extras": []
+   },
+   "umbrella": false
+  }
+ },
+ "look-boardMember": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 1,
+  "calls": 3,
+  "triangles": 36424,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.98,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "eyeWhite": 15657696,
+    "iris": 2760728,
+    "belt": 1972760,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 1973796,
+    "stripe": 14212582,
+    "skin": 15845542,
+    "hair": 14210252,
+    "brow": 14210252,
+    "stubble": 15845542,
+    "top": 14080995,
+    "outer": 3356223,
+    "outer2": 2500655,
+    "bottom": 3356223,
+    "shoes": 1118486,
+    "accent": 3820154
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "blazer",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hair": "thinning",
+    "extras": [
+     "glasses",
+     "tie"
+    ]
+   },
+   "umbrella": false
+  }
+ },
+ "civ-office-m": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 38576,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.0100148358359002,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 9263675,
+    "hair": 14210252,
+    "brow": 14210252,
+    "stubble": 7226926,
+    "eyeWhite": 15657696,
+    "iris": 3824186,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 14930880,
+    "outer": 3356484,
+    "outer2": 2894387,
+    "bottom": 1976892,
+    "shoes": 1710623,
+    "accent": 4169306,
+    "bag": 6961722,
+    "vest": 3356484
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "blazer",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "extras": [
+     "tie",
+     "glasses",
+     "bag",
+     "lanyard",
+     "beard"
+    ],
+    "hair": "short"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-office-f": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 44496,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9447475029673427,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 13212284,
+    "hair": 13149290,
+    "brow": 13149290,
+    "stubble": 10319969,
+    "eyeWhite": 15657696,
+    "iris": 1710618,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 13621222,
+    "outer": 3029811,
+    "outer2": 3356484,
+    "bottom": 2894387,
+    "shoes": 1710623,
+    "accent": 9060259,
+    "bag": 7032634,
+    "vest": 3029811
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "blazer",
+    "bottom": "skirt",
+    "shoes": "shoes",
+    "extras": [
+     "glasses",
+     "bag",
+     "lanyard"
+    ],
+    "hair": "long"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-casual-m": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 29716,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.0100148358359002,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 5123613,
+    "hair": 9316895,
+    "brow": 9316895,
+    "stubble": 4006935,
+    "eyeWhite": 15657696,
+    "iris": 1710618,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 14734520,
+    "outer": 3356484,
+    "bottom": 4274490,
+    "shoes": 1710623,
+    "bag": 2303278,
+    "vest": 3356484,
+    "outer2": 3356484
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "short",
+    "outer": null,
+    "bottom": "jeans",
+    "shoes": "sneakers",
+    "extras": [
+     "backpack"
+    ],
+    "hair": "swept"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-casual-f": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 31524,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9447475029673427,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 9263675,
+    "hair": 14210252,
+    "brow": 14210252,
+    "stubble": 7226926,
+    "eyeWhite": 15657696,
+    "iris": 3824186,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 15262422,
+    "outer": 3813162,
+    "bottom": 4874112,
+    "shoes": 1710623,
+    "bag": 9060259,
+    "vest": 3813162,
+    "outer2": 3813162
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "short",
+    "outer": null,
+    "bottom": "jeans",
+    "shoes": "sneakers",
+    "extras": [
+     "backpack"
+    ],
+    "hair": "bun"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-worker-m": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 33236,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9774837499507704,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 9263675,
+    "hair": 14210252,
+    "brow": 14210252,
+    "stubble": 7226926,
+    "eyeWhite": 15657696,
+    "iris": 3824186,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 9071162,
+    "stripe": 14212582,
+    "top": 1976892,
+    "vest": 15262266,
+    "bottom": 3099246,
+    "shoes": 4863268,
+    "hat": 15658734,
+    "hat2": 2763312
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "short",
+    "outer": "hivis",
+    "bottom": "jeans",
+    "shoes": "boots",
+    "hat": "hardhat",
+    "extras": [
+     "gloves",
+     "radio"
+    ],
+    "hair": "short"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-worker-f": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 41148,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9427196744656657,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 13212284,
+    "hair": 13149290,
+    "brow": 13149290,
+    "stubble": 10319969,
+    "eyeWhite": 15657696,
+    "iris": 1710618,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 9071162,
+    "stripe": 14212582,
+    "top": 2894387,
+    "vest": 15764004,
+    "bottom": 3822968,
+    "shoes": 4863268,
+    "hat": 15254314,
+    "hat2": 2763312
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "short",
+    "outer": "hivis",
+    "bottom": "jeans",
+    "shoes": "boots",
+    "hat": "hardhat",
+    "extras": [
+     "gloves",
+     "radio"
+    ],
+    "hair": "long"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-chef-m": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 30052,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9989657165179961,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 9263675,
+    "hair": 14210252,
+    "brow": 14210252,
+    "stubble": 7226926,
+    "eyeWhite": 15657696,
+    "iris": 3824186,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 16053486,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 15724520,
+    "bottom": 2303278,
+    "shoes": 1710623
+   },
+   "cut": {
+    "top": "tunic",
+    "outer": "apron",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hat": "chef",
+    "extras": [],
+    "hair": "bald"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-chef-f": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 34692,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.8839791969220154,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 9263675,
+    "hair": 13149290,
+    "brow": 13149290,
+    "stubble": 7226926,
+    "eyeWhite": 15657696,
+    "iris": 1710618,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 16053486,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 15724520,
+    "bottom": 3815994,
+    "shoes": 1710623
+   },
+   "cut": {
+    "top": "tunic",
+    "outer": "apron",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hat": "chef",
+    "extras": [],
+    "hair": "curly"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-nurse-m": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 30168,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.002125199888833,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 14724230,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 11503209,
+    "eyeWhite": 15657696,
+    "iris": 3824186,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 16777215,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 8042634,
+    "bottom": 8042634,
+    "shoes": 15790320
+   },
+   "cut": {
+    "top": "tunic",
+    "bottom": "trousers",
+    "shoes": "sneakers",
+    "extras": [
+     "lanyard",
+     "stethoscope"
+    ],
+    "hair": "thinning"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-nurse-f": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 33704,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9524239243478049,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 14266508,
+    "hair": 2825492,
+    "brow": 2825492,
+    "stubble": 11110765,
+    "eyeWhite": 15657696,
+    "iris": 3811866,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 16777215,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 8042634,
+    "bottom": 8042634,
+    "shoes": 15790320
+   },
+   "cut": {
+    "top": "tunic",
+    "bottom": "trousers",
+    "shoes": "sneakers",
+    "extras": [
+     "lanyard",
+     "stethoscope"
+    ],
+    "hair": "curly"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-police-m": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 33280,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.0025758200953716,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 15845542,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 12360833,
+    "eyeWhite": 15657696,
+    "iris": 2771562,
+    "belt": 1118486,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 2899558,
+    "vest": 1975347,
+    "bottom": 1975347,
+    "shoes": 1118486,
+    "hat": 1975347,
+    "hat2": 1118486
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "tactical",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hat": "police",
+    "extras": [
+     "badge",
+     "radio",
+     "holster",
+     "belt",
+     "moustache"
+    ],
+    "hair": "short"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-police-f": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 41072,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.8853455505066085,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 15845542,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 12360833,
+    "eyeWhite": 15657696,
+    "iris": 3811866,
+    "belt": 1118486,
+    "metal": 14268490,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 2899558,
+    "vest": 1975347,
+    "bottom": 1975347,
+    "shoes": 1118486,
+    "hat": 1975347,
+    "hat2": 1118486
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "tactical",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hat": "police",
+    "extras": [
+     "badge",
+     "radio",
+     "holster",
+     "belt"
+    ],
+    "hair": "long"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-firefighter-m": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 35856,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9483653785893694,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 14724230,
+    "hair": 14210252,
+    "brow": 14210252,
+    "stubble": 11503209,
+    "eyeWhite": 15657696,
+    "iris": 3824186,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 6969914,
+    "stripe": 14212582,
+    "top": 3815984,
+    "outer": 2763304,
+    "outer2": 14209594,
+    "bottom": 9075274,
+    "shoes": 1118486,
+    "hat": 13120060,
+    "accent": 14268490,
+    "vest": 2763304
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "coat",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hat": "fire",
+    "extras": [
+     "gloves"
+    ],
+    "hair": "thinning"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-firefighter-f": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 39668,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.8997789838816039,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 9263675,
+    "hair": 2825492,
+    "brow": 2825492,
+    "stubble": 7226926,
+    "eyeWhite": 15657696,
+    "iris": 1710618,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 6969914,
+    "stripe": 14212582,
+    "top": 3815984,
+    "outer": 2763304,
+    "outer2": 14209594,
+    "bottom": 9075274,
+    "shoes": 1118486,
+    "hat": 1710623,
+    "accent": 14268490,
+    "vest": 2763304
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "long",
+    "outer": "coat",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hat": "fire",
+    "extras": [
+     "gloves"
+    ],
+    "hair": "curly"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-vendor-m": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 31268,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.002893270708155,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 15845542,
+    "hair": 7227946,
+    "brow": 7227946,
+    "stubble": 12360833,
+    "eyeWhite": 15657696,
+    "iris": 3824186,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 14207144,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 3122848,
+    "bottom": 3029811,
+    "shoes": 2760472,
+    "hat": 4030399,
+    "hat2": 2894387
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "rolled",
+    "outer": "apron",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hat": "cap",
+    "extras": [
+     "moustache"
+    ],
+    "hair": "short"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-vendor-f": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 39036,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9097930123258848,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 15845542,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 12360833,
+    "eyeWhite": 15657696,
+    "iris": 3811866,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 14207144,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 14214868,
+    "bottom": 4274490,
+    "shoes": 2760472,
+    "hat": 9060259,
+    "hat2": 3029811
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "rolled",
+    "outer": "apron",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hat": "cap",
+    "extras": [],
+    "hair": "long"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-tourist-m": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 30404,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9737868837430143,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 15845542,
+    "hair": 1908006,
+    "brow": 1908006,
+    "stubble": 12360833,
+    "eyeWhite": 15657696,
+    "iris": 1710618,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 4169306,
+    "bottom": 14207136,
+    "shoes": 15790320,
+    "hat": 14734520,
+    "hat2": 15262422,
+    "bag": 6183506
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "short",
+    "bottom": "shorts",
+    "shoes": "sneakers",
+    "hat": null,
+    "extras": [
+     "camera",
+     "backpack",
+     "sunglasses"
+    ],
+    "hair": "swept"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-tourist-f": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 32112,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.8940799313507509,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 7029033,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 5452576,
+    "eyeWhite": 15657696,
+    "iris": 1710618,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 16048202,
+    "bottom": 3822968,
+    "shoes": 15790320,
+    "hat": 13120060,
+    "hat2": 14930880,
+    "bag": 4870758
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "short",
+    "bottom": "shorts",
+    "shoes": "sneakers",
+    "hat": null,
+    "extras": [
+     "camera",
+     "backpack",
+     "sunglasses"
+    ],
+    "hair": "ponytail"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-hoodie-m": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 35224,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9774837499507704,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 15845542,
+    "hair": 7227946,
+    "brow": 7227946,
+    "stubble": 12360833,
+    "eyeWhite": 15657696,
+    "iris": 3824186,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 4274490,
+    "outer": 13120060,
+    "bottom": 3813162,
+    "shoes": 15263976,
+    "hat": 2894387,
+    "hat2": 1976892,
+    "vest": 13120060,
+    "outer2": 13120060
+   },
+   "cut": {
+    "top": "tee",
+    "outer": "hoodie",
+    "bottom": "jeans",
+    "shoes": "sneakers",
+    "hat": null,
+    "extras": [
+     "moustache"
+    ],
+    "hair": "short"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-hoodie-f": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 43060,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.894533561434038,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 15845542,
+    "hair": 1446415,
+    "brow": 1446415,
+    "stubble": 12360833,
+    "eyeWhite": 15657696,
+    "iris": 3811866,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 3356484,
+    "outer": 3029811,
+    "bottom": 3029811,
+    "shoes": 1710623,
+    "hat": 3029811,
+    "hat2": 3356484,
+    "vest": 3029811,
+    "outer2": 3029811
+   },
+   "cut": {
+    "top": "tee",
+    "outer": "hoodie",
+    "bottom": "jeans",
+    "shoes": "sneakers",
+    "hat": null,
+    "extras": [],
+    "hair": "long"
+   },
+   "umbrella": false
+  }
+ },
+ "civ-coat-m": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 35596,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9790052260854282,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 11565912,
+    "hair": 10122308,
+    "brow": 10122308,
+    "stubble": 9003077,
+    "eyeWhite": 15657696,
+    "iris": 1710618,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 14214868,
+    "outer": 5909034,
+    "outer2": 3813162,
+    "bottom": 2894387,
+    "shoes": 1972244,
+    "hat": 2894387,
+    "hat2": 2894387,
+    "accent": 4169306,
+    "vest": 5909034
+   },
+   "cut": {
+    "top": "sweater",
+    "sleeves": "long",
+    "outer": "trench",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hat": "beanie",
+    "extras": [
+     "glasses"
+    ],
+    "hair": "bald"
+   },
+   "umbrella": true
+  }
+ },
+ "civ-coat-f": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 39964,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9202649125203024,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 11565912,
+    "hair": 10122308,
+    "brow": 10122308,
+    "stubble": 9003077,
+    "eyeWhite": 15657696,
+    "iris": 1710618,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 14214868,
+    "outer": 5909034,
+    "outer2": 3813162,
+    "bottom": 2894387,
+    "shoes": 1972244,
+    "hat": 2894387,
+    "hat2": 2894387,
+    "accent": 4169306,
+    "vest": 5909034
+   },
+   "cut": {
+    "top": "sweater",
+    "sleeves": "long",
+    "outer": "trench",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hat": "fedora",
+    "extras": [
+     "scarf"
+    ],
+    "hair": "curly"
+   },
+   "umbrella": true
+  }
+ },
+ "crowd-0": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 31064,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9725665757106617,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 7029033,
+    "hair": 9316895,
+    "brow": 9316895,
+    "stubble": 5452576,
+    "eyeWhite": 15657696,
+    "iris": 3811866,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 16048202,
+    "bottom": 2636376,
+    "shoes": 15790320,
+    "hat": 9060259,
+    "hat2": 15262422,
+    "bag": 6183506
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "short",
+    "bottom": "shorts",
+    "shoes": "sneakers",
+    "hat": "cap",
+    "extras": [
+     "camera",
+     "backpack",
+     "sunglasses"
+    ],
+    "hair": "short"
+   },
+   "umbrella": false
+  }
+ },
+ "crowd-1": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 37308,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9135327500778716,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 7029033,
+    "hair": 10122308,
+    "brow": 10122308,
+    "stubble": 5452576,
+    "eyeWhite": 15657696,
+    "iris": 2771562,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 2303278,
+    "outer": 6961722,
+    "bottom": 3099246,
+    "shoes": 15263976,
+    "hat": 3029811,
+    "hat2": 1976892,
+    "vest": 6961722,
+    "outer2": 6961722
+   },
+   "cut": {
+    "top": "tee",
+    "outer": "hoodie",
+    "bottom": "jeans",
+    "shoes": "sneakers",
+    "hat": null,
+    "extras": [],
+    "hair": "bun"
+   },
+   "umbrella": false
+  }
+ },
+ "crowd-2": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 36568,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.0105586491362193,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 13212284,
+    "hair": 9316895,
+    "brow": 9316895,
+    "stubble": 10319969,
+    "eyeWhite": 15657696,
+    "iris": 2771562,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 14080995,
+    "outer": 5909034,
+    "outer2": 4274490,
+    "bottom": 2894387,
+    "shoes": 1972244,
+    "hat": 1976892,
+    "hat2": 4274490,
+    "accent": 4030399,
+    "vest": 5909034
+   },
+   "cut": {
+    "top": "sweater",
+    "sleeves": "long",
+    "outer": "trench",
+    "bottom": "trousers",
+    "shoes": "shoes",
+    "hat": "beanie",
+    "extras": [
+     "scarf"
+    ],
+    "hair": "short"
+   },
+   "umbrella": true
+  }
+ },
+ "crowd-3": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 35568,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9797650497441646,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 5123613,
+    "hair": 7227946,
+    "brow": 7227946,
+    "stubble": 4006935,
+    "eyeWhite": 15657696,
+    "iris": 3824186,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 9071162,
+    "stripe": 14212582,
+    "top": 7032634,
+    "vest": 15764004,
+    "bottom": 2636376,
+    "shoes": 4863268,
+    "hat": 14711326,
+    "hat2": 2763312
+   },
+   "cut": {
+    "top": "shirt",
+    "sleeves": "short",
+    "outer": "hivis",
+    "bottom": "trousers",
+    "shoes": "boots",
+    "hat": null,
+    "extras": [
+     "gloves",
+     "radio"
+    ],
+    "hair": "bob"
+   },
+   "umbrella": false
+  }
+ },
+ "crowd-4": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 31036,
+  "bones": 65,
+  "meta": {
+   "heightScale": 1.007787535293028,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 15845542,
+    "hair": 7227946,
+    "brow": 7227946,
+    "stubble": 12360833,
+    "eyeWhite": 15657696,
+    "iris": 1710618,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 2763312,
+    "stripe": 14212582,
+    "top": 13658668,
+    "outer": 4274490,
+    "bottom": 3356484,
+    "shoes": 5913124,
+    "bag": 3029811,
+    "vest": 4274490,
+    "outer2": 4274490
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "long",
+    "outer": null,
+    "bottom": "jeans",
+    "shoes": "shoes",
+    "extras": [
+     "backpack",
+     "stubble"
+    ],
+    "hair": "swept"
+   },
+   "umbrella": false
+  }
+ },
+ "crowd-5": {
+  "characters": 1,
+  "colorCalls": 2,
+  "normalCalls": 0,
+  "calls": 2,
+  "triangles": 35572,
+  "bones": 65,
+  "meta": {
+   "heightScale": 0.9880336545291821,
+   "cape": null,
+   "hands": {
+    "l": "hand_l",
+    "r": "hand_r"
+   },
+   "props": "none",
+   "palette": {
+    "skin": 9263675,
+    "hair": 4861466,
+    "brow": 4861466,
+    "stubble": 7226926,
+    "eyeWhite": 15657696,
+    "iris": 2771562,
+    "belt": 1972760,
+    "metal": 13158592,
+    "white": 15921384,
+    "ink": 723730,
+    "lens": 2767434,
+    "glove": 9071162,
+    "stripe": 14212582,
+    "top": 1976892,
+    "vest": 15764004,
+    "bottom": 2636376,
+    "shoes": 4863268,
+    "hat": 14711326,
+    "hat2": 2763312
+   },
+   "cut": {
+    "top": "tee",
+    "sleeves": "long",
+    "outer": "hivis",
+    "bottom": "jeans",
+    "shoes": "boots",
+    "hat": "hardhat",
+    "extras": [
+     "gloves"
+    ],
+    "hair": "ponytail"
+   },
+   "umbrella": false
+  }
+ }
+}

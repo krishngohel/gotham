@@ -11,7 +11,9 @@
 // Usage: node scripts/fps-sweep.mjs [baseUrl] [high|low]
 // Env:   OUT=<file.json> writes the raw result; SHOTS=<dir> saves a screenshot at each spot;
 //        ONLY=main|fight|boss|side|stealth|gadgets runs one page only; EXTRA=<query> replaces the default extra URL params (dynres=0).
-//        FRAMES=1 adds every frame ({ page, l, dt, calls, tris, t }) to the OUT file, to see when a spike lands.
+//        FRAMES=1 adds every frame ({ page, l, dt, calls, tris, t, passes: { pass: [calls, gpuMs] } }) to the OUT file.
+//        WEAK=swiftshader / CPU=4: software rendering / 4x CPU throttling stress proxies (not a real weak GPU).
+//        Per-pass GPU ms needs EXTRA='dynres=0&gputime=1'.
 import { chromium } from 'playwright-core';
 import { writeFileSync, mkdirSync } from 'node:fs';
 
@@ -35,7 +37,10 @@ const spots = [
 // real GPU, but its frame times read higher than a visible window: compare builds A/B headless).
 // HEADED=1 opens the old
 // visible maximized window (it grabs focus and the pointer while it runs).
-const b = await chromium.launch({ channel: 'msedge', headless: !process.env.HEADED, args: ['--mute-audio', ...(process.env.HEADED ? ['--start-maximized'] : ['--window-size=1600,900', '--use-angle=d3d11', '--ignore-gpu-blocklist']), '--disable-gpu-vsync', '--disable-frame-rate-limit'] });
+// WEAK=swiftshader renders in software and CPU=4 throttles the page's CPU 4x (DevTools): stress
+// proxies for weak machines only, not a substitute for a real Intel UHD 620 (see render-bench.mjs).
+const weakArgs = process.env.WEAK === 'swiftshader' ? ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] : ['--use-angle=d3d11', '--ignore-gpu-blocklist'];
+const b = await chromium.launch({ channel: 'msedge', headless: !process.env.HEADED, args: ['--mute-audio', ...(process.env.HEADED ? ['--start-maximized'] : ['--window-size=1600,900', ...weakArgs]), '--disable-gpu-vsync', '--disable-frame-rate-limit'] });
 const ctx = await b.newContext({ viewport: null });
 
 // Records every rAF delta with the current scenario label, and the draw calls/triangles of the
@@ -45,6 +50,7 @@ async function openGame(query) {
   const p = await ctx.newPage();
   const errors = [];
   p.on('pageerror', (e) => errors.push(String(e)));
+  if (Number(process.env.CPU) > 1) await (await ctx.newCDPSession(p)).send('Emulation.setCPUThrottlingRate', { rate: Number(process.env.CPU) });
   await p.goto(`${base}?${query}&q=${q}${extra}`);
   await p.waitForFunction(() => window.__game?.comic, null, { timeout: 120000 });
   // PRE=<js>: an expression run in the page once the game is up (A/B experiments, e.g. hiding a system).
@@ -55,7 +61,8 @@ async function openGame(query) {
     const rec = window.__rec = { label: 'boot', frames: [], t0: performance.now() };
     let last = performance.now();
     const f = (n) => {
-      rec.frames.push([rec.label, n - last, r.info.render.calls, r.info.render.triangles, n - rec.t0]);
+      const ps = window.__game.ink.stats?.passes;
+      rec.frames.push([rec.label, n - last, r.info.render.calls, r.info.render.triangles, n - rec.t0, ps ? Object.fromEntries(Object.entries(ps).filter(([, v]) => v.ran).map(([k, v]) => [k, [v.calls, v.gpu]])) : null]);
       r.info.reset();
       last = n;
       requestAnimationFrame(f);
@@ -82,7 +89,7 @@ const skipComic = async (p) => {
 };
 async function collect(p, page) {
   const frames = await p.evaluate(() => window.__rec.frames);
-  return frames.map(([l, dt, calls, tris, t]) => ({ page, l, dt, calls, tris, t }));
+  return frames.map(([l, dt, calls, tris, t, passes]) => ({ page, l, dt, calls, tris, t, passes }));
 }
 
 const all = [];

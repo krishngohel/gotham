@@ -1,0 +1,264 @@
+{
+ "budgets": {
+  "potato": {
+   "gcpd roof": {
+    "calls": 190,
+    "tris": 256153,
+    "skinnedVis": 59,
+    "lights": 0,
+    "matrixWalk": 3472,
+    "programs": 114,
+    "gameMs": 4.4,
+    "worldMs": 1.2,
+    "renderMs": 9.6,
+    "jsMs": 15.8
+   },
+   "docks": {
+    "calls": 105,
+    "tris": 150353,
+    "skinnedVis": 59,
+    "lights": 0,
+    "matrixWalk": 3554,
+    "programs": 114,
+    "gameMs": 5.1,
+    "worldMs": 1.3,
+    "renderMs": 9.9,
+    "jsMs": 17.1
+   },
+   "neon street": {
+    "calls": 152,
+    "tris": 238495,
+    "skinnedVis": 59,
+    "lights": 0,
+    "matrixWalk": 3636,
+    "programs": 114,
+    "gameMs": 4.8,
+    "worldMs": 1.1,
+    "renderMs": 10.1,
+    "jsMs": 16.6
+   },
+   "ace chemicals": {
+    "calls": 175,
+    "tris": 253885,
+    "skinnedVis": 59,
+    "lights": 0,
+    "matrixWalk": 3800,
+    "programs": 114,
+    "gameMs": 4.7,
+    "worldMs": 1.1,
+    "renderMs": 9.8,
+    "jsMs": 16.6
+   },
+   "clock plaza": {
+    "calls": 148,
+    "tris": 222765,
+    "skinnedVis": 59,
+    "lights": 0,
+    "matrixWalk": 3964,
+    "programs": 114,
+    "gameMs": 4.3,
+    "worldMs": 1,
+    "renderMs": 9.2,
+    "jsMs": 15.1
+   },
+   "loop el": {
+    "calls": 166,
+    "tris": 267189,
+    "skinnedVis": 74,
+    "lights": 0,
+    "matrixWalk": 3969,
+    "programs": 114,
+    "gameMs": 4,
+    "worldMs": 0.9,
+    "renderMs": 9,
+    "jsMs": 14
+   },
+   "narrows": {
+    "calls": 182,
+    "tris": 215442,
+    "skinnedVis": 64,
+    "lights": 0,
+    "matrixWalk": 4048,
+    "programs": 114,
+    "gameMs": 4.7,
+    "worldMs": 1.1,
+    "renderMs": 10.8,
+    "jsMs": 17.2
+   }
+  },
+  "low": {
+   "gcpd roof": {
+    "calls": 246,
+    "tris": 288901,
+    "skinnedVis": 59,
+    "lights": 2,
+    "matrixWalk": 3652,
+    "programs": 112,
+    "gameMs": 4.9,
+    "worldMs": 1.3,
+    "renderMs": 11.5,
+    "jsMs": 18.5
+   },
+   "docks": {
+    "calls": 126,
+    "tris": 152929,
+    "skinnedVis": 59,
+    "lights": 2,
+    "matrixWalk": 3734,
+    "programs": 112,
+    "gameMs": 4.7,
+    "worldMs": 1.2,
+    "renderMs": 9.3,
+    "jsMs": 15.6
+   },
+   "neon street": {
+    "calls": 191,
+    "tris": 235713,
+    "skinnedVis": 59,
+    "lights": 2,
+    "matrixWalk": 3898,
+    "programs": 112,
+    "gameMs": 4.8,
+    "worldMs": 1.3,
+    "renderMs": 11.2,
+    "jsMs": 18
+   },
+   "ace chemicals": {
+    "calls": 184,
+    "tris": 251021,
+    "skinnedVis": 59,
+    "lights": 2,
+    "matrixWalk": 3980,
+    "programs": 112,
+    "gameMs": 4.4,
+    "worldMs": 1.3,
+    "renderMs": 10.3,
+    "jsMs": 17
+   },
+   "clock plaza": {
+    "calls": 193,
+    "tris": 293587,
+    "skinnedVis": 59,
+    "lights": 2,
+    "matrixWalk": 4144,
+    "programs": 112,
+    "gameMs": 3.9,
+    "worldMs": 1.1,
+    "renderMs": 8.7,
+    "jsMs": 13.9
+   },
+   "loop el": {
+    "calls": 197,
+    "tris": 318166,
+    "skinnedVis": 97,
+    "lights": 0,
+    "matrixWalk": 4238,
+    "programs": 112,
+    "gameMs": 5,
+    "worldMs": 1.4,
+    "renderMs": 11.9,
+    "jsMs": 18.8
+   },
+   "narrows": {
+    "calls": 262,
+    "tris": 288766,
+    "skinnedVis": 72,
+    "lights": 0,
+    "matrixWalk": 4395,
+    "programs": 112,
+    "gameMs": 4.6,
+    "worldMs": 1.3,
+    "renderMs": 12.3,
+    "jsMs": 18.8
+   }
+  },
+  "high": {
+   "gcpd roof": {
+    "calls": 385,
+    "tris": 475389,
+    "skinnedVis": 62,
+    "lights": 6,
+    "matrixWalk": 3723,
+    "programs": 122,
+    "gameMs": 6.1,
+    "worldMs": 1.4,
+    "renderMs": 18.2,
+    "jsMs": 26.5
+   },
+   "docks": {
+    "calls": 162,
+    "tris": 230633,
+    "skinnedVis": 62,
+    "lights": 6,
+    "matrixWalk": 3887,
+    "programs": 122,
+    "gameMs": 5.2,
+    "worldMs": 1.5,
+    "renderMs": 12.4,
+    "jsMs": 19.9
+   },
+   "neon street": {
+    "calls": 249,
+    "tris": 343757,
+    "skinnedVis": 59,
+    "lights": 6,
+    "matrixWalk": 4051,
+    "programs": 122,
+    "gameMs": 7.9,
+    "worldMs": 1.8,
+    "renderMs": 19.5,
+    "jsMs": 29.8
+   },
+   "ace chemicals": {
+    "calls": 267,
+    "tris": 423293,
+    "skinnedVis": 73,
+    "lights": 6,
+    "matrixWalk": 4137,
+    "programs": 122,
+    "gameMs": 5.8,
+    "worldMs": 1.4,
+    "renderMs": 16.9,
+    "jsMs": 24.8
+   },
+   "clock plaza": {
+    "calls": 354,
+    "tris": 587810,
+    "skinnedVis": 76,
+    "lights": 6,
+    "matrixWalk": 4219,
+    "programs": 122,
+    "gameMs": 5.7,
+    "worldMs": 1.4,
+    "renderMs": 17,
+    "jsMs": 25
+   },
+   "loop el": {
+    "calls": 278,
+    "tris": 383788,
+    "skinnedVis": 131,
+    "lights": 0,
+    "matrixWalk": 4318,
+    "programs": 122,
+    "gameMs": 5.2,
+    "worldMs": 1.3,
+    "renderMs": 15.3,
+    "jsMs": 22.4
+   },
+   "narrows": {
+    "calls": 424,
+    "tris": 539231,
+    "skinnedVis": 83,
+    "lights": 0,
+    "matrixWalk": 4469,
+    "programs": 123,
+    "gameMs": 5.5,
+    "worldMs": 1.3,
+    "renderMs": 19.3,
+    "jsMs": 27
+   }
+  }
+ },
+ "note": "Written by scripts/perf-gate.mjs UPDATE=1. Counts fail above x1.15, JS ms above x2.5 (CPU throttle 2x).",
+ "recorded": "2026-11-24T20:18:05.590Z"
+}

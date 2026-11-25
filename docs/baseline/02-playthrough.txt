@@ -1,0 +1,9 @@
+ended at {"id":"credits","type":"credits","mode":"play","site":null,"phase":4,"joker":"knocked"}
+comic pages captured: 13
+no console errors
+gadgets unlocked in order: ["claw","gel","smoke","remote","launcher","freeze","flashbang"]
+saved gadget unlocks: ["claw","gel","smoke","remote","launcher","freeze","flashbang"] wayne: {"xp":2965,"level":3}
+
+real	2m25.434s
+user	0m0.000s
+sys	0m0.000s

@@ -6,7 +6,7 @@ export function createRenderer(canvas, quality) {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NoToneMapping;
   renderer.setClearColor(0x000000, 1);
-  renderer.shadowMap.enabled = quality.shadows;
+  renderer.shadowMap.enabled = !!quality.shadows;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.shadowMap.autoUpdate = false;
   return renderer;

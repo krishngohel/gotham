@@ -1,0 +1,613 @@
+{
+ "when": "2026-11-24T23:33:52.025Z",
+ "urlA": "http://localhost:5851/",
+ "urlB": "http://localhost:5850/",
+ "labels": [
+  "head",
+  "fix"
+ ],
+ "rounds": 4,
+ "measureMs": 2500,
+ "cpu": 0,
+ "weak": false,
+ "pairs": [
+  [
+   "low",
+   "low"
+  ]
+ ],
+ "summary": [
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "frameRatio": 1.0716462110078655,
+   "frameMin": 0.5409747261862441,
+   "frameMax": 1.136687267338899,
+   "jsRatio": 1.0626462091164743,
+   "jsMin": 0.5351896471319758,
+   "jsMax": 1.12894901144641,
+   "fpsA": 336,
+   "fpsB": 315,
+   "callsA": 255,
+   "callsB": 253.5
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "frameRatio": 1.0522630058008422,
+   "frameMin": 0.5217906846123442,
+   "frameMax": 1.2287694974003467,
+   "jsRatio": 1.0427717959027567,
+   "jsMin": 0.5241653220801787,
+   "jsMax": 1.2233798946645296,
+   "fpsA": 402,
+   "fpsB": 389,
+   "callsA": 128,
+   "callsB": 131
+  },
+  {
+   "pair": "low:low",
+   "site": "neon street",
+   "frameRatio": 0.9657517624724083,
+   "frameMin": 0.41459977452085683,
+   "frameMax": 1.0148558852160665,
+   "jsRatio": 0.9575707632339416,
+   "jsMin": 0.41296566114438865,
+   "jsMax": 0.9995676402767104,
+   "fpsA": 358,
+   "fpsB": 395,
+   "callsA": 199,
+   "callsB": 200
+  },
+  {
+   "pair": "low:low",
+   "site": "ace chemicals",
+   "frameRatio": 0.9960776905635067,
+   "frameMin": 0.6066541803236044,
+   "frameMax": 1.2055041280960719,
+   "jsRatio": 0.9960362904436362,
+   "jsMin": 0.6351750316322228,
+   "jsMax": 1.1940273882197656,
+   "fpsA": 385,
+   "fpsB": 422,
+   "callsA": 186,
+   "callsB": 185.5
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "frameRatio": 1.1084327721413396,
+   "frameMin": 0.7815893701290406,
+   "frameMax": 1.2997390082312787,
+   "jsRatio": 1.101082351476211,
+   "jsMin": 0.7807144623864881,
+   "jsMax": 1.2925207756232688,
+   "fpsA": 469,
+   "fpsB": 411,
+   "callsA": 201,
+   "callsB": 201
+  }
+ ],
+ "results": [
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "round": 0,
+   "order": "AB",
+   "a": {
+    "frameMs": 5.9073,
+    "medMs": 5.8,
+    "jsMs": 5.1464,
+    "p95Ms": 8.1,
+    "frames": 405,
+    "calls": 255,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 3.1957,
+    "medMs": 3.2,
+    "jsMs": 2.7543,
+    "p95Ms": 4.1,
+    "frames": 767,
+    "calls": 254,
+    "prof": null
+   },
+   "frameRatio": 0.5409747261862441,
+   "jsRatio": 0.5351896471319758
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "round": 0,
+   "order": "AB",
+   "a": {
+    "frameMs": 4.8071,
+    "medMs": 4.8,
+    "jsMs": 4.0285,
+    "p95Ms": 7,
+    "frames": 491,
+    "calls": 128,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.5083,
+    "medMs": 2.5,
+    "jsMs": 2.1116,
+    "p95Ms": 3.8,
+    "frames": 934,
+    "calls": 131,
+    "prof": null
+   },
+   "frameRatio": 0.5217906846123442,
+   "jsRatio": 0.5241653220801787
+  },
+  {
+   "pair": "low:low",
+   "site": "neon street",
+   "round": 0,
+   "order": "AB",
+   "a": {
+    "frameMs": 6.3864,
+    "medMs": 6.3,
+    "jsMs": 5.5593,
+    "p95Ms": 10,
+    "frames": 373,
+    "calls": 196,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.6478,
+    "medMs": 2.7,
+    "jsMs": 2.2958,
+    "p95Ms": 3.6,
+    "frames": 924,
+    "calls": 200,
+    "prof": null
+   },
+   "frameRatio": 0.41459977452085683,
+   "jsRatio": 0.41296566114438865
+  },
+  {
+   "pair": "low:low",
+   "site": "ace chemicals",
+   "round": 0,
+   "order": "AB",
+   "a": {
+    "frameMs": 3.8442,
+    "medMs": 3.4,
+    "jsMs": 3.3194,
+    "p95Ms": 8,
+    "frames": 591,
+    "calls": 186,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.3321,
+    "medMs": 2.3,
+    "jsMs": 2.1084,
+    "p95Ms": 3.2,
+    "frames": 1045,
+    "calls": 185,
+    "prof": null
+   },
+   "frameRatio": 0.6066541803236044,
+   "jsRatio": 0.6351750316322228
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "round": 0,
+   "order": "AB",
+   "a": {
+    "frameMs": 2.0797,
+    "medMs": 2.1,
+    "jsMs": 1.8904,
+    "p95Ms": 2.8,
+    "frames": 1175,
+    "calls": 201,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.3055,
+    "medMs": 2.3,
+    "jsMs": 2.0796,
+    "p95Ms": 3.1,
+    "frames": 1057,
+    "calls": 202,
+    "prof": null
+   },
+   "frameRatio": 1.1085733519257586,
+   "jsRatio": 1.1000846381718155
+  },
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "round": 1,
+   "order": "BA",
+   "a": {
+    "frameMs": 2.7262,
+    "medMs": 2.7,
+    "jsMs": 2.3544,
+    "p95Ms": 3.4,
+    "frames": 901,
+    "calls": 255,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.9352,
+    "medMs": 3,
+    "jsMs": 2.5122,
+    "p95Ms": 3.9,
+    "frames": 835,
+    "calls": 253,
+    "prof": null
+   },
+   "frameRatio": 1.076663487638471,
+   "jsRatio": 1.0670234454638123
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "round": 1,
+   "order": "BA",
+   "a": {
+    "frameMs": 2.3948,
+    "medMs": 2.4,
+    "jsMs": 2.0123,
+    "p95Ms": 3.1,
+    "frames": 1021,
+    "calls": 128,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.5878,
+    "medMs": 2.6,
+    "jsMs": 2.1555,
+    "p95Ms": 3.6,
+    "frames": 940,
+    "calls": 128,
+    "prof": null
+   },
+   "frameRatio": 1.0805912811090697,
+   "jsRatio": 1.0711623515380408
+  },
+  {
+   "pair": "low:low",
+   "site": "neon street",
+   "round": 1,
+   "order": "BA",
+   "a": {
+    "frameMs": 2.4121,
+    "medMs": 2.4,
+    "jsMs": 2.1021,
+    "p95Ms": 3.2,
+    "frames": 1012,
+    "calls": 201,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.4155,
+    "medMs": 2.4,
+    "jsMs": 2.0895,
+    "p95Ms": 3.4,
+    "frames": 1006,
+    "calls": 200,
+    "prof": null
+   },
+   "frameRatio": 1.001409560134323,
+   "jsRatio": 0.994005994005994
+  },
+  {
+   "pair": "low:low",
+   "site": "ace chemicals",
+   "round": 1,
+   "order": "BA",
+   "a": {
+    "frameMs": 2.1567,
+    "medMs": 2.2,
+    "jsMs": 1.9497,
+    "p95Ms": 2.8,
+    "frames": 1136,
+    "calls": 186,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.3182,
+    "medMs": 2.3,
+    "jsMs": 2.0914,
+    "p95Ms": 3.1,
+    "frames": 1054,
+    "calls": 186,
+    "prof": null
+   },
+   "frameRatio": 1.074882922984189,
+   "jsRatio": 1.072677847874032
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "round": 1,
+   "order": "BA",
+   "a": {
+    "frameMs": 2.1876,
+    "medMs": 2.2,
+    "jsMs": 1.9759,
+    "p95Ms": 2.8,
+    "frames": 1118,
+    "calls": 202,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.4245,
+    "medMs": 2.4,
+    "jsMs": 2.1776,
+    "p95Ms": 3.3,
+    "frames": 1007,
+    "calls": 200,
+    "prof": null
+   },
+   "frameRatio": 1.1082921923569207,
+   "jsRatio": 1.1020800647806064
+  },
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "round": 2,
+   "order": "AB",
+   "a": {
+    "frameMs": 2.7669,
+    "medMs": 2.7,
+    "jsMs": 2.4025,
+    "p95Ms": 3.8,
+    "frames": 880,
+    "calls": 254,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 3.1451,
+    "medMs": 3.1,
+    "jsMs": 2.7123,
+    "p95Ms": 4.2,
+    "frames": 778,
+    "calls": 253,
+    "prof": null
+   },
+   "frameRatio": 1.136687267338899,
+   "jsRatio": 1.12894901144641
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "round": 2,
+   "order": "AB",
+   "a": {
+    "frameMs": 2.5862,
+    "medMs": 2.6,
+    "jsMs": 2.1834,
+    "p95Ms": 3.7,
+    "frames": 940,
+    "calls": 132,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.6481,
+    "medMs": 2.6,
+    "jsMs": 2.2148,
+    "p95Ms": 3.6,
+    "frames": 919,
+    "calls": 131,
+    "prof": null
+   },
+   "frameRatio": 1.0239347304926147,
+   "jsRatio": 1.0143812402674728
+  },
+  {
+   "pair": "low:low",
+   "site": "neon street",
+   "round": 2,
+   "order": "AB",
+   "a": {
+    "frameMs": 3.1714,
+    "medMs": 3.2,
+    "jsMs": 2.7617,
+    "p95Ms": 4.2,
+    "frames": 771,
+    "calls": 201,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.9497,
+    "medMs": 3,
+    "jsMs": 2.5439,
+    "p95Ms": 3.8,
+    "frames": 832,
+    "calls": 201,
+    "prof": null
+   },
+   "frameRatio": 0.9300939648104937,
+   "jsRatio": 0.9211355324618894
+  },
+  {
+   "pair": "low:low",
+   "site": "ace chemicals",
+   "round": 2,
+   "order": "AB",
+   "a": {
+    "frameMs": 3.0401,
+    "medMs": 3,
+    "jsMs": 2.7492,
+    "p95Ms": 3.9,
+    "frames": 806,
+    "calls": 185,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.7886,
+    "medMs": 2.8,
+    "jsMs": 2.5276,
+    "p95Ms": 3.6,
+    "frames": 878,
+    "calls": 186,
+    "prof": null
+   },
+   "frameRatio": 0.9172724581428243,
+   "jsRatio": 0.9193947330132403
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "round": 2,
+   "order": "AB",
+   "a": {
+    "frameMs": 3.1308,
+    "medMs": 3.1,
+    "jsMs": 2.8301,
+    "p95Ms": 4.1,
+    "frames": 780,
+    "calls": 200,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.447,
+    "medMs": 2.5,
+    "jsMs": 2.2095,
+    "p95Ms": 3.4,
+    "frames": 995,
+    "calls": 202,
+    "prof": null
+   },
+   "frameRatio": 0.7815893701290406,
+   "jsRatio": 0.7807144623864881
+  },
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "round": 3,
+   "order": "BA",
+   "a": {
+    "frameMs": 3.1803,
+    "medMs": 3.1,
+    "jsMs": 2.7579,
+    "p95Ms": 4.8,
+    "frames": 760,
+    "calls": 256,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 3.3922,
+    "medMs": 3.4,
+    "jsMs": 2.9186,
+    "p95Ms": 4.1,
+    "frames": 727,
+    "calls": 254,
+    "prof": null
+   },
+   "frameRatio": 1.06662893437726,
+   "jsRatio": 1.0582689727691361
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "round": 3,
+   "order": "BA",
+   "a": {
+    "frameMs": 2.0772,
+    "medMs": 2.1,
+    "jsMs": 1.7468,
+    "p95Ms": 2.7,
+    "frames": 1182,
+    "calls": 125,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.5524,
+    "medMs": 2.5,
+    "jsMs": 2.137,
+    "p95Ms": 3.5,
+    "frames": 956,
+    "calls": 134,
+    "prof": null
+   },
+   "frameRatio": 1.2287694974003467,
+   "jsRatio": 1.2233798946645296
+  },
+  {
+   "pair": "low:low",
+   "site": "neon street",
+   "round": 3,
+   "order": "BA",
+   "a": {
+    "frameMs": 2.3627,
+    "medMs": 2.3,
+    "jsMs": 2.0816,
+    "p95Ms": 3.3,
+    "frames": 1031,
+    "calls": 197,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.3978,
+    "medMs": 2.4,
+    "jsMs": 2.0807,
+    "p95Ms": 3.3,
+    "frames": 1017,
+    "calls": 200,
+    "prof": null
+   },
+   "frameRatio": 1.0148558852160665,
+   "jsRatio": 0.9995676402767104
+  },
+  {
+   "pair": "low:low",
+   "site": "ace chemicals",
+   "round": 3,
+   "order": "BA",
+   "a": {
+    "frameMs": 1.9985,
+    "medMs": 2,
+    "jsMs": 1.8183,
+    "p95Ms": 2.5,
+    "frames": 1228,
+    "calls": 186,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.4092,
+    "medMs": 2.4,
+    "jsMs": 2.1711,
+    "p95Ms": 3.1,
+    "frames": 1016,
+    "calls": 185,
+    "prof": null
+   },
+   "frameRatio": 1.2055041280960719,
+   "jsRatio": 1.1940273882197656
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "round": 3,
+   "order": "BA",
+   "a": {
+    "frameMs": 1.9924,
+    "medMs": 2,
+    "jsMs": 1.805,
+    "p95Ms": 2.5,
+    "frames": 1232,
+    "calls": 201,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.5896,
+    "medMs": 2.6,
+    "jsMs": 2.333,
+    "p95Ms": 3.3,
+    "frames": 944,
+    "calls": 200,
+    "prof": null
+   },
+   "frameRatio": 1.2997390082312787,
+   "jsRatio": 1.2925207756232688
+  }
+ ]
+}

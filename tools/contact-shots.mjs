@@ -7,7 +7,7 @@ import { chromium } from 'playwright-core';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const out = process.argv[2] ?? 'C:/Users/awsom/AppData/Local/Temp/mocap/contact';
+const out = process.argv[2] ?? 'contact-shots'; // [verify] relative (was a personal absolute path)
 const base = process.argv[3] ?? 'http://localhost:5212/';
 mkdirSync(out, { recursive: true });
 const browser = await chromium.launch({ args: ['--mute-audio', '--ignore-gpu-blocklist', '--use-angle=d3d11'] });

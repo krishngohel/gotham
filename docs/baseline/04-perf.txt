@@ -1,0 +1,14 @@
+high gcpd roof      332 fps
+high docks          514 fps
+high neon street    513 fps
+high ace chemicals  353 fps
+high clock plaza    601 fps
+low  gcpd roof      358 fps
+low  docks          516 fps
+low  neon street    469 fps
+low  ace chemicals  342 fps
+low  clock plaza    623 fps
+
+real	1m3.892s
+user	0m0.000s
+sys	0m0.000s

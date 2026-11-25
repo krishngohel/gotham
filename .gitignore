@@ -4,3 +4,7 @@ assets-src/
 test-results/
 playwright-report/
 .playwright-mcp/
+# [verify] script output folders (scripts/playthrough.mjs OUT, scripts/story-walk.mjs outDir defaults)
+playthrough/
+story-walk/
+contact-shots/

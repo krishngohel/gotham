@@ -1,0 +1,9 @@
+ended at credits credits | shots 146 | steps 62
+cuts (hero jumps the script did not make): [{"step":"finale","d":175,"from":[-62,58,-154],"to":[0,42,9],"ctl":null,"veh":null}]
+events: [["vehicleEnter","boardBatmobile"],["chaseDone","batmobileChase"],["vehicleExit","toRoofAfterChase"],["vehicleEnter","boardBatmobileAce"],["battleDone","aceBattle"],["vehicleExit","toBruteFight"],["vehicleEnter","boardBatmobileAce2"],["chaseDone","aceVanChase"],["vehicleExit","harleyRadio"]]
+combo hits outside a fight: none
+no console errors
+
+real	4m58.493s
+user	0m0.000s
+sys	0m0.000s

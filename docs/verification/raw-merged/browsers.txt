@@ -1,0 +1,5 @@
+== browsers: env BASE=http://localhost:5861/ OUT=~/AppData/Local/Temp/claude/9519414f725d5b3e/fa0efec5-d6d5-43fd-b20d-c13ef3059827/scratchpad/checks2/browsers node scripts/browsers.mjs
+chromium: OK | gpu: ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11) | fps: 56 | errors: none
+edge: OK | gpu: ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11) | fps: 149 | errors: none
+firefox: FAILED browserType.launch: Executable doesn't exist at ~\AppData\Local\ms-playwright\firefox-1543\firefox\firefox.exe | errors: 
+== exit 0 after 44 s

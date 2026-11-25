@@ -1,0 +1,17 @@
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5862/?net=broadcast&god=1
+Call log:
+[2m  - navigating to "http://localhost:5862/?net=broadcast&god=1", waiting until "load"[22m
+
+    at joinGuest (~\Documents\Projects\gotham-ln2-verify-head\scripts\playthrough.mjs:42:15)
+    at ~\Documents\Projects\gotham-ln2-verify-head\scripts\playthrough.mjs:57:16 {
+  log: [
+    '  - navigating to "http://localhost:5862/?net=broadcast&god=1", waiting until "load"'
+  ],
+  name: 'Error'
+}
+
+Node.js v26.13.1

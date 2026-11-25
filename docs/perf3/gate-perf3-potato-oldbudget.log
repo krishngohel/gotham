@@ -1,0 +1,10 @@
+potato gcpd roof     calls 190  tris 254823  skinnedVis 60  lights 0  matrixWalk 2180  programs 117  gameMs 2.7  worldMs 0.8  renderMs 8.6  hero.capeMs 1  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 12.8
+potato docks         calls 108  tris 146451  skinnedVis 59  lights 0  matrixWalk 2027  programs 117  gameMs 2.5  worldMs 0.8  renderMs 6.8  hero.capeMs 1  civiliansMs 0  wantedMs 0  sandboxMs 0  jsMs 10.6
+potato neon street   calls 166  tris 262197  skinnedVis 60  lights 0  matrixWalk 2158  programs 117  gameMs 2.4  worldMs 0.8  renderMs 8.5  hero.capeMs 0.9  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 12.2
+potato ace chemicals calls 185  tris 257767  skinnedVis 59  lights 0  matrixWalk 2056  programs 117  gameMs 2.4  worldMs 0.8  renderMs 7.6  hero.capeMs 1  civiliansMs 0  wantedMs 0  sandboxMs 0  jsMs 11.1
+potato clock plaza   calls 154  tris 224275  skinnedVis 59  lights 0  matrixWalk 2059  programs 117  gameMs 2.5  worldMs 0.8  renderMs 7.9  hero.capeMs 1  civiliansMs 0  wantedMs 0  sandboxMs 0  jsMs 11.5
+potato loop el       calls 172  tris 254707  skinnedVis 77  lights 0  matrixWalk 2278  programs 117  gameMs 2.4  worldMs 0.8  renderMs 8  hero.capeMs 0.9  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 11.7
+potato narrows       calls 191  tris 251166  skinnedVis 61  lights 0  matrixWalk 2239  programs 117  gameMs 2.3  worldMs 0.7  renderMs 7.7  hero.capeMs 0.9  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 11.2
+
+PERF GATE FAILED (1):
+  potato narrows tris 251166 > 215442 x1.15

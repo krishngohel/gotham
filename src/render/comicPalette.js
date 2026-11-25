@@ -1,19 +1,11 @@
 // Each district is "coloured" by a different colourist: six swatches, blended by where the
 // camera is. snapColor mirrors the ink shader's snap so it can be tested.
-export const DISTRICT_PALETTES = {
-  gcpd: [0x1c2433, 0x3a4a66, 0x5b6f8e, 0x2e3a4f, 0xc9a54a, 0xd9dfe9],
-  docks: [0x1d2426, 0x8a4a2e, 0x2f6b6e, 0x3b3531, 0xd98c3a, 0xe6d8c0],
-  neon: [0x1b1426, 0x8a2f6e, 0x3d2a5c, 0x2a2433, 0x9be23c, 0xf2c6e6],
-  ace: [0x161c16, 0x4f6b2e, 0x5a3a78, 0x2d3326, 0xb9e04a, 0xdfe8c8],
-  cathedral: [0x1e1c1c, 0x6e675e, 0x4f4a44, 0x34302c, 0xe8a23f, 0xefe1c4],
-};
-export const DISTRICT_CENTERS = {
-  gcpd: { x: 0, z: 0 },
-  docks: { x: -20, z: 200 },
-  neon: { x: 150, z: 0 },
-  ace: { x: 130, z: -160 },
-  cathedral: { x: -90, z: -150 },
-};
+// Swatches and centres are data on each district of the region list (src/world/regions/data.js),
+// keyed by palette key (the clock district's has always been 'cathedral').
+import { DISTRICTS } from '../world/regions/data.js';
+
+export const DISTRICT_PALETTES = Object.fromEntries(DISTRICTS.filter((d) => d.palette).map((d) => [d.palette.key, d.palette.swatches]));
+export const DISTRICT_CENTERS = Object.fromEntries(DISTRICTS.filter((d) => d.palette).map((d) => [d.palette.key, d.palette.center]));
 
 const toRgb = (hex) => [((hex >> 16) & 255) / 255, ((hex >> 8) & 255) / 255, (hex & 255) / 255];
 const RGB = Object.fromEntries(Object.entries(DISTRICT_PALETTES).map(([k, v]) => [k, v.map(toRgb)]));

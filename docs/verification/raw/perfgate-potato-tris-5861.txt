@@ -1,0 +1,4 @@
+potato neon street   calls 160  tris 272847  skinnedVis 58  lights 0  matrixWalk 3405  programs 115  gameMs 4.5  worldMs 1  renderMs 8.8  jsMs 15
+potato narrows       calls 198  tris 230704  skinnedVis 55  lights 0  matrixWalk 3658  programs 115  gameMs 4.4  worldMs 1  renderMs 9.5  jsMs 15.5
+
+perf gate: all within budget

@@ -25,6 +25,8 @@ function buildQuestionMark() {
   return g;
 }
 
+export const TROPHY_DRAW = 110;
+
 export function createTrophies(scene, found = []) {
   const items = [];
   const xrayGeo = new THREE.SphereGeometry(0.6, 16, 12);
@@ -33,11 +35,12 @@ export function createTrophies(scene, found = []) {
     const g = new THREE.Group();
     const xray = new THREE.Mesh(xrayGeo, xrayMat);
     xray.layers.set(LAYER_XRAY);
-    g.add(buildQuestionMark(), xray);
+    const model = buildQuestionMark();
+    g.add(model, xray);
     g.position.set(b.x, b.y, b.z);
     g.visible = !found.includes(i);
     scene.add(g);
-    items.push({ ...b, index: i, group: g, taken: found.includes(i), phase: i * 1.7 });
+    items.push({ ...b, index: i, group: g, model, taken: found.includes(i), phase: i * 1.7 });
   });
   return {
     items,
@@ -49,6 +52,11 @@ export function createTrophies(scene, found = []) {
         it.group.position.y = it.y + Math.sin(t * 1.6 + it.phase) * 0.18;
         it.group.rotation.y = t * 0.9 + it.phase;
         const dx = heroPos.x - it.x, dy = heroPos.y + 1 - it.group.position.y, dz = heroPos.z - it.z;
+        // [perf2] A metre-high mark is a pixel or two past TROPHY_DRAW m (and in fog): its eight
+        // draws (four parts, four hulls) stop there. Detective vision's x-ray marker stays.
+        // Called once per hero per frame (same t): shown when near any of them.
+        if (it.seenT !== t) { it.seenT = t; it.model.visible = false; }
+        if (dx * dx + dz * dz < TROPHY_DRAW * TROPHY_DRAW) it.model.visible = true;
         if (dx * dx + dy * dy * 0.5 + dz * dz < 2.2 * 2.2) { it.taken = true; it.group.visible = false; hit = it.index; }
       }
       return hit;

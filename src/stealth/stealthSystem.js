@@ -10,6 +10,7 @@ import { createPatrol, stepPatrol, huddleSpot, pickSpot } from './patrol.js';
 import { ROOMS, roomSquad, roomSpots } from './stealthRooms.js';
 import { createSilentTakedown, createPerchDrop } from './takedowns.js';
 import { registerMoves } from '../game/progressTracker.js';
+import { withPlayer } from '../core/events.js';
 
 // Plan 3C's progress tracker: the two stealth moves count toward "Moves learned", but only for a
 // save that can still reach a predator room (up to the catwalks, the last one in the story) or has
@@ -21,6 +22,10 @@ const LOOK_SEARCH = 2.5, LOOK_HUNT = 1.5;     // seconds spent looking round at 
 const LINE_GAP = 2.2;                         // seconds between two lines called out
 const HELD_BY_CHAIN = new Set(['chained', 'tied']);
 
+// Co-op (workstream D1): every hero in the world is watched. Each has its own "watcher": what the
+// goons see of it (crouched, perched, in a vent), its takedown prompt and its perch state, and the
+// combat it takes goons down through. A goon looks at every hero and reacts to the one it sees
+// best; either hero can choke or perch-drop. With one hero it is exactly the old system.
 export function createStealth({ hero, combat, events, collision, perches = [], rng, rules = STEALTH }) {
   let room = null, spots = [];
   let squad = createSquad();
@@ -28,15 +33,36 @@ export function createStealth({ hero, combat, events, collision, perches = [], r
   const eye = { x: 0, y: 0, z: 0 }, ray = { x: 0, y: 0, z: 0 };
   // The last smoke pellet's cloud: nobody sees through it while t > 0.
   const cloud = { x: 0, y: 0, z: 0, r: 0, t: 0 };
-  const view = { pos: hero.pos, crouched: false, perched: false, hidden: false, flying: false };
   const sense = { seesAt: -1, range: rules.range, hero: hero.pos, noise: null };
   let perchT = 0, lineT = 0, lineN = 0, alive = 0, lastAlive = -1;
-  let prompt = null, wasPerched = false, wasHidden = false;
-  // Seconds since the silent takedown prompt was last on screen. The prompt is 10 Hz stale and a
-  // goon walks off at 1.6 m/s, so a press just after it goes still counts with a little more reach.
-  let silentAgo = Infinity;
   const graceRules = { ...rules, silentReach: rules.silentReach * (rules.silentGraceReach ?? 1) };
-  const api = { events, noise, takedown: (e, kind, opts) => combat.takedown(e, kind, opts), quiet: () => !!room };
+  // One watcher per hero. Events a hero's takedowns emit carry its player.
+  function makeWatcher(h, takedownVia) {
+    const w = {
+      hero: h,
+      view: { pos: h.pos, crouched: false, perched: false, hidden: false, flying: false },
+      prompt: null, wasPerched: false, wasHidden: false,
+      // Seconds since the silent takedown prompt was last on screen. The prompt is 10 Hz stale and
+      // a goon walks off at 1.6 m/s, so a press just after it goes still counts with more reach.
+      silentAgo: Infinity,
+    };
+    const evs = { on: events.on, emit: (n, d) => events.emit(n, withPlayer(d ?? {}, h.player)) };
+    w.api = { events: h === hero ? events : evs, noise, takedown: (e, kind, opts) => takedownVia().takedown(e, kind, opts), quiet: () => !!room };
+    return w;
+  }
+  const primary = makeWatcher(hero, () => combat);
+  const watchers = [primary];
+  const watcherOf = (h) => watchers.find((w) => w.hero === h) ?? null;
+  const api = primary.api;
+  // The view of the hero each goon is judging this frame (look() sets it).
+  let view = primary.view;
+  const heroAt = (d) => (d?.player?.hero && watcherOf(d.player.hero) ? d.player.hero : hero);
+  // The hero nearest a point (a goon waking to "go and look" goes to the nearest one).
+  function nearestHero(pos) {
+    let best = hero, bd = Infinity;
+    for (const w of watchers) { if (w.hero.dead) continue; const d = Math.hypot(w.hero.pos.x - pos.x, w.hero.pos.z - pos.z); if (d < bd) { bd = d; best = w.hero; } }
+    return best;
+  }
 
   function hearAt(g, at) {
     g.noiseAt.x = at.x; g.noiseAt.y = at.y; g.noiseAt.z = at.z;
@@ -63,7 +89,7 @@ export function createStealth({ hero, combat, events, collision, perches = [], r
       e.aware = false;
       e.seesHero = false;
       // 4E's chain hearers and a goon getting up call wake(): here that means "go and look".
-      e.wake = () => hearAt(g, hero.pos);
+      e.wake = () => hearAt(g, nearestHero(e.pos).pos);
       // 5FG's smoke calls e.lose(), which calls e.search(from).
       e.search = (from) => hearAt(g, from);
       goons.push(g);
@@ -77,10 +103,12 @@ export function createStealth({ hero, combat, events, collision, perches = [], r
     if (!room) return;
     // Ended mid-choke or mid-drop (a restart, a story jump): the goon is about to be despawned, so
     // let go of it and drop the control. One that already landed plays out its short tail.
-    const c = hero.control;
-    if (c && (c.name === 'silent' || c.name === 'perchDrop') && c.target?.alive && goons.some((g) => g.e === c.target)) {
-      c.target.chainRelease?.();
-      hero.control = null;
+    for (const w of watchers) {
+      const c = w.hero.control;
+      if (c && (c.name === 'silent' || c.name === 'perchDrop') && c.target?.alive && goons.some((g) => g.e === c.target)) {
+        c.target.chainRelease?.();
+        w.hero.control = null;
+      }
     }
     for (const g of goons) { g.e.room = null; g.e.wake = g.baseWake; g.e.search = undefined; g.e.seesHero = undefined; }
     goons.length = 0;
@@ -106,34 +134,51 @@ export function createStealth({ hero, combat, events, collision, perches = [], r
   // its cone, in range and in sight (Batman crouched, as he lands) saw it happen: it shouts. The
   // others only heard it (the drop's noise sends them to look). Until Batman can move again, no
   // goon that isn't hostile builds its meter from seeing him: the landing was the moment to spot.
-  function witness(target) {
+  function witness(target, dropper = hero) {
     if (!room) return;
-    view.crouched = !!hero.crouched;
-    view.perched = false;
-    view.flying = false;
-    view.hidden = !!room.vent && view.crouched && inRect(hero.pos, room.vent);
+    const w = watcherOf(dropper) ?? primary;
+    const v = w.view;
+    v.crouched = !!dropper.crouched;
+    v.perched = false;
+    v.flying = false;
+    v.hidden = !!room.vent && v.crouched && inRect(dropper.pos, room.vent);
     for (const g of goons) {
       if (g.e === target || !g.e.alive || !canLook(g.e) || HOSTILE.has(g.mind.alert)) continue;
-      if (look(g) < 0) continue;
-      goHostile(g.mind, squad, hero.pos);
+      if (lookAt(g, w) < 0) continue;
+      goHostile(g.mind, squad, dropper.pos);
       shout(g);
       return;
     }
   }
-  const dropJudged = () => hero.control?.name === 'perchDrop';
+  const dropJudged = () => watchers.some((w) => w.hero.control?.name === 'perchDrop');
 
-  // How far away this goon sees Batman right now, or -1: the pure checks, then one ray.
+  // How far away this goon sees a hero right now, or -1, over every hero: the one it sees best
+  // (nearest) is the one it reacts to (g.seen).
   function look(g) {
-    const e = g.e;
+    let best = -1;
+    g.seen = null;
+    for (let i = 0; i < watchers.length; i++) {
+      const w = watchers[i];
+      if (w.hero.dead && watchers.length > 1) continue;
+      const d = lookAt(g, w);
+      if (d >= 0 && (best < 0 || d < best)) { best = d; g.seen = w; }
+    }
+    if (g.seen) g.range = sightRange({ crouched: g.seen.view.crouched, shadow: inShadow(g.seen.hero.pos, room.lights) }, rules);
+    return best;
+  }
+  // One hero: the pure checks, then one ray.
+  function lookAt(g, w) {
+    const e = g.e, h = w.hero;
+    view = w.view;
     g.view.yaw = e.yaw;
     g.view.hostile = HOSTILE.has(g.mind.alert);
-    g.range = sightRange({ crouched: view.crouched, shadow: inShadow(hero.pos, room.lights) }, rules);
+    g.range = sightRange({ crouched: view.crouched, shadow: inShadow(h.pos, room.lights) }, rules);
     const d = spotCheck(g.view, view, room.lights, rules);
     if (d < 0) return -1;
     eye.x = e.pos.x; eye.y = e.pos.y + rules.eye; eye.z = e.pos.z;
-    ray.x = hero.pos.x - eye.x;
-    ray.y = hero.pos.y + (view.crouched ? rules.crouchChest : rules.chest) - eye.y;
-    ray.z = hero.pos.z - eye.z;
+    ray.x = h.pos.x - eye.x;
+    ray.y = h.pos.y + (view.crouched ? rules.crouchChest : rules.chest) - eye.y;
+    ray.z = h.pos.z - eye.z;
     const len = Math.hypot(ray.x, ray.y, ray.z);
     if (len < 0.5) return d;
     ray.x /= len; ray.y /= len; ray.z /= len;
@@ -226,32 +271,40 @@ export function createStealth({ hero, combat, events, collision, perches = [], r
     e.goTo(g.goal.x, g.goal.y, g.goal.z, (hunt ? HUNT : SEARCH) * k, state);
   }
 
-  function promptFor() {
-    if (hero.dead || hero.control || hero.state !== 'ground' || !hero.grounded) return null;
-    if (hero.perched) return pickPerchDrop(hero.pos, combat.enemies, rules) ? 'perch' : null;
-    return pickSilentTarget(hero.pos, combat.enemies, rules) ? 'silent' : null;
+  function promptFor(h = hero) {
+    if (h.dead || h.control || h.state !== 'ground' || !h.grounded) return null;
+    if (h.perched) return pickPerchDrop(h.pos, combat.enemies, rules) ? 'perch' : null;
+    return pickSilentTarget(h.pos, combat.enemies, rules) ? 'silent' : null;
   }
 
   function update(dt) {
     if (!dt) return;
     perchT -= dt;
-    if (perchT <= 0) {
-      perchT = 0.1;
-      const on = !hero.dead && hero.grounded && hero.state === 'ground' && !hero.control ? perchedOn(hero.pos, perches, rules) : null;
-      hero.perched = !!on;
-      if (hero.perched && !wasPerched) events.emit('perched');
-      wasPerched = hero.perched;
-      prompt = promptFor();
+    const tick = perchT <= 0;
+    if (tick) perchT = 0.1;
+    for (const w of watchers) {
+      const h = w.hero;
+      if (tick) {
+        const on = !h.dead && h.grounded && h.state === 'ground' && !h.control ? perchedOn(h.pos, perches, rules) : null;
+        h.perched = !!on;
+        if (h.perched && !w.wasPerched) w.api.events.emit('perched');
+        w.wasPerched = h.perched;
+        w.prompt = promptFor(h);
+      }
+      w.silentAgo = w.prompt === 'silent' ? 0 : w.silentAgo + dt;
     }
-    silentAgo = prompt === 'silent' ? 0 : silentAgo + dt;
     if (!room) return;
     cloud.t -= dt;
-    view.crouched = !!hero.crouched;
-    view.perched = hero.perched;
-    view.hidden = !!room.vent && !!hero.crouched && inRect(hero.pos, room.vent);
-    view.flying = hero.dead || hero.control?.name === 'grapple';
-    if (view.hidden && !wasHidden) events.emit('ventHide');
-    wasHidden = view.hidden;
+    for (const w of watchers) {
+      const h = w.hero, v = w.view;
+      v.crouched = !!h.crouched;
+      v.perched = h.perched;
+      v.hidden = !!room.vent && !!h.crouched && inRect(h.pos, room.vent);
+      // In the air on a line, or flying (a co-op kit), the hero is hard to pin down; down, out of it.
+      v.flying = h.dead || h.control?.name === 'grapple' || h.state === 'fly';
+      if (v.hidden && !w.wasHidden) w.api.events.emit('ventHide');
+      w.wasHidden = v.hidden;
+    }
 
     let anySees = false;
     alive = 0;
@@ -274,6 +327,7 @@ export function createStealth({ hero, combat, events, collision, perches = [], r
       const e = g.e;
       if (!e.alive || !canLook(e)) continue;
       sense.seesAt = judging && !HOSTILE.has(g.mind.alert) ? -1 : g.seesAt;
+      sense.hero = (g.seen ?? primary).hero.pos;
       sense.range = g.range;
       sense.noise = g.noise;
       g.noise = null;
@@ -286,28 +340,32 @@ export function createStealth({ hero, combat, events, collision, perches = [], r
     lineT = Math.max(0, lineT - dt);
   }
 
-  // combatSystem's stealthStart hook: true when the press was used.
-  function start(action) {
-    if (hero.dead || hero.state !== 'ground' || !hero.grounded) return false;
+  // combatSystem's stealthStart hook: true when the press was used. startFor(hero, action) is the
+  // same for any watched hero (a co-op partner's own hook).
+  function startFor(h, action) {
+    const w = watcherOf(h);
+    if (!w) return false;
+    if (h.dead || h.state !== 'ground' || !h.grounded) return false;
     if (action !== 'punch' && action !== 'kick') return false;
-    if (hero.perched) {
-      const t = pickPerchDrop(hero.pos, combat.enemies, rules);
-      if (t) { hero.control = createPerchDrop(hero, api, { target: t, rules }); return true; }
+    if (h.perched) {
+      const t = pickPerchDrop(h.pos, combat.enemies, rules);
+      if (t) { h.control = createPerchDrop(h, w.api, { target: t, rules }); return true; }
       // Outside a room a gargoyle or a container top is just somewhere to stand: a normal attack.
       if (!room) return false;
-      events.emit('hint', { id: 'perch-none' });
+      w.api.events.emit('hint', { id: 'perch-none' });
       return true;
     }
     if (action !== 'punch') return false;
-    let t = pickSilentTarget(hero.pos, combat.enemies, rules);
-    if (!t && silentAgo <= (rules.silentGrace ?? 0)) t = pickSilentTarget(hero.pos, combat.enemies, graceRules);
+    let t = pickSilentTarget(h.pos, combat.enemies, rules);
+    if (!t && w.silentAgo <= (rules.silentGrace ?? 0)) t = pickSilentTarget(h.pos, combat.enemies, graceRules);
     if (!t) return false;
     // Null when no side of the goon is safe to snap to (a wall, or an edge): combat decides then.
-    const choke = createSilentTakedown(hero, api, { target: t, rules });
+    const choke = createSilentTakedown(h, w.api, { target: t, rules });
     if (!choke) return false;
-    hero.control = choke;
+    h.control = choke;
     return true;
   }
+  const start = (action) => startFor(hero, action);
 
   // combatSystem's stealthHold hook, asked once a punch has picked its target: true swallows the
   // press. In a quiet room a punch that would land on a goon who hasn't noticed Batman is a missed
@@ -320,10 +378,10 @@ export function createStealth({ hero, combat, events, collision, perches = [], r
     return true;
   }
 
-  events.on('footstep', (d) => { if (room) noise(hero.pos, d?.sprint ? rules.noise.sprint : rules.noise.step, 'step'); });
-  events.on('land', (d) => { if (room && d?.hard && d.who === 'hero') noise(hero.pos, rules.noise.land, 'land'); });
+  events.on('footstep', (d) => { if (room) noise(heroAt(d).pos, d?.sprint ? rules.noise.sprint : rules.noise.step, 'step'); });
+  events.on('land', (d) => { if (room && d?.hard && d.who === 'hero') noise(heroAt(d).pos, rules.noise.land, 'land'); });
   events.on('batarangWall', (d) => { if (room) noise(d.pos, rules.noise.batarang, 'batarang'); });
-  events.on('perchDrop', (d) => witness(d?.target));
+  events.on('perchDrop', (d) => witness(d?.target, heroAt(d)));
   events.on('smoke', (d) => {
     if (!room) return;
     cloud.x = d.pos.x; cloud.y = d.pos.y; cloud.z = d.pos.z;
@@ -337,7 +395,7 @@ export function createStealth({ hero, combat, events, collision, perches = [], r
     const target = d?.target;
     if (!room || !target?.alive || target.room !== room.id || HELD_BY_CHAIN.has(target.state)) return;
     const g = goons.find((x) => x.e === target);
-    if (g && struck(g.mind, squad, hero.pos, d.outcome, rules) === 'shout') shout(g);
+    if (g && struck(g.mind, squad, heroAt(d).pos, d.outcome, rules) === 'shout') shout(g);
   });
 
   return {
@@ -345,9 +403,20 @@ export function createStealth({ hero, combat, events, collision, perches = [], r
     get room() { return room; },
     get alarm() { return squad.alarm; },
     get squad() { return squad; },
-    get prompt() { return prompt; },
+    get prompt() { return primary.prompt; },
     goons, rules,
-    begin, end, update, noise, start, hold,
+    begin, end, update, noise, start, hold, startFor,
+    // Co-op: watch another hero (its takedowns go through its own fighter's combat api).
+    addHero(h, combatApi) { if (!watcherOf(h)) watchers.push(makeWatcher(h, () => combatApi)); },
+    removeHero(h) { const i = watchers.findIndex((w) => w.hero === h); if (i > 0) watchers.splice(i, 1); },
+    promptOf(h) { return watcherOf(h)?.prompt ?? null; },
+    // Whether a point is inside the running predator room (flight is not allowed there).
+    inRoom(pos) {
+      const b = room?.bounds;
+      if (!room) return false;
+      if (!b) return true;
+      return pos.x > b.minX - 8 && pos.x < b.maxX + 8 && pos.z > b.minZ - 8 && pos.z < b.maxZ + 8 && pos.y < b.maxY + 25;
+    },
     armed() { let n = 0; for (const g of goons) if (g.e.alive && g.e.def?.ranged) n += 1; return n; },
   };
 }

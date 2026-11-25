@@ -1,0 +1,86 @@
+{
+ "q": "potato",
+ "shots": {
+  "manor-hall": {
+   "calls": 40,
+   "tris": 172390,
+   "passes": 3
+  },
+  "manor-hall-landing": {
+   "calls": 37,
+   "tris": 138016,
+   "passes": 3
+  },
+  "manor-study": {
+   "calls": 52,
+   "tris": 216330,
+   "passes": 3
+  },
+  "manor-library": {
+   "calls": 32,
+   "tris": 100908,
+   "passes": 3
+  },
+  "manor-dining": {
+   "calls": 30,
+   "tris": 100882,
+   "passes": 3
+  },
+  "manor-gallery": {
+   "calls": 34,
+   "tris": 100890,
+   "passes": 3
+  },
+  "manor-ballroom": {
+   "calls": 34,
+   "tris": 101048,
+   "passes": 3
+  },
+  "gala-ballroom": {
+   "calls": 68,
+   "tris": 505962,
+   "passes": 3
+  },
+  "gala-window": {
+   "calls": 50,
+   "tris": 425514,
+   "passes": 3
+  },
+  "cave-overview": {
+   "calls": 75,
+   "tris": 191725,
+   "passes": 3
+  },
+  "cave-batcomputer": {
+   "calls": 37,
+   "tris": 92078,
+   "passes": 3
+  },
+  "cave-bay": {
+   "calls": 40,
+   "tris": 62307,
+   "passes": 3
+  },
+  "cave-vault": {
+   "calls": 77,
+   "tris": 193186,
+   "passes": 3
+  },
+  "cave-trophies": {
+   "calls": 36,
+   "tris": 61138,
+   "passes": 3
+  },
+  "cave-medbay": {
+   "calls": 31,
+   "tris": 52832,
+   "passes": 3
+  },
+  "cave-sim": {
+   "calls": 32,
+   "tris": 55786,
+   "passes": 3
+  }
+ },
+ "errors": []
+}

@@ -42,6 +42,16 @@ describe('solveTwoBone', () => {
     solveTwoBone(upper, lower, end, new THREE.Vector3(0, 10, 0), new THREE.Vector3(1, 0, 0), 0);
     expect(world(end).distanceTo(before)).toBeLessThan(1e-9);
   });
+  it('a partial weight moves the end part of the way (it used to do nothing below weight 1)', () => {
+    const { upper, lower, end } = chain();
+    const before = world(end);
+    const target = world(upper).add(new THREE.Vector3(0.9, -0.6, 0.3));
+    solveTwoBone(upper, lower, end, target, new THREE.Vector3(0, 0, -1), 0.5);
+    const mid = world(end);
+    const full = before.distanceTo(target);
+    expect(mid.distanceTo(before)).toBeGreaterThan(full * 0.2);
+    expect(mid.distanceTo(target)).toBeGreaterThan(full * 0.1);
+  });
   it('lands on the target again from its own solved pose (no drift frame to frame)', () => {
     const { upper, lower, end } = chain();
     const target = world(upper).add(new THREE.Vector3(0.5, -0.9, -0.4));

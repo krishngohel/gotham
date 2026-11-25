@@ -36,14 +36,19 @@ const TROPHY_ORDER = ['technician', 'chemist', 'newsCrew', 'nightwing', 'gordon'
 
 // The lobby sits inside the GCPD building, around the roof's centre (0, 0) at street level.
 export const LOBBY_VIEW_DIST = 60;
+// [perf2] The lobby has its own ceiling at 7 m under 35 m of tower: from above LOBBY_VIEW_TOP (the
+// GCPD roof, a glide overhead) nothing inside it can be seen, so the cell goons (each a dozen
+// skinned meshes, ~44k triangles, never frustum-culled) no longer draw and animate there.
+export const LOBBY_VIEW_TOP = 12;
 export function lobbyInView(cam, dist = LOBBY_VIEW_DIST) {
-  return Math.hypot(cam.x, cam.y - 3, cam.z) <= dist;
+  return cam.y < LOBBY_VIEW_TOP && Math.hypot(cam.x, cam.y - 3, cam.z) <= dist;
 }
 
 export function createGCPDLobby({ scene, assets, events, progress }) {
   const rng = createRng(71166);
   const group = new THREE.Group();
   group.name = 'gcpdLobby';
+  group.userData.parkHidden = true; // [perf2] no matrix updates while out of view (inkPipeline)
   scene.add(group);
 
   const cellGoons = [];

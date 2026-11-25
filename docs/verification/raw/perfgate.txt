@@ -1,0 +1,32 @@
+== perfgate: env BASE=http://localhost:5861/ node scripts/perf-gate.mjs
+potato gcpd roof     calls 190  tris 253533  skinnedVis 60  lights 0  matrixWalk 4069  programs 115  gameMs 2.8  worldMs 0.7  renderMs 6.5  jsMs 10.3
+potato docks         calls 110  tris 147405  skinnedVis 59  lights 0  matrixWalk 4232  programs 115  gameMs 3.2  worldMs 0.8  renderMs 6.6  jsMs 11.2
+potato neon street   calls 160  tris 244387  skinnedVis 62  lights 0  matrixWalk 4398  programs 115  gameMs 5.1  worldMs 1  renderMs 11  jsMs 18.2
+potato ace chemicals calls 184  tris 256953  skinnedVis 59  lights 0  matrixWalk 4478  programs 115  gameMs 3.4  worldMs 0.9  renderMs 7.9  jsMs 12.8
+potato clock plaza   calls 151  tris 223265  skinnedVis 59  lights 0  matrixWalk 4642  programs 115  gameMs 3.5  worldMs 0.8  renderMs 8.3  jsMs 13.3
+potato loop el       calls 168  tris 249169  skinnedVis 77  lights 0  matrixWalk 4812  programs 115  gameMs 4.2  worldMs 1  renderMs 10  jsMs 15.7
+potato narrows       calls 190  tris 216232  skinnedVis 60  lights 0  matrixWalk 4889  programs 115  gameMs 4.5  worldMs 1  renderMs 10.5  jsMs 16.5
+low    gcpd roof     calls 247  tris 287137  skinnedVis 60  lights 2  matrixWalk 4088  programs 114  gameMs 4.6  worldMs 1.3  renderMs 10.9  jsMs 17.4
+low    docks         calls 128  tris 151741  skinnedVis 59  lights 2  matrixWalk 4169  programs 114  gameMs 3.7  worldMs 1.2  renderMs 8.6  jsMs 14.1
+low    neon street   calls 196  tris 236743  skinnedVis 61  lights 2  matrixWalk 4335  programs 114  gameMs 4.3  worldMs 1.2  renderMs 10.2  jsMs 16.3
+low    ace chemicals calls 189  tris 251475  skinnedVis 59  lights 2  matrixWalk 4497  programs 114  gameMs 4.5  worldMs 1.2  renderMs 10.3  jsMs 16.8
+low    clock plaza   calls 205  tris 298805  skinnedVis 59  lights 2  matrixWalk 4661  programs 114  gameMs 4.2  worldMs 1.2  renderMs 10.2  jsMs 16
+low    loop el       calls 199  tris 264740  skinnedVis 96  lights 0  matrixWalk 4754  programs 114  gameMs 4.3  worldMs 1.1  renderMs 10.1  jsMs 16
+low    narrows       calls 267  tris 289500  skinnedVis 64  lights 0  matrixWalk 4909  programs 114  gameMs 4.7  worldMs 1.2  renderMs 12.8  jsMs 19.6
+high   gcpd roof     calls 392  tris 475071  skinnedVis 62  lights 6  matrixWalk 4077  programs 124  gameMs 6  worldMs 1.5  renderMs 18.1  jsMs 26.2
+high   docks         calls 168  tris 233695  skinnedVis 62  lights 6  matrixWalk 4241  programs 124  gameMs 4.8  worldMs 1.5  renderMs 12.6  jsMs 19.7
+high   neon street   calls 257  tris 345547  skinnedVis 61  lights 6  matrixWalk 4324  programs 124  gameMs 4.9  worldMs 1.4  renderMs 14.4  jsMs 21.5
+high   ace chemicals calls 277  tris 425807  skinnedVis 69  lights 6  matrixWalk 4490  programs 124  gameMs 5.3  worldMs 1.4  renderMs 14.9  jsMs 22.5
+high   clock plaza   calls 372  tris 598276  skinnedVis 76  lights 6  matrixWalk 4655  programs 124  gameMs 5.1  worldMs 1.3  renderMs 14.4  jsMs 21.6
+high   loop el       calls 283  tris 382714  skinnedVis 125  lights 0  matrixWalk 4752  programs 124  gameMs 4.9  worldMs 1.2  renderMs 13.6  jsMs 20.2
+high   narrows       calls 427  tris 524945  skinnedVis 89  lights 0  matrixWalk 4906  programs 124  gameMs 7.5  worldMs 1.4  renderMs 20.2  jsMs 29.1
+
+PERF GATE FAILED (7):
+  potato gcpd roof matrixWalk 4069 > 3472 x1.15
+  potato docks matrixWalk 4232 > 3554 x1.15
+  potato neon street matrixWalk 4398 > 3636 x1.15
+  potato ace chemicals matrixWalk 4478 > 3800 x1.15
+  potato clock plaza matrixWalk 4642 > 3964 x1.15
+  potato loop el matrixWalk 4812 > 3969 x1.15
+  potato narrows matrixWalk 4889 > 4048 x1.15
+== exit 1 after 211 s

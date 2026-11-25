@@ -1,6 +1,9 @@
+import { getAccess } from './accessibility.js'; // [prog] a11y
+
 // Screen-space comic effects over the canvas: tapered speed-line wedges at the frame edge
 // when moving fast, and a bold tilted panel border while the action camera holds a shot.
-export function createComicFx(root) {
+// getSize: the view's size in CSS px (split screen: one player's panel); the window by default.
+export function createComicFx(root, getSize = null) {
   const canvas = document.createElement('canvas');
   canvas.className = 'speed-lines';
   const panel = document.createElement('div');
@@ -19,13 +22,17 @@ export function createComicFx(root) {
     white: i % 4 === 3,
   }));
   let k = 0, t = 0, drawn = false, panelOn = false;
-  function resize() { canvas.width = Math.round(innerWidth / 2); canvas.height = Math.round(innerHeight / 2); }
+  function resize() {
+    const sz = getSize?.();
+    canvas.width = Math.round((sz ? sz.w : innerWidth) / 2); canvas.height = Math.round((sz ? sz.h : innerHeight) / 2);
+  }
   resize();
   addEventListener('resize', resize);
   return {
     update(dt, { speed = 0, actionActive = false }) {
       t += dt;
-      const want = Math.min(1, Math.max(0, (speed - 16) / 20));
+      // [prog] a11y reduced motion: no speed lines.
+      const want = getAccess().reducedMotion ? 0 : Math.min(1, Math.max(0, (speed - 16) / 20));
       k += (want - k) * Math.min(1, dt * 6);
       if (actionActive !== panelOn) { panelOn = actionActive; panel.classList.toggle('on', actionActive); }
       // Touch the canvas only while lines show (and once to clear them): any draw call, even a
@@ -58,5 +65,8 @@ export function createComicFx(root) {
       g.globalAlpha = 1;
     },
     panel(on) { panelOn = on; panel.classList.toggle('on', on); },
+    // Split screen: the panel's size changed (its HUD moved); the speed-line canvas follows.
+    resize,
+    elements: [canvas, panel],
   };
 }

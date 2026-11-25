@@ -14,6 +14,17 @@ export const GADGET_ICONS = {
   freeze: '<path d="M24 5 V43 M7.5 14.5 L40.5 33.5 M7.5 33.5 L40.5 14.5"/><path d="M19 8 L24 13 L29 8 M19 40 L24 35 L29 40"/>',
   flashbang: '<rect class="fill" x="15" y="19" width="16" height="24" rx="3"/><path d="M18 19 V13 H28 V19 M28 13 L36 9"/><path d="M7 11 L11 14 M38 26 L44 24 M5 28 L10 28"/>'
     + '<circle class="fill pop" cx="39" cy="7" r="2.6"/><circle class="fill pop" cx="8" cy="6" r="1.8"/>',
+  // [prog] wave 3 gadgets
+  disruptor: '<rect class="fill" x="6" y="20" width="16" height="12" rx="2"/><path d="M22 26 H27"/><path d="M27 26 L31 19 L34 33 L38 21 L42 26"/><path d="M10 20 V14 M18 20 V15"/>',
+  sonic: `<path class="fill" d="${batSvgPath(0.3, 18, 28)}"/><path d="M31 18 C35 22 35 30 31 34 M36 13 C42 20 42 32 36 39"/>`,
+  hack: '<rect class="fill" x="12" y="8" width="20" height="32" rx="3"/><rect x="15" y="12" width="14" height="12"/><path d="M18 30 H26 M18 35 H23"/><path d="M36 14 C40 18 40 24 36 28"/>',
+  shock: '<path class="fill" d="M10 22 C10 16 26 16 26 22 V34 C26 40 10 40 10 34 Z"/><path class="fill pop" d="M33 6 L27 22 H34 L29 42 L42 18 H35 L39 6 Z"/>',
+  glue: '<rect class="fill" x="17" y="22" width="14" height="20" rx="4"/><path d="M20 22 V16 H28 V22"/><path class="fill gel" d="M6 38 C8 30 14 31 15 36 C10 40 8 41 6 38 Z M33 36 C34 31 40 30 42 38 C40 41 37 40 33 36 Z"/>',
+  tracker: '<path d="M6 42 L30 18"/><path class="fill" d="M30 18 L36 10 L38 12 L30 20 Z"/><circle cx="36" cy="34" r="7"/><circle class="fill pop" cx="36" cy="34" r="2.5"/>',
+  drone: '<rect class="fill" x="16" y="21" width="16" height="7" rx="2"/><path d="M16 24 H8 M32 24 H40"/><ellipse cx="8" cy="20" rx="6" ry="1.8"/><ellipse cx="40" cy="20" rx="6" ry="1.8"/><circle class="fill pop" cx="24" cy="32" r="2.6"/>',
+  bolas: '<circle class="fill" cx="10" cy="36" r="5"/><circle class="fill" cx="38" cy="36" r="5"/><circle class="fill" cx="24" cy="10" r="5"/><path d="M10 36 L24 24 L38 36 M24 24 V10"/>',
+  emp: '<ellipse class="fill" cx="24" cy="34" rx="12" ry="5"/><circle class="fill pop" cx="24" cy="29" r="2.4"/><path d="M10 22 C14 14 34 14 38 22 M4 18 C10 6 38 6 44 18"/>',
+  decoy: `<path class="dash" d="${batSvgPath(0.36, 24, 18)}"/><path class="dash" d="M14 26 L10 44 H38 L34 26 Z"/>`,
 };
 
 // The Bat Swarm (chain 4): three bats of different sizes, drawn beside the chain icons.

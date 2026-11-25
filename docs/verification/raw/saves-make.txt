@@ -1,0 +1,3 @@
+early stepId toYard step 12 finished false trophies 0 wayne {"xp":0,"owned":[],"medals":{}} errors 0
+mid stepId toAce step 30 finished false trophies 0 wayne {"xp":0,"owned":[],"medals":{}} errors 0
+finished stepId credits step 61 finished true trophies 8 wayne {"xp":4000,"owned":["plating1","reflexes","kevlar","flow"],"medals":{}} errors 0

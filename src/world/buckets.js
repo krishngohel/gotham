@@ -1,21 +1,37 @@
-// Collects static geometry per material and per 80 m chunk, then merges each group into one mesh.
+// Collects static geometry per material and per render chunk, then merges each group into one
+// indexed mesh (Long Night 2, rendering-performance.md item 3). Two chunk sizes:
+//   near materials (facades, trim, roofs, props: everything with real vertex cost) group in
+//     CHUNK_SIZE (128 m) chunks and are swapped for the chunk's far-LOD silhouette past
+//     quality.lodDistance (src/world/chunks.js);
+//   detail materials (userData.detail: ground, lane paint, light pools, glow, cones) are cheap
+//     overlays: they group in 512 m cells (chunks.detailCellOf) and cull on their own box at
+//     drawDistance.
+// Geometry stays indexed (the old toNonIndexed() ran the vertex shader 36 times per box instead
+// of 24); a non-indexed input (extrusions) gets a plain 0..n-1 index, so its triangles are
+// exactly the ones it had.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { CHUNK_SIZE, chunkOf, detailCellOf } from './chunks.js';
 
-const CHUNK = 80;
 const ATTRS = ['position', 'normal', 'uv', 'color'];
 
-export function createBuckets(materials) {
+export function createBuckets(materials, { region = null } = {}) {
   const groups = new Map();
   const tmp = new THREE.Vector3();
 
   // geometry must already be in world space. color (hex) fills a vertex color attribute when the
   // material uses vertex colors.
   function add(key, geometry, color = null) {
+    if (!materials[key]) throw new Error(`Unknown material ${key}`);
+    // A plain-colour material folds into its vertex-coloured twin (one draw per chunk fewer; the
+    // shading maths is identical: material colour x vertex colour).
+    const fold = materials[key].userData.foldInto;
+    if (fold) { color = materials[key].color.getHex(); key = fold; }
     const mat = materials[key];
-    if (!mat) throw new Error(`Unknown material ${key}`);
-    let g = geometry.index ? geometry.toNonIndexed() : geometry;
+    const g = geometry;
     for (const name of Object.keys(g.attributes)) if (!ATTRS.includes(name)) g.deleteAttribute(name);
+    g.morphAttributes = {};
+    g.clearGroups();
     if (!g.attributes.normal) g.computeVertexNormals();
     if (!g.attributes.uv) g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(g.attributes.position.count * 2), 2));
     if (mat.vertexColors) {
@@ -27,34 +43,70 @@ export function createBuckets(materials) {
         g.setAttribute('color', new THREE.BufferAttribute(arr, 3));
       }
     } else if (g.attributes.color) g.deleteAttribute('color');
+    if (!g.index) {
+      const n = g.attributes.position.count;
+      const idx = n > 65535 ? new Uint32Array(n) : new Uint16Array(n);
+      for (let i = 0; i < n; i++) idx[i] = i;
+      g.setIndex(new THREE.BufferAttribute(idx, 1));
+    }
     g.computeBoundingBox();
     g.boundingBox.getCenter(tmp);
-    // Cheap flat overlays (userData.global) go in one city-wide mesh: fewer draw calls beats culling.
-    const id = mat.userData.global ? key : `${key}|${Math.floor(tmp.x / CHUNK)},${Math.floor(tmp.z / CHUNK)}`;
-    if (!groups.has(id)) groups.set(id, { key, list: [] });
-    groups.get(id).list.push(g);
+    const detail = !!mat.userData.detail;
+    // Heavy prop materials group finer (userData.subChunk, 64 m) for tighter frustum culling,
+    // and still belong to their 128 m chunk for the distance and LOD switch.
+    const [sx, sz] = detail ? detailCellOf(tmp.x, tmp.z) : chunkOf(tmp.x, tmp.z, mat.userData.subChunk ?? CHUNK_SIZE);
+    const [cx, cz] = detail ? [sx, sz] : chunkOf(tmp.x, tmp.z, CHUNK_SIZE);
+    const id = `${key}|${sx},${sz}`;
+    let grp = groups.get(id);
+    if (!grp) groups.set(id, grp = { key, cx, cz, detail, list: [] });
+    grp.list.push(g);
   }
 
-  function flush(parent, { castShadow = true, receiveShadow = true } = {}) {
+  // Merges every group into a mesh under `parent` and registers it with `chunkSet` (when given)
+  // as a near member of its chunk or as a detail overlay. Returns the meshes.
+  function flush(parent, { castShadow = true, receiveShadow = true, chunkSet = null } = {}) {
     const meshes = [];
-    for (const { key, list } of groups.values()) {
+    for (const { key, cx, cz, detail, list } of groups.values()) {
       const merged = mergeGeometries(list, false);
       if (!merged) { console.warn('merge failed for', key); continue; }
+      merged.computeBoundingBox();
       merged.computeBoundingSphere();
       const mesh = new THREE.Mesh(merged, materials[key]);
       mesh.castShadow = castShadow && !materials[key].userData.noShadow;
       mesh.receiveShadow = receiveShadow;
       mesh.matrixAutoUpdate = false;
       mesh.name = key;
+      mesh.userData.chunk = `${cx},${cz}`;
+      if (region) mesh.userData.region = region;
       if (materials[key].userData.layer) mesh.layers.set(materials[key].userData.layer);
       parent.add(mesh);
       meshes.push(mesh);
+      if (chunkSet) {
+        const bb = merged.boundingBox;
+        const box = { minX: bb.min.x, minY: bb.min.y, minZ: bb.min.z, maxX: bb.max.x, maxY: bb.max.y, maxZ: bb.max.z };
+        if (detail) chunkSet.addDetail(mesh, box);
+        else chunkSet.addNear(cx, cz, mesh, box, region);
+      }
     }
     groups.clear();
     return meshes;
   }
 
-  return { add, flush };
+  // [polish] Takes back geometry added earlier whose world bounding box passes `test(bb)` (any
+  // material). For removing a prop after a frozen build without touching its rng draws. Returns
+  // how many geometries went.
+  function remove(test) {
+    let n = 0;
+    for (const grp of groups.values()) {
+      const keep = grp.list.filter((g) => !test(g.boundingBox));
+      n += grp.list.length - keep.length;
+      grp.list = keep;
+    }
+    for (const [id, grp] of groups) if (!grp.list.length) groups.delete(id);
+    return n;
+  }
+
+  return { add, flush, remove };
 }
 
 // ---- geometry helpers (all return world-space BufferGeometry) ----

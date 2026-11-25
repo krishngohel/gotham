@@ -342,3 +342,32 @@ describe('prompt queue: step tips and quiet moments', () => {
     expect(hud.shown.length).toBe(2);
   });
 });
+
+// [polish] A card she has shown she knows leaves early, but only after it has had a moment.
+describe('createPromptQueue: retire', () => {
+  const makeHud = () => { const h = { shown: 0, hidden: 0 }; h.hint = () => { h.shown++; }; h.hideHint = () => { h.hidden++; }; return h; };
+  it('a card on screen comes down once it has been up minUp seconds, and never comes back', () => {
+    const hud = makeHud();
+    const q = createPromptQueue(hud, () => DEFAULT_BINDINGS, () => true);
+    q.show(['drive']);
+    q.update(0.1);
+    expect(hud.shown).toBe(1);
+    q.update(0.5);
+    q.retire('drive', 2.5);
+    q.update(1.0);
+    expect(hud.hidden).toBe(0); // up 1.6 s: still being read
+    q.update(1.0);
+    expect(hud.hidden).toBe(1); // past 2.5 s: down
+    q.show(['drive']);
+    q.update(0.1);
+    expect(hud.shown).toBe(1);
+  });
+  it('a queued card that is retired is never shown', () => {
+    const hud = makeHud();
+    const q = createPromptQueue(hud, () => DEFAULT_BINDINGS, () => true);
+    q.retire('drive');
+    q.show(['drive']);
+    q.update(0.1);
+    expect(hud.shown).toBe(0);
+  });
+});

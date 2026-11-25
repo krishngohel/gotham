@@ -1,0 +1,444 @@
+{
+ "when": "2026-11-24T22:59:32.484Z",
+ "urlA": "http://localhost:5850/",
+ "urlB": "http://localhost:5850/",
+ "labels": [
+  "n1",
+  "n2"
+ ],
+ "rounds": 2,
+ "measureMs": 2000,
+ "cpu": 0,
+ "weak": false,
+ "seq": false,
+ "pairs": [
+  [
+   "low",
+   "low"
+  ]
+ ],
+ "summary": [
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "frameRatio": 0.9852941176470589,
+   "frameMin": 0.9843749999999999,
+   "frameMax": 0.9852941176470589,
+   "jsRatio": 0.9666666666666667,
+   "jsMin": 0.9666666666666667,
+   "jsMax": 0.9666666666666667,
+   "fpsA": 147,
+   "fpsB": 149,
+   "callsA": 248,
+   "callsB": 247
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "frameRatio": 0.9464285714285715,
+   "frameMin": 0.9183673469387754,
+   "frameMax": 0.9464285714285715,
+   "jsRatio": 0.9534883720930232,
+   "jsMin": 0.9423076923076923,
+   "jsMax": 0.9534883720930232,
+   "fpsA": 179,
+   "fpsB": 189,
+   "callsA": 136,
+   "callsB": 129
+  },
+  {
+   "pair": "low:low",
+   "site": "neon street",
+   "frameRatio": 0.9836065573770493,
+   "frameMin": 0.9107142857142857,
+   "frameMax": 0.9836065573770493,
+   "jsRatio": 0.9649122807017544,
+   "jsMin": 0.8846153846153845,
+   "jsMax": 0.9649122807017544,
+   "fpsA": 164,
+   "fpsB": 167,
+   "callsA": 198,
+   "callsB": 196
+  },
+  {
+   "pair": "low:low",
+   "site": "ace chemicals",
+   "frameRatio": 0.9814814814814814,
+   "frameMin": 0.9464285714285715,
+   "frameMax": 0.9814814814814814,
+   "jsRatio": 0.9800000000000001,
+   "jsMin": 0.923076923076923,
+   "jsMax": 0.9800000000000001,
+   "fpsA": 179,
+   "fpsB": 189,
+   "callsA": 191,
+   "callsB": 190
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "frameRatio": 0.983050847457627,
+   "frameMin": 0.9473684210526316,
+   "frameMax": 0.983050847457627,
+   "jsRatio": 1,
+   "jsMin": 0.9433962264150944,
+   "jsMax": 1,
+   "fpsA": 169,
+   "fpsB": 172,
+   "callsA": 206,
+   "callsB": 205
+  },
+  {
+   "pair": "low:low",
+   "site": "loop el",
+   "frameRatio": 0.9577464788732395,
+   "frameMin": 0.9113924050632911,
+   "frameMax": 0.9577464788732395,
+   "jsRatio": 0.9545454545454546,
+   "jsMin": 0.9054054054054054,
+   "jsMax": 0.9545454545454546,
+   "fpsA": 127,
+   "fpsB": 139,
+   "callsA": 208,
+   "callsB": 203
+  },
+  {
+   "pair": "low:low",
+   "site": "narrows",
+   "frameRatio": 1.0333333333333334,
+   "frameMin": 0.9729729729729729,
+   "frameMax": 1.0333333333333334,
+   "jsRatio": 1.0363636363636364,
+   "jsMin": 0.9710144927536232,
+   "jsMax": 1.0363636363636364,
+   "fpsA": 135,
+   "fpsB": 139,
+   "callsA": 275,
+   "callsB": 278
+  }
+ ],
+ "results": [
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "round": 0,
+   "a": {
+    "frameMs": 6.8,
+    "jsMs": 6,
+    "p95Ms": 10.1,
+    "frames": 294,
+    "calls": 248,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 6.7,
+    "jsMs": 5.8,
+    "p95Ms": 9.4,
+    "frames": 302,
+    "calls": 247,
+    "prof": null
+   },
+   "frameRatio": 0.9852941176470589,
+   "jsRatio": 0.9666666666666667
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "round": 0,
+   "a": {
+    "frameMs": 4.9,
+    "jsMs": 4.3,
+    "p95Ms": 10.6,
+    "frames": 367,
+    "calls": 132,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 4.5,
+    "jsMs": 4.1,
+    "p95Ms": 10.9,
+    "frames": 391,
+    "calls": 123,
+    "prof": null
+   },
+   "frameRatio": 0.9183673469387754,
+   "jsRatio": 0.9534883720930232
+  },
+  {
+   "pair": "low:low",
+   "site": "neon street",
+   "round": 0,
+   "a": {
+    "frameMs": 6.1,
+    "jsMs": 5.7,
+    "p95Ms": 7.5,
+    "frames": 341,
+    "calls": 198,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 6,
+    "jsMs": 5.5,
+    "p95Ms": 7,
+    "frames": 344,
+    "calls": 196,
+    "prof": null
+   },
+   "frameRatio": 0.9836065573770493,
+   "jsRatio": 0.9649122807017544
+  },
+  {
+   "pair": "low:low",
+   "site": "ace chemicals",
+   "round": 0,
+   "a": {
+    "frameMs": 5.4,
+    "jsMs": 5,
+    "p95Ms": 6.8,
+    "frames": 386,
+    "calls": 191,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 5.3,
+    "jsMs": 4.9,
+    "p95Ms": 6.6,
+    "frames": 395,
+    "calls": 190,
+    "prof": null
+   },
+   "frameRatio": 0.9814814814814814,
+   "jsRatio": 0.9800000000000001
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "round": 0,
+   "a": {
+    "frameMs": 5.7,
+    "jsMs": 5.3,
+    "p95Ms": 6.9,
+    "frames": 366,
+    "calls": 206,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 5.4,
+    "jsMs": 5,
+    "p95Ms": 6.7,
+    "frames": 382,
+    "calls": 205,
+    "prof": null
+   },
+   "frameRatio": 0.9473684210526316,
+   "jsRatio": 0.9433962264150944
+  },
+  {
+   "pair": "low:low",
+   "site": "loop el",
+   "round": 0,
+   "a": {
+    "frameMs": 7.9,
+    "jsMs": 7.4,
+    "p95Ms": 11.2,
+    "frames": 237,
+    "calls": 208,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 7.2,
+    "jsMs": 6.7,
+    "p95Ms": 10,
+    "frames": 258,
+    "calls": 203,
+    "prof": null
+   },
+   "frameRatio": 0.9113924050632911,
+   "jsRatio": 0.9054054054054054
+  },
+  {
+   "pair": "low:low",
+   "site": "narrows",
+   "round": 0,
+   "a": {
+    "frameMs": 7.4,
+    "jsMs": 6.9,
+    "p95Ms": 9.3,
+    "frames": 274,
+    "calls": 275,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 7.2,
+    "jsMs": 6.7,
+    "p95Ms": 9,
+    "frames": 282,
+    "calls": 278,
+    "prof": null
+   },
+   "frameRatio": 0.9729729729729729,
+   "jsRatio": 0.9710144927536232
+  },
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "round": 1,
+   "a": {
+    "frameMs": 6.4,
+    "jsMs": 6,
+    "p95Ms": 9.1,
+    "frames": 299,
+    "calls": 241,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 6.3,
+    "jsMs": 5.8,
+    "p95Ms": 9.3,
+    "frames": 311,
+    "calls": 240,
+    "prof": null
+   },
+   "frameRatio": 0.9843749999999999,
+   "jsRatio": 0.9666666666666667
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "round": 1,
+   "a": {
+    "frameMs": 5.6,
+    "jsMs": 5.2,
+    "p95Ms": 6.6,
+    "frames": 372,
+    "calls": 136,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 5.3,
+    "jsMs": 4.9,
+    "p95Ms": 6.5,
+    "frames": 384,
+    "calls": 129,
+    "prof": null
+   },
+   "frameRatio": 0.9464285714285715,
+   "jsRatio": 0.9423076923076923
+  },
+  {
+   "pair": "low:low",
+   "site": "neon street",
+   "round": 1,
+   "a": {
+    "frameMs": 5.6,
+    "jsMs": 5.2,
+    "p95Ms": 7.2,
+    "frames": 345,
+    "calls": 194,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 5.1,
+    "jsMs": 4.6,
+    "p95Ms": 6.4,
+    "frames": 51,
+    "calls": 192,
+    "prof": null
+   },
+   "frameRatio": 0.9107142857142857,
+   "jsRatio": 0.8846153846153845
+  },
+  {
+   "pair": "low:low",
+   "site": "ace chemicals",
+   "round": 1,
+   "a": {
+    "frameMs": 5.6,
+    "jsMs": 5.2,
+    "p95Ms": 6.9,
+    "frames": 368,
+    "calls": 181,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 5.3,
+    "jsMs": 4.8,
+    "p95Ms": 6.6,
+    "frames": 387,
+    "calls": 182,
+    "prof": null
+   },
+   "frameRatio": 0.9464285714285715,
+   "jsRatio": 0.923076923076923
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "round": 1,
+   "a": {
+    "frameMs": 5.9,
+    "jsMs": 5.3,
+    "p95Ms": 7.6,
+    "frames": 346,
+    "calls": 200,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 5.8,
+    "jsMs": 5.3,
+    "p95Ms": 7.4,
+    "frames": 346,
+    "calls": 199,
+    "prof": null
+   },
+   "frameRatio": 0.983050847457627,
+   "jsRatio": 1
+  },
+  {
+   "pair": "low:low",
+   "site": "loop el",
+   "round": 1,
+   "a": {
+    "frameMs": 7.1,
+    "jsMs": 6.6,
+    "p95Ms": 11.1,
+    "frames": 252,
+    "calls": 206,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 6.8,
+    "jsMs": 6.3,
+    "p95Ms": 10,
+    "frames": 274,
+    "calls": 195,
+    "prof": null
+   },
+   "frameRatio": 0.9577464788732395,
+   "jsRatio": 0.9545454545454546
+  },
+  {
+   "pair": "low:low",
+   "site": "narrows",
+   "round": 1,
+   "a": {
+    "frameMs": 6,
+    "jsMs": 5.5,
+    "p95Ms": 9.3,
+    "frames": 329,
+    "calls": 269,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 6.2,
+    "jsMs": 5.7,
+    "p95Ms": 7.5,
+    "frames": 336,
+    "calls": 269,
+    "prof": null
+   },
+   "frameRatio": 1.0333333333333334,
+   "jsRatio": 1.0363636363636364
+  }
+ ]
+}

@@ -5,6 +5,9 @@
 // and its own --user-data-dir. Everything runs as page scripts in that tab: no clicks, no typing,
 // and the session token never leaves the page.
 //   node scripts/mixamo-fetch.mjs [ClipName ...]   (no names: the whole list)
+//   node scripts/mixamo-fetch.mjs --packs [ClipName ...]   (the new lazy packs' list, scripts/anim-packs.mjs)
+// MIXAMO_DIR overrides where FBX are saved (default <repo>/assets-src/mixamo), so a worktree can
+// share the main checkout's git-ignored source folder.
 // Then: node scripts/fbx2glb.mjs assets-src/mixamo/*.fbx, and scripts/retarget-mocap.mjs --map mixamo.
 import { chromium } from 'playwright-core';
 import { mkdirSync, writeFileSync, existsSync } from 'node:fs';
@@ -77,6 +80,11 @@ export const MIXAMO_CLIPS = {
   Getting_Thrown: ['Getting Thrown', 'Being Thrown To The Side'],
 };
 
+export const mixamoDir = () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  return path.resolve(process.env.MIXAMO_DIR ?? path.join(root, 'assets-src', 'mixamo'));
+};
+
 // One clip, inside the page: find it, export it, return the link to the finished FBX.
 const exportOne = async ([name, desc]) => {
   const token = localStorage.getItem('access_token');
@@ -92,7 +100,11 @@ const exportOne = async ([name, desc]) => {
     const { primary_character_id: charId } = await api('characters/primary');
     const found = await api(`products?page=1&limit=96&order=&type=Motion&query=${encodeURIComponent(name)}`);
     const lc = (s) => (s ?? '').toLowerCase();
-    const hit = (found.results ?? []).find((x) => lc(x.name) === lc(name) && lc(x.description).startsWith(lc(desc)));
+    const hit = (found.results ?? []).find((x) => lc(x.name) === lc(name) && lc(x.description).startsWith(lc(desc)))
+      // The search ranks by relevance and caps at 96: a common name ("Idle") can push the wanted
+      // one off the first page, so ask again with the description as the query.
+      ?? ((await api(`products?page=1&limit=96&order=&type=Motion&query=${encodeURIComponent(desc)}`)).results ?? [])
+        .find((x) => lc(x.name) === lc(name) && lc(x.description).startsWith(lc(desc)));
     if (!hit) return { error: `not found: ${name} [${desc}]` };
     const prod = await api(`products/${hit.id}?similar=0&character_id=${charId}`);
     const gms = prod.details.gms_hash;
@@ -113,17 +125,20 @@ const exportOne = async ([name, desc]) => {
 };
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
-  const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-  const dir = path.join(ROOT, 'assets-src', 'mixamo');
+  const dir = mixamoDir();
   mkdirSync(dir, { recursive: true });
-  const want = process.argv.slice(2);
-  const list = Object.entries(MIXAMO_CLIPS).filter(([k]) => !want.length || want.includes(k));
+  const packs = process.argv.includes('--packs');
+  const want = process.argv.slice(2).filter((a) => a !== '--packs');
+  const source = packs
+    ? Object.fromEntries(Object.entries((await import('./anim-packs.mjs')).PACK_CLIPS).map(([k, v]) => [k, v.mixamo]))
+    : MIXAMO_CLIPS;
+  const list = Object.entries(source).filter(([k]) => !want.length || want.includes(k));
   const b = await chromium.connectOverCDP('http://127.0.0.1:9555');
   const page = b.contexts().flatMap((c) => c.pages()).find((p) => p.url().includes('mixamo.com'));
   if (!page) { console.error('no mixamo.com tab in the Chrome on :9555'); process.exit(1); }
   for (const [clip, spec] of list) {
     const file = path.join(dir, clip + '.fbx');
-    if (existsSync(file) && !want.length) { console.log(`${clip}: already have it`); continue; }
+    if (existsSync(file) && (!want.length || packs)) { console.log(`${clip}: already have it`); continue; }
     // Mixamo rate-limits exports (HTTP 429): back off and retry, and pace every clip.
     let r = null;
     for (let tries = 0; tries < 6; tries++) {

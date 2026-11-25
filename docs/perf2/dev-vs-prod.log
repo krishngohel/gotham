@@ -1,0 +1,34 @@
+dev    high   -            gcpd roof     frame      9 (111 fps) js    8.3 gpu   3.79 calls 378 tris 464675
+prod   high   -            gcpd roof     frame    8.7 (115 fps) js    8.2 gpu   3.76 calls 378 tris 464657
+dev    high   -            neon street   frame    9.3 (108 fps) js    8.6 gpu   3.59 calls 253 tris 348993
+prod   high   -            neon street   frame    9.1 (110 fps) js    8.3 gpu   4.45 calls 251 tris 361717
+dev    high   -            loop el       frame   10.4 (96 fps) js    9.5 gpu   3.42 calls 276 tris 419428
+prod   high   -            loop el       frame    9.6 (104 fps) js    8.6 gpu   3.43 calls 271 tris 383712
+dev    low    -            gcpd roof     frame    7.6 (132 fps) js    7.1 gpu   3.21 calls 257 tris 299349
+prod   low    -            gcpd roof     frame    7.8 (128 fps) js    7.1 gpu   2.76 calls 250 tris 291033
+dev    low    -            neon street   frame    6.4 (156 fps) js    5.5 gpu   1.94 calls 192 tris 236287
+prod   low    -            neon street   frame    6.6 (152 fps) js    5.7 gpu   2.07 calls 190 tris 234135
+dev    low    -            loop el       frame      9 (111 fps) js      8 gpu   3.57 calls 221 tris 298228
+prod   low    -            loop el       frame    9.4 (106 fps) js    8.3 gpu   3.46 calls 223 tris 302812
+
+medians over rounds:
+dev   high   -            gcpd roof      111 fps  frame 9  js 8.3  gpu 3.79  calls 378  tris 464675
+prod  high   -            gcpd roof      115 fps  frame 8.7  js 8.2  gpu 3.76  calls 378  tris 464657
+dev   high   -            neon street    108 fps  frame 9.3  js 8.6  gpu 3.59  calls 253  tris 348993
+prod  high   -            neon street    110 fps  frame 9.1  js 8.3  gpu 4.45  calls 251  tris 361717
+dev   high   -            loop el         96 fps  frame 10.4  js 9.5  gpu 3.42  calls 276  tris 419428
+prod  high   -            loop el        104 fps  frame 9.6  js 8.6  gpu 3.43  calls 271  tris 383712
+dev   low    -            gcpd roof      132 fps  frame 7.6  js 7.1  gpu 3.21  calls 257  tris 299349
+prod  low    -            gcpd roof      128 fps  frame 7.8  js 7.1  gpu 2.76  calls 250  tris 291033
+dev   low    -            neon street    156 fps  frame 6.4  js 5.5  gpu 1.94  calls 192  tris 236287
+prod  low    -            neon street    152 fps  frame 6.6  js 5.7  gpu 2.07  calls 190  tris 234135
+dev   low    -            loop el        111 fps  frame 9  js 8  gpu 3.57  calls 221  tris 298228
+prod  low    -            loop el        106 fps  frame 9.4  js 8.3  gpu 3.46  calls 223  tris 302812
+
+prod / dev:
+  high   -          gcpd roof     js x0.99  frame x0.97  calls 378 -> 378
+  high   -          neon street   js x0.97  frame x0.98  calls 253 -> 251
+  high   -          loop el       js x0.91  frame x0.92  calls 276 -> 271
+  low    -          gcpd roof     js x1.00  frame x1.03  calls 257 -> 250
+  low    -          neon street   js x1.04  frame x1.03  calls 192 -> 190
+  low    -          loop el       js x1.04  frame x1.04  calls 221 -> 223

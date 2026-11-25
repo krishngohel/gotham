@@ -55,6 +55,20 @@ function partMeshes(outfits, name) {
   return out;
 }
 
+// [perf2] Garments share skeletons: every Skeleton is posed (a matrix per bone) and uploaded as a
+// bone texture once per frame, and a goon wore five or six of them on top of his body's. A garment
+// whose bones and bind inverses match the body's binds to the body's own skeleton; others share one
+// per source skin per character.
+const sameInverses = (a, b) => a.length === b.length && a.every((m, i) => m.equals(b[i]) || m.elements.every((v, k) => Math.abs(v - b[i].elements[k]) < 1e-5));
+function wornSkeleton(ch, src, bones) {
+  const body = ch.body?.skeleton;
+  if (body && body.bones.length === bones.length && bones.every((b, i) => b === body.bones[i]) && sameInverses(body.boneInverses, src.skeleton.boneInverses)) return body;
+  const cache = (ch.wornSkeletons ??= new Map());
+  let sk = cache.get(src.skeleton);
+  if (!sk) cache.set(src.skeleton, sk = new THREE.Skeleton(bones, src.skeleton.boneInverses));
+  return sk;
+}
+
 // materialFor(sourceMaterial) -> the material to wear. Returns the new meshes.
 export function wear(ch, outfits, name, materialFor, { outline = 0.009 } = {}) {
   const made = [];
@@ -64,7 +78,7 @@ export function wear(ch, outfits, name, materialFor, { outline = 0.009 } = {}) {
     const bones = src.skeleton.bones.map((b) => find(b.name));
     if (bones.some((b) => !b)) throw new Error(`Skeleton mismatch for ${name}`);
     const mesh = new THREE.SkinnedMesh(src.geometry, materialFor(src.material));
-    mesh.bind(new THREE.Skeleton(bones, src.skeleton.boneInverses), src.bindMatrix);
+    mesh.bind(wornSkeleton(ch, src, bones), src.bindMatrix);
     mesh.castShadow = true;
     mesh.frustumCulled = false;
     // Folds, straps and buckles would fill the crease-detection pass with ink, so clothes skip it:

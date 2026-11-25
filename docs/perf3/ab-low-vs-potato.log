@@ -1,0 +1,27 @@
+A=low http://localhost:5850/
+B=potato http://localhost:5850/
+3 rounds, 2500 ms per site, alternating one page at a time
+r0 AB low:potato   gcpd roof     low   6.46 ms (js 5.36) potato   3.25 ms (js 2.73)  frame x0.70 js x0.71 (normalised; raw frame x0.50, cpu-speed x1.40)  calls 255/190
+r0 AB low:potato   docks         low   4.07 ms (js 3.41) potato   2.36 ms (js 1.93)  frame x0.60 js x0.58 (normalised; raw frame x0.58, cpu-speed x1.03)  calls 127/113
+r0 AB low:potato   neon street   low   3.54 ms (js 3.05) potato   2.68 ms (js 2.31)  frame x0.82 js x0.82 (normalised; raw frame x0.76, cpu-speed x1.08)  calls 200/164
+r0 AB low:potato   ace chemicals low   3.82 ms (js 3.43) potato   2.55 ms (js 2.29)  frame x0.67 js x0.67 (normalised; raw frame x0.67, cpu-speed x1.00)  calls 186/180
+r0 AB low:potato   clock plaza   low   3.90 ms (js 3.51) potato   3.15 ms (js 2.81)  frame x0.78 js x0.77 (normalised; raw frame x0.81, cpu-speed x0.97)  calls 202/152
+r1 BA low:potato   gcpd roof     low   6.32 ms (js 5.02) potato   3.86 ms (js 3.23)  frame x0.62 js x0.65 (normalised; raw frame x0.61, cpu-speed x1.02)  calls 256/190
+r1 BA low:potato   docks         low   4.04 ms (js 3.19) potato   2.54 ms (js 2.08)  frame x0.63 js x0.65 (normalised; raw frame x0.63, cpu-speed x1.00)  calls 128/106
+r1 BA low:potato   neon street   low   3.69 ms (js 3.20) potato   4.10 ms (js 3.52)  frame x1.09 js x1.08 (normalised; raw frame x1.11, cpu-speed x0.98)  calls 197/161
+r1 BA low:potato   ace chemicals low   4.40 ms (js 3.94) potato   3.39 ms (js 3.02)  frame x0.78 js x0.78 (normalised; raw frame x0.77, cpu-speed x1.02)  calls 187/181
+r1 BA low:potato   clock plaza   low   3.16 ms (js 2.80) potato   3.49 ms (js 3.11)  frame x1.01 js x1.02 (normalised; raw frame x1.10, cpu-speed x0.92)  calls 202/152
+r2 AB low:potato   gcpd roof     low   6.55 ms (js 5.19) potato   4.98 ms (js 4.22)  frame x0.74 js x0.79 (normalised; raw frame x0.76, cpu-speed x0.97)  calls 255/190
+r2 AB low:potato   docks         low   4.38 ms (js 3.58) potato   4.46 ms (js 3.70)  frame x1.04 js x1.05 (normalised; raw frame x1.02, cpu-speed x1.02)  calls 129/106
+r2 AB low:potato   neon street   low   5.59 ms (js 4.80) potato   4.98 ms (js 4.29)  frame x0.91 js x0.91 (normalised; raw frame x0.89, cpu-speed x1.02)  calls 200/163
+r2 AB low:potato   ace chemicals low   4.60 ms (js 4.15) potato   4.40 ms (js 3.94)  frame x0.94 js x0.93 (normalised; raw frame x0.96, cpu-speed x0.98)  calls 186/182
+r2 AB low:potato   clock plaza   low   4.38 ms (js 3.94) potato   4.23 ms (js 3.76)  frame x0.98 js x0.97 (normalised; raw frame x0.97, cpu-speed x1.02)  calls 201/153
+
+per site, potato/low (ratio < 1: potato faster), median over 3 rounds [min..max]:
+  low:potato   gcpd roof     frame x0.70 [0.62..0.74]  js x0.71 [0.65..0.79]  fps 155 -> 259  calls 255 -> 190
+  low:potato   docks         frame x0.63 [0.60..1.04]  js x0.65 [0.58..1.05]  fps 245 -> 394  calls 128 -> 106
+  low:potato   neon street   frame x0.91 [0.82..1.09]  js x0.91 [0.82..1.08]  fps 271 -> 244  calls 200 -> 163
+  low:potato   ace chemicals frame x0.78 [0.67..0.94]  js x0.78 [0.67..0.93]  fps 228 -> 295  calls 186 -> 181
+  low:potato   clock plaza   frame x0.98 [0.78..1.01]  js x0.97 [0.77..1.02]  fps 256 -> 286  calls 202 -> 152
+  low:potato   ALL           frame x0.78  js x0.79
+(243 s)

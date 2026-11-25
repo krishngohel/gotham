@@ -1,0 +1,56 @@
+
+Running 17 tests using 1 worker
+
+  ok  1 tests\e2e\content.spec.js:13:1 › a glide challenge counts down, runs and can be quit from the pause menu (8.9s)
+  ok  2 tests\e2e\content.spec.js:28:1 › a street crime spawns, is won and counted (2.5s)
+  ok  3 tests\e2e\content.spec.js:41:1 › an engaged crime you walk far away from for 10 s is dropped, not held forever (12.3s)
+  ok  4 tests\e2e\content.spec.js:60:1 › photo mode opens with O, cycles filters and saves a PNG (2.6s)
+  ok  5 tests\e2e\content.spec.js:78:1 › the progress page shows the percentage, every part and the map (2.2s)
+  ok  6 tests\e2e\gadgets.spec.js:20:1 › the gadget wheel opens on Tab, 3 picks gel, and no chain fires (3.2s)
+  ok  7 tests\e2e\gadgets.spec.js:39:1 › explosive gel opens the Monarch booth and the trophy inside (5.5s)
+  x   8 tests\e2e\gadgets.spec.js:67:1 › a WayneTech purchase shows on the page and survives a reload (7.6s)
+  ok  9 tests\e2e\smoke.spec.js:13:1 › title screen renders with no errors (3.7s)
+  ok 10 tests\e2e\smoke.spec.js:23:1 › new game: suit select, intro comic, then play (9.1s)
+  ok 11 tests\e2e\smoke.spec.js:40:1 › a fight can be won and advances the story (2.2s)
+  ok 12 tests\e2e\smoke.spec.js:52:1 › boss fight begins after its comic (2.4s)
+  ok 13 tests\e2e\stealth.spec.js:23:1 › a predator room patrols, and a silent takedown from behind lands (9.9s)
+  ok 14 tests\e2e\stealth.spec.js:46:1 › clearing a predator room moves the story on (3.4s)
+  ok 15 tests\e2e\stealth.spec.js:55:1 › a save under the new (v2) key resumes on its saved step id (4.2s)
+  ok 16 tests\e2e\vanChase.spec.js:11:1 › a free-roam Joker van chase spawns, is won by real driving, and is counted (14.0s)
+  ok 17 tests\e2e\vanChase.spec.js:103:1 › ignoring a free-roam van chase lets it drive off and despawn, uncounted (2.5s)
+
+
+  1) tests\e2e\gadgets.spec.js:67:1 › a WayneTech purchase shows on the page and survives a reload ─
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.hud-card.show')
+    Expected substring: "LEVEL 2"
+    Received string:    "WAYNETECH DELIVERY!Lucius sent new toys: Explosive Gel and Batclaw. Hold Tab for the gadget wheel."
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('.hud-card.show') with timeout 5000ms
+      - waiting for locator('.hud-card.show')
+        7 × locator resolved to <div class="hud-card show">…</div>
+          - unexpected value "WAYNETECH DELIVERY!Lucius sent new toys: Explosive Gel and Batclaw. Hold Tab for the gadget wheel."
+
+
+      69 |   await boot(page, 'at=toNeon&god=1&new=1');
+      70 |   await page.evaluate(() => window.__game.wayne.award(1000, 'test'));
+    > 71 |   await expect(page.locator('.hud-card.show')).toContainText('LEVEL 2');
+         |                                                ^
+      72 |   await page.keyboard.press('Escape');
+      73 |   await page.locator('.pause-menu .mbtn', { hasText: 'WayneTech' }).click();
+      74 |   await expect(page.locator('.wt-menu')).toBeVisible();
+        at ~\Documents\Projects\gotham\tests\e2e\gadgets.spec.js:71:48
+
+    Error Context: test-results\gadgets-a-WayneTech-purcha-ff364--page-and-survives-a-reload\error-context.md
+
+  1 failed
+    tests\e2e\gadgets.spec.js:67:1 › a WayneTech purchase shows on the page and survives a reload ──
+  16 passed (1.6m)
+
+real	1m39.174s
+user	0m0.045s
+sys	0m0.000s

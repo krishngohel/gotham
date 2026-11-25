@@ -22,7 +22,10 @@ export function buildReachTable(model, clips, fwd = 1) {
   const p = new THREE.Vector3();
   for (const [name, hands] of Object.entries(PUNCHES)) {
     const clip = clips.get(name);
-    if (!clip) continue;
+    // A mocap clip of the same name already has its baked contact and root motion: sampling it
+    // again here gave Punch_Jab, Punch_Cross and Melee_Hook a second contact time and no root
+    // (combat-findings.md, finding 1).
+    if (!clip || table[name]) continue;
     const action = mixer.clipAction(clip);
     action.play();
     let best = { z: -Infinity }, any = { z: -Infinity };

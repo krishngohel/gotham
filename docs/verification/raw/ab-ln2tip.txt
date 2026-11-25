@@ -1,0 +1,104 @@
+
+Running 5 tests using 1 worker
+
+  x  1 tests\e2e\coopSplit.spec.js:153:1 › two-player story slice: brawl, Batmobile chase with a passenger, Harley, the boss to the end (47.7s)
+  x  2 tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down (26.6s)
+  x  3 tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down (with a bot partner) (26.7s)
+  x  4 tests\e2e\openworld.spec.js:218:1 › soak: 20 simulated minutes of the director with no input stays bounded and clean (11.5s)
+  x  5 tests\e2e\progression.spec.js:56:1 › save slots: copy, delete with confirmation, export and import round trip (17.2s)
+
+
+  1) tests\e2e\coopSplit.spec.js:153:1 › two-player story slice: brawl, Batmobile chase with a passenger, Harley, the boss to the end 
+
+    TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.
+
+      177 |   await page.waitForTimeout(1500);
+      178 |   await shot(page, '06-chase-passenger');
+    > 179 |   await page.waitForFunction(() => window.__game.vehicles.debugWin(), null, { timeout: 30000, polling: 400 });
+          |              ^
+      180 |   await page.waitForFunction(() => window.__game.flow.objectives.step?.type !== 'chase', null, { timeout: 20000 });
+      181 |   // Harley.
+      182 |   await page.evaluate(() => window.__game.jump('harleyFight'));
+        at ~\Documents\Projects\gotham-ln2-verify-ln2tip\tests\e2e\coopSplit.spec.js:179:14
+
+    Error Context: test-results\coopSplit-two-player-story-b4f2e--Harley-the-boss-to-the-end\error-context.md
+
+  2) tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      35 |     const errors = await boot(page, p2);
+      36 |     const id = await crimeAt(page, 'hostageStore', 'mileDiamondRow0', []);
+    > 37 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.squadUp, id, { timeout: 15000 });
+         |                ^
+      38 |     await expect(page.locator('.ow-panel .ow-job.show').first()).toContainText('hostages');
+      39 |     const before = await page.evaluate(() => window.__game.progress.openworld.saved);
+      40 |     await page.waitForFunction(() => { window.__game.winFight(); return window.__game.progress.crimes.stopped >= 1; }, null, { timeout: 20000, polling: 400 });
+        at ~\Documents\Projects\gotham-ln2-verify-ln2tip\tests\e2e\openworld.spec.js:37:16
+
+    Error Context: test-results\openworld-protect-hostages-8bf99-ved-when-the-crew-goes-down\error-context.md
+
+  3) tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down (with a bot partner) 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      35 |     const errors = await boot(page, p2);
+      36 |     const id = await crimeAt(page, 'hostageStore', 'mileDiamondRow0', []);
+    > 37 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.squadUp, id, { timeout: 15000 });
+         |                ^
+      38 |     await expect(page.locator('.ow-panel .ow-job.show').first()).toContainText('hostages');
+      39 |     const before = await page.evaluate(() => window.__game.progress.openworld.saved);
+      40 |     await page.waitForFunction(() => { window.__game.winFight(); return window.__game.progress.crimes.stopped >= 1; }, null, { timeout: 20000, polling: 400 });
+        at ~\Documents\Projects\gotham-ln2-verify-ln2tip\tests\e2e\openworld.spec.js:37:16
+
+    Error Context: test-results\openworld-protect-hostages-372a1-es-down-with-a-bot-partner-\error-context.md
+
+  4) tests\e2e\openworld.spec.js:218:1 › soak: 20 simulated minutes of the director with no input stays bounded and clean 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 10
+    Received:   0
+
+      226 |   });
+      227 |   expect(r.errors).toBe(0);
+    > 228 |   expect(r.spawned).toBeGreaterThan(10);
+          |                     ^
+      229 |   expect(r.maxLive).toBeLessThanOrEqual(r.cap);
+      230 |   expect(r.enemies).toBeLessThan(40);
+      231 |   expect(r.props.visible).toBeLessThanOrEqual(20);
+        at ~\Documents\Projects\gotham-ln2-verify-ln2tip\tests\e2e\openworld.spec.js:228:21
+
+    Error Context: test-results\openworld-soak-20-simulate-44ecf-put-stays-bounded-and-clean\error-context.md
+
+  5) tests\e2e\progression.spec.js:56:1 › save slots: copy, delete with confirmation, export and import round trip 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.title-slot')
+    Expected substring: "Slot 1"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" locator('.title-slot') with timeout 5000ms
+      - waiting for locator('.title-slot')
+
+
+      63 |   });
+      64 |   await title(page);
+    > 65 |   await expect(page.locator('.title-slot')).toContainText('Slot 1');
+         |                                             ^
+      66 |   await page.locator('.mbtn.slots').click();
+      67 |   const s1 = page.locator('.slot-card[data-slot="1"]');
+      68 |   await expect(s1).toContainText('Level 3');
+        at ~\Documents\Projects\gotham-ln2-verify-ln2tip\tests\e2e\progression.spec.js:65:45
+
+    Error Context: test-results\progression-save-slots-cop-dadfd-xport-and-import-round-trip\error-context.md
+
+  5 failed
+    tests\e2e\coopSplit.spec.js:153:1 › two-player story slice: brawl, Batmobile chase with a passenger, Harley, the boss to the end 
+    tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down 
+    tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down (with a bot partner) 
+    tests\e2e\openworld.spec.js:218:1 › soak: 20 simulated minutes of the director with no input stays bounded and clean 
+    tests\e2e\progression.spec.js:56:1 › save slots: copy, delete with confirmation, export and import round trip 

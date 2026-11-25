@@ -10,7 +10,9 @@ registerProgressField('stepId', { sanitize: (v) => (typeof v === 'string' && ID.
 // longer exists) starts over at the top.
 // Steps taken out of the story, and where a save sitting on one carries on (the Batwing balloon
 // run was cut on 2026-10-10).
-export const RETIRED = { armadaRun: 'nightwingTagRadio' };
+// [story] Plus every id the J1 pacing pass folded into the step after it (storyAliases.js).
+import { ALIASES } from './storyAliases.js';
+export const RETIRED = { armadaRun: 'nightwingTagRadio', ...ALIASES };
 
 export function resolveStep(progress, steps = STEPS) {
   const id = RETIRED[progress?.stepId] ?? progress?.stepId;

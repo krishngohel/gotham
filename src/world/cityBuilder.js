@@ -1,5 +1,6 @@
 // Turns mapData into merged meshes, collision boxes, grapple points and light spots.
 import * as THREE from 'three';
+import { registerToggle } from '../dev/perfToggles.js'; // [perf3]
 import { PALETTE } from '../config/palette.js';
 import { LAYER_FX } from '../render/layers.js';
 import { GRID, WORLD, SITES, districtAt } from './mapData.js';
@@ -11,6 +12,10 @@ import { facadeRelief, decoCrown, awnings } from './facadeDetail.js';
 import { dressStreets } from './streetDressing.js';
 import { createClimbables, addLadder } from './climbables.js';
 import { BREAKABLES, boxDistance } from './breakableSpots.js';
+import { createChunkSet } from './chunks.js';
+import { buildLods, silhouetteBoxes } from './lod.js';
+import { mergeStaticLines, createSpotIndex, batchTexturedPlanes } from './staticBatches.js';
+import { parkedFleetCar } from './parkedCars.js';
 
 const CAR_COLORS = [0x6d2f2f, 0x2f3f5a, 0x39473a, 0x5a5146, 0x1e2026, 0x7a6a44, 0x4a3a52];
 const NEON = { pink: PALETTE.neonPink, cyan: PALETTE.neonCyan };
@@ -29,11 +34,18 @@ function clearOfBreakables(x, z) {
   return true;
 }
 
-export function createCityContext(scene, rng, collision) {
-  const materials = createCityMaterials(rng);
-  const ctx = {
+// `shared` (optional) lets a later region build into the same world: it reuses the first
+// context's materials, halos, lists and chunk set, and gets its own rng, buckets and bookkeeping
+// (src/world/regions/). The core city is built with shared = null, exactly as before.
+export function createCityContext(scene, rng, collision, { shared = null, region = 'core', chunks = null } = {}) {
+  const materials = shared ? shared.materials : createCityMaterials(rng);
+  const ctx = shared ? {
+    ...shared,
+    rng,
+    buckets: createBuckets(materials, { region }),
+  } : {
     scene, rng, collision, materials,
-    buckets: createBuckets(materials),
+    buckets: createBuckets(materials, { region }),
     halos: createHalos(6000),
     grapple: [],
     lights: [],
@@ -44,8 +56,16 @@ export function createCityContext(scene, rng, collision) {
     steam: [],   // { x, y, z, s }: sources of rising steam (vents, chimneys, manholes)
     reflect: [], // { x, y, z, h, color, w, len, k }: lights that streak on the wet ground below them
     climbables: createClimbables(),
+    chunks: chunks ?? createChunkSet(),
   };
-  scene.add(ctx.halos.points);
+  if (!shared) scene.add(ctx.halos.points);
+  // Per-region bookkeeping: where this region's boxes, grapple points and scene children start,
+  // and the facade boxes its far-LOD silhouettes are made from.
+  ctx.region = region;
+  ctx.facades = [];
+  ctx.boxStart = collision.boxes.length;
+  ctx.grappleStart = ctx.grapple.length;
+  ctx.sceneStart = scene.children.length;
   return ctx;
 }
 
@@ -108,7 +128,7 @@ export function sawtoothRoof(ctx, b) {
   }
 }
 
-function parapet(ctx, x, z, w, d, y, hgt = 0.9, t = 0.35) {
+export function parapet(ctx, x, z, w, d, y, hgt = 0.9, t = 0.35) {
   solid(ctx, 'trim', box(w, hgt, t, x, y + hgt / 2, z - d / 2 + t / 2));
   solid(ctx, 'trim', box(w, hgt, t, x, y + hgt / 2, z + d / 2 - t / 2));
   solid(ctx, 'trim', box(t, hgt, d - 2 * t, x - w / 2 + t / 2, y + hgt / 2, z));
@@ -116,7 +136,7 @@ function parapet(ctx, x, z, w, d, y, hgt = 0.9, t = 0.35) {
 }
 
 // A cornice/belt as a ring around the footprint, so its top never z-fights with the roof.
-function ring(ctx, key, x, z, w, d, y, hgt, over) {
+export function ring(ctx, key, x, z, w, d, y, hgt, over) {
   const t = over + 0.3;
   ctx.buckets.add(key, box(w + 2 * over, hgt, t, x, y, z - d / 2 - over + t / 2));
   ctx.buckets.add(key, box(w + 2 * over, hgt, t, x, y, z + d / 2 + over - t / 2));
@@ -144,6 +164,7 @@ function facade(ctx, style, w, h, d, x, y0, z, { collide = true, excludeFaces = 
     uvScale: [FACADE_METERS[style], FLOOR_METERS], uOffset, faces,
   }));
   ctx.buckets.add('roof', tiledBox(w, h, d, x, y0 + h / 2, z, { uvScale: [8, 8], faces: [2] }));
+  ctx.facades?.push({ minX: x - w / 2, minY: y0, minZ: z - d / 2, maxX: x + w / 2, maxY: y0 + h, maxZ: z + d / 2, style });
   if (collide) ctx.collision.addBox(x - w / 2, y0, z - d / 2, x + w / 2, y0 + h, z + d / 2, 'building');
   return uOffset;
 }
@@ -465,7 +486,7 @@ function roofProps(ctx, b, x, z, w, d, y, squeeze = 1) {
 
 // ---- buildings ----
 
-function building(ctx, b) {
+export function building(ctx, b) {
   const { x, z, w, d, h, style } = b;
   const uFacade = facade(ctx, style, w, h, d, x, 0, z, { collide: !b.hollow, excludeFaces: b.exteriorHoles ?? [] });
   ctx.roofs.push({ id: b.id, x, z, w, d, y: h, district: b.district });
@@ -536,7 +557,7 @@ function building(ctx, b) {
 
 // ---- streets ----
 
-function streetLamp(ctx, x, z, nx, nz) {
+export function streetLamp(ctx, x, z, nx, nz) {
   solid(ctx, 'steel', cylinder(0.09, 0.14, 6.2, x, 3.1, z, 8));
   const hx = x + nx * 1.4, hz = z + nz * 1.4;
   ctx.buckets.add('steel', box(Math.abs(nx) ? 1.5 : 0.1, 0.1, Math.abs(nz) ? 1.5 : 0.1, x + nx * 0.7, 6.15, z + nz * 0.7));
@@ -551,23 +572,23 @@ function streetLamp(ctx, x, z, nx, nz) {
   ctx.buckets.add('pool', pool, 0x6b4520);
 }
 
-function parkedCar(ctx, x, z, alongX) {
+// A parked car: the street fleet's model (src/world/parkedCars.js, workstream H) on the same
+// collision box the old three-box car had. The rng draw (the paint) and the box are exactly as
+// before, so the core's layout and collision stay frozen; the model and its facing come from a
+// hash of the position, never from the rng.
+export function parkedCar(ctx, x, z, alongX) {
   const color = ctx.rng.pick(CAR_COLORS);
   const L = 4.4, W = 1.9;
   const sx = alongX ? L : W, sz = alongX ? W : L;
-  solid(ctx, 'painted', box(sx, 0.8, sz, x, 0.7, z), { color });
-  ctx.buckets.add('painted', box(alongX ? 2.3 : 1.7, 0.65, alongX ? 1.7 : 2.3, x, 1.42, z), color);
-  ctx.buckets.add('glass', box(alongX ? 2.35 : 1.5, 0.45, alongX ? 1.5 : 2.35, x, 1.45, z));
-  for (const a of [-1, 1]) for (const s of [-1, 1]) {
-    const wx = x + (alongX ? a * 1.4 : s * 0.95), wz = z + (alongX ? s * 0.95 : a * 1.4);
-    const wheel = new THREE.CylinderGeometry(0.36, 0.36, 0.25, 10).rotateX(alongX ? Math.PI / 2 : 0).rotateZ(alongX ? 0 : Math.PI / 2).translate(wx, 0.36, wz);
-    ctx.buckets.add('painted', wheel, 0x111216);
-  }
-  for (const s of [-1, 1]) {
-    const tx = x + (alongX ? -L / 2 : s * 0.7), tz = z + (alongX ? s * 0.7 : -L / 2);
-    glow(ctx, box(0.12, 0.14, 0.12, tx, 0.85, tz), 0x5a1414);
-  }
+  const g = box(sx, 0.8, sz, x, 0.7, z);
+  g.computeBoundingBox();
+  const bb = g.boundingBox;
+  ctx.collision.addBox(bb.min.x, bb.min.y, bb.min.z, bb.max.x, bb.max.y, bb.max.z, '');
+  // The cheap tiers park the fleet's ~190-triangle silhouettes instead of the full models.
+  parkedFleetCar(ctx, x, z, alongX, color, { detail: (ctx.quality?.crowdDensity ?? 1) < 0.6 ? 'lod' : PARKED_DETAIL.value });
 }
+// 'full' (the fleet's LOD0 geometry) or 'lod' (its ~190-triangle silhouette); see parkedCars.js.
+export const PARKED_DETAIL = { value: 'full' };
 
 function streets(ctx) {
   const { rng } = ctx;
@@ -677,21 +698,55 @@ export function buildCity(ctx, data) {
 }
 
 // Drops grapple points whose landing spot is buried in something solid (a landing inside a box
-// would shove the hero off, or drop them through the city).
+// would shove the hero off, or drop them through the city). Only this region's own points.
 function pruneGrapples(ctx) {
-  const keep = ctx.grapple.filter((p) => {
+  const from = ctx.grappleStart ?? 0;
+  const keep = ctx.grapple.slice(from).filter((p) => {
     const k = p.perch ? 0 : -1.1;
     const lx = p.x + (p.nx ?? 0) * k, lz = p.z + (p.nz ?? 0) * k;
     return !ctx.collision.query(lx - 0.2, lz - 0.2, lx + 0.2, lz + 0.2).some((b) =>
       b.maxY > p.y + 0.5 && b.minY < p.y + 1.8 && lx > b.minX - 0.2 && lx < b.maxX + 0.2 && lz > b.minZ - 0.2 && lz < b.maxZ + 0.2);
   });
-  ctx.grapple.length = 0;
+  ctx.grapple.length = from;
   ctx.grapple.push(...keep);
 }
 
-export function finishCity(ctx) {
+// One region is built: prune its grapple points, merge its geometry into chunked meshes, give
+// every chunk its far-LOD silhouette and fold its loose ink lines into chunk batches.
+export function finishRegion(ctx) {
   pruneGrapples(ctx);
-  ctx.buckets.flush(ctx.scene);
+  ctx.buckets.flush(ctx.scene, { chunkSet: ctx.chunks });
+  buildLods(silhouetteBoxes(ctx.facades, ctx.collision.boxes.slice(ctx.boxStart)), ctx.chunks, ctx.scene, ctx.region);
+  mergeStaticLines(ctx.scene, ctx.sceneStart, ctx.chunks, ctx.region);
+  batchTexturedPlanes(ctx.scene, ctx.sceneStart, ctx.chunks, new Set(ctx.flickers.map((f) => f.mat)), ctx.region);
+  cullLooseSigns(ctx);
+}
+
+// [perf2] Sign and poster planes the atlases left alone (flickering neon, sets too big for one
+// atlas: most of the west and east regions' signs) were each a draw call out to the full draw
+// distance from anywhere in the city (77 of them at the Narrows). They now join the chunk
+// detail list with the 'lod' range: drawn within lodDistance, like the facades they hang on
+// (past it those facades are already the far-LOD silhouette, which has no signs either).
+const _bb = new THREE.Box3();
+export function cullLooseSigns(ctx) {
+  if (!ctx.chunks) return;
+  for (const o of ctx.scene.children.slice(ctx.sceneStart)) {
+    if (!o.isMesh || o.userData.dynamic || o.userData.chunk || o.children.length || o.geometry?.type !== 'PlaneGeometry') continue;
+    if (!o.material?.map?.isCanvasTexture) continue;
+    o.updateMatrixWorld(true);
+    _bb.setFromObject(o);
+    ctx.chunks.addDetail(o, { minX: _bb.min.x, minY: _bb.min.y, minZ: _bb.min.z, maxX: _bb.max.x, maxY: _bb.max.y, maxZ: _bb.max.z }, 'lod');
+    o.userData.chunk = 'detail';
+  }
+}
+
+// Every region is built: pack the collision grid, split the halos into chunks, index the light
+// spots and freeze every static matrix.
+export function finishWorld(ctx) {
+  // Pack the collision grid now that the static city is in (later boxes go to per-cell lists).
+  ctx.collision.freeze?.();
+  ctx.halos.freeze(ctx.chunks, ctx.scene);
+  ctx.lightIndex = createSpotIndex(ctx.lights);
   // Everything built so far stands still (signs, decals, wires): freeze their matrices so the
   // renderer stops recomposing them every pass. Movers opt out with userData.dynamic.
   for (const o of ctx.scene.children) {
@@ -699,8 +754,38 @@ export function finishCity(ctx) {
     o.updateMatrix();
     o.matrixAutoUpdate = false;
   }
+  groupChunkMembers(ctx);
   ctx.updaters.push((t) => {
     for (const b of ctx.blinkers) ctx.halos.setSize(b.i, Math.sin(t * 2 + b.phase) > 0.2 ? b.size : 0.01);
     for (const f of ctx.flickers) f.mat.opacity = Math.sin(t * 23 + f.phase) > -0.93 || Math.sin(t * 1.3 + f.phase) > 0 ? 1 : 0.25;
   });
+}
+
+// [perf3] Each chunk's static near meshes go under one Group per chunk (see chunks.groupNear).
+// Only frozen, childless-or-not static members that hang straight off the scene move; the group
+// sits at the origin with a frozen identity matrix, so their world matrices do not change. The
+// group is parked while hidden (inkPipeline.updateMatrices skips its subtree).
+export function groupChunkMembers(ctx) {
+  if (!ctx.chunks?.groupNear) return;
+  ctx.chunks.groupNear((c, members) => {
+    const move = [], loose = [];
+    for (const o of members) (o.parent === ctx.scene && !o.matrixAutoUpdate && !o.userData.dynamic ? move : loose).push(o);
+    if (move.length < 2) return null;
+    const group = new THREE.Group();
+    group.name = `chunk:${c.key}`;
+    group.matrixAutoUpdate = false;
+    group.userData.parkHidden = true;
+    group.userData.chunk = c.key;
+    for (const o of move) { ctx.scene.remove(o); o.visible = true; group.add(o); }
+    group.updateMatrixWorld(true);
+    ctx.scene.add(group);
+    return { group, loose };
+  });
+  registerToggle('chunkGroups', (on) => ctx.chunks.setGrouped(on));
+}
+
+// The whole build of a single-region world (the original city on its own).
+export function finishCity(ctx) {
+  finishRegion(ctx);
+  finishWorld(ctx);
 }

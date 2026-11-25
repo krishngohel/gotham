@@ -1,0 +1,42 @@
+{"quality":"high","canvas":[1576,808,1,1],"gpu":"ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)","glideEnd":[2,85,2,"air"],"errorsMain":[],"errorsFight":[],"errorsBoss":[],"errorsSide":[],"errorsStealth":[],"errorsGadgets":[]}
+warmup               med    3.1  p95    5.1  max   14.4  fps  323  calls 532  tris 698040
+arrive:gcpd roof     med    3.7  p95    5.3  max    7.8  fps  270  calls 636  tris 792328
+gcpd roof            med    3.4  p95    4.8  max    7.6  fps  294  calls 654  tris 794516
+arrive:docks yard    med    1.9  p95    2.4  max    5.7  fps  526  calls 267  tris 331236
+docks yard           med    2.1  p95    3.7  max    6.2  fps  476  calls 267  tris 331236
+arrive:neon street   med    2.6  p95    3.9  max    5.2  fps  385  calls 412  tris 578016
+neon street          med    2.3  p95      3  max    5.2  fps  435  calls 419  tris 578460
+arrive:ace yard      med    2.2  p95    3.2  max    5.2  fps  455  calls 345  tris 386802
+ace yard             med    2.2  p95      3  max    4.4  fps  455  calls 366  tris 389006
+arrive:clock plaza   med    2.2  p95    2.7  max    4.5  fps  455  calls 319  tris 395074
+clock plaza          med    2.1  p95    3.3  max    8.5  fps  476  calls 340  tris 397350
+arrive:glide         med    3.7  p95    4.7  max    8.3  fps  270  calls 885  tris 877628
+glide                med    3.6  p95    4.6  max   19.9  fps  278  calls 746  tris 801966
+spawn                med    3.3  p95    4.1  max   13.2  fps  303  calls 410  tris 605338
+fight                med    4.1  p95    5.7  max  236.1  fps  244  calls 668  tris 1088428
+chain                med    3.5  p95    4.8  max   35.2  fps  286  calls 623  tris 970866
+boss                 med    3.3  p95    4.4  max   10.6  fps  303  calls 443  tris 679344
+challenge            med      3  p95    3.9  max    9.3  fps  333  calls 719  tris 691328
+arrive:crime         med    3.8  p95    4.8  max     13  fps  263  calls 644  tris 894172
+crime                med    3.7  p95    4.9  max   12.3  fps  270  calls 602  tris 867096
+photo                med    2.1  p95      3  max     12  fps  476  calls 484  tris 704802
+stealth              med    3.5  p95    6.9  max   11.8  fps  286  calls 643  tris 896664
+stealth-detective    med    4.8  p95    6.5  max   14.2  fps  208  calls 654  tris 942076
+stealth-takedown     med      3  p95    4.2  max    7.1  fps  333  calls 487  tris 724492
+stealth-alarm        med    3.5  p95    4.3  max    7.8  fps  286  calls 617  tris 753696
+g:wheel              med    3.9  p95    5.2  max   10.5  fps  256  calls 676  tris 1105256
+g:batarang           med    3.9  p95      7  max   23.5  fps  256  calls 688  tris 1015208
+g:remote             med      4  p95    5.3  max   11.5  fps  250  calls 709  tris 1017412
+g:gel                med      4  p95    5.3  max   12.9  fps  250  calls 709  tris 1017412
+g:smoke              med    3.8  p95    4.8  max    9.9  fps  263  calls 723  tris 1017440
+g:launcher           med    3.3  p95    4.2  max    9.4  fps  303  calls 585  tris 935476
+g:claw               med    3.9  p95    4.8  max   11.4  fps  256  calls 710  tris 995666
+g:freeze             med      4  p95    6.2  max     14  fps  250  calls 711  tris 1017572
+g:flashbang          med    4.2  p95    8.4  max   18.5  fps  238  calls 708  tris 1039158
+g:swarm              med    4.7  p95    7.4  max  218.2  fps  213  calls 769  tris 1237668
+g:breakables         med    2.3  p95    3.5  max    7.3  fps  435  calls 277  tris 421218
+hitches >25ms after warmup: 4 [{"page":"fight","l":"fight","ms":236.1,"at":11.69},{"page":"fight","l":"chain","ms":35.2,"at":18.93},{"page":"gadgets","l":"g:swarm","ms":75.1,"at":54.41},{"page":"gadgets","l":"g:swarm","ms":218.2,"at":54.63}]
+
+real	3m46.842s
+user	0m0.000s
+sys	0m0.000s

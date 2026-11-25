@@ -93,6 +93,8 @@ export function createDynamicRes({ min = 0.6, max = 1, step = 0.05, missLimit = 
       quiet = 0;
       set(max);
     },
+    // [perf3] Measurement and tests: jump to a scale now (snapped and clamped like a real step).
+    forceScale(s) { set(s); },
     // dt: ms since the last frame.
     update(dt) {
       if (!(dt > 0) || dt > 250) return; // tab switches, breakpoints, loading stalls

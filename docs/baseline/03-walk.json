@@ -1,0 +1,1223 @@
+{
+ "end": {
+  "id": "credits",
+  "type": "credits",
+  "mode": "credits",
+  "text": "",
+  "site": null,
+  "hero": [
+   0,
+   42,
+   9
+  ],
+  "comic": false,
+  "cine": false,
+  "radio": false,
+  "veh": null,
+  "fly": false
+ },
+ "steps": [
+  {
+   "step": "intro",
+   "type": "cutscene",
+   "mode": "play",
+   "text": "",
+   "hero": [
+    6,
+    42,
+    10
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "002-intro-start.png"
+  },
+  {
+   "step": "signal",
+   "type": null,
+   "mode": "play",
+   "text": "Walk to the Batsignal and see what is stuck to it.",
+   "hero": [
+    6,
+    42,
+    10
+   ],
+   "site": {
+    "x": -12,
+    "y": 42,
+    "z": -12
+   },
+   "distance": 28,
+   "climb": 0,
+   "veh": null,
+   "shot": "007-signal-start.png"
+  },
+  {
+   "step": "card",
+   "type": "cutscene",
+   "mode": "cutscene",
+   "text": "",
+   "hero": [
+    -12,
+    42,
+    -12
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "008-card-start.png"
+  },
+  {
+   "step": "gordonRadio",
+   "type": "radio",
+   "mode": "play",
+   "text": "Gordon is on the radio.",
+   "hero": [
+    -12,
+    42,
+    -3
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "010-gordonRadio-start.png"
+  },
+  {
+   "step": "courierIntro",
+   "type": "courier",
+   "mode": "play",
+   "text": "Follow the masked man as he runs for the Docks.",
+   "hero": [
+    -12,
+    42,
+    -3
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "012-courierIntro-start.png"
+  },
+  {
+   "step": "actOneTitle",
+   "type": "cutscene",
+   "mode": "play",
+   "text": "",
+   "hero": [
+    -12,
+    42,
+    -3
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "014-actOneTitle-start.png"
+  },
+  {
+   "step": "toDocks",
+   "type": null,
+   "mode": "play",
+   "text": "Glide to the Docks and land on the warehouse roof.",
+   "hero": [
+    -12,
+    42,
+    -3
+   ],
+   "site": {
+    "x": -60,
+    "y": 16,
+    "z": 180
+   },
+   "distance": 189,
+   "climb": -26,
+   "veh": null,
+   "shot": "018-toDocks-start.png"
+  },
+  {
+   "step": "alfredRadio",
+   "type": "radio",
+   "mode": "play",
+   "text": "Alfred is on the radio.",
+   "hero": [
+    -60,
+    16,
+    180
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "019-alfredRadio-start.png"
+  },
+  {
+   "step": "boardBatmobile",
+   "type": "board",
+   "mode": "play",
+   "text": "Climb down to the dock road and get in the Batmobile.",
+   "hero": [
+    -60,
+    16,
+    180
+   ],
+   "site": {
+    "x": -90,
+    "y": 0.15,
+    "z": 165
+   },
+   "distance": 34,
+   "climb": -16,
+   "veh": null,
+   "shot": "021-boardBatmobile-start.png"
+  },
+  {
+   "step": "batmobileChase",
+   "type": "chase",
+   "mode": "play",
+   "text": "Ram the Joker van 3 times before it reaches the warehouses.",
+   "hero": [
+    -90,
+    0,
+    165
+   ],
+   "site": {
+    "x": -60,
+    "y": 16,
+    "z": 180
+   },
+   "distance": 34,
+   "climb": 16,
+   "veh": "batmobile",
+   "shot": "023-batmobileChase-start.png"
+  },
+  {
+   "step": "toRoofAfterChase",
+   "type": null,
+   "mode": "play",
+   "text": "Leave the car. Climb back up to the warehouse roof.",
+   "hero": [
+    -90,
+    0,
+    105.4
+   ],
+   "site": {
+    "x": -60,
+    "y": 16,
+    "z": 180
+   },
+   "distance": 80,
+   "climb": 16,
+   "veh": "batmobile",
+   "shot": "026-toRoofAfterChase-start.png"
+  },
+  {
+   "step": "f1",
+   "type": "fight",
+   "mode": "play",
+   "text": "Take down the goons on the warehouse roof. Punch, kick, counter.",
+   "hero": [
+    -60,
+    16,
+    180
+   ],
+   "site": {
+    "x": -60,
+    "y": 16,
+    "z": 180
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "028-f1-start.png"
+  },
+  {
+   "step": "toYard",
+   "type": null,
+   "mode": "play",
+   "text": "Drop into the container yard below the warehouse.",
+   "hero": [
+    -60,
+    16,
+    180
+   ],
+   "site": {
+    "x": 0,
+    "y": 0.15,
+    "z": 178
+   },
+   "distance": 60,
+   "climb": -16,
+   "veh": null,
+   "shot": "030-toYard-start.png"
+  },
+  {
+   "step": "f2",
+   "type": "fight",
+   "mode": "play",
+   "text": "Clear the container yard. Dodge, block and throw.",
+   "hero": [
+    0,
+    0.2,
+    178
+   ],
+   "site": {
+    "x": 0,
+    "y": 0.15,
+    "z": 178
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "032-f2-start.png"
+  },
+  {
+   "step": "toShip",
+   "type": null,
+   "mode": "play",
+   "text": "Grapple onto the freighter at the end of the dock.",
+   "hero": [
+    0,
+    0.2,
+    178
+   ],
+   "site": {
+    "x": -44,
+    "y": 9,
+    "z": 238
+   },
+   "distance": 74,
+   "climb": 9,
+   "veh": null,
+   "shot": "034-toShip-start.png"
+  },
+  {
+   "step": "f3",
+   "type": "fight",
+   "mode": "play",
+   "text": "Clear the freighter deck. Finish them before the next wave lands.",
+   "hero": [
+    -44,
+    9,
+    238
+   ],
+   "site": {
+    "x": -44,
+    "y": 9,
+    "z": 238
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "036-f3-start.png"
+  },
+  {
+   "step": "crates",
+   "type": "collect",
+   "mode": "play",
+   "text": "Secure the Wayne Tech crates at the marker on deck.",
+   "hero": [
+    -44,
+    9,
+    238
+   ],
+   "site": {
+    "x": -44,
+    "y": 9,
+    "z": 232
+   },
+   "distance": 6,
+   "climb": 0,
+   "veh": null,
+   "shot": "038-crates-start.png"
+  },
+  {
+   "step": "rewardCrates",
+   "type": "cutscene",
+   "mode": "cutscene",
+   "text": "",
+   "hero": [
+    -44,
+    9,
+    232
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "040-rewardCrates-start.png"
+  },
+  {
+   "step": "toNeon",
+   "type": null,
+   "mode": "play",
+   "text": "Head east to the Gazette building roof in Neon Row.",
+   "hero": [
+    -44,
+    9,
+    232
+   ],
+   "site": {
+    "x": 120,
+    "y": 30,
+    "z": 0
+   },
+   "distance": 284,
+   "climb": 21,
+   "veh": null,
+   "shot": "042-toNeon-start.png"
+  },
+  {
+   "step": "n1",
+   "type": "fight",
+   "mode": "play",
+   "text": "Knife goons on the Gazette roof. Kick or cape to break their guard.",
+   "hero": [
+    120,
+    30,
+    0
+   ],
+   "site": {
+    "x": 120,
+    "y": 30,
+    "z": 0
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "044-n1-start.png"
+  },
+  {
+   "step": "toStreet",
+   "type": null,
+   "mode": "play",
+   "text": "Drop down to the Neon Row street, toward the broadcast.",
+   "hero": [
+    120,
+    30,
+    0
+   ],
+   "site": {
+    "x": 150,
+    "y": 0,
+    "z": 62
+   },
+   "distance": 69,
+   "climb": -30,
+   "veh": null,
+   "shot": "046-toStreet-start.png"
+  },
+  {
+   "step": "n2",
+   "type": "fight",
+   "mode": "play",
+   "text": "Clear the street. Batarang the ones hanging back.",
+   "hero": [
+    150,
+    0,
+    62
+   ],
+   "site": {
+    "x": 150,
+    "y": 0,
+    "z": 62
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "048-n2-start.png"
+  },
+  {
+   "step": "toMonarch",
+   "type": null,
+   "mode": "play",
+   "text": "Climb to the Monarch Theater roof.",
+   "hero": [
+    150,
+    0,
+    62
+   ],
+   "site": {
+    "x": 180,
+    "y": 22,
+    "z": -60
+   },
+   "distance": 126,
+   "climb": 22,
+   "veh": null,
+   "shot": "050-toMonarch-start.png"
+  },
+  {
+   "step": "n3",
+   "type": "fight",
+   "mode": "play",
+   "text": "Clear the Monarch roof. Fill your meter and use a special.",
+   "hero": [
+    180,
+    22,
+    -60
+   ],
+   "site": {
+    "x": 180,
+    "y": 22,
+    "z": -60
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "052-n3-start.png"
+  },
+  {
+   "step": "courierRooftop",
+   "type": "courier",
+   "mode": "play",
+   "text": "Chase the masked man down to the theater balcony.",
+   "hero": [
+    180,
+    22,
+    -60
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "054-courierRooftop-start.png"
+  },
+  {
+   "step": "monarchBalcony",
+   "type": "fight",
+   "mode": "play",
+   "text": "Rifle goons on the balcony. Crouch, stay hidden, take them one by one.",
+   "hero": [
+    180,
+    22,
+    -60
+   ],
+   "site": {
+    "x": 203,
+    "y": 13,
+    "z": -60
+   },
+   "distance": 23,
+   "climb": -9,
+   "veh": null,
+   "shot": "056-monarchBalcony-start.png"
+  },
+  {
+   "step": "rig",
+   "type": "collect",
+   "mode": "play",
+   "text": "Seize the Joker's transmitter and relay gear on the balcony stage.",
+   "hero": [
+    180,
+    22,
+    -60
+   ],
+   "site": {
+    "x": 186,
+    "y": 22,
+    "z": -66
+   },
+   "distance": 8,
+   "climb": 0,
+   "veh": null,
+   "shot": "058-rig-start.png"
+  },
+  {
+   "step": "rewardRig",
+   "type": "cutscene",
+   "mode": "cutscene",
+   "text": "",
+   "hero": [
+    186,
+    22,
+    -66
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "060-rewardRig-start.png"
+  },
+  {
+   "step": "aceClueRadio",
+   "type": "radio",
+   "mode": "play",
+   "text": "Gordon is on the radio.",
+   "hero": [
+    186,
+    22,
+    -66
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "062-aceClueRadio-start.png"
+  },
+  {
+   "step": "actTwoTitle",
+   "type": "cutscene",
+   "mode": "play",
+   "text": "",
+   "hero": [
+    186,
+    22,
+    -66
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "064-actTwoTitle-start.png"
+  },
+  {
+   "step": "toAce",
+   "type": null,
+   "mode": "play",
+   "text": "Go north to the Ace Chemicals gate.",
+   "hero": [
+    186,
+    22,
+    -66
+   ],
+   "site": {
+    "x": 95,
+    "y": 0.15,
+    "z": -90
+   },
+   "distance": 94,
+   "climb": -22,
+   "veh": null,
+   "shot": "068-toAce-start.png"
+  },
+  {
+   "step": "boardBatmobileAce",
+   "type": "board",
+   "mode": "play",
+   "text": "Get in the Batmobile waiting at the Ace Chemicals gate.",
+   "hero": [
+    95,
+    0,
+    -90
+   ],
+   "site": {
+    "x": 95,
+    "y": 0.15,
+    "z": -105
+   },
+   "distance": 15,
+   "climb": 0,
+   "veh": null,
+   "shot": "069-boardBatmobileAce-start.png"
+  },
+  {
+   "step": "aceBattle",
+   "type": "battle",
+   "mode": "play",
+   "text": "Drive into the yard. Cannon the drone tanks.",
+   "hero": [
+    95,
+    0.2,
+    -105
+   ],
+   "site": {
+    "x": 95,
+    "y": 0,
+    "z": -140
+   },
+   "distance": 35,
+   "climb": 0,
+   "veh": "batmobile",
+   "shot": "071-aceBattle-start.png"
+  },
+  {
+   "step": "toBruteFight",
+   "type": null,
+   "mode": "play",
+   "text": "Get out of the Batmobile. Face the brute in the yard on foot.",
+   "hero": [
+    97,
+    0.2,
+    -156
+   ],
+   "site": {
+    "x": 95,
+    "y": 0,
+    "z": -140
+   },
+   "distance": 16,
+   "climb": 0,
+   "veh": "batmobile",
+   "shot": "074-toBruteFight-start.png"
+  },
+  {
+   "step": "a1",
+   "type": "fight",
+   "mode": "play",
+   "text": "A brute. Cape to stun him, then hit him while he is dazed.",
+   "hero": [
+    95,
+    0.2,
+    -140
+   ],
+   "site": {
+    "x": 95,
+    "y": 0,
+    "z": -140
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "076-a1-start.png"
+  },
+  {
+   "step": "toFactory",
+   "type": null,
+   "mode": "play",
+   "text": "Climb to the factory roof inside Ace Chemicals.",
+   "hero": [
+    95,
+    0.2,
+    -140
+   ],
+   "site": {
+    "x": 140,
+    "y": 25.1,
+    "z": -172
+   },
+   "distance": 55,
+   "climb": 25,
+   "veh": null,
+   "shot": "078-toFactory-start.png"
+  },
+  {
+   "step": "a2",
+   "type": "fight",
+   "mode": "play",
+   "text": "Take out the lookouts on the factory roof.",
+   "hero": [
+    140,
+    25.1,
+    -172
+   ],
+   "site": {
+    "x": 140,
+    "y": 25.1,
+    "z": -172
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "080-a2-start.png"
+  },
+  {
+   "step": "aceVanRadio",
+   "type": "radio",
+   "mode": "play",
+   "text": "Alfred is on the radio.",
+   "hero": [
+    140,
+    25.1,
+    -172
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "082-aceVanRadio-start.png"
+  },
+  {
+   "step": "boardBatmobileAce2",
+   "type": "board",
+   "mode": "play",
+   "text": "Get back in the Batmobile at the Ace gate.",
+   "hero": [
+    140,
+    25.1,
+    -172
+   ],
+   "site": {
+    "x": 95,
+    "y": 0.15,
+    "z": -90
+   },
+   "distance": 94,
+   "climb": -25,
+   "veh": null,
+   "shot": "084-boardBatmobileAce2-start.png"
+  },
+  {
+   "step": "aceVanChase",
+   "type": "chase",
+   "mode": "play",
+   "text": "Ram Harley's van 3 times before it leaves the block.",
+   "hero": [
+    95,
+    0,
+    -90
+   ],
+   "site": {
+    "x": 96,
+    "y": 0,
+    "z": -164
+   },
+   "distance": 74,
+   "climb": 0,
+   "veh": "batmobile",
+   "shot": "086-aceVanChase-start.png"
+  },
+  {
+   "step": "harleyRadio",
+   "type": "radio",
+   "mode": "play",
+   "text": "Someone is on the Joker's open channel.",
+   "hero": [
+    97.4,
+    0.2,
+    -122.6
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "089-harleyRadio-start.png"
+  },
+  {
+   "step": "toHarleyDoor",
+   "type": "interior",
+   "mode": "play",
+   "text": "Enter the chemical hall through the open loading dock door.",
+   "hero": [
+    97.4,
+    0.2,
+    -122.6
+   ],
+   "site": {
+    "x": 96,
+    "y": 0,
+    "z": -164
+   },
+   "distance": 41,
+   "climb": 0,
+   "veh": null,
+   "shot": "091-toHarleyDoor-start.png"
+  },
+  {
+   "step": "harleyFight",
+   "type": "fight",
+   "mode": "play",
+   "text": "Beat Harley and her crew in the chemical hall.",
+   "hero": [
+    140,
+    0.2,
+    -172
+   ],
+   "site": {
+    "x": 140,
+    "y": 0.15,
+    "z": -172
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "093-harleyFight-start.png"
+  },
+  {
+   "step": "toVat",
+   "type": null,
+   "mode": "play",
+   "text": "Go out to the deck over the vats. The antidote is there.",
+   "hero": [
+    140,
+    0.2,
+    -172
+   ],
+   "site": {
+    "x": 180,
+    "y": 10,
+    "z": -118
+   },
+   "distance": 67,
+   "climb": 10,
+   "veh": null,
+   "shot": "095-toVat-start.png"
+  },
+  {
+   "step": "a3",
+   "type": "fight",
+   "mode": "play",
+   "text": "Protect the antidote on the vat deck. Keep every goon off it.",
+   "hero": [
+    180,
+    10,
+    -118
+   ],
+   "site": {
+    "x": 180,
+    "y": 10,
+    "z": -118
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "097-a3-start.png"
+  },
+  {
+   "step": "toCatwalks",
+   "type": null,
+   "mode": "play",
+   "text": "Reach the catwalk entrance along the hall wall. Crouch.",
+   "hero": [
+    180,
+    10,
+    -118
+   ],
+   "site": {
+    "x": 172,
+    "y": 10,
+    "z": -124
+   },
+   "distance": 10,
+   "climb": 0,
+   "veh": null,
+   "shot": "099-toCatwalks-start.png"
+  },
+  {
+   "step": "aceCatwalks",
+   "type": "fight",
+   "mode": "play",
+   "text": "Rifle goons on the catwalks. Stay hidden and take them silently.",
+   "hero": [
+    172,
+    10,
+    -124
+   ],
+   "site": {
+    "x": 124,
+    "y": 0.15,
+    "z": -118
+   },
+   "distance": 48,
+   "climb": -10,
+   "veh": null,
+   "shot": "101-aceCatwalks-start.png"
+  },
+  {
+   "step": "aceCatwalks",
+   "issue": "fight starts 48 m from the player, with no travel step"
+  },
+  {
+   "step": "antidote",
+   "type": "collect",
+   "mode": "play",
+   "text": "Secure the antidote case on the vat deck.",
+   "hero": [
+    124,
+    0.2,
+    -118
+   ],
+   "site": {
+    "x": 184,
+    "y": 10,
+    "z": -112
+   },
+   "distance": 60,
+   "climb": 10,
+   "veh": null,
+   "shot": "103-antidote-start.png"
+  },
+  {
+   "step": "rewardAntidote",
+   "type": "cutscene",
+   "mode": "cutscene",
+   "text": "",
+   "hero": [
+    184,
+    10,
+    -112
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "105-rewardAntidote-start.png"
+  },
+  {
+   "step": "courierReveal",
+   "type": "radio",
+   "mode": "play",
+   "text": "The masked man has caught up with you, mask in hand.",
+   "hero": [
+    184,
+    10,
+    -112
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "107-courierReveal-start.png"
+  },
+  {
+   "step": "actThreeTitle",
+   "type": "cutscene",
+   "mode": "play",
+   "text": "",
+   "hero": [
+    184,
+    10,
+    -112
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "109-actThreeTitle-start.png"
+  },
+  {
+   "step": "nightwingTagRadio",
+   "type": "radio",
+   "mode": "play",
+   "text": "Gordon and Nightwing are both on the line.",
+   "hero": [
+    184,
+    10,
+    -112
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "113-nightwingTagRadio-start.png"
+  },
+  {
+   "step": "toPlaza",
+   "type": null,
+   "mode": "play",
+   "text": "Get down to the clock plaza and back Nightwing up.",
+   "hero": [
+    184,
+    10,
+    -112
+   ],
+   "site": {
+    "x": -62,
+    "y": 0.15,
+    "z": -122
+   },
+   "distance": 246,
+   "climb": -10,
+   "veh": null,
+   "shot": "115-toPlaza-start.png"
+  },
+  {
+   "step": "plazaFight",
+   "type": "fight",
+   "mode": "play",
+   "text": "Clear the plaza with Nightwing at your side.",
+   "hero": [
+    -62,
+    0.2,
+    -122
+   ],
+   "site": {
+    "x": -62,
+    "y": 0.15,
+    "z": -122
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "117-plazaFight-start.png"
+  },
+  {
+   "step": "toFunhouse",
+   "type": "interior",
+   "mode": "play",
+   "text": "Enter the funhouse door in the old cathedral.",
+   "hero": [
+    -62,
+    0.2,
+    -122
+   ],
+   "site": {
+    "x": -120,
+    "y": 0,
+    "z": -108
+   },
+   "distance": 60,
+   "climb": 0,
+   "veh": null,
+   "shot": "119-toFunhouse-start.png"
+  },
+  {
+   "step": "funhouseFight",
+   "type": "fight",
+   "mode": "play",
+   "text": "Fight through the funhouse floor to reach the hostages.",
+   "hero": [
+    -120,
+    0.2,
+    -150
+   ],
+   "site": {
+    "x": -120,
+    "y": 0.15,
+    "z": -150
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "121-funhouseFight-start.png"
+  },
+  {
+   "step": "rescueGuestsRadio",
+   "type": "radio",
+   "mode": "play",
+   "text": "The last hostages are found.",
+   "hero": [
+    -120,
+    0.2,
+    -150
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "123-rescueGuestsRadio-start.png"
+  },
+  {
+   "step": "toTower",
+   "type": null,
+   "mode": "play",
+   "text": "Go to the clock tower. The Joker is waiting.",
+   "hero": [
+    -120,
+    0.2,
+    -150
+   ],
+   "site": {
+    "x": -62,
+    "y": 58,
+    "z": -154
+   },
+   "distance": 58,
+   "climb": 58,
+   "veh": null,
+   "shot": "125-toTower-start.png"
+  },
+  {
+   "step": "boss",
+   "type": "boss",
+   "mode": "cutscene",
+   "text": "Defeat the Joker.",
+   "hero": [
+    -62,
+    58,
+    -154
+   ],
+   "site": {
+    "x": -62,
+    "y": 58,
+    "z": -154
+   },
+   "distance": 0,
+   "climb": 0,
+   "veh": null,
+   "shot": "127-boss-start.png"
+  },
+  {
+   "step": "finale",
+   "type": "cutscene",
+   "mode": "finale",
+   "text": "",
+   "hero": [
+    0,
+    42,
+    9
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "141-finale-start.png"
+  },
+  {
+   "step": "credits",
+   "type": "credits",
+   "mode": "credits",
+   "text": "",
+   "hero": [
+    0,
+    42,
+    9
+   ],
+   "site": null,
+   "distance": null,
+   "climb": null,
+   "veh": null,
+   "shot": "144-credits-start.png"
+  }
+ ],
+ "cuts": [
+  {
+   "step": "finale",
+   "d": 175,
+   "from": [
+    -62,
+    58,
+    -154
+   ],
+   "to": [
+    0,
+    42,
+    9
+   ],
+   "ctl": null,
+   "veh": null
+  }
+ ],
+ "events": [
+  [
+   "vehicleEnter",
+   "boardBatmobile"
+  ],
+  [
+   "chaseDone",
+   "batmobileChase"
+  ],
+  [
+   "vehicleExit",
+   "toRoofAfterChase"
+  ],
+  [
+   "vehicleEnter",
+   "boardBatmobileAce"
+  ],
+  [
+   "battleDone",
+   "aceBattle"
+  ],
+  [
+   "vehicleExit",
+   "toBruteFight"
+  ],
+  [
+   "vehicleEnter",
+   "boardBatmobileAce2"
+  ],
+  [
+   "chaseDone",
+   "aceVanChase"
+  ],
+  [
+   "vehicleExit",
+   "harleyRadio"
+  ]
+ ],
+ "strayCombo": [],
+ "errors": []
+}

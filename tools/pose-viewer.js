@@ -12,6 +12,7 @@ import { buildChainClips } from '../src/actors/chainAnims.js';
 import { CHAIN_BEATS } from '../src/combat/chainTimeline.js';
 import { buildStealthClips, STEALTH_BEATS, CHOKE_OFFSET } from '../src/actors/stealthAnims.js';
 import { MOCAP_BEATS } from '../src/config/mocap.js';
+import { loadAnimPack, mergePackClips } from '../src/actors/animPacks.js';
 
 const params = new URLSearchParams(location.search);
 // ?kicks=<module path relative to this page> swaps in another kicks module (e.g. a copy of an
@@ -53,6 +54,15 @@ for (const c of buildKickClips(SkeletonUtils.clone(assets.bodies.m), assets.clip
 for (const c of buildClimbClips(SkeletonUtils.clone(assets.bodies.m), assets.clips)) assets.clips.set(c.name, c);
 for (const c of buildChainClips(SkeletonUtils.clone(assets.bodies.m), assets.clips)) assets.clips.set(c.name, c);
 for (const c of buildStealthClips(SkeletonUtils.clone(assets.bodies.m), assets.clips)) assets.clips.set(c.name, c);
+// ?packs=combat2,enemies,... also loads lazy animation packs (tools/pack-sheets.mjs); their
+// contact frames come from the pack data.
+const packData = {};
+for (const name of (params.get('packs') ?? '').split(',').filter(Boolean)) {
+  const pack = await loadAnimPack(name, { base: '/assets/' });
+  mergePackClips(assets.clips, pack);
+  Object.assign(packData, pack.data);
+  for (const [k, d] of Object.entries(pack.data)) if (d.kind === 'strike' && !KICK_BEATS[k]) KICK_BEATS[k] = { duration: d.duration, contact: d.contact };
+}
 
 const bats = {};
 // suit='goon' or suit='rifle' renders on a goon body (grunt, or a rifle goon with its rifle mesh)
@@ -212,6 +222,6 @@ function measure({ clip, suit = 'm', frames = 24 } = {}) {
   return rows;
 }
 
-window.__viewer = { ready: true, sheet, pairSheet, measure, clips: [...assets.clips.keys()], beats: KICK_BEATS };
+window.__viewer = { ready: true, sheet, pairSheet, measure, clips: [...assets.clips.keys()], beats: KICK_BEATS, packData };
 // Manual use: ?clip=Kick_Front&suit=m renders one sheet into the page.
 if (params.get('clip')) sheet({ clip: params.get('clip'), suit: params.get('suit') ?? 'm' });

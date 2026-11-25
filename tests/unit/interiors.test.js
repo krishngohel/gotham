@@ -190,11 +190,14 @@ describe('createInteriors runtime', () => {
 });
 
 describe('lobbyInView', () => {
-  it('shows the lobby from inside it, at its door and from the GCPD roof', () => {
+  it('shows the lobby from inside it and at its door', () => {
     expect(lobbyInView({ x: 0, y: 1.7, z: 6 })).toBe(true);
     expect(lobbyInView({ x: 0, y: 2, z: 30 })).toBe(true);
-    expect(lobbyInView({ x: 6, y: 45, z: 10 })).toBe(true);
     expect(lobbyInView({ x: LOBBY_VIEW_DIST - 1, y: 3, z: 0 })).toBe(true);
+  });
+  // [perf2] The roof is 35 m of tower above the lobby's own ceiling: nothing inside shows there.
+  it('hides it from the GCPD roof above it', () => {
+    expect(lobbyInView({ x: 6, y: 45, z: 10 })).toBe(false);
   });
   it('hides it from across the city', () => {
     expect(lobbyInView({ x: 95, y: 2, z: -140 })).toBe(false);

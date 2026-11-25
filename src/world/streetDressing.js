@@ -24,7 +24,7 @@ function place(geo, x, y, z, nx, nz) {
   return geo.rotateY(Math.atan2(nx, nz)).translate(x, y, z);
 }
 
-function hydrant(ctx, x, z) {
+export function hydrant(ctx, x, z) {
   const c = PALETTE.containerRed;
   ctx.buckets.add('painted', cylinder(0.17, 0.2, 0.55, x, 0.15 + 0.3, z, 10), c);
   ctx.buckets.add('painted', cylinder(0.24, 0.24, 0.08, x, 0.15 + 0.6, z, 10), c);
@@ -33,7 +33,7 @@ function hydrant(ctx, x, z) {
   ctx.collision.addBox(x - 0.25, 0.15, z - 0.25, x + 0.25, 0.95, z + 0.25, 'prop');
 }
 
-function newsBoxes(ctx, x, z, nx, nz) {
+export function newsBoxes(ctx, x, z, nx, nz) {
   const colors = [PALETTE.containerBlue, PALETTE.containerRed, 0x6a6048, PALETTE.containerGreen];
   const along = { x: -nz, z: nx };
   const n = ctx.rng.int(2, 3);
@@ -47,7 +47,7 @@ function newsBoxes(ctx, x, z, nx, nz) {
   }
 }
 
-function trashBags(ctx, x, z) {
+export function trashBags(ctx, x, z) {
   for (let k = 0, n = ctx.rng.int(2, 5); k < n; k++) {
     const r = ctx.rng.range(0.2, 0.32);
     const g = new THREE.IcosahedronGeometry(r, 0).scale(1, ctx.rng.range(0.6, 0.85), 1).rotateY(ctx.rng.range(0, 3));
@@ -56,25 +56,25 @@ function trashBags(ctx, x, z) {
   }
 }
 
-function trashCan(ctx, x, z) {
+export function trashCan(ctx, x, z) {
   addSolid(ctx, 'steel', cylinder(0.3, 0.26, 0.95, x, 0.15 + 0.47, z, 12));
   ctx.buckets.add('painted', cylinder(0.33, 0.33, 0.06, x, 0.15 + 0.97, z, 12), 0x5a5d63);
   ctx.buckets.add('steel', cylinder(0.31, 0.31, 0.05, x, 0.15 + 0.7, z, 12, true));
 }
 
-function mailbox(ctx, x, z, nx, nz) {
+export function mailbox(ctx, x, z, nx, nz) {
   addSolid(ctx, 'painted', place(new THREE.BoxGeometry(0.5, 0.85, 0.45), x, 0.15 + 0.55, z, nx, nz), PALETTE.containerBlue);
   ctx.buckets.add('painted', place(new THREE.CylinderGeometry(0.25, 0.25, 0.45, 12, 1, false, 0, Math.PI).rotateX(Math.PI / 2).rotateZ(Math.PI / 2), x, 0.15 + 0.97, z, nx, nz), PALETTE.containerBlue);
   for (const s of [-1, 1]) ctx.buckets.add('steel', place(new THREE.BoxGeometry(0.06, 0.25, 0.06).translate(s * 0.2, 0, 0), x, 0.15 + 0.12, z, nx, nz));
 }
 
-function bench(ctx, x, z, nx, nz) {
+export function bench(ctx, x, z, nx, nz) {
   addSolid(ctx, 'wood', place(new THREE.BoxGeometry(1.8, 0.07, 0.45).translate(0, 0.45, 0), x, 0.15, z, nx, nz));
   ctx.buckets.add('wood', place(new THREE.BoxGeometry(1.8, 0.4, 0.06).translate(0, 0.75, -0.24).rotateX(-0.12), x, 0.15, z, nx, nz));
   for (const s of [-0.75, 0.75]) ctx.buckets.add('steel', place(new THREE.BoxGeometry(0.06, 0.45, 0.4).translate(s, 0.22, 0), x, 0.15, z, nx, nz));
 }
 
-function phoneBooth(ctx, x, z, nx, nz) {
+export function phoneBooth(ctx, x, z, nx, nz) {
   const frame = 0x2c3a52;
   addSolid(ctx, 'painted', box(1.0, 0.12, 1.0, x, 0.15 + 0.06, z), frame);
   ctx.buckets.add('painted', box(1.06, 0.3, 1.06, x, 0.15 + 2.35, z), frame);
@@ -93,7 +93,7 @@ function phoneBooth(ctx, x, z, nx, nz) {
 }
 
 // Traffic light on a mast arm reaching over the street (nx, nz: the direction it reaches).
-function trafficLight(ctx, x, z, nx, nz, phase) {
+export function trafficLight(ctx, x, z, nx, nz, phase) {
   ctx.collision.addBox(x - 0.15, 0.15, z - 0.15, x + 0.15, 6.3, z + 0.15, 'prop');
   ctx.buckets.add('steel', cylinder(0.12, 0.15, 6.2, x, 0.15 + 3.1, z, 8));
   const reach = 4.6;
@@ -112,19 +112,19 @@ function trafficLight(ctx, x, z, nx, nz, phase) {
   return { ids, walk, phase };
 }
 
-function streetTree(ctx, x, z) {
+export function streetTree(ctx, x, z) {
   ctx.buckets.add('painted', box(1.3, 0.06, 1.3, x, 0.16, z), 0x1b1a18);
   for (const g of bareTree(ctx.rng, x, 0.15, z, ctx.rng.range(0.9, 1.25), 3)) ctx.buckets.add('painted', g, 0x201c1c);
   ctx.collision.addBox(x - 0.25, 0.15, z - 0.25, x + 0.25, 3, z + 0.25, 'tree');
 }
 
-function manhole(ctx, x, z) {
+export function manhole(ctx, x, z) {
   ctx.buckets.add('painted', cylinder(0.5, 0.5, 0.04, x, 0.01, z, 18), 0x2e3139);
   ctx.buckets.add('painted', cylinder(0.38, 0.38, 0.05, x, 0.012, z, 18), 0x17181d);
   if (ctx.rng.chance(0.55)) ctx.steam.push({ x, y: 0.2, z, s: 1.25 });
 }
 
-function puddle(ctx, x, y, z, size) {
+export function puddle(ctx, x, y, z, size) {
   const v = ctx.rng.int(0, 3);
   const g = new THREE.PlaneGeometry(size, size * ctx.rng.range(0.5, 0.8)).rotateX(-Math.PI / 2).rotateY(ctx.rng.range(0, Math.PI));
   const uv = g.attributes.uv;

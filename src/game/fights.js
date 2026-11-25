@@ -40,3 +40,9 @@ export const FIGHTS = {
 // fight so the Act 2 Harley beat (src/game/story.js) stays playable on its own (coordinator
 // guidance, 2026-09-30). Once harleyHall exists here, this picks it up with no further changes.
 export const HARLEY_FIGHT = FIGHTS.harleyHall ? 'harleyHall' : 'aceYard';
+
+// [story] Optional fights on the way somewhere (a travel step's `interrupts`, src/story/travel.js):
+// a rooftop lookout pair and a street mugging. Their site's y is found at run time (the roof or
+// the street under the interrupt's x, z), so the y here is only a placeholder.
+FIGHTS.interruptLookout = { site: { x: 65, y: 21, z: 65 }, radius: 12, interrupt: true, waves: [[g(-2, -2), k(2, 1)]] };
+FIGHTS.interruptMugging = { site: { x: 150, y: 0.15, z: -84 }, radius: 12, interrupt: true, waves: [[g(-3, -2), g(3, -1), k(0, 3)]] };

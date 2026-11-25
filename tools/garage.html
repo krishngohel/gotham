@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Garage</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #0b0b12; color: #efe6cf; font: 12px/1.35 monospace; overflow: hidden; }
+    #gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+    #ui { position: fixed; left: 8px; top: 8px; bottom: 8px; width: 250px; overflow-y: auto; background: rgba(11,11,18,0.82); border: 2px solid #efe6cf; padding: 8px; }
+    #ui h3 { margin: 8px 0 4px; font-size: 12px; color: #f2d24b; }
+    #list button { display: block; width: 100%; text-align: left; margin: 1px 0; background: #1a2436; color: #efe6cf; border: 1px solid #4b586e; font: inherit; padding: 2px 4px; cursor: pointer; }
+    #list button.on { background: #c8323c; }
+    label { display: block; margin: 3px 0; }
+    input[type=range] { width: 100%; }
+    #stats { position: fixed; right: 8px; top: 8px; background: rgba(11,11,18,0.82); border: 2px solid #efe6cf; padding: 6px 8px; white-space: pre; }
+    body.sheet #ui, body.sheet #stats { display: none; }
+  </style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <div id="ui">
+    <h3>Vehicle</h3>
+    <div id="list"></div>
+    <h3>View</h3>
+    <label><input type="checkbox" id="turn" checked> turntable</label>
+    <label>distance <input type="range" id="dist" min="0.5" max="6" step="0.05" value="1"></label>
+    <label>height <input type="range" id="height" min="-0.2" max="1.5" step="0.02" value="0.35"></label>
+    <h3>Drive</h3>
+    <label><input type="checkbox" id="spin" checked> wheels spin</label>
+    <label>steer <input type="range" id="steer" min="-0.55" max="0.55" step="0.01" value="0"></label>
+    <label>palette <input type="range" id="palette" min="0" max="9" step="1" value="0"></label>
+    <label>damage <select id="damage"><option value="0">clean</option><option value="1">dented</option><option value="2">smoking</option><option value="3">wrecked</option></select></label>
+    <label><input type="checkbox" id="lod1"> LOD1</label>
+    <h3>Lamps</h3>
+    <div id="lamps"></div>
+    <label><input type="checkbox" id="siren"> siren / beacons</label>
+    <label>indicate <select id="ind"><option value="0">off</option><option value="1">left</option><option value="-1">right</option></select></label>
+    <h3>Batmobile</h3>
+    <label>mode (pursuit 0 .. battle 1) <input type="range" id="mode" min="0" max="1" step="0.01" value="0"></label>
+    <label>strafe swivel <input type="range" id="swivel" min="0" max="1" step="0.01" value="0"></label>
+    <label>turret yaw <input type="range" id="tyaw" min="-3.14" max="3.14" step="0.01" value="0"></label>
+    <label>turret pitch <input type="range" id="tpitch" min="-0.2" max="0.6" step="0.01" value="0"></label>
+    <label>canopy <input type="range" id="canopy" min="0" max="1" step="0.01" value="0"></label>
+    <label>suspension <input type="range" id="susp" min="-0.15" max="0.15" step="0.01" value="0"></label>
+    <label><input type="checkbox" id="boost"> afterburner</label>
+    <h3>Ink</h3>
+    <label><input type="checkbox" id="lowq"> low quality preset</label>
+  </div>
+  <div id="stats"></div>
+  <script type="module" src="./garage.js"></script>
+</body>
+</html>

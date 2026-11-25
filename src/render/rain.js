@@ -189,7 +189,22 @@ export function createRain(count, { area = 36, height = 24 } = {}) {
   // Splashes ride along as a child so callers keep adding a single mesh.
   const splash = createSplashes(Math.round(count / 40));
   mesh.add(splash.mesh);
+  // [env] Weather (src/env/envSystem.js): uniforms only, plus how many streaks draw. The near layer
+  // is spawned first, so a partial draw range thins the far layer and the near rain evenly.
+  let splashOn = true;
   return {
+    uniforms,
+    splashUniforms: splash.uniforms,
+    count,
+    // k 0..1: share of the streaks drawn (0 hides the mesh: no draw call at all).
+    setDensity(k) {
+      const n = Math.round(Math.max(0, Math.min(1, k)) * count);
+      geo.setDrawRange(0, n * 6);
+      mesh.material.visible = n > 0;
+    },
+    // Splashes off (potato, snow, no rain): the child mesh stops drawing.
+    setSplashes(on) { splashOn = on; splash.mesh.material.visible = on; },
+    get splashes() { return splashOn; },
     mesh,
     // ground: the surface height under the player, or null to hide splashes (in the air).
     update(t, center, ground = null) {

@@ -7,7 +7,8 @@ export const IMPACT = {
   freezeLook: 0.35, soft: 0.6,
 };
 
-export function createImpactTimeline(P = IMPACT) {
+// [prog] a11y: flashScale() (0..1, default 1) dims the flash beats only (flash reduction).
+export function createImpactTimeline(P = IMPACT, { flashScale = () => 1 } = {}) {
   let tier = 0, start = 0, mode = 'full';
   let last1 = -Infinity, last2 = -Infinity;
   // Soft mode drops the flash beats from tier 2 (it goes straight to the freeze).
@@ -31,7 +32,7 @@ export function createImpactTimeline(P = IMPACT) {
       const e = now - start;
       const flash = flashLen();
       if (e < flash) {
-        out.impact = mode === 'full' ? (e < P.beat ? 1 : 0.5) : P.soft;
+        out.impact = (mode === 'full' ? (e < P.beat ? 1 : 0.5) : P.soft) * flashScale();
         return out;
       }
       if (tier === 1) { tier = 0; return out; }

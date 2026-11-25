@@ -1,0 +1,309 @@
+
+Running 129 tests using 1 worker
+
+  ok   1 tests\e2e\accessibility.spec.js:14:1 › a spoken line shows as a subtitle with its speaker (18.5s)
+  ok   2 tests\e2e\accessibility.spec.js:35:1 › counter, unblockable and ranged tells have different shapes (17.9s)
+  ok   3 tests\e2e\accessibility.spec.js:70:1 › the Accessibility tab saves its options across a reload (32.4s)
+  ok   4 tests\e2e\bruce.spec.js:34:1 › Bristol -> the Manor -> the clock passage -> every cave station -> suit up -> out through the waterfall (1.1m)
+  ok   5 tests\e2e\bruce.spec.js:156:1 › the gala: the signal mid-toast, played to stay and to slip away; the meters and the next night carry it (20.6s)
+  ok   6 tests\e2e\bruce.spec.js:191:1 › a Bruce day: breakfast with a split lip and the reporter at the table, the 9 a.m. vote, the night starts in the cave (20.0s)
+  ok   7 tests\e2e\bruce.spec.js:229:1 › co-op: two players go through the cave together; the partner is the ward in a Bruce scene (19.3s)
+  ok   8 tests\e2e\campaign.spec.js:15:1 › a save in the middle of Night Two resumes on its step, in that night (37.2s)
+  ok   9 tests\e2e\campaign.spec.js:43:1 › Night One's credits lead into Night Two, with free roam kept (1.7m)
+  ok  10 tests\e2e\campaign.spec.js:57:1 › Night Two plays start to finish with a scripted player and a co-op bot (2.1m)
+  ok  11 tests\e2e\campaign.spec.js:109:1 › Night Eight: the scripted player fights Black Mask for real and makes progress (43.3s)
+  x   12 tests\e2e\cityNorth.spec.js:56:1 › on foot from the old city to Wayne Manor, the village and the cemetery; and out to Blackgate (41.4s)
+  ok  13 tests\e2e\cityNorth.spec.js:77:1 › drive the Batmobile from the Loop up into Bristol; walk the Blackgate causeway (54.4s)
+  ok  14 tests\e2e\cityNorth.spec.js:129:1 › a glide off the overlook west over the woods finds grapple points ahead (58.4s)
+  ok  15 tests\e2e\cityNorth.spec.js:166:1 › traffic: the fleet drives the streets, stops for a hero in the road, honks, and reports pass-bys (1.2m)
+normal / answers {"left":0,"down":false,"hp":43.67634000000002,"hurt":5,"counters":11,"dodges":2,"capes":2}
+  ok  16 tests\e2e\combatRoles.spec.js:103:1 › normal: the right answers win a mixed-role fight (55.1s)
+hard / masher {"left":6,"down":true,"hp":0}
+  ok  17 tests\e2e\combatRoles.spec.js:115:1 › hard: button-mashing loses the same fight (34.9s)
+  ok  18 tests\e2e\content.spec.js:13:1 › a glide challenge counts down, runs and can be quit from the pause menu (23.3s)
+  ok  19 tests\e2e\content.spec.js:28:1 › a street crime spawns, is won and counted (50.5s)
+  x   20 tests\e2e\content.spec.js:41:1 › an engaged crime you walk far away from for 10 s is dropped, not held forever (1.8m)
+  x   21 tests\e2e\content.spec.js:60:1 › photo mode opens with O, cycles filters and saves a PNG (2.1m)
+  ok  22 tests\e2e\content.spec.js:78:1 › the progress page shows the percentage, every part and the map (31.5s)
+  x   23 tests\e2e\coop.spec.js:16:1 › two heroes fight the same goons: both deal and take hits, aggro is shared, a downed hero is revived (40ms)
+  x   24 tests\e2e\coopSplit.spec.js:38:1 › lobby: two players join, pick heroes and start the story in split screen (0ms)
+  -   25 tests\e2e\coopSplit.spec.js:75:1 › drop in mid-fight, a lost controller pauses and is reassigned, drop out
+  -   26 tests\e2e\coopSplit.spec.js:114:1 › two players: grapple, gadgets, detective and stealth are each player's own; hold to revive
+  -   27 tests\e2e\coopSplit.spec.js:153:1 › two-player story slice: brawl, Batmobile chase with a passenger, Harley, the boss to the end
+  x   28 tests\e2e\east.spec.js:33:1 › walk from the old city east across Robinson Avenue into the park, then along the pier (0ms)
+  -   29 tests\e2e\east.spec.js:51:1 › walk the Arkham causeway up onto the island
+  -   30 tests\e2e\east.spec.js:64:1 › drive the Batmobile down Lakeshore Drive and over the river-mouth viaduct
+  -   31 tests\e2e\east.spec.js:93:1 › glide off the Conservatory dome over the park; the lake rescues a fall
+  x   32 tests\e2e\env.spec.js:30:1 › time skip from night to day changes the lighting and the crowd (0ms)
+  -   33 tests\e2e\env.spec.js:52:3 › weather transitions run on potato and respect the tier
+  -   34 tests\e2e\env.spec.js:52:3 › weather transitions run on ultra and respect the tier
+  -   35 tests\e2e\env.spec.js:68:1 › pedestrians cross on the walk signal and flee a fight
+  -   36 tests\e2e\env.spec.js:108:1 › two players far apart: both surroundings are populated
+  x   37 tests\e2e\gadgets.spec.js:20:1 › the gadget wheel opens on Tab, 3 picks gel, and no chain fires (0ms)
+  -   38 tests\e2e\gadgets.spec.js:39:1 › explosive gel opens the Monarch booth and the trophy inside
+  -   39 tests\e2e\gadgets.spec.js:67:1 › a WayneTech purchase shows on the page and survives a reload
+  x   40 tests\e2e\gadgets2.spec.js:43:1 › ?gadgets=all unlocks all eighteen; the wheel turns to page 2 and the loadout station opens (0ms)
+  -   41 tests\e2e\gadgets2.spec.js:69:1 › disruptor, sonic, bolas and glue act on goons
+  -   42 tests\e2e\gadgets2.spec.js:103:1 › tracker, decoy, EMP and drone
+  -   43 tests\e2e\gadgets2.spec.js:140:1 › hack (QTE assist auto) and shock gloves
+  x   44 tests\e2e\loop.spec.js:56:1 › on foot from the old city to Wayne Tower, the Exchange and up Gotham Mile (0ms)
+  -   45 tests\e2e\loop.spec.js:72:1 › drive the Batmobile up the canyon to the Exchange and along under the El
+  -   46 tests\e2e\loop.spec.js:98:1 › a glide across the Loop from the Herald finds grapple points ahead
+  -   47 tests\e2e\loop.spec.js:135:1 › El trains run, stop at stations and carry a hero on the roof
+  x   48 tests\e2e\map.spec.js:46:1 › a waypoint set on the city map shows on the minimap and as a ribbon on the road; leaving the route reroutes (0ms)
+  -   49 tests\e2e\map.spec.js:90:1 › a raised bridge on the route makes the GPS go round
+  -   50 tests\e2e\map.spec.js:106:1 › fast travel between two El stations
+  -   51 tests\e2e\map.spec.js:131:1 › split screen: each player has a minimap and a route to their own waypoint
+  -   52 tests\e2e\map.spec.js:157:1 › tracked marks from mapMark events, and the minimap in an interior
+  x   53 tests\e2e\movement.spec.js:22:1 › wingsuit: a dive builds speed and pulling up climbs back (0ms)
+  -   54 tests\e2e\movement.spec.js:44:1 › grapple-boost chaining crosses the Loop without touching the street
+  -   55 tests\e2e\movement.spec.js:88:1 › drives core -> Lower Gotham upper deck, ramp, lower deck -> Lakeshore Drive -> Arkham causeway -> Blackgate causeway
+  -   56 tests\e2e\movement.spec.js:109:1 › battle mode: strafes sideways and the turret takes out drones
+  -   57 tests\e2e\movement.spec.js:147:1 › eject at speed launches into a glide; remote call drives the car to her
+  -   58 tests\e2e\movement.spec.js:180:1 › two players: driver and gunner stop a getaway car
+  -   59 tests\e2e\movement.spec.js:220:1 › the Batwing drops her over a far district into a glide (fast-travel hook)
+  -   60 tests\e2e\movement.spec.js:240:1 › on foot on the lower deck and the river walk nothing pulls her back (fall rescue, bounds)
+  x   61 tests\e2e\netCoop.spec.js:12:1 › online brawl: the guest fights the host's goons, hits and KOs replicate, the story step is shared, bandwidth in budget (0ms)
+  -   62 tests\e2e\netCoop.spec.js:59:1 › disconnect and reconnect: the guest drops, comes back to the same slot and the worlds agree again
+  -   63 tests\e2e\netCoop.spec.js:82:1 › story beats: a predator room, the Batmobile chase and the boss all advance on both machines
+  -   64 tests\e2e\netCoop.spec.js:130:1 › real WebRTC: the test relays the offer and answer; both channels open and a fight replicates
+  x   65 tests\e2e\netCoop2.spec.js:24:1 › the guest drives the Batmobile in the chase (host-simulated from its stick) (0ms)
+  -   66 tests\e2e\netCoop2.spec.js:68:1 › the guest mans the gunner seat in the drone battle
+  -   67 tests\e2e\netCoop2.spec.js:91:1 › a dual takedown and a team move between host and guest
+  -   68 tests\e2e\netCoop2.spec.js:139:1 › a campaign boss (the Penguin) fought by both players
+  -   69 tests\e2e\netCoop2.spec.js:175:1 › the night changes with a Bruce day between: the guest follows (night, step); time skip, weather and lightning on both
+  -   70 tests\e2e\netCoop2.spec.js:213:1 › fast travel together, both ways
+  -   71 tests\e2e\netCoop2.spec.js:240:1 › the guest sees the predator room's awareness rings, the AI Nightwing and a street crime's UI
+  -   72 tests\e2e\netCoop2.spec.js:262:1 › a street crime (crime system v2): its events, the police-radio call and the crime panel reach the guest
+  x   73 tests\e2e\onboard.spec.js:26:1 › a fresh save cannot chain, special or grapple until the story gives each (0ms)
+  -   74 tests\e2e\onboard.spec.js:49:1 › the same squad with ?abilities=all: the chain fires
+  -   75 tests\e2e\onboard.spec.js:59:1 › the grapple: no marker or line before the Docks beat, a real grapple after it
+  -   76 tests\e2e\onboard.spec.js:72:1 › ?at= grants what the story would have by that step
+  -   77 tests\e2e\onboard.spec.js:83:1 › a teaching beat completes when she performs the move (twice takes the card down)
+  -   78 tests\e2e\onboard.spec.js:102:1 › the next goal eases in with distance as she approaches, then hands off a beat after reaching it
+  -   79 tests\e2e\onboard.spec.js:123:1 › one centre card at a time
+  x   80 tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down (0ms)
+  -   81 tests\e2e\openworld.spec.js:47:3 › defuse: the bomb's dial takes three strikes in the window
+  -   82 tests\e2e\openworld.spec.js:66:3 › rooftop chase: the free-runner hops the roofs until a hero catches him
+  -   83 tests\e2e\openworld.spec.js:88:3 › vehicle getaway: the car is stopped before it reaches the exit
+  -   84 tests\e2e\openworld.spec.js:107:3 › gang war: take one crew down, leave the other be, and the street is theirs
+  -   85 tests\e2e\openworld.spec.js:135:3 › El hijack: board the running train, then clear its roof
+  -   86 tests\e2e\openworld.spec.js:152:3 › stealth encounters: the counting house and the Herald nests, cleared and recorded
+  -   87 tests\e2e\openworld.spec.js:165:3 › side chain: Heads or Tails, all four missions and the two-faced DA
+  -   88 tests\e2e\openworld.spec.js:184:3 › detective case: The Bell That Rang Twice, scanned, reconstructed on the board, triangulated
+  -   89 tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down (with a bot partner)
+  -   90 tests\e2e\openworld.spec.js:47:3 › defuse: the bomb's dial takes three strikes in the window (with a bot partner)
+  -   91 tests\e2e\openworld.spec.js:66:3 › rooftop chase: the free-runner hops the roofs until a hero catches him (with a bot partner)
+  -   92 tests\e2e\openworld.spec.js:88:3 › vehicle getaway: the car is stopped before it reaches the exit (with a bot partner)
+  -   93 tests\e2e\openworld.spec.js:107:3 › gang war: take one crew down, leave the other be, and the street is theirs (with a bot partner)
+  -   94 tests\e2e\openworld.spec.js:135:3 › El hijack: board the running train, then clear its roof (with a bot partner)
+  -   95 tests\e2e\openworld.spec.js:152:3 › stealth encounters: the counting house and the Herald nests, cleared and recorded (with a bot partner)
+  -   96 tests\e2e\openworld.spec.js:165:3 › side chain: Heads or Tails, all four missions and the two-faced DA (with a bot partner)
+  -   97 tests\e2e\openworld.spec.js:184:3 › detective case: The Bell That Rang Twice, scanned, reconstructed on the board, triangulated (with a bot partner)
+  -   98 tests\e2e\openworld.spec.js:218:1 › soak: 20 simulated minutes of the director with no input stays bounded and clean
+  x   99 tests\e2e\photo.spec.js:26:1 › photo mode: camera, filter, bubble, 4K-capped PNG export, gallery, back to play (0ms)
+  -  100 tests\e2e\photo.spec.js:123:1 › split screen: player 2 opens photo mode on its own view while the world keeps running
+  x  101 tests\e2e\progression.spec.js:23:1 › skill tree: buy nodes on the page, see their effects, respec at the bench (0ms)
+  -  102 tests\e2e\progression.spec.js:56:1 › save slots: copy, delete with confirmation, export and import round trip
+  -  103 tests\e2e\progression.spec.js:102:1 › new game: the difficulty row sets the run difficulty (Knightmare surfaced)
+  x  104 tests\e2e\render.spec.js:15:1 › two views render side by side, both non-blank and different (0ms)
+  -  105 tests\e2e\render.spec.js:52:1 › a software renderer gets the hardware-acceleration dialog
+  x  106 tests\e2e\smoke.spec.js:13:1 › title screen renders with no errors (0ms)
+  -  107 tests\e2e\smoke.spec.js:23:1 › new game: suit select, intro comic, then play
+  -  108 tests\e2e\smoke.spec.js:40:1 › a fight can be won and advances the story
+  -  109 tests\e2e\smoke.spec.js:52:1 › boss fight begins after its comic
+  x  110 tests\e2e\stealth.spec.js:23:1 › a predator room patrols, and a silent takedown from behind lands (0ms)
+  -  111 tests\e2e\stealth.spec.js:46:1 › clearing a predator room moves the story on
+  -  112 tests\e2e\stealth.spec.js:55:1 › a save under the new (v2) key resumes on its saved step id
+  x  113 tests\e2e\vanChase.spec.js:11:1 › a free-roam Joker van chase spawns, is won by real driving, and is counted (0ms)
+  -  114 tests\e2e\vanChase.spec.js:103:1 › ignoring a free-roam van chase lets it drive off and despawn, uncounted
+  x  115 tests\e2e\wanted.spec.js:44:1 › Loop: provoked from Noticed to Coordinated, chased by cruisers, a roadblock, lost on the rooftops (0ms)
+  -  116 tests\e2e\wanted.spec.js:95:1 › the helicopter's searchlight finds him in the open at night, not under the lower deck
+  -  117 tests\e2e\wanted.spec.js:115:1 › caught: a struggle chance, then a holding cell to break out of, then the chase resumes
+  -  118 tests\e2e\wanted.spec.js:147:1 › Bruce gets pulled over for speeding and takes the ticket
+  -  119 tests\e2e\wanted.spec.js:170:1 › two players: one hidden indoors and one seen is still wanted; the off setting holds the city back
+  -  120 tests\e2e\wanted.spec.js:214:1 › soak: 15 game-minutes at levels 4-5 with time accelerated: bounded units, no errors, flat cost
+  x  121 tests\e2e\wardrobe.spec.js:13:1 › the suit vault picks a suit and it persists across a reload (0ms)
+  -  122 tests\e2e\wardrobe.spec.js:57:1 › a campaign reward unlocks a suit with a toast, once
+  x  123 tests\e2e\westCity.spec.js:29:1 › walk from the old city over the -150 South Branch bascule into Chinatown (0ms)
+  -  124 tests\e2e\westCity.spec.js:57:1 › drive the Batmobile west over the -30 bascule to the Yards gate street
+  -  125 tests\e2e\westCity.spec.js:86:1 › glide off Wolf Point across the Narrows: grapple points under the whole flight
+  -  126 tests\e2e\westCity.spec.js:113:1 › a raised North Branch bascule closes its road and the route goes round
+  x  127 tests\e2e\world.spec.js:30:1 › walk from the old city over a bascule bridge to the Loop (0ms)
+  -  128 tests\e2e\world.spec.js:50:1 › glide from the clock tower across the river
+  -  129 tests\e2e\world.spec.js:67:1 › drive the Batmobile north over a bridge onto Lower Gotham's upper deck; a raised bridge closes the road
+
+
+  1) tests\e2e\cityNorth.spec.js:56:1 › on foot from the old city to Wayne Manor, the village and the cemetery; and out to Blackgate 
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected value: "wayneManor"
+    Received array: ["gcpd", "lowerGotham", "loop", "bristol", "docks", "blackgate"]
+
+      71 |   await page.waitForTimeout(1500);
+      72 |   const visited = await page.evaluate(() => window.__game.progress.districts);
+    > 73 |   for (const d of ['bristol', 'wayneManor', 'blackgate']) expect(visited).toContain(d);
+         |                                                                           ^
+      74 |   expect(errors).toEqual([]);
+      75 | });
+      76 |
+        at ~\Documents\Projects\gotham-ln2-verify-head\tests\e2e\cityNorth.spec.js:73:75
+
+    Error Context: test-results\cityNorth-on-foot-from-the-28c55-metery-and-out-to-Blackgate\error-context.md
+
+  2) tests\e2e\content.spec.js:41:1 › an engaged crime you walk far away from for 10 s is dropped, not held forever 
+
+    TimeoutError: page.waitForFunction: Timeout 90000ms exceeded.
+
+      42 |   const errors = await collectErrors(page);
+      43 |   await page.goto('/?at=toNeon&god=1&new=1');
+    > 44 |   await page.waitForFunction(ready, null, { timeout: 90000 });
+         |              ^
+      45 |   await page.evaluate(() => window.__game.side.crimes.force({ kind: 'robbery', spotId: 'neonNorth' }));
+      46 |   await page.waitForFunction(() => !!window.__game.side.crimes.active, null, { timeout: 5000 });
+      47 |   await page.evaluate(() => window.__game.teleport({ x: 150, y: 0, z: -14 }));
+        at ~\Documents\Projects\gotham-ln2-verify-head\tests\e2e\content.spec.js:44:14
+
+    Error Context: test-results\content-an-engaged-crime-y-179f9-is-dropped-not-held-forever\error-context.md
+
+  3) tests\e2e\content.spec.js:60:1 › photo mode opens with O, cycles filters and saves a PNG ──────
+
+    TimeoutError: page.waitForFunction: Timeout 90000ms exceeded.
+
+      61 |   const errors = await collectErrors(page);
+      62 |   await page.goto('/?at=toNeon&god=1&new=1');
+    > 63 |   await page.waitForFunction(ready, null, { timeout: 90000 });
+         |              ^
+      64 |   await page.keyboard.press('KeyO');
+      65 |   await expect(page.locator('.photo-panel')).toBeVisible();
+      66 |   expect(await page.evaluate(() => window.__game.state.paused)).toBe(true);
+        at ~\Documents\Projects\gotham-ln2-verify-head\tests\e2e\content.spec.js:63:14
+
+    Error Context: test-results\content-photo-mode-opens-w-f8a17-les-filters-and-saves-a-PNG\error-context.md
+
+  4) tests\e2e\coop.spec.js:16:1 › two heroes fight the same goons: both deal and take hits, aggro is shared, a downed hero is revived 
+
+    Error: browserContext.newPage: Target crashed 
+
+    Error Context: test-results\coop-two-heroes-fight-the--df168-ed-a-downed-hero-is-revived\error-context.md
+
+  5) tests\e2e\coopSplit.spec.js:38:1 › lobby: two players join, pick heroes and start the story in split screen 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  6) tests\e2e\east.spec.js:33:1 › walk from the old city east across Robinson Avenue into the park, then along the pier 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  7) tests\e2e\env.spec.js:30:1 › time skip from night to day changes the lighting and the crowd ───
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  8) tests\e2e\gadgets.spec.js:20:1 › the gadget wheel opens on Tab, 3 picks gel, and no chain fires 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  9) tests\e2e\gadgets2.spec.js:43:1 › ?gadgets=all unlocks all eighteen; the wheel turns to page 2 and the loadout station opens 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  10) tests\e2e\loop.spec.js:56:1 › on foot from the old city to Wayne Tower, the Exchange and up Gotham Mile 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  11) tests\e2e\map.spec.js:46:1 › a waypoint set on the city map shows on the minimap and as a ribbon on the road; leaving the route reroutes 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  12) tests\e2e\movement.spec.js:22:1 › wingsuit: a dive builds speed and pulling up climbs back ───
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  13) tests\e2e\netCoop.spec.js:12:1 › online brawl: the guest fights the host's goons, hits and KOs replicate, the story step is shared, bandwidth in budget 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  14) tests\e2e\netCoop2.spec.js:24:1 › the guest drives the Batmobile in the chase (host-simulated from its stick) 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  15) tests\e2e\onboard.spec.js:26:1 › a fresh save cannot chain, special or grapple until the story gives each 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  16) tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  17) tests\e2e\photo.spec.js:26:1 › photo mode: camera, filter, bubble, 4K-capped PNG export, gallery, back to play 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  18) tests\e2e\progression.spec.js:23:1 › skill tree: buy nodes on the page, see their effects, respec at the bench 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  19) tests\e2e\render.spec.js:15:1 › two views render side by side, both non-blank and different ──
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  20) tests\e2e\smoke.spec.js:13:1 › title screen renders with no errors ───────────────────────────
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  21) tests\e2e\stealth.spec.js:23:1 › a predator room patrols, and a silent takedown from behind lands 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  22) tests\e2e\vanChase.spec.js:11:1 › a free-roam Joker van chase spawns, is won by real driving, and is counted 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  23) tests\e2e\wanted.spec.js:44:1 › Loop: provoked from Noticed to Coordinated, chased by cruisers, a roadblock, lost on the rooftops 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  24) tests\e2e\wardrobe.spec.js:13:1 › the suit vault picks a suit and it persists across a reload 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  25) tests\e2e\westCity.spec.js:29:1 › walk from the old city over the -150 South Branch bascule into Chinatown 
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  26) tests\e2e\world.spec.js:30:1 › walk from the old city over a bascule bridge to the Loop ──────
+
+    Error: worker process exited unexpectedly (code=3221225794, signal=null)
+
+  Slow test file: tests\e2e\campaign.spec.js (5.1m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  26 failed
+    tests\e2e\cityNorth.spec.js:56:1 › on foot from the old city to Wayne Manor, the village and the cemetery; and out to Blackgate 
+    tests\e2e\content.spec.js:41:1 › an engaged crime you walk far away from for 10 s is dropped, not held forever 
+    tests\e2e\content.spec.js:60:1 › photo mode opens with O, cycles filters and saves a PNG ───────
+    tests\e2e\coop.spec.js:16:1 › two heroes fight the same goons: both deal and take hits, aggro is shared, a downed hero is revived 
+    tests\e2e\coopSplit.spec.js:38:1 › lobby: two players join, pick heroes and start the story in split screen 
+    tests\e2e\east.spec.js:33:1 › walk from the old city east across Robinson Avenue into the park, then along the pier 
+    tests\e2e\env.spec.js:30:1 › time skip from night to day changes the lighting and the crowd ────
+    tests\e2e\gadgets.spec.js:20:1 › the gadget wheel opens on Tab, 3 picks gel, and no chain fires 
+    tests\e2e\gadgets2.spec.js:43:1 › ?gadgets=all unlocks all eighteen; the wheel turns to page 2 and the loadout station opens 
+    tests\e2e\loop.spec.js:56:1 › on foot from the old city to Wayne Tower, the Exchange and up Gotham Mile 
+    tests\e2e\map.spec.js:46:1 › a waypoint set on the city map shows on the minimap and as a ribbon on the road; leaving the route reroutes 
+    tests\e2e\movement.spec.js:22:1 › wingsuit: a dive builds speed and pulling up climbs back ─────
+    tests\e2e\netCoop.spec.js:12:1 › online brawl: the guest fights the host's goons, hits and KOs replicate, the story step is shared, bandwidth in budget 
+    tests\e2e\netCoop2.spec.js:24:1 › the guest drives the Batmobile in the chase (host-simulated from its stick) 
+    tests\e2e\onboard.spec.js:26:1 › a fresh save cannot chain, special or grapple until the story gives each 
+    tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down 
+    tests\e2e\photo.spec.js:26:1 › photo mode: camera, filter, bubble, 4K-capped PNG export, gallery, back to play 
+    tests\e2e\progression.spec.js:23:1 › skill tree: buy nodes on the page, see their effects, respec at the bench 
+    tests\e2e\render.spec.js:15:1 › two views render side by side, both non-blank and different ────
+    tests\e2e\smoke.spec.js:13:1 › title screen renders with no errors ─────────────────────────────
+    tests\e2e\stealth.spec.js:23:1 › a predator room patrols, and a silent takedown from behind lands 
+    tests\e2e\vanChase.spec.js:11:1 › a free-roam Joker van chase spawns, is won by real driving, and is counted 
+    tests\e2e\wanted.spec.js:44:1 › Loop: provoked from Noticed to Coordinated, chased by cruisers, a roadblock, lost on the rooftops 
+    tests\e2e\wardrobe.spec.js:13:1 › the suit vault picks a suit and it persists across a reload ──
+    tests\e2e\westCity.spec.js:29:1 › walk from the old city over the -150 South Branch bascule into Chinatown 
+    tests\e2e\world.spec.js:30:1 › walk from the old city over a bascule bridge to the Loop ────────
+  84 did not run
+  19 passed (19.7m)

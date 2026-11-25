@@ -1,0 +1,59 @@
+A=old http://localhost:5201/
+B=head http://localhost:5851/
+4 rounds, 3000 ms per site, simultaneous
+r0  low:low      gcpd roof     old    8.9 ms (js 8.2) head    7.5 ms (js 6.6)  frame x0.84 js x0.80  calls 1/252
+r0  low:low      docks         old    6.3 ms (js 5.6) head    7.0 ms (js 6.2)  frame x1.11 js x1.11  calls 1/129
+r0  low:low      neon street   old    6.8 ms (js 6.1) head    6.9 ms (js 6.3)  frame x1.01 js x1.03  calls 1/200
+r0  low:low      ace chemicals old    8.0 ms (js 7.1) head    8.4 ms (js 7.6)  frame x1.05 js x1.07  calls 1/190
+r0  low:low      clock plaza   old    8.1 ms (js 7.1) head    8.7 ms (js 8.0)  frame x1.07 js x1.13  calls 1/204
+r0  low:low      loop el       old    5.5 ms (js 4.6) head    7.6 ms (js 7.0)  frame x1.38 js x1.52  calls 1/212
+r0  low:low      narrows       old    9.5 ms (js 8.7) head    7.5 ms (js 6.9)  frame x0.79 js x0.79  calls 1/272
+r1  low:low      gcpd roof     old   11.2 ms (js 10.2) head    7.8 ms (js 7.4)  frame x0.70 js x0.73  calls 1/242
+r1  low:low      docks         old    9.3 ms (js 8.0) head    9.0 ms (js 8.2)  frame x0.97 js x1.02  calls 1/135
+r1  low:low      neon street   old    8.5 ms (js 7.6) head    8.3 ms (js 7.6)  frame x0.98 js x1.00  calls 1/196
+r1  low:low      ace chemicals old    7.0 ms (js 6.3) head    5.7 ms (js 5.2)  frame x0.81 js x0.83  calls 1/181
+r1  low:low      clock plaza   old    6.0 ms (js 5.4) head    6.2 ms (js 5.7)  frame x1.03 js x1.06  calls 1/199
+r1  low:low      loop el       old    6.3 ms (js 5.3) head    8.5 ms (js 7.6)  frame x1.35 js x1.43  calls 1/195
+r1  low:low      narrows       old    7.2 ms (js 6.5) head    7.0 ms (js 6.3)  frame x0.97 js x0.97  calls 1/276
+r2s low:low      gcpd roof     old   11.0 ms (js 10.3) head    8.5 ms (js 7.4)  frame x0.77 js x0.72  calls 1/249
+r2s low:low      docks         old    9.3 ms (js 8.2) head    8.6 ms (js 7.7)  frame x0.92 js x0.94  calls 1/131
+r2s low:low      neon street   old    8.6 ms (js 7.8) head    8.0 ms (js 7.3)  frame x0.93 js x0.94  calls 1/198
+r2s low:low      ace chemicals old    9.6 ms (js 8.5) head    9.8 ms (js 9.0)  frame x1.02 js x1.06  calls 1/191
+r2s low:low      clock plaza   old    8.8 ms (js 7.8) head    9.1 ms (js 8.4)  frame x1.03 js x1.08  calls 1/206
+r2s low:low      loop el       old    5.0 ms (js 4.3) head    6.1 ms (js 5.6)  frame x1.22 js x1.30  calls 1/199
+r2s low:low      narrows       old   10.6 ms (js 9.8) head    8.7 ms (js 8.1)  frame x0.82 js x0.83  calls 1/267
+r3s low:low      gcpd roof     old   13.1 ms (js 12.7) head   10.8 ms (js 10.1)  frame x0.82 js x0.80  calls 1/242
+r3s low:low      docks         old    8.9 ms (js 8.2) head    7.6 ms (js 6.9)  frame x0.85 js x0.84  calls 1/130
+r3s low:low      neon street   old    8.2 ms (js 7.3) head    8.1 ms (js 7.5)  frame x0.99 js x1.03  calls 1/195
+r3s low:low      ace chemicals old    7.7 ms (js 6.8) head    7.8 ms (js 7.1)  frame x1.01 js x1.04  calls 1/182
+r3s low:low      clock plaza   old    8.9 ms (js 7.7) head    8.4 ms (js 7.3)  frame x0.94 js x0.95  calls 1/200
+r3s low:low      loop el       old    7.1 ms (js 6.2) head   10.2 ms (js 9.4)  frame x1.44 js x1.52  calls 1/203
+r3s low:low      narrows       old   10.6 ms (js 9.7) head    9.6 ms (js 9.0)  frame x0.91 js x0.93  calls 1/271
+r0  low:potato   gcpd roof     old    8.7 ms (js 7.9) head    7.2 ms (js 6.3)  frame x0.83 js x0.80  calls 1/190
+r0  low:potato   docks         old    8.3 ms (js 7.4) head    7.0 ms (js 6.3)  frame x0.84 js x0.85  calls 1/112
+r0  low:potato   neon street   old    9.7 ms (js 8.8) head    9.0 ms (js 8.1)  frame x0.93 js x0.92  calls 1/159
+r0  low:potato   ace chemicals old    9.0 ms (js 8.0) head    8.6 ms (js 7.9)  frame x0.96 js x0.99  calls 1/179
+r0  low:potato   clock plaza   old    8.6 ms (js 7.7) head    8.4 ms (js 7.7)  frame x0.98 js x1.00  calls 1/157
+r0  low:potato   loop el       old    6.6 ms (js 5.8) head    8.5 ms (js 7.8)  frame x1.29 js x1.34  calls 1/173
+r0  low:potato   narrows       old    9.7 ms (js 9.1) head    7.0 ms (js 6.3)  frame x0.72 js x0.69  calls 1/191
+r1  low:potato   gcpd roof     old   10.1 ms (js 9.6) head    7.1 ms (js 6.6)  frame x0.70 js x0.69  calls 1/184
+r1  low:potato   docks         old    5.7 ms (js 5.1) head    4.6 ms (js 4.1)  frame x0.81 js x0.80  calls 1/105
+r1  low:potato   neon street   old    7.2 ms (js 6.3) head    6.2 ms (js 5.7)  frame x0.86 js x0.90  calls 1/164
+r1  low:potato   ace chemicals old    7.5 ms (js 6.6) head    6.5 ms (js 5.9)  frame x0.87 js x0.89  calls 1/176
+r1  low:potato   clock plaza   old    7.2 ms (js 6.5) head    6.8 ms (js 6.2)  frame x0.94 js x0.95  calls 1/151
+r1  low:potato   loop el       old    5.8 ms (js 4.9) head   63.2 ms (js 62.8)  frame x10.90 js x12.82  calls 1/161
+r1  low:potato   narrows       old    8.3 ms (js 7.5) head    6.4 ms (js 5.6)  frame x0.77 js x0.75  calls 1/192
+r2s low:potato   gcpd roof     old    7.3 ms (js 6.3) head    5.6 ms (js 5.2)  frame x0.77 js x0.83  calls 1/194
+r2s low:potato   docks         old    5.0 ms (js 4.5) head    5.0 ms (js 4.2)  frame x1.00 js x0.93  calls 1/110
+r2s low:potato   neon street   old    4.7 ms (js 4.2) head    4.6 ms (js 3.7)  frame x0.98 js x0.88  calls 1/154
+r2s low:potato   ace chemicals old    4.9 ms (js 4.3) head    4.8 ms (js 4.2)  frame x0.98 js x0.98  calls 1/179
+r2s low:potato   clock plaza   old    6.0 ms (js 5.2) head    6.5 ms (js 5.6)  frame x1.08 js x1.08  calls 1/152
+r2s low:potato   loop el       old    3.9 ms (js 3.4) head    5.3 ms (js 5.0)  frame x1.36 js x1.47  calls 1/184
+r2s low:potato   narrows       old    6.7 ms (js 6.1) head    5.1 ms (js 4.6)  frame x0.76 js x0.75  calls 1/190
+r3s low:potato   gcpd roof     old    5.7 ms (js 5.2) head    3.9 ms (js 3.6)  frame x0.68 js x0.69  calls 1/183
+r3s low:potato   docks         old    4.0 ms (js 3.5) head    3.8 ms (js 3.4)  frame x0.95 js x0.97  calls 1/111
+r3s low:potato   neon street   old    6.7 ms (js 6.0) head    5.9 ms (js 5.3)  frame x0.88 js x0.88  calls 1/155
+r3s low:potato   ace chemicals old    7.1 ms (js 6.2) head    6.8 ms (js 6.2)  frame x0.96 js x1.00  calls 1/180
+r3s low:potato   clock plaza   old    8.5 ms (js 7.3) head    7.9 ms (js 7.3)  frame x0.93 js x1.00  calls 1/150
+r3s low:potato   loop el       old    6.6 ms (js 5.7) head    7.8 ms (js 7.2)  frame x1.18 js x1.26  calls 1/169
+r3s low:potato   narrows       old   11.3 ms (js 10.5) head    7.8 ms (js 7.2)  frame x0.69 js x0.69  calls 1/191

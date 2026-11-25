@@ -1,10 +1,12 @@
 // Equip, unlocks, charges and cooldowns for the gadgets. Pure.
-// `tune` is the live WayneTech effects object: `${id}Cooldown` (smokeCooldown) overrides a cooldown.
-import { GADGETS, GADGET_IDS, gadgetById } from './gadgetDefs.js';
+// `tune` is the live WayneTech effects object: `${id}Cooldown` (smokeCooldown) overrides a cooldown,
+// and a def's `maxKey` (disruptorCharges) its charge count. [prog]: all eighteen gadgets.
+import { ALL_GADGETS as GADGETS, ALL_GADGET_IDS as GADGET_IDS, gadgetById } from './gadgetDefs.js';
 
 export function createGadgetState({ equipped = 'batarang', unlocked = ['batarang'], tune = {} } = {}) {
   const slots = new Map();
-  for (const g of GADGETS) slots.set(g.id, { charges: g.max ?? 0, cool: 0, refill: 0 });
+  const maxOf = (g) => (g.maxKey && Number.isFinite(tune[g.maxKey]) ? Math.max(1, tune[g.maxKey]) : g.max ?? 0);
+  for (const g of GADGETS) slots.set(g.id, { charges: maxOf(g), cool: 0, refill: 0 });
   const open = new Set(['batarang', ...unlocked.filter((id) => GADGET_IDS.includes(id))]);
   let eq = open.has(equipped) ? equipped : 'batarang';
   const cooldownOf = (g) => tune[`${g.id}Cooldown`] ?? g.cooldown;
@@ -47,11 +49,14 @@ export function createGadgetState({ equipped = 'batarang', unlocked = ['batarang
       for (const g of GADGETS) {
         const s = slots.get(g.id);
         if (s.cool > 0) s.cool = Math.max(0, s.cool - dt);
-        if (g.kind === 'charges' && s.charges < g.max) {
+        const max = maxOf(g);
+        if (g.kind === 'charges' && s.charges < max) {
+          // A charge count raised by a skill node starts refilling at once.
+          if (s.refill <= 0) s.refill = g.recharge;
           s.refill -= dt;
-          while (s.refill <= 0 && s.charges < g.max) {
+          while (s.refill <= 0 && s.charges < max) {
             s.charges += 1;
-            s.refill = s.charges < g.max ? s.refill + g.recharge : 0;
+            s.refill = s.charges < max ? s.refill + g.recharge : 0;
           }
         }
       }
@@ -63,11 +68,12 @@ export function createGadgetState({ equipped = 'batarang', unlocked = ['batarang
       out.kind = g.kind;
       out.ready = ready(id);
       out.charges = s.charges;
-      out.max = g.max ?? 0;
-      out.cool = g.kind === 'charges' ? (s.charges < g.max ? s.refill : 0) : s.cool;
+      const max = maxOf(g);
+      out.max = max;
+      out.cool = g.kind === 'charges' ? (s.charges < max ? s.refill : 0) : s.cool;
       out.total = g.kind === 'charges' ? g.recharge : g.kind === 'cooldown' ? cooldownOf(g) : 0;
       out.frac = out.total ? out.cool / out.total : 0;
-      out.text = g.kind === 'charges' ? `${s.charges} of ${g.max} charges`
+      out.text = g.kind === 'charges' ? `${s.charges} of ${max} charges`
         : out.ready ? 'Ready' : `Ready in ${Math.ceil(s.cool)} s`;
       return out;
     },
@@ -75,7 +81,7 @@ export function createGadgetState({ equipped = 'batarang', unlocked = ['batarang
     hudCode(id) {
       const s = slots.get(id);
       const g = gadgetById(id);
-      const t = g.kind === 'charges' ? (s.charges < g.max ? s.refill : 0) : s.cool;
+      const t = g.kind === 'charges' ? (s.charges < maxOf(g) ? s.refill : 0) : s.cool;
       return GADGET_IDS.indexOf(id) * 1e6 + s.charges * 1e4 + Math.ceil(t * 4);
     },
   };

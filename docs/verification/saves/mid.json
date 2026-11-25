@@ -1,0 +1,52 @@
+{
+ "made": "5fe2c7f ?at=toAce",
+ "progress": {
+  "step": 30,
+  "trophies": [],
+  "suit": "m",
+  "goldUnlocked": false,
+  "seenIntro": false,
+  "finished": false,
+  "challenges": {},
+  "stats": {
+   "playTime": 1806.0665,
+   "kos": 60,
+   "longestCombo": 23,
+   "topGlideSpeed": 0,
+   "distanceGlided": 0,
+   "photos": 0
+  },
+  "crimes": {
+   "stopped": 0
+  },
+  "moves": [],
+  "districts": [
+   "neon"
+  ],
+  "milestone": 0,
+  "unlocks": [],
+  "gadgets": {
+   "equipped": "batarang",
+   "unlocked": [
+    "remote",
+    "gel",
+    "smoke",
+    "launcher",
+    "claw"
+   ],
+   "broken": [],
+   "caches": [],
+   "wheelUsed": false
+  },
+  "wayne": {
+   "xp": 0,
+   "owned": [],
+   "medals": {}
+  },
+  "vanChases": {
+   "stopped": 0
+  },
+  "stepId": "toAce"
+ },
+ "settings": null
+}

@@ -1,0 +1,22 @@
+A=old http://localhost:5201/
+B=head http://localhost:5851/
+2 rounds, 3000 ms per site, alternating one page at a time, fresh load per site
+r0 AB low:low      gcpd roof     old   3.35 ms (js 2.80) head   4.10 ms (js 2.80)  frame x1.22 js x1.00  calls 1/254
+r0 AB low:low      docks         old   1.98 ms (js 1.60) head   2.47 ms (js 1.90)  frame x1.25 js x1.19  calls 1/133
+r0 AB low:low      neon street   old   2.17 ms (js 1.70) head   2.46 ms (js 1.90)  frame x1.13 js x1.12  calls 1/172
+r0 AB low:low      ace chemicals old   3.86 ms (js 3.10) head   3.53 ms (js 2.60)  frame x0.92 js x0.84  calls 1/249
+r0 AB low:low      clock plaza   old   1.36 ms (js 1.10) head   1.55 ms (js 1.20)  frame x1.14 js x1.09  calls 1/198
+r1 BA low:low      gcpd roof     old   2.68 ms (js 2.30) head   2.96 ms (js 2.30)  frame x1.11 js x1.00  calls 1/254
+r1 BA low:low      docks         old   1.84 ms (js 1.50) head   2.63 ms (js 2.00)  frame x1.43 js x1.33  calls 1/133
+r1 BA low:low      neon street   old   2.03 ms (js 1.60) head   2.48 ms (js 1.90)  frame x1.22 js x1.19  calls 1/171
+r1 BA low:low      ace chemicals old   2.77 ms (js 2.30) head   3.51 ms (js 2.70)  frame x1.27 js x1.17  calls 1/249
+r1 BA low:low      clock plaza   old   1.18 ms (js 1.00) head   1.66 ms (js 1.30)  frame x1.40 js x1.30  calls 1/198
+
+per site, head/old (ratio < 1: head faster), median over 2 rounds [min..max]:
+  low:low      gcpd roof     frame x1.22 [1.11..1.22]  js x1.00 [1.00..1.00]  fps 299 -> 244  calls 1 -> 254
+  low:low      docks         frame x1.43 [1.25..1.43]  js x1.33 [1.19..1.33]  fps 506 -> 380  calls 1 -> 133
+  low:low      neon street   frame x1.22 [1.13..1.22]  js x1.19 [1.12..1.19]  fps 460 -> 404  calls 1 -> 172
+  low:low      ace chemicals frame x1.27 [0.92..1.27]  js x1.17 [0.84..1.17]  fps 259 -> 283  calls 1 -> 249
+  low:low      clock plaza   frame x1.40 [1.14..1.40]  js x1.30 [1.09..1.30]  fps 737 -> 604  calls 1 -> 198
+  low:low      ALL           frame x1.22  js x1.17
+(176 s)

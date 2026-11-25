@@ -1,0 +1,8 @@
+== walk: node scripts/story-walk.mjs http://localhost:5860/ ~/AppData/Local/Temp/claude/9519414f725d5b3e/fa0efec5-d6d5-43fd-b20d-c13ef3059827/scratchpad/checks/walk
+pacing: {"steps":51,"hardStops":8,"radioSteps":0,"comics":6,"cinematics":3,"cuts":10,"noAgencySeconds":78,"seen":{"comics":7,"comicPanels":17,"cinematics":1}}
+ended at credits credits | shots 120 | steps 50
+cuts (hero jumps the script did not make): [{"step":"finale","d":175,"from":[-62,58,-154],"to":[0,42,9],"ctl":null,"veh":null}]
+events: [["vehicleEnter","boardBatmobile"],["chaseDone","batmobileChase"],["vehicleExit","toRoofAfterChase"],["vehicleEnter","boardBatmobileAce"],["battleDone","aceBattle"],["vehicleExit","a1"],["vehicleEnter","boardBatmobileAce2"],["chaseDone","aceVanChase"],["vehicleExit","toHarleyDoor"]]
+combo hits outside a fight: none
+no console errors
+== exit 0 after 285 s

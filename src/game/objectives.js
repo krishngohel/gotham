@@ -4,7 +4,9 @@
 // by flow.js itself whether the real system (vehicles, batwing, nightwing) finished it or it
 // degraded to a timer. 'interior' is a plain reach step (falls to the default case below); flow.js
 // just also tries to enter the room when the hero arrives.
-function matches(step, ev) {
+export function matches(step, ev) {
+  // [story] Any step can also be finished by its own generic event (new step types, dev hooks).
+  if (ev.type === 'stepDone' && ev.id === step.id) return true;
   switch (step.type) {
     case 'cutscene': return ev.type === 'cutsceneDone' && ev.scene === step.scene;
     case 'fight': return ev.type === 'fightDone' && ev.id === step.fight;

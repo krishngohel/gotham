@@ -1,3 +1,5 @@
+import { getAccess } from './accessibility.js'; // [prog] a11y
+
 // The tier 2 comic panel: a tilted ink border on a paper gutter, and a halftone burst behind the
 // hit, built once at boot. show() places it (once per trigger); set() runs every frame but only
 // touches the DOM when the state code changes (0 hidden, 1 frozen, 2 releasing).
@@ -9,11 +11,13 @@ export function createImpactPanel(root, rng = Math.random) {
   root.insertBefore(el, root.firstChild);
   let state = 0;
   return {
+    el,
     get state() { return state; },
     show(x, y) {
       el.style.setProperty('--ix', `${Math.round(x)}px`);
       el.style.setProperty('--iy', `${Math.round(y)}px`);
-      el.style.setProperty('--tilt', `${((2 + rng() * 2) * (rng() < 0.5 ? -1 : 1)).toFixed(2)}deg`);
+      // [prog] a11y reduced motion: the panel sits square.
+      el.style.setProperty('--tilt', getAccess().reducedMotion ? '0deg' : `${((2 + rng() * 2) * (rng() < 0.5 ? -1 : 1)).toFixed(2)}deg`);
     },
     set(next) {
       if (next === state) return;

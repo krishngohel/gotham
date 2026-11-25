@@ -1,6 +1,7 @@
 import {
   tone, noise, metal, env, filter, drive, noiseSource, bell, brass, mtof, rand,
 } from './synth.js';
+import { SFX_EXTRA } from './sfxExtra.js';
 
 // Each SFX builds into (ctx, out, t, p) where p is a pitch multiplier, and returns its end time.
 // `wet` is the reverb send level, `max` caps how many of that sound may overlap.
@@ -41,6 +42,7 @@ function flutter(ctx, out, t, p, { dur = 0.3, rate = 38, freq = 2200, to = null,
 // Random clicks on one noise gain: crackle for electricity, sparks and drips.
 function crackle(ctx, out, t, { dur = 0.6, count = 30, freq = 3000, gain = 0.4, type = 'highpass' } = {}) {
   const g = ctx.createGain();
+  g.gain.value = 0; // silent before the first event, whatever the rounding of t
   g.gain.setValueAtTime(0, t);
   const times = [];
   for (let i = 0; i < count; i++) times.push(t + Math.pow(Math.random(), 1.4) * dur);
@@ -322,9 +324,11 @@ export const SFX = {
     });
 
     const voice = ctx.createGain();
+    voice.gain.value = 0; // silent before the first event, whatever the rounding of t
     voice.gain.setValueAtTime(0, t);
     voice.connect(bank);
     const breath = ctx.createGain();
+    breath.gain.value = 0; // silent before the first event, whatever the rounding of t
     breath.gain.setValueAtTime(0, t);
     breath.connect(bank);
 
@@ -383,6 +387,7 @@ export const SFX = {
   takedown: { wet: 0.4, max: 1, fn(ctx, out, t, p) {
     const s = 0.28;
     const sg = ctx.createGain();
+    sg.gain.value = 0; // silent before the first event, whatever the rounding of t
     sg.gain.setValueAtTime(1e-4, t);
     sg.gain.exponentialRampToValueAtTime(0.5, t + s);
     sg.gain.setValueAtTime(0, t + s + 0.005);
@@ -416,6 +421,7 @@ export const SFX = {
     // mains hum and a rising glow
     const h = t + 0.1, dur = 1.6;
     const g = ctx.createGain();
+    g.gain.value = 0; // silent before the first event, whatever the rounding of t
     g.gain.setValueAtTime(0, h);
     g.gain.linearRampToValueAtTime(0.1, h + 1.0);
     g.gain.setValueAtTime(0.1, h + 1.2);
@@ -726,30 +732,69 @@ export const SFX = {
   } },
 };
 
+// Long Night 2 additions (whooshes, layered impacts, footsteps by surface, props, UI, stingers).
+Object.assign(SFX, SFX_EXTRA);
+
+// Interface sounds go to the ui bus (never reverberated, never ducked by combat).
+for (const n of ['uiMove', 'uiSelect', 'uiBack', 'wheelOpen']) { SFX[n].bus = 'ui'; SFX[n].priority = 3; }
+SFX.radioCrackle.bus = 'dialogue';
+for (const n of ['ko', 'takedown', 'signal', 'thunder', 'levelUp', 'trophy']) SFX[n].priority = 4;
+for (const n of ['punch', 'kick', 'heavy', 'counter', 'block', 'hurt']) SFX[n].priority = 3;
+SFX.footstep.priority = 1;
+
 export const SFX_NAMES = Object.keys(SFX);
 const TRIM = 0.8; // headroom: noise-based hits vary a little in peak from play to play
 
-// Builds one SFX voice (gain + optional pan + reverb send) into a mixer and schedules it.
-export function triggerSfx(mix, name, t, { gain = 1, pitch = 1, pan = 0 } = {}) {
+// Builds one SFX voice into a mixer and schedules it:
+//   voice gain -> [occlusion low-pass] -> [StereoPanner | PannerNode] -> bus input
+//              \-> reverb send (def.wet x space send x opts.wet)
+// opts: gain, pitch, pan (-1..1), lowpass (Hz, 0 = none), wet (send multiplier),
+//       panner ({ x, y, z } listener-relative, uses an HRTF PannerNode instead of pan),
+//       plus recipe options handed to fn as `o` (samples, power, variant, ko, gait, who).
+export function triggerSfx(mix, name, t, opts = {}) {
   const def = SFX[name];
   if (!def) return null;
   const { ctx } = mix;
+  const { gain = 1, pitch = 1, pan = 0, lowpass = 0, wet = 1, panner = null } = opts;
   const v = ctx.createGain();
   v.gain.value = TRIM * Math.max(0, Number(gain) || 0);
-  const pn = Math.max(-1, Math.min(1, Number(pan) || 0));
-  if (pn && ctx.createStereoPanner) {
-    const sp = ctx.createStereoPanner();
-    sp.pan.value = pn;
-    v.connect(sp);
-    sp.connect(mix.sfxIn);
-  } else v.connect(mix.sfxIn);
-  if (def.wet > 0) {
+  const busIn = mix.input ? mix.input(def.bus ?? 'sfx') : mix.sfxIn;
+  let head = busIn;
+  if (panner && ctx.createPanner) {
+    const pn = ctx.createPanner();
+    pn.panningModel = 'HRTF';
+    pn.distanceModel = 'linear';
+    pn.rolloffFactor = 0; // distance gain is ours (spatial.js); the panner only places it
+    if (pn.positionX) { pn.positionX.value = panner.x; pn.positionY.value = panner.y; pn.positionZ.value = panner.z; }
+    else pn.setPosition(panner.x, panner.y, panner.z);
+    pn.connect(head);
+    head = pn;
+  } else {
+    const pv = Math.max(-1, Math.min(1, Number(pan) || 0));
+    if (pv && ctx.createStereoPanner) {
+      const sp = ctx.createStereoPanner();
+      sp.pan.value = pv;
+      sp.connect(head);
+      head = sp;
+    }
+  }
+  if (lowpass > 0) {
+    const f = ctx.createBiquadFilter();
+    f.type = 'lowpass';
+    f.frequency.value = lowpass;
+    f.Q.value = 0.6;
+    f.connect(head);
+    head = f;
+  }
+  v.connect(head);
+  const send = (def.wet || 0) * (Number.isFinite(wet) ? wet : 1) * (mix.spaceSend ?? 1);
+  if (send > 0 && (def.bus ?? 'sfx') === 'sfx') {
     const s = ctx.createGain();
-    s.gain.value = def.wet;
+    s.gain.value = send;
     v.connect(s);
     s.connect(mix.sfxWet);
   }
   const p = Math.max(0.25, Math.min(4, Number(pitch) || 1));
-  const end = def.fn(ctx, v, t, p);
-  return { name, gain: v, start: t, end };
+  const end = def.fn(ctx, v, t, p, opts);
+  return { name, gain: v, start: t, end, priority: def.priority ?? 2 };
 }

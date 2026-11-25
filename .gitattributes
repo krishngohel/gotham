@@ -1,4 +1,23 @@
+# Every text file is stored and checked out with LF, whatever core.autocrlf says on the machine
+# (this overrides a global autocrlf=true on Windows). If `git status` shows files as modified with
+# no real change after a tool wrote CRLF, `git add --renormalize <file>` clears it.
 * text=auto eol=lf
+
+# Binary assets: never diffed or converted.
 *.png binary
-*.glb binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
 *.webp binary
+*.ico binary
+*.glb binary
+*.bin binary
+*.fbx binary
+*.mp3 binary
+*.webm binary
+*.ogg binary
+*.opus binary
+*.wav binary
+*.woff binary
+*.woff2 binary
+*.zip binary

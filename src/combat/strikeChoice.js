@@ -18,13 +18,16 @@ export const KICK_FINISHERS = ['Kick_Spin', 'Kick_Axe', 'Kick_Flip'];
 export const CLOSE = 1.2;       // closer than this, an elbow instead of a cross
 export const POINT_BLANK = 1.3; // closer than this, no stepping kicks
 
-export function createStrikeChooser({ has = () => true, random = Math.random } = {}) {
+// tables: a kit's strike tables (src/combat/kitMoves.js); defaults are the lists above.
+export function createStrikeChooser({ has = () => true, random = Math.random, tables = null } = {}) {
   let last = '', kickIdx = 0, finIdx = 0, kickFinIdx = 0, closeIdx = 0;
+  const TIERS = tables?.punchTiers ?? PUNCH_TIERS, KICK_LIST = tables?.kicks ?? KICKS;
+  const PFIN = tables?.finishers?.punch ?? PUNCH_FINISHERS, KFIN = tables?.finishers?.kick ?? KICK_FINISHERS;
   const firstHad = (list, fallback) => list.find(has) ?? fallback;
   return {
     // n: this punch's place in the chain (1, 2, 3); range: metres to the target.
     punch(n, range) {
-      const tier = PUNCH_TIERS[Math.min(PUNCH_TIERS.length, Math.max(1, n)) - 1]
+      const tier = TIERS[Math.min(TIERS.length, Math.max(1, n)) - 1]
         .map((c) => (c === 'Punch_Cross' && range < CLOSE && n > 1 ? 'Elbow_Strike' : c))
         .filter(has);
       const options = tier.filter((c) => c !== last);
@@ -33,23 +36,23 @@ export function createStrikeChooser({ has = () => true, random = Math.random } =
       return last;
     },
     punchFinisher() {
-      for (let i = 0; i < PUNCH_FINISHERS.length; i++) {
-        const c = PUNCH_FINISHERS[finIdx++ % PUNCH_FINISHERS.length];
+      for (let i = 0; i < PFIN.length; i++) {
+        const c = PFIN[finIdx++ % PFIN.length];
         if (has(c)) return c;
       }
       return 'Melee_Hook';
     },
     kick(range) {
       if (range < POINT_BLANK) return closeIdx++ % 2 ? firstHad(['Knee_Strike'], 'Kick_Front') : 'Kick_Front';
-      for (let i = 0; i < KICKS.length; i++) {
-        const c = KICKS[kickIdx++ % KICKS.length];
+      for (let i = 0; i < KICK_LIST.length; i++) {
+        const c = KICK_LIST[kickIdx++ % KICK_LIST.length];
         if (has(c)) return c;
       }
       return 'Kick_Front';
     },
     kickFinisher() {
-      for (let i = 0; i < KICK_FINISHERS.length; i++) {
-        const c = KICK_FINISHERS[kickFinIdx++ % KICK_FINISHERS.length];
+      for (let i = 0; i < KFIN.length; i++) {
+        const c = KFIN[kickFinIdx++ % KFIN.length];
         if (has(c)) return c;
       }
       return 'Kick_Spin';

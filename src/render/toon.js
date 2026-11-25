@@ -57,18 +57,17 @@ function posterize(mat, palette, stripes) {
   mat.customProgramCacheKey = () => `pal-${pal.length}-${stripeIdx}-${period}`;
 }
 
-// Inverted-hull ink line. Lives on LAYER_FX so it never reaches the normal pass.
+// Inverted-hull ink line, on LAYER_FX.
+// [perf2] One hull material per colour, width and kind (skinned or static), shared by every hull
+// that matches: three re-uploads a material's uniforms each time consecutive draws switch material,
+// and a material per hull made every hull draw a switch (149 materials in one colour pass at the
+// docks). Callers that recolour a hull clone its material first (see batwing.js).
+const hullMats = new Map();
 export function addHullOutline(mesh, width = 0.011, color = PALETTE.ink) {
-  const mat = new THREE.MeshBasicMaterial({ color, side: THREE.BackSide });
-  mat.userData.outline = { value: width };
   const skinned = mesh.isSkinnedMesh;
-  mat.onBeforeCompile = (shader) => {
-    shader.uniforms.uOutline = mat.userData.outline;
-    shader.vertexShader = 'uniform float uOutline;\n' + (skinned
-      ? shader.vertexShader.replace('#include <skinning_vertex>', '#include <skinning_vertex>\n\ttransformed += normalize(objectNormal) * uOutline;')
-      : shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n\ttransformed += normalize(normal) * uOutline;'));
-  };
-  mat.customProgramCacheKey = () => (skinned ? 'hull-skinned' : 'hull-static');
+  const key = `${color}|${width}|${skinned ? 1 : 0}`;
+  let mat = hullMats.get(key);
+  if (!mat) hullMats.set(key, mat = hullMaterial(width, color, skinned));
   const hull = skinned ? new THREE.SkinnedMesh(mesh.geometry, mat) : new THREE.Mesh(mesh.geometry, mat);
   if (skinned) hull.bind(mesh.skeleton, mesh.bindMatrix);
   hull.layers.set(LAYER_FX);
@@ -76,6 +75,26 @@ export function addHullOutline(mesh, width = 0.011, color = PALETTE.ink) {
   hull.castShadow = false;
   mesh.add(hull);
   return hull;
+}
+
+// A hull material of its own (for a caller that recolours its hull).
+export function hullMaterial(width, color, skinned) {
+  // A custom blend that is opaque in colour (alpha 1 replaces) but writes nothing to the normal
+  // attachment (its output there has alpha 0, see mrtNormals.js): the old normal pass never drew
+  // hulls, so their pixels keep the normals of whatever is behind them and add no crease lines.
+  const mat = new THREE.MeshBasicMaterial({
+    color, side: THREE.BackSide,
+    blending: THREE.CustomBlending, blendSrc: THREE.SrcAlphaFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
+  });
+  mat.userData.outline = { value: width };
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uOutline = mat.userData.outline;
+    shader.vertexShader = 'uniform float uOutline;\n' + (skinned
+      ? shader.vertexShader.replace('#include <skinning_vertex>', '#include <skinning_vertex>\n\ttransformed += normalize(objectNormal) * uOutline;')
+      : shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n\ttransformed += normalize(normal) * uOutline;'));
+  };
+  mat.customProgramCacheKey = () => (skinned ? 'hull-skinned' : 'hull-static');
+  return mat;
 }
 
 // One flat MeshBasicMaterial per colour, shared by every x-ray mesh that wants it (every goon's

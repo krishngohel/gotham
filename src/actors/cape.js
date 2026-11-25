@@ -6,6 +6,14 @@ import { addRim } from './outfitParts.js';
 import { PALETTE } from '../config/palette.js';
 
 
+// [perf3] Cloth sub-steps per frame are capped by tier (quality.clothSteps, set once at boot by
+// setCapeQuality): the cloth steps at 120 Hz, so a slow frame ran up to four steps, and on a weak
+// CPU the cape cost four times as much exactly when the frame was already late (11 % of a 45 ms
+// frame at 4x CPU throttle). Potato and low take at most two (each a little longer: a slightly
+// livelier swing at low frame rates only; at 60 fps and up nothing changes).
+let STEP_CAP = 4;
+export function setCapeQuality(quality) { STEP_CAP = Math.max(1, Math.min(4, quality?.clothSteps ?? 4)); }
+
 function gridIndex(cols, rows) {
   const idx = [];
   for (let r = 0; r < rows - 1; r++) {
@@ -23,21 +31,50 @@ function gridIndex(cols, rows) {
 // its shadow floor is raised so it never drops to solid black, a cool rim runs along the folds
 // where the cloth turns from the camera, and the inner face is a lighter lining that shows where
 // the hem curls. Which winding faces the body is found from the cloth's normals each frame.
+//
+// The pale-blue cape (polish list): the outer face used to be the cape colour lifted 30 % toward
+// slate and the lining 60 %, both blue-greys, and a big flat cloth facing the camera fill, the rim
+// light and (after the day/night merge) a 1.7x noon sky took that to a pale powder blue from
+// behind. Now the outer face is the cape colour itself, the lining only a step lighter, and the
+// lit result is capped at CAPE_LIGHT_CAP times the cloth's own colour, so no time of day or
+// weather can light a dark cape pale (scripts/cape-check.mjs measures it at noon and at night).
+export const CAPE_LIGHT_CAP = 2.6;
+export const CAPE_EDGE = 0.012; // linear headroom over the cap: a faint rim survives on the edge
+// Which side is the lining is decided per fragment: the face whose normal (as drawn, after the
+// double-sided flip) points toward the wearer's front is the inside. (It was decided once per
+// frame from the winding of one cloth vertex, and that came out inverted: from behind, the
+// camera saw the lining, which was the lighter of the two.)
 function capeMaterial(color) {
-  const outer = new THREE.Color(color).lerp(new THREE.Color(PALETTE.slate), 0.3);
-  const lining = new THREE.Color(color).lerp(new THREE.Color(PALETTE.slate), 0.6);
+  const outer = new THREE.Color(color);
+  const lining = new THREE.Color(color).lerp(new THREE.Color(PALETTE.slate), 0.22);
   const mat = toonMaterial({ color: outer, side: THREE.DoubleSide });
-  const frontIsInner = { value: 0 };
+  const wearerFwd = { value: new THREE.Vector3(0, 0, 1) };
   mat.onBeforeCompile = (shader) => {
     shader.uniforms.uLining = { value: lining };
-    shader.uniforms.uFrontIsInner = frontIsInner;
-    shader.fragmentShader = 'uniform vec3 uLining;\nuniform float uFrontIsInner;\n' + shader.fragmentShader.replace('#include <color_fragment>', `
+    shader.uniforms.uWearerFwd = wearerFwd;
+    shader.vertexShader = 'varying vec3 vCapeN;\n' + shader.vertexShader.replace('#include <beginnormal_vertex>', `#include <beginnormal_vertex>
+	vCapeN = mat3( modelMatrix ) * objectNormal;`);
+    shader.fragmentShader = 'uniform vec3 uLining;\nuniform vec3 uWearerFwd;\nvarying vec3 vCapeN;\n' + shader.fragmentShader.replace('#include <color_fragment>', `
 	#include <color_fragment>
-	if ((uFrontIsInner > 0.5) == gl_FrontFacing) diffuseColor.rgb = uLining;`);
+	if (dot(vCapeN, uWearerFwd) * (gl_FrontFacing ? 1.0 : -1.0) > 0.0) diffuseColor.rgb = uLining;`);
   };
   mat.customProgramCacheKey = () => 'cape-lining';
-  addRim(mat, 0x9fc3ff, 1.0, [0.42, 0.62], 0.5);
-  mat.userData.frontIsInner = frontIsInner;
+  // A thin cool rim on the folds' turning edges only (it was a broad full-strength band).
+  addRim(mat, 0x9fc3ff, 0.5, [0.55, 0.7], 0.5);
+  // The cap goes LAST, after the rim: the follow camera looks down on the cape from above and
+  // behind, the view grazes the whole cloth, and the rim term (added after any earlier cap) lit
+  // the entire cape pale blue in play while a level camera saw it dark. Whatever the light, the
+  // rim or the angle, the cape ends at most CAPE_LIGHT_CAP x its colour plus a faint edge.
+  const withRim = mat.onBeforeCompile;
+  mat.onBeforeCompile = (shader, renderer) => {
+    withRim(shader, renderer);
+    shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
+	outgoingLight = min(outgoingLight, diffuseColor.rgb * ${CAPE_LIGHT_CAP.toFixed(2)} + vec3(${CAPE_EDGE.toFixed(3)}));
+	#include <opaque_fragment>`);
+  };
+  const rimKey = mat.customProgramCacheKey;
+  mat.customProgramCacheKey = () => `${rimKey()}|cape-cap-last`;
+  mat.userData.wearerFwd = wearerFwd;
   return mat;
 }
 
@@ -45,16 +82,18 @@ function capeMaterial(color) {
 // The hero cape's defaults: it is cut to the shoulder line and ends at the shins, leaving the
 // gloves, the legs' outer edges and the boots visible around it from behind. look 'cape' is the
 // hero material above; 'coat' a plain toon cloth with the usual rim (the Joker's tails).
-export function createCape(ch, color, {
-  cols: COLS = 11, rows: ROWS = 14, topWidth = 0.46, bottomWidth = 1.05, length = 1.2, pointDrop = 0.15, anchor: mode = 'shoulders', look = 'cape',
-} = {}) {
+// Options not passed fall back to the wearer's own cut (ch.meta.cape.options, set by the model
+// builder: Batman's is longer and wider than Batwoman's), then to the defaults below.
+export function createCape(ch, color, opts = {}) {
+  const {
+    cols: COLS = 11, rows: ROWS = 14, topWidth = 0.46, bottomWidth = 1.05, length = 1.2, pointDrop = 0.15, anchor: mode = 'shoulders', look = 'cape',
+  } = { ...(ch.meta?.cape?.options ?? {}), ...opts };
   const cloth = createCloth({ cols: COLS, rows: ROWS, topWidth, bottomWidth, length, pointDrop });
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(cloth.pos, 3));
   geo.setIndex(gridIndex(COLS, ROWS));
   const mesh = new THREE.Mesh(geo, look === 'cape' ? capeMaterial(color) : addRim(toonMaterial({ color, side: THREE.DoubleSide })));
-  const frontIsInner = mesh.material.userData.frontIsInner ?? null;
-  const midNormal = new THREE.Vector3();
+  const wearerFwd = mesh.material.userData.wearerFwd ?? null;
   mesh.frustumCulled = false;
   mesh.castShadow = true;
 
@@ -142,17 +181,14 @@ export function createCape(ch, color, {
     if (dt <= 0) return;
     // Ground under each point, sampled once per frame (a hair above it, clear of the depth test).
     if (floorAt) for (let i = 0; i < cloth.n; i++) floors[i] = floorAt(cloth.pos[i * 3], cloth.pos[i * 3 + 2]) + 0.01;
-    const steps = Math.min(4, Math.ceil(dt / (1 / 120)));
+    const steps = Math.min(STEP_CAP, Math.ceil(dt / (1 / 120)));
     const back = mode === 'shoulders' && !wings ? backPlane : null;
     if (back) { back.x = anchor.x; back.z = anchor.z; back.nx = fwd.x; back.nz = fwd.z; back.top = anchor.y + 0.05; }
     for (let s = 0; s < steps; s++) stepCloth(cloth, dt / steps, { wind, damping: 0.04, iterations: 8, colliders, pins, floor: floorAt ? floors : null, back });
     geo.attributes.position.needsUpdate = true;
     geo.computeVertexNormals();
-    // Lining: the winding whose normal points at the wearer's back is the inner face.
-    if (frontIsInner) {
-      midNormal.fromBufferAttribute(geo.attributes.normal, ((ROWS >> 1) * COLS) + (COLS >> 1));
-      frontIsInner.value = midNormal.x * fwd.x + midNormal.z * fwd.z > 0 ? 1 : 0;
-    }
+    // Lining: the shader picks the face turned toward the wearer's front (see capeMaterial).
+    if (wearerFwd) wearerFwd.value.copy(fwd);
   }
 
   return {

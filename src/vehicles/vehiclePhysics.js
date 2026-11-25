@@ -27,6 +27,20 @@ export const DEFAULT_TUNING = {
   wallRestitution: 0.15, // 0 = stop dead on a wall, 1 = a perfectly bouncy wall (low: glance off, keep going)
 };
 
+// [verify] The street surface (world.weather.traction: 1 dry, ~0.82 soaked, 0.4 packed snow): less
+// bite on the brakes and the throttle, a little less steering, and a slide that takes longer to
+// die. Dry (1) returns the tuning unchanged. Fills and returns `out` (the caller caches it).
+export function wetTuning(t, traction, out = {}) {
+  const k = Math.max(0.4, Math.min(1, Number.isFinite(traction) ? traction : 1));
+  Object.assign(out, t);
+  out.brakeDecel = t.brakeDecel * (0.55 + 0.45 * k);
+  out.accel = t.accel * (0.75 + 0.25 * k);
+  out.boostAccel = t.boostAccel * (0.75 + 0.25 * k);
+  out.turnRate = t.turnRate * (0.8 + 0.2 * k);
+  out.driftDecayRate = t.driftDecayRate * k;
+  return out;
+}
+
 export function mergeTuning(overrides = {}) {
   return { ...DEFAULT_TUNING, ...overrides };
 }

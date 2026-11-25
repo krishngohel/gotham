@@ -1,0 +1,856 @@
+{
+ "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "q": "potato",
+ "shots": {
+  "loop-canyon": {
+   "calls": 144,
+   "tris": 207184,
+   "medianMs": 1.2,
+   "p95Ms": 1.9
+  },
+  "loop-wayne-plaza": {
+   "calls": 107,
+   "tris": 202660,
+   "medianMs": 1.2,
+   "p95Ms": 1.9
+  },
+  "loop-marquee": {
+   "calls": 111,
+   "tris": 143564,
+   "medianMs": 0.5,
+   "p95Ms": 1.1
+  },
+  "loop-el-platform": {
+   "calls": 153,
+   "tris": 232876,
+   "medianMs": 0.6,
+   "p95Ms": 0.9
+  },
+  "loop-tower-roof": {
+   "calls": 125,
+   "tris": 208540,
+   "medianMs": 0.5,
+   "p95Ms": 1.1
+  },
+  "loop-wayne-crown": {
+   "calls": 55,
+   "tris": 113552,
+   "medianMs": 0.4,
+   "p95Ms": 0.8
+  },
+  "mile-boulevard": {
+   "calls": 81,
+   "tris": 113556,
+   "medianMs": 0.4,
+   "p95Ms": 0.8
+  },
+  "mile-iceberg": {
+   "calls": 84,
+   "tris": 123560,
+   "medianMs": 0.5,
+   "p95Ms": 0.9
+  },
+  "mile-diamond": {
+   "calls": 59,
+   "tris": 100370,
+   "medianMs": 0.4,
+   "p95Ms": 0.6
+  },
+  "mile-roof": {
+   "calls": 91,
+   "tris": 131220,
+   "medianMs": 0.5,
+   "p95Ms": 0.9
+  },
+  "mile-pumping": {
+   "calls": 56,
+   "tris": 94978,
+   "medianMs": 0.4,
+   "p95Ms": 0.8
+  },
+  "mile-church": {
+   "calls": 54,
+   "tris": 90368,
+   "medianMs": 0.4,
+   "p95Ms": 0.6
+  },
+  "loop-overview": {
+   "calls": 80,
+   "tris": 163525,
+   "medianMs": 0.4,
+   "p95Ms": 0.5
+  },
+  "loop-el-train": {
+   "calls": 110,
+   "tris": 162206,
+   "medianMs": 0.5,
+   "p95Ms": 0.7
+  },
+  "loop-cityhall": {
+   "calls": 83,
+   "tris": 131214,
+   "medianMs": 0.4,
+   "p95Ms": 0.6
+  },
+  "east-park-roof": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 87,
+     "tris": 99041
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 92,
+   "tris": 113963,
+   "medianMs": 1.9,
+   "p95Ms": 2.2
+  },
+  "east-lsd": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 75,
+     "tris": 91213
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 82,
+   "tris": 106275,
+   "medianMs": 1.1,
+   "p95Ms": 3
+  },
+  "east-viaduct": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 109,
+     "tris": 102722
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 114,
+   "tris": 117644,
+   "medianMs": 1.1,
+   "p95Ms": 1.3
+  },
+  "east-mirror": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 60,
+     "tris": 78937
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 65,
+   "tris": 93859,
+   "medianMs": 0.9,
+   "p95Ms": 1.2
+  },
+  "east-conservatory": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 49,
+     "tris": 63281
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 54,
+   "tris": 78203,
+   "medianMs": 0.5,
+   "p95Ms": 0.8
+  },
+  "east-museum": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 81,
+     "tris": 97012
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 88,
+   "tris": 112074,
+   "medianMs": 0.4,
+   "p95Ms": 0.6
+  },
+  "east-campus-roof": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 86,
+     "tris": 103996
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 93,
+   "tris": 119058,
+   "medianMs": 1,
+   "p95Ms": 1.2
+  },
+  "east-pier": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 75,
+     "tris": 80189
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 80,
+   "tris": 95111,
+   "medianMs": 0.5,
+   "p95Ms": 1.1
+  },
+  "east-pier-aerial": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 72,
+     "tris": 71459
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 77,
+   "tris": 86381,
+   "medianMs": 0.9,
+   "p95Ms": 1.2
+  },
+  "east-undercroft": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 67,
+     "tris": 80171
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 72,
+   "tris": 95093,
+   "medianMs": 0.8,
+   "p95Ms": 1.2
+  },
+  "east-arkham": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 50,
+     "tris": 47871
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 55,
+   "tris": 62793,
+   "medianMs": 0.4,
+   "p95Ms": 0.8
+  },
+  "east-arkham-yard": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 42,
+     "tris": 40714
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 47,
+   "tris": 55636,
+   "medianMs": 0.6,
+   "p95Ms": 0.9
+  },
+  "east-lake-horizon": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 75,
+     "tris": 69461
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 80,
+   "tris": 84383,
+   "medianMs": 0.8,
+   "p95Ms": 1.6
+  },
+  "east-shell": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 54,
+     "tris": 69107
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 59,
+   "tris": 84029,
+   "medianMs": 0.7,
+   "p95Ms": 0.9
+  },
+  "east-avenue": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 52,
+     "tris": 79761
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 57,
+   "tris": 94683,
+   "medianMs": 0.4,
+   "p95Ms": 1.1
+  },
+  "east-fountain-aerial": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 76,
+     "tris": 91039
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 81,
+   "tris": 105961,
+   "medianMs": 0.6,
+   "p95Ms": 1.4
+  },
+  "east-lsd-south": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 86,
+     "tris": 109220
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 93,
+   "tris": 124282,
+   "medianMs": 1,
+   "p95Ms": 1.5
+  },
+  "east-statue-garden": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 107,
+     "tris": 127246
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 112,
+   "tris": 142168,
+   "medianMs": 0.9,
+   "p95Ms": 1.1
+  },
+  "east-aquarium": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 60,
+     "tris": 51512
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 67,
+   "tris": 66574,
+   "medianMs": 0.4,
+   "p95Ms": 0.9
+  },
+  "east-planetarium": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 34,
+     "tris": 35448
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 41,
+   "tris": 50510,
+   "medianMs": 0.6,
+   "p95Ms": 0.8
+  },
+  "east-marina": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 42,
+     "tris": 37374
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 49,
+   "tris": 52436,
+   "medianMs": 0.3,
+   "p95Ms": 0.5
+  },
+  "east-penny-dino": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 94,
+     "tris": 124242
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 101,
+   "tris": 139304,
+   "medianMs": 0.9,
+   "p95Ms": 1.2
+  },
+  "east-wheel-up": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 42,
+     "tris": 68463
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 47,
+   "tris": 83385,
+   "medianMs": 0.5,
+   "p95Ms": 1
+  },
+  "east-funhouse": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 52,
+     "tris": 66129
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 57,
+   "tris": 81051,
+   "medianMs": 0.5,
+   "p95Ms": 0.8
+  },
+  "east-pavilion": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 37,
+     "tris": 64870
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 42,
+   "tris": 79792,
+   "medianMs": 0.7,
+   "p95Ms": 1
+  },
+  "east-coaster": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 54,
+     "tris": 70785
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 59,
+   "tris": 85707,
+   "medianMs": 0.5,
+   "p95Ms": 0.9
+  },
+  "east-arkham-gate": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 59,
+     "tris": 46652
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 64,
+   "tris": 61574,
+   "medianMs": 0.5,
+   "p95Ms": 0.8
+  },
+  "east-arkham-roof": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 45,
+     "tris": 42690
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 52,
+   "tris": 57752,
+   "medianMs": 0.8,
+   "p95Ms": 1
+  },
+  "east-arkham-tower": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 53,
+     "tris": 43576
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 58,
+   "tris": 58498,
+   "medianMs": 1.1,
+   "p95Ms": 1.3
+  },
+  "east-greenhouse": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 35,
+     "tris": 36518
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 40,
+   "tris": 51440,
+   "medianMs": 0.8,
+   "p95Ms": 1
+  },
+  "east-lighthouse": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 23,
+     "tris": 32930
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 28,
+   "tris": 47852,
+   "medianMs": 0.8,
+   "p95Ms": 0.9
+  },
+  "east-lock": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 69,
+     "tris": 59988
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 74,
+   "tris": 74910,
+   "medianMs": 0.7,
+   "p95Ms": 1.1
+  },
+  "east-lake-arkham": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 42,
+     "tris": 46081
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 49,
+   "tris": 61143,
+   "medianMs": 0.8,
+   "p95Ms": 1.1
+  }
+ },
+ "errors": []
+}

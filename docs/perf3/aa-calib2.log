@@ -1,0 +1,19 @@
+A=a1 http://localhost:5851/
+B=a2 http://localhost:5851/
+3 rounds, 2500 ms per site, alternating one page at a time
+r0 AB low:low      gcpd roof     a1   3.63 ms (js 3.06) a2   3.50 ms (js 2.96)  frame x0.96 js x0.97 (normalised; raw frame x0.96, cpu-speed x1.00)  calls 260/260
+r0 AB low:low      docks         a1   2.98 ms (js 2.47) a2   2.68 ms (js 2.26)  frame x0.97 js x0.98 (normalised; raw frame x0.90, cpu-speed x1.08)  calls 125/125
+r0 AB low:low      clock plaza   a1   3.18 ms (js 2.69) a2   3.02 ms (js 2.56)  frame x0.91 js x0.92 (normalised; raw frame x0.95, cpu-speed x0.96)  calls 210/210
+r1 BA low:low      gcpd roof     a1   3.83 ms (js 3.24) a2   3.93 ms (js 3.33)  frame x0.98 js x0.98 (normalised; raw frame x1.03, cpu-speed x0.96)  calls 260/260
+r1 BA low:low      docks         a1   2.97 ms (js 2.48) a2   2.92 ms (js 2.45)  frame x0.98 js x0.98 (normalised; raw frame x0.98, cpu-speed x1.00)  calls 125/125
+r1 BA low:low      clock plaza   a1   3.40 ms (js 2.88) a2   3.47 ms (js 2.95)  frame x0.98 js x0.98 (normalised; raw frame x1.02, cpu-speed x0.96)  calls 210/210
+r2 AB low:low      gcpd roof     a1   3.48 ms (js 2.97) a2   4.58 ms (js 3.88)  frame x0.90 js x0.90 (normalised; raw frame x1.32, cpu-speed x0.69)  calls 261/260
+r2 AB low:low      docks         a1   2.68 ms (js 2.25) a2   2.93 ms (js 2.44)  frame x1.05 js x1.04 (normalised; raw frame x1.09, cpu-speed x0.96)  calls 128/125
+r2 AB low:low      clock plaza   a1   2.93 ms (js 2.46) a2   3.97 ms (js 3.37)  frame x1.30 js x1.32 (normalised; raw frame x1.35, cpu-speed x0.96)  calls 209/210
+
+per site, a2/a1 (ratio < 1: a2 faster), median over 3 rounds [min..max]:
+  low:low      gcpd roof     frame x0.96 [0.90..0.98]  js x0.97 [0.90..0.98]  fps 276 -> 255  calls 260 -> 260
+  low:low      docks         frame x0.98 [0.97..1.05]  js x0.98 [0.98..1.04]  fps 337 -> 343  calls 125 -> 125
+  low:low      clock plaza   frame x0.98 [0.91..1.30]  js x0.98 [0.92..1.32]  fps 315 -> 288  calls 210 -> 210
+  low:low      ALL           frame x0.98  js x0.98
+(158 s)

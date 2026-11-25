@@ -10,6 +10,8 @@ import { BASE_EFFECTS, hurtDamage } from '../progress/upgrades.js';
 import { createJoker, footGround, enemyPlantsFeet } from '../actors/characters.js';
 import { createCape } from '../actors/cape.js';
 import { SITES } from '../world/mapData.js';
+import { withPlayer } from '../core/events.js';
+import { scaleWave } from '../players/coopRules.js';
 
 const ARENA = { x: -62, y: 58, minX: -80.5, maxX: -43.5, minZ: -164.5, maxZ: -141.5 };
 // Up at the railing (its inner face is at z -161.1), so the floor can see him over it.
@@ -31,7 +33,19 @@ const LINES = {
 
 // `effects` is the live WayneTech effects object: Kevlar Weave and Impact Dampers soften the
 // joy-buzzer tiles and the laughing gas as they do any goon's hit.
-export function createBoss({ assets, scene, rng, combat, events, hud, spawn, despawn, hero, time, getDifficulty, collision = null, effects = BASE_EFFECTS }) {
+// Co-op (workstream D1): getPlayers() lists every player in the fight. The Joker goes after the
+// hero combat's aggro picks for him (src/players/targeting.js: nearest, who hit him last, spread),
+// his buzzer tiles and gas clouds hurt whoever stands in them (each through that hero's own
+// fighter, so going down is that player's), and his goon waves grow with the team
+// (src/players/coopRules.js). With one player it is exactly the old fight.
+export function createBoss({ assets, scene, rng, combat, events, hud, spawn, despawn, hero, time, getDifficulty, collision = null, effects = BASE_EFFECTS, getPlayers = null }) {
+  // The hero the Joker is facing and moving on this frame (combat's aggro for him; player 0's
+  // hero alone).
+  let target = hero;
+  const heroes = () => (getPlayers ? getPlayers().map((p) => p.hero) : [hero]);
+  const playerOf = (h) => h.player ?? null;
+  const killFor = (h) => { if (h === hero || !combat.fighterFor) combat.killHero(); else combat.fighterFor(h)?.killHero(); };
+  let throwAt = 0;
   const ch = createJoker(assets);
   const groundUnderFoot = collision ? footGround(collision) : null;
   scene.add(ch.root);
@@ -188,8 +202,8 @@ export function createBoss({ assets, scene, rng, combat, events, hud, spawn, des
   }
 
   function faceHero(rate, dt) {
-    const target = Math.atan2(hero.pos.x - pos.x, hero.pos.z - pos.z);
-    const d = Math.atan2(Math.sin(target - ch.yaw), Math.cos(target - ch.yaw));
+    const yaw = Math.atan2(target.pos.x - pos.x, target.pos.z - pos.z);
+    const d = Math.atan2(Math.sin(yaw - ch.yaw), Math.cos(yaw - ch.yaw));
     ch.face(ch.yaw + (rate ? d * Math.min(1, rate * dt) : d));
   }
 
@@ -200,7 +214,9 @@ export function createBoss({ assets, scene, rng, combat, events, hud, spawn, des
   }
 
   function spawnWave(i) {
-    goons = WAVES[i].map(([type, dx, dz]) => spawn(type, { x: ARENA.x + dx, y: ARENA.y, z: ARENA.maxZ - 3 - dz }));
+    const n = getPlayers ? getPlayers().length : 1;
+    const wave = n > 1 ? scaleWave(WAVES[i].map(([type, dx, dz]) => ({ type, dx, dz })), n).map((e) => [e.type, e.dx, e.dz]) : WAVES[i];
+    goons = wave.map(([type, dx, dz]) => spawn(type, { x: ARENA.x + dx, y: ARENA.y, z: ARENA.maxZ - 3 - dz }));
     spawned.push(...goons);
     for (const g of goons) g.wake();
     combat.setEnemies([...goons]);
@@ -240,7 +256,8 @@ export function createBoss({ assets, scene, rng, combat, events, hud, spawn, des
   function finish() {
     phase = 4;
     joker.finishable = false;
-    time.slowMo(1.4, 0.25);
+    // A world slow motion: the boss finisher is a cinematic beat for everyone (src/core/time.js).
+    time.slowMo(1.4, 0.25, 'world');
     hud.bossBar(false);
     for (const t of tiles) { t.m.visible = t.edge.visible = false; }
     combat.setEnemies([]);
@@ -267,11 +284,12 @@ export function createBoss({ assets, scene, rng, combat, events, hud, spawn, des
         if (t.t > 1.4) {
           t.state = 'shock'; t.t = 0;
           events.emit('buzzer');
-          if (onTile(hero.pos, t) && hero.invulnerable <= 0 && !hero.dead) {
+          for (const h of heroes()) {
+            if (!onTile(h.pos, t) || h.invulnerable > 0 || h.dead) continue;
             const dmg = hurtDamage('buzzer', { difficulty: getDifficulty() }, effects);
-            hero.health = Math.max(0, hero.health - dmg);
-            events.emit('heroHurt', { kind: 'buzzer', damage: dmg });
-            if (hero.health <= 0) combat.killHero();
+            h.health = Math.max(0, h.health - dmg);
+            events.emit('heroHurt', withPlayer({ kind: 'buzzer', damage: dmg }, playerOf(h)));
+            if (h.health <= 0) killFor(h);
           }
           for (const g of goons) if (g.alive && onTile(g.pos, t)) g.applyHit({ outcome: 'stun', stun: 2 }, { x: t.cx, z: t.cz });
         }
@@ -297,18 +315,21 @@ export function createBoss({ assets, scene, rng, combat, events, hud, spawn, des
       c.t += dt;
       c.g.scale.setScalar(Math.min(1, c.t * 2) * (c.t > 5.5 ? Math.max(0, (6.2 - c.t) / 0.7) : 1));
       c.g.rotation.y += dt * 0.3;
-      const inside = Math.hypot(hero.pos.x - c.p.x, hero.pos.z - c.p.z) < 3.3;
-      if (inside && !hero.dead) {
-        c.tick -= dt;
-        if (c.tick <= 0) {
-          c.tick = 0.5;
-          const dmg = hurtDamage('gas', { difficulty: getDifficulty(), invulnerable: hero.invulnerable > 0 }, effects);
-          if (dmg > 0) {
-            hero.health = Math.max(0, hero.health - dmg);
-            events.emit('heroHurt', { kind: 'gas', damage: dmg });
-            events.emit('hint', { id: 'gas' });
-            if (hero.health <= 0) combat.killHero();
-          }
+      // Each hero in the cloud chokes on its own tick (c.ticks: one per hero; player 0's is c.tick).
+      const hs = heroes();
+      for (let k = 0; k < hs.length; k++) {
+        const h = hs[k];
+        const inside = Math.hypot(h.pos.x - c.p.x, h.pos.z - c.p.z) < 3.3;
+        if (!inside || h.dead) continue;
+        const tick = k === 0 ? (c.tick -= dt) : ((c.ticks ??= [])[k] = (c.ticks[k] ?? 0) - dt);
+        if (tick > 0) continue;
+        if (k === 0) c.tick = 0.5; else c.ticks[k] = 0.5;
+        const dmg = hurtDamage('gas', { difficulty: getDifficulty(), invulnerable: h.invulnerable > 0 }, effects);
+        if (dmg > 0) {
+          h.health = Math.max(0, h.health - dmg);
+          events.emit('heroHurt', withPlayer({ kind: 'gas', damage: dmg }, playerOf(h)));
+          events.emit('hint', withPlayer({ id: 'gas' }, playerOf(h)));
+          if (h.health <= 0) killFor(h);
         }
       }
       if (c.t > 6.2) { scene.remove(c.g); clouds.splice(i, 1); }
@@ -326,7 +347,9 @@ export function createBoss({ assets, scene, rng, combat, events, hud, spawn, des
     }
     joker.t += dt;
     if (knock.lengthSq() > 0.001) { pos.addScaledVector(knock, dt); knock.multiplyScalar(Math.max(0, 1 - dt * 4)); }
-    const dx = hero.pos.x - pos.x, dz = hero.pos.z - pos.z;
+    // combat hands every enemy the hero its aggro is on (one player: player 0's hero).
+    target = ectx?.hero && !ectx.hero.dead ? ectx.hero : hero.dead ? heroes().find((h) => !h.dead) ?? hero : hero;
+    const dx = target.pos.x - pos.x, dz = target.pos.z - pos.z;
     const dist = Math.hypot(dx, dz);
     let speed = 0, mx = 0, mz = 0;
     switch (joker.state) {
@@ -344,7 +367,7 @@ export function createBoss({ assets, scene, rng, combat, events, hud, spawn, des
         if (strafe.t <= 0) { strafe.dir *= -1; strafe.t = rng.range(1.5, 3); }
         strafe.angle += strafe.dir * dt * 0.5;
         const want = 8.5;
-        const tx = hero.pos.x + Math.sin(strafe.angle) * want, tz = hero.pos.z + Math.cos(strafe.angle) * want;
+        const tx = target.pos.x + Math.sin(strafe.angle) * want, tz = target.pos.z + Math.cos(strafe.angle) * want;
         const gx = tx - pos.x, gz = tz - pos.z, gd = Math.hypot(gx, gz);
         if (gd > 0.5) { speed = gd > 3 ? 5 : 2.2; mx = gx / gd; mz = gz / gd; }
         faceHero(8, dt);
@@ -361,7 +384,8 @@ export function createBoss({ assets, scene, rng, combat, events, hud, spawn, des
       case 'throw':
         faceHero(10, dt);
         if (joker.t > 0.95) {
-          throwGrenade(hero.pos);
+          // Two heroes: the grenades alternate between them (his target, then the other).
+          { const hs = heroes().filter((h) => !h.dead); throwGrenade(hs.length > 1 ? hs[throwAt++ % hs.length].pos : target.pos); }
           if (rng.chance(0.4)) say(pick(LINES.phase2), 2);
           joker.state = 'roam'; joker.t = 0; joker.glyph = null;
           throwT = rng.range(2.4, 3.4);
@@ -441,6 +465,8 @@ export function createBoss({ assets, scene, rng, combat, events, hud, spawn, des
     debugFinish: () => finish(),
     get active() { return phase > 0 && phase < 4; },
     get speech() { return speech; },
+    // [net] The boss bar's fill (an online guest draws the host's).
+    progress: () => progress(),
     headWorld: (out) => ch.headWorld(out, 0.5),
     // Pose for comic panels.
     pose(p, yaw, anim, t = 0.5) {

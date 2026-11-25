@@ -61,3 +61,24 @@ export function maybeShowGpuHint(root, raw, storage, platform = detectPlatform()
   root.appendChild(box);
   return box;
 }
+
+// [perf3] First-boot auto quality found a better tier for this machine than the one this session
+// started on. It is stored for the next launch (src/render/tierDetect.js settleAutoTier); this
+// note on the title screen offers to restart now. Nothing reloads unless the player clicks.
+// stillOk(): false once the player has left the title (the note then removes itself).
+export function showTierAdvice(root, label, stillOk = () => true) {
+  const box = document.createElement('div');
+  box.className = 'gpu-hint tier-advice';
+  const text = document.createElement('p');
+  text.textContent = `Video quality "${label}" suits this machine better. It applies from the next start, or restart now. (Settings > Video can change it any time.)`;
+  const now = document.createElement('button');
+  now.textContent = 'Restart now';
+  now.addEventListener('click', () => { if (stillOk()) location.reload(); else box.remove(); });
+  const later = document.createElement('button');
+  later.textContent = 'Later';
+  later.addEventListener('click', () => box.remove());
+  box.append(text, now, later);
+  root.appendChild(box);
+  const watch = setInterval(() => { if (!stillOk() || !box.isConnected) { clearInterval(watch); box.remove(); } }, 500);
+  return box;
+}

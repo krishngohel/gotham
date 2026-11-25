@@ -1,0 +1,30 @@
+potato neon street: 149 draws, 85 distinct materials
+== triangles by object | material ==  total 229954
+   89014   21 painted | MeshToonMaterial#ffffff
+   25783    5 glow | MeshBasicMaterial#ffffff
+   20736    1 wetStreaks | ShaderMaterial
+   12664    2 _<_<backdrop | ShaderMaterial
+    9068    1 kit-lit<Armature<Scene | MeshToonMaterial#ffffff
+    9068    1 _<kit-lit<Armature | MeshBasicMaterial#0b0b12
+    7762    3 _<_<Armature | MeshBasicMaterial#0b0b12
+    7700    1 cone | ShaderMaterial
+    5882    2 _<Armature<Scene | MeshToonMaterial#ffffff
+    5168    1 SuperHero_Male<Armature<Scene | MeshToonMaterial#ffffff
+    5168    1 _<SuperHero_Male<Armature | MeshBasicMaterial#0b0b12
+    3892    4 lane | MeshBasicMaterial#b9b2a0
+    3600    1 signalLenses | MeshBasicMaterial#ffffff
+    3348    1 signalHeads | MeshToonMaterial#1e2026
+    2688    2 traffic-sedan | fleet-traffic#ffffff
+    2210    2 _<_ | ShaderMaterial
+    1880    1 _<Armature<Scene | MeshToonMaterial#17181e
+    1410    1 puddle | MeshBasicMaterial#ffffff
+    1300    6 _ | ShaderMaterial
+    1048    5 pool | MeshBasicMaterial#ffffff
+    1032    1 farLandmarks<_ | MeshBasicMaterial#111927
+     986    9 _ | MeshToonMaterial#ffffff
+     920    4 wood | MeshToonMaterial#ffffff
+     738    4 roof | MeshToonMaterial#ffffff
+     622    4 sidewalk | MeshToonMaterial#ffffff
+     564    1 traffic-suv | fleet-traffic#ffffff
+     520    3 concrete | MeshToonMaterial#ffffff
+     520    1 steam | ShaderMaterial

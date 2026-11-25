@@ -1,10 +1,13 @@
 // Objective marker: a diamond with the distance, pinned to the screen edge as an arrow when the
-// objective is off screen or behind the camera.
+// objective is off screen or behind the camera. A target more than 4 m above or below gets a
+// height line (up 58 m: a roof; down: the lower deck). The same marker, recoloured with
+// setColor(), shows custom waypoints (src/nav/navSystem.js, workstream L2).
 import * as THREE from 'three';
 import { PALETTE } from '../config/palette.js';
 import { LAYER_FX } from '../render/layers.js';
 
-export function createWaypoint(root) {
+// getSize: the view's size in CSS px (split screen: one player's panel); the window by default.
+export function createWaypoint(root, getSize = null) {
   const el = document.createElement('div');
   el.className = 'waypoint';
   el.innerHTML = `
@@ -16,19 +19,27 @@ export function createWaypoint(root) {
   const arrow = el.querySelector('.wp-arrow');
   const v = new THREE.Vector3();
   const camDir = new THREE.Vector3();
+  const rel = new THREE.Vector3();
+  let lastText = '', lastColor = null, lastFade = 1;
   return {
+    el,
+    // A custom waypoint's colour (CSS colour; null: the objective's yellow).
+    setColor(c) { if (c === lastColor) return; lastColor = c; el.style.setProperty('--wp-color', c ?? ''); el.classList.toggle('wp-tinted', !!c); },
     update(target, camera, heroPos) {
       if (!target) { el.style.display = 'none'; return; }
       el.style.display = '';
       const meters = Math.round(Math.hypot(target.x - heroPos.x, target.y - heroPos.y, target.z - heroPos.z));
-      dist.textContent = `${meters} m`;
+      const dy = Math.round((target.y ?? 0) - heroPos.y);
+      const text = Math.abs(dy) > 4 ? `${meters} m ${dy > 0 ? '▲' : '▼'}${Math.abs(dy)}` : `${meters} m`;
+      if (text !== lastText) { lastText = text; dist.textContent = text; }
       v.set(target.x, target.y + 1.5, target.z);
       camera.getWorldDirection(camDir);
-      const behind = v.clone().sub(camera.position).dot(camDir) < 0;
+      const behind = rel.copy(v).sub(camera.position).dot(camDir) < 0;
       v.project(camera);
       let x = v.x, y = v.y;
       if (behind) { x = -x; y = -y; }
-      const W = innerWidth, H = innerHeight;
+      const sz = getSize?.();
+      const W = sz ? sz.w : innerWidth, H = sz ? sz.h : innerHeight;
       const margin = 0.88;
       const off = behind || Math.abs(x) > margin || Math.abs(y) > margin;
       if (off) {
@@ -47,12 +58,19 @@ export function createWaypoint(root) {
     hide() { el.style.display = 'none'; },
     // The idle nudge: a few beats so the eye finds it.
     pulse() { el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse'); },
+    // [onboard] Arriving: the marker fades as she closes in (1 far, 0 on the spot) instead of
+    // vanishing at 7 m. Written only when the quantised level changes.
+    fade(k) { const q = Math.round(Math.min(1, Math.max(0, k)) * 20) / 20; if (q === lastFade) return; lastFade = q; el.style.opacity = q >= 1 ? '' : String(q); },
+    // [onboard] Reached: the diamond bursts where it stood (the world's acknowledgement).
+    burst() { el.classList.remove('burst'); void el.offsetWidth; el.classList.add('burst'); setTimeout(() => el.classList.remove('burst'), 600); },
   };
 }
 
 // A tall column of yellow ink light over the objective, fading as the hero gets close.
-export function createBeacon(scene) {
-  const uniforms = { uColor: { value: new THREE.Color(PALETTE.signal) }, uTime: { value: 0 }, uFade: { value: 1 } };
+// opts.color: another colour (a custom waypoint); opts.owner(): the camera of the only view that
+// should see it (split screen: each player's own waypoint beacon), or nothing for every view.
+export function createBeacon(scene, { color = PALETTE.signal, owner = null } = {}) {
+  const uniforms = { uColor: { value: new THREE.Color(color) }, uTime: { value: 0 }, uFade: { value: 1 } };
   const mat = new THREE.ShaderMaterial({
     uniforms,
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
@@ -70,14 +88,17 @@ export function createBeacon(scene) {
   mesh.layers.set(LAYER_FX);
   mesh.frustumCulled = false;
   mesh.visible = false;
+  const fade = { v: 1 };
+  if (owner) mesh.onBeforeRender = (r, s, cam) => { const o = owner(); uniforms.uFade.value = !o || cam === o ? fade.v : 0; };
   scene.add(mesh);
   return {
-    set(pos) { mesh.visible = !!pos; if (pos) mesh.position.set(pos.x, pos.y, pos.z); },
+    set(pos, c = null) { mesh.visible = !!pos; if (pos) mesh.position.set(pos.x, pos.y, pos.z); if (c) uniforms.uColor.value.set(c); },
     update(t, heroPos) {
       uniforms.uTime.value = t;
       if (!mesh.visible) return;
       const d = Math.hypot(heroPos.x - mesh.position.x, heroPos.z - mesh.position.z);
-      uniforms.uFade.value = THREE.MathUtils.smoothstep(d, 8, 40);
+      fade.v = THREE.MathUtils.smoothstep(d, 8, 40);
+      uniforms.uFade.value = fade.v;
     },
   };
 }

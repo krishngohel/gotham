@@ -1,0 +1,6 @@
+gcpd roof     gpu 1.871 step 2.9 calls 253 obj 5698 walk 5646 autoMat 4201 meshVis 434 skinVis 60 prog 114 dom 2.0 heapUp 353505 B/f long 0
+   render 2.05 | render.matrices 0.76 | game 0.65 | hero.cape 0.27 | world 0.23 | hero 0.10 | flow 0.05 | world.traffic 0.05 | world.chunks 0.04 | vehicles 0.03 | side 0.03 | civilians 0.03 | nav 0.03
+docks         gpu 1.314 step 2.5 calls 128 obj 5698 walk 5645 autoMat 4201 meshVis 374 skinVis 59 prog 114 dom 2.0 heapUp 342566 B/f long 0
+   render 1.70 | render.matrices 0.74 | game 0.61 | hero.cape 0.26 | world 0.22 | hero 0.10 | flow 0.05 | world.traffic 0.05 | world.chunks 0.03 | vehicles 0.03 | side 0.02
+clock plaza   gpu 1.326 step 2.3 calls 204 obj 5698 walk 5645 autoMat 4201 meshVis 512 skinVis 59 prog 114 dom 2.0 heapUp 314693 B/f long 0
+   render 1.52 | render.matrices 0.61 | game 0.56 | hero.cape 0.26 | world 0.19 | hero 0.09 | world.traffic 0.04 | side 0.03 | flow 0.03 | world.chunks 0.03 | vehicles 0.03

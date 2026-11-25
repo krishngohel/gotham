@@ -1,0 +1,5 @@
+low: toggling clothSqrt, programSort, chunkGroups every 500 ms for 20 s per site
+gcpd roof     js 5.377 -> 4.929 ms (x0.917, halves x0.916/0.918)  frame 5.998 -> 5.532 ms (x0.922)  frames 1717/1579
+neon street   js 4.816 -> 4.373 ms (x0.908, halves x0.918/0.898)  frame 5.230 -> 4.788 ms (x0.915)  frames 2006/1827
+clock plaza   js 5.256 -> 4.660 ms (x0.886, halves x0.869/0.907)  frame 5.870 -> 5.242 ms (x0.893)  frames 1840/1631
+geomean: js x0.904  frame x0.910
