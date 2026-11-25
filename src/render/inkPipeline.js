@@ -5,6 +5,7 @@ import { LAYER_FX, LAYER_XRAY } from './layers.js';
 import { createPassStats } from './passStats.js';
 import { createSkinCuller } from './skinCull.js'; // [perf2]
 import { installMrtNormals, prepareInkMaterials, INK_VIEWPORT } from './mrtNormals.js';
+import { brightnessGamma } from './brightness.js'; // [light]
 
 const vertexShader = /* glsl */ `
 varying vec2 vUv;
@@ -19,6 +20,8 @@ uniform sampler2D tNormal;
 uniform vec2 uTexel;
 uniform float uNear, uFar, uTime, uFlash, uDetective, uHalftone, uHalftoneAmount;
 uniform float uWobble, uHatch, uMidDots, uSkyDots, uColorEdges, uMisreg, uPaletteAmt, uImpact, uImpactSoft, uPaperTex, uFilter;
+// [light] The Brightness setting (src/render/brightness.js): the last step, a gamma in linear light.
+uniform float uGamma, uVignette, uToneInk;
 uniform vec2 uImpactCenter;
 uniform vec3 uPalette[6];
 uniform vec3 uInk, uPaper, uDetectiveTint, uAccent;
@@ -239,14 +242,14 @@ void main() {
 #endif
   float r = (0.3 * smoothstep(0.24, 0.15, L) + 0.12 * smoothstep(0.1, 0.04, L)) * (1.0 - smoothstep(60.0, 150.0, dc)) * uHalftoneAmount * (1.0 - hatchZone * 0.8);
   float dotMask = 1.0 - smoothstep(r - 0.06, r + 0.06, length(fract(cell) - 0.5));
-  col = mix(col, uInk, dotMask * step(0.001, r) * 0.9);
+  col = mix(col, uInk, dotMask * step(0.001, r) * 0.9 * uToneInk);
   if (hatchZone > 0.0) {
     vec2 hp = frag + (uWobble > 0.0 ? vec2(vnoise(frag / 40.0 + floor(uTime * 8.0)) * 1.5, 0.0) : vec2(0.0));
     float s = uHalftone * 0.9;
     float h1 = 1.0 - smoothstep(0.12, 0.28, abs(fract((hp.x + hp.y) / s) - 0.5));
     float h2 = 1.0 - smoothstep(0.12, 0.28, abs(fract((hp.x - hp.y) / s) - 0.5));
     float hatch = max(h1, h2 * smoothstep(0.1, 0.05, L)) * hatchZone;
-    col = mix(col, uInk, hatch * 0.75);
+    col = mix(col, uInk, hatch * 0.75 * uToneInk);
   }
   // Mid tones: a light dot tint of the surface's own hue.
   float mid = smoothstep(0.18, 0.26, L) * (1.0 - smoothstep(0.42, 0.55, L)) * (1.0 - smoothstep(50.0, 120.0, dc)) * uMidDots;
@@ -320,7 +323,9 @@ void main() {
   }
   col *= 0.96 + 0.04 * hash(floor(frag / 2.0) + floor(uTime * 6.0));
   vec2 v = vUv - 0.5;
-  col *= 1.0 - 0.72 * dot(v, v);
+  col *= 1.0 - uVignette * dot(v, v);
+  // [light] Brightness: skipped at the default (uGamma 1), one pow per pixel otherwise.
+  if (uGamma != 1.0) col = pow(max(col, vec3(0.0)), vec3(uGamma));
   gl_FragColor = vec4(col, 1.0);
   #include <colorspace_fragment>
 }
@@ -404,6 +409,13 @@ export function createInkPipeline(renderer, quality, { gpuTime = false } = {}) {
     uDetectiveTint: { value: new THREE.Color(PALETTE.detective) },
     uAccent: { value: new THREE.Color(PALETTE.crimson) },
     uFilter: { value: 0 },
+    uGamma: { value: 1 }, // [light] Brightness (setBrightness)
+    // [light] Corner darkening. It was 0.72 (the corners at 64 % of the centre), which took the
+    // bottom corners of a night street, already the darkest part of the frame, to black.
+    uVignette: { value: 0.5 },
+    // [light] Strength of the shadow tone patterns (hatching, halftone dots): 1 by day, lighter in
+    // the dark, where they covered every road and wall near the camera in black (setEnv).
+    uToneInk: { value: 1 },
     uWobble: { value: 0 }, uHatch: { value: 0 }, uMidDots: { value: 0 }, uSkyDots: { value: 0 },
     uColorEdges: { value: 0 }, uMisreg: { value: 0 }, uPaletteAmt: { value: 0 }, uPaperTex: { value: 0 },
     uImpact: { value: 0 }, uImpactSoft: { value: 0 }, uImpactCenter: { value: new THREE.Vector2(0.5, 0.5) },
@@ -491,6 +503,9 @@ export function createInkPipeline(renderer, quality, { gpuTime = false } = {}) {
   }
   const FILTER_INDEX = { ink: 0, noir: 1, pop: 2, sepia: 3 };
   function setFilter(name) { uniforms.uFilter.value = FILTER_INDEX[name] ?? 0; }
+  // [light] The Brightness setting (0.6..1.6, 1 = as authored). A uniform write: no new program,
+  // and one value for every view, so split screen follows it.
+  function setBrightness(b) { uniforms.uGamma.value = brightnessGamma(b); }
 
   // Benchmark switches (src/dev/perfBench.js): each drops or swaps a piece of the frame so its cost
   // can be measured on the player's own machine. Never set in normal play.
@@ -726,12 +741,12 @@ export function createInkPipeline(renderer, quality, { gpuTime = false } = {}) {
   }
 
   // [env] The world's key light direction (toward the light) and the street's wetness.
-  function setEnv(dir, wet, lit = 1) { if (dir) keyWorld.copy(dir).normalize(); uniforms.uWet.value = wet; uniforms.uEnvLit.value = lit; }
+  function setEnv(dir, wet, lit = 1, toneInk = 1) { if (dir) keyWorld.copy(dir).normalize(); uniforms.uWet.value = wet; uniforms.uEnvLit.value = lit; uniforms.uToneInk.value = toneInk; }
 
   return {
     setEnv,
     get envEffects() { return Object.keys(envDefines); },
-    uniforms, setSize, render, setComic, setPalette, setImpact, setFilter, compileAsync, prepare, debug, stats,
+    uniforms, setSize, render, setComic, setPalette, setImpact, setFilter, setBrightness, compileAsync, prepare, debug, stats,
     createView, disposeView, mainView, views,
     get normals() { return mrt ? 'mrt' : 'depth'; },
     get gpuMs() { return stats.gpuMs; },

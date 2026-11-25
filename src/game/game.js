@@ -155,7 +155,7 @@ import { isReplica } from '../net/mode.js';
 import '../net/netSave.js';
 // [story] The campaign's start params and the boss framework (workstream J1).
 import { applyStartParams } from '../story/campaignSave.js';
-import { stepsOf, registerDayHook } from '../story/campaign.js';
+import { stepsOf, registerDayHook, allNights } from '../story/campaign.js';
 import { missionsOf as campaignMissionsOf } from '../story/campaign.js'; // [onboard]
 import { createAbilities } from '../abilities/runtime.js'; // [onboard] the ability layer
 import { PROMPT_ABILITY } from '../abilities/abilityDefs.js'; // [onboard]
@@ -364,6 +364,8 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
     game?.gadgets.refresh();
     audio.setVolumes(settings.volume);
     ink.uniforms.uHalftoneAmount.value = settings.halftone;
+    // [light] Brightness (Settings > Video). ?brightness= overrides it for the darkness audit.
+    ink.setBrightness(params.has('brightness') ? Number(params.get('brightness')) : settings.brightness);
     // The tier in force: split screen runs one tier lower (see splitQuality).
     const tq = split?.split ? getQuality(stepTier(quality.name, -1)) : quality;
     ink.setComic({ ...tq.comic, wobble: settings.lineWobble && !settings.access.reducedMotion ? tq.comic.wobble : 0 }); // [prog] a11y
@@ -1911,6 +1913,10 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
     // [net] Online co-op from scripts and tests: openNet((n) => n.openHost()), and the controller.
     openNet: (fn) => openNet(fn), get net() { return net; }, lightningNow: () => { world.weather.strikeNow(); }, checkStealthRooms: () => checkRooms(world.collision, world.grapplePoints, ROOMS, SITES) };
 
+  // [light] The campaign's registry for scripts/darkness-audit.mjs (every night's sites, fights, rooms
+  // and steps are audited from data, also on a production build where /src is not served).
+  if (DEV_TOOLS) window.__game.campaign = { allNights, stepsOf };
+
   // [env] The environment object (design doc 4.5) for player 0's hero (or the camera before a
   // run): read by the audio (sound.js falls back to __game.environment), traffic, civilians, UI.
   const envObj = world.environmentAt(camera.position);
@@ -1932,7 +1938,7 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
   });
   function lightning() {
     ink.uniforms.uFlash.value = world.flash; // [verify] a11y: env's lightningFlash already applies flash reduction (no double dimming)
-    ink.setEnv(world.keyDir, world.weather.wetness, 0.25 + 0.75 * world.lampsOn); // [env] upper-tier ink passes
+    ink.setEnv(world.keyDir, world.weather.wetness, 0.25 + 0.75 * world.lampsOn, world.toneInk); // [env] upper-tier ink passes; [light] tone ink
   }
   let prevNow = performance.now();
   const coopFocus = new THREE.Vector3();

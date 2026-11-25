@@ -13,7 +13,9 @@
     "verify": "npm test && npm run build",
     "assets": "node scripts/build-assets.mjs",
     "shots": "node scripts/shots.mjs",
-    "test:balance": "node scripts/balance-regress.mjs"
+    "test:balance": "node scripts/balance-regress.mjs",
+    "test:darkness": "vite build && node scripts/darkness-audit.mjs --dist=dist --fast --check",
+    "audit:darkness": "vite build && node scripts/darkness-audit.mjs --dist=dist"
   },
   "dependencies": {
     "three": "^0.186.1",

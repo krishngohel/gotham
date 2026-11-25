@@ -12,10 +12,12 @@
 import { distortOptions } from '../ui/accessibility.js'; // [verify] a11y
 const FONT = "'Bangers', cursive";
 const FILTERS = {
-  fear: (k) => `hue-rotate(${Math.round(40 + 40 * k)}deg) saturate(${(1.4 + k).toFixed(2)}) contrast(1.15)`,
+  // [light] fear and heat used contrast(1.15 / 1.2): it pivots at mid grey, so on a night frame it
+  // pushed the darks to black (docs/design/lighting.md). The hue and saturation carry the effect.
+  fear: (k) => `hue-rotate(${Math.round(40 + 40 * k)}deg) saturate(${(1.4 + k).toFixed(2)}) brightness(1.12)`,
   cold: (k) => `saturate(${(1 - 0.6 * k).toFixed(2)}) brightness(${(1 + 0.25 * k).toFixed(2)}) hue-rotate(${Math.round(-12 * k)}deg)`,
   spore: (k, blur = true) => `hue-rotate(${Math.round(70 * k)}deg) saturate(${(1.2 + 0.8 * k).toFixed(2)})${blur ? ` blur(${(1.4 * k).toFixed(1)}px)` : ''}`, // [verify] a11y: no blur under reduced motion
-  heat: (k) => `sepia(${(0.5 * k).toFixed(2)}) saturate(${(1 + k).toFixed(2)}) contrast(${(1 + 0.2 * k).toFixed(2)})`,
+  heat: (k) => `sepia(${(0.5 * k).toFixed(2)}) saturate(${(1 + k).toFixed(2)}) brightness(${(1 + 0.12 * k).toFixed(2)})`,
 };
 
 export function createViewFx({ hud, players = () => [] }) {

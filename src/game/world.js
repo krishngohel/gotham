@@ -8,7 +8,8 @@ import { createRng } from '../core/rng.js';
 import { SITES } from '../world/mapData.js';
 import { REGIONS, WORLD_BOUNDS, WATER_BODIES, districtAt, regionAt, killYAt } from '../world/regions/index.js';
 import { assembleCity } from '../world/regions/assemble.js';
-import { INTERIOR_ROOMS, insideRoom } from '../world/interiors.js';
+import { INTERIOR_ROOMS, insideRoom, roomBounds } from '../world/interiors.js';
+import { POCKETS } from '../bruce/pockets.js'; // [light] where the pockets are (the Manor, the cave, the tower)
 import { createSkyDome } from '../world/sky.js';
 import { createBackdrop } from '../world/skyline.js';
 import { createBatsignal } from '../world/batsignal.js';
@@ -145,6 +146,23 @@ export function createWorld(scene, quality, envOpts = {}) {
   const envLocal = { fog: 0, snow: 0 };
   const altitudeAt = (p) => { const g = collision.groundBelow(p.x, p.y + 0.5, p.z, 0.3); return Number.isFinite(g) ? Math.max(0, p.y - g) : Math.max(0, p.y); };
   let envT = 0;
+  // [light] How far indoors (a core interior room, or anywhere in a pocket: those are interiors
+  // through and through) and how far under a deck the player is, eased over about a third of a
+  // second so the fill never pops at a doorway. Tables built once; the per-frame tests allocate nothing.
+  let indoorK = 0, coverK = 0;
+  const roomBoxes = Object.values(INTERIOR_ROOMS).map(roomBounds);
+  const pocketOrigins = Object.values(POCKETS).map((p) => p.origin);
+  const POCKET_SPAN = 160;
+  function focusIndoors(p) {
+    for (let i = 0; i < roomBoxes.length; i++) { const b = roomBoxes[i]; if (p.x >= b.minX && p.x <= b.maxX && p.y >= b.minY && p.y <= b.maxY && p.z >= b.minZ && p.z <= b.maxZ) return true; }
+    for (let i = 0; i < pocketOrigins.length; i++) { const o = pocketOrigins[i]; if (Math.abs(p.x - o.x) < POCKET_SPAN && Math.abs(p.z - o.z) < POCKET_SPAN) return true; }
+    return false;
+  }
+  function focusCovered(p) {
+    const cs = ctx.world.covers;
+    for (let i = 0; i < cs.length; i++) { const c = cs[i]; if (p.x > c.minX && p.x < c.maxX && p.y > c.minY && p.y < c.maxY && p.z > c.minZ && p.z < c.maxZ) return true; }
+    return false;
+  }
 
   return {
     collision,
@@ -169,6 +187,7 @@ export function createWorld(scene, quality, envOpts = {}) {
     districtAt,
     streetGraph,
     bridges: ctx.world.bridges ?? null,
+    covers: ctx.world.covers, // [light] covered volumes (under a deck): the darkness audit visits each
     traffic: life.traffic,
     // True when a body at p has gone under the water (or below the lowest deck) at its x, z. In
     // the core this is the old y < -0.8 test; the river and Lower Gotham sit lower.
@@ -188,6 +207,8 @@ export function createWorld(scene, quality, envOpts = {}) {
     // gliding (environment.gust).
     get windVec() { return env.windVec; },
     get lampsOn() { return env.look.lamps; },
+    // [light] How strongly the ink pass prints hatching and shadow dots (1 by day, lighter in the dark).
+    get toneInk() { return env.look.toneInk; },
     // Lightning's flash this frame (0 or 1): game.js feeds it to the ink pass.
     get flash() { return env.flash; },
     // The district palette graded by the time of day (in place).
@@ -208,7 +229,11 @@ export function createWorld(scene, quality, envOpts = {}) {
     update(t, dt, focus, camera, hero = null) {
       // [env] Clock, weather and the look first: the shadow system below reads the key direction.
       envT += dt;
-      env.update(t, dt, camera.position);
+      const inside = focusIndoors(focus) ? 1 : 0;
+      const ease = Math.min(1, dt * 3.5);
+      indoorK += (inside - indoorK) * ease;
+      coverK += ((focusCovered(focus) ? 1 : 0) - coverK) * ease;
+      env.update(t, dt, camera.position, indoorK, coverK);
       farMarks.setTone(scene.fog.color, clock.daylight);
       for (const u of ctx.updaters) u(t);
       life.update(t, dt, hero, camera);

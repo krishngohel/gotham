@@ -927,3 +927,10 @@ body .gh-name { font-size: calc(16px * var(--a11y-text, 1)); }
 body .photo-panel .ph-sec { font-size: calc(13px * var(--a11y-text, 1)); }
 body .photo-panel .ph-adds .mbtn { font-size: calc(15px * var(--a11y-text, 1)); }
 body .photo-panel .ph-help summary { font-size: calc(16px * var(--a11y-text, 1)); }
+
+/* [light] Brightness calibration tile (src/ui/brightnessControl.js): two bats on black, tinted by
+   the same curve the game's final pass uses. */
+.bright-calib { display: flex; align-items: center; gap: 14px; padding: 6px 0 8px; border-bottom: 2px dashed rgba(11, 11, 18, 0.2); }
+.bright-calib .note { margin: 0; flex: 1; }
+.bright-tile { display: flex; gap: 10px; padding: 12px 14px; background: #000; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); flex: none; }
+.bright-tile svg { width: 66px; height: 43px; display: block; }

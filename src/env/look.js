@@ -38,7 +38,7 @@ export function makeLook() {
   const o = {};
   for (const k of COLOR_KEYS) o[k] = [0, 0, 0];
   for (const k of SCALAR_KEYS) o[k] = 0;
-  Object.assign(o, { day: 0, cloudCut: 0.52, sunDir: [0, -1, 0], keyDir: [0, 1, 0], keyIsSun: false, signal: 1, starsVis: 0 });
+  Object.assign(o, { day: 0, cloudCut: 0.52, sunDir: [0, -1, 0], keyDir: [0, 1, 0], keyIsSun: false, signal: 1, starsVis: 0, wetDark: 1, dark: 0, toneInk: 1 });
   return o;
 }
 
@@ -86,6 +86,96 @@ export function applyWeather(out, w, day, snowCover = 0) {
   mixc(out.fog, day > 0.5 ? 0xc8ccd4 : 0x4a5468, 0.4 * snow);
   mixc(out.hemiGround, day > 0.5 ? 0x9aa0ac : 0x3a4250, 0.6 * snowCover);
   out.fogMul *= 1 + 0.5 * snow;
+  return out;
+}
+
+// [light] The readability floor (docs/design/lighting.md). The key frames above stay as they are
+// (the night ones are the pre-overhaul constants); this is what is added on top so that no scene
+// renders too dark to read, as numbers the darkness audit (scripts/darkness-audit.mjs) was tuned
+// against. How dark the hour is comes from the frame itself, not from the clock: `dark` is 1 when
+// the hemisphere fill is 1.15 or less (18:00 to 06:30) and 0 from 1.5 up (08:00-16:00), so dusk and
+// dawn, whose key light is weaker than the moon's, are covered by the same rule as midnight.
+//
+//   fill      On the tiers with shadow maps a street between towers gets no moonlight at all, only
+//             the hemisphere fill, and at 0.75 with a near-black ground colour that put the road,
+//             the walls and a dark cape in the same black. In the dark the fill's ground colour is
+//             a navy instead of a black and its sky colour is lifted, so shaded, down-facing and
+//             up-facing faces keep a tone (the comic answer to night: blue, not black), and the
+//             fill has a floor in received light (see applyReadability).
+//   shadowed  the tier draws shadow maps (medium and up): those streets are cut off from the moon,
+//             which the tiers without shadow maps never are, so their floor is higher, to end up
+//             where potato and low already stand.
+//   keyFloor  19:00 and 05:30 have a key light of 1.0-1.4 (the sun gone, the moon not up) and rain
+//             dims it further: the darkest hours of the cycle were dusk and dawn in a storm, not
+//             midnight. The key never drops under keyFloor x dark.
+//   wetDark   Wet streets darken up-facing surfaces by 30 % (surfacePatch.js). By day that reads
+//             as wet; in the dark it stacked on the night and crushed the road, while a real wet
+//             street at night is the brighter one. So the darkening fades with the light.
+//   toneInk   The ink pass draws shadow tone as black hatching and halftone dots wherever a surface
+//             is under 20 % luma, which at night is every road and wall near the camera: the
+//             pattern, not the surface, was what read as black (more fill did not move it). In
+//             the dark the tone patterns are printed lighter (the outlines stay full ink).
+//   indoor    0..1, the player is inside a room or pocket: the moon does not reach in (and on the
+//             shadow tiers the roof shadows the floor), the room's own lamps are pool lights the
+//             potato tier does not have, so the fill carries the room on every tier: stronger, and
+//             a warm neutral bounce instead of the street's navy. At any hour.
+//   cover     0..1, under a deck (Lower Gotham, the pier undercroft): the same idea, cooler.
+// Uniform and light-property writes only: no new light, no recompile, nothing per pixel.
+export const READABILITY = {
+  fill: 1.5, // the night fill (0.75) times this is the fill's floor at dark 1
+  shadowFill: 1.7, // and again on the tiers with shadow maps
+  ground: 0x2b3550, groundMix: 0.85, // the ground (bounce) colour's target in the dark
+  sky: 0xa3b4da, skyMix: 0.8, // up-facing surfaces (roads, roofs) take the fill's sky colour
+  keyFloor: 1.7, // the key light's floor at dark 1
+  wetDark: 0.2, // share of the daytime wet darkening kept at dark 1
+  toneCut: 0.45, // how much lighter hatching and shadow dots print at dark 1 (indoors: 0.7 of it)
+  indoorFill: 1.7, indoorGround: 0x5a5650, indoorGroundMix: 0.8, indoorSky: 0xb0b4c0, indoorSkyMix: 0.5,
+  coverFill: 1.7, coverGround: 0x4a5060, coverGroundMix: 0.8,
+};
+
+const lin = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+// Linear luminance of an sRGB [r, g, b] (the lights take these colours as sRGB).
+const lumLin = (c) => 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]);
+// Mix a colour toward a target, never letting a channel drop (the floor only ever adds light).
+const liftc = (c, hex, k) => { const r = rgb(hex); for (let i = 0; i < 3; i++) c[i] = Math.max(c[i], c[i] + (r[i] - c[i]) * k); };
+
+// The lifted night sky colour's luminance (the night key frame's fill colour after the lift).
+const NIGHT_SKY_LUM = (() => { const c = [...NIGHT.hemiSky]; liftc(c, READABILITY.sky, READABILITY.skyMix); return lumLin(c); })();
+
+// How dark this frame is, 0 (day: a fill of 1.5 or more, 08:00-16:00) .. 1 (a fill of 1.15 or
+// less: 18:00 through the night to 06:30). Pure.
+export function darkness(hemiI) {
+  return Math.max(0, Math.min(1, (1.5 - hemiI) / 0.35));
+}
+
+// In place, after applyWeather. indoor, cover: 0..1 (how far inside a room / under a deck the
+// player is). shadowed: true on a tier with shadow maps. Sets out.dark, out.wetDark, out.toneInk.
+export function applyReadability(out, indoor = 0, cover = 0, shadowed = false) {
+  const R = READABILITY;
+  const dark = darkness(out.hemiI);
+  out.dark = dark;
+  liftc(out.hemiGround, R.ground, R.groundMix * dark);
+  liftc(out.hemiSky, R.sky, R.skyMix * dark);
+  // The fill has a floor in light, not in intensity: what an up-facing surface receives (intensity
+  // x the sky colour's luminance) never drops under the lifted night's. Dawn and dusk have a paler
+  // sky colour than the night but a weaker fill and a low sun the towers block, and a street was
+  // darker at 06:30 under a bright sky than at midnight.
+  const floor = (NIGHT.hemiI * R.fill * (shadowed ? R.shadowFill : 1) * NIGHT_SKY_LUM) / Math.max(1e-3, lumLin(out.hemiSky));
+  out.hemiI += (Math.max(out.hemiI, floor) - out.hemiI) * dark;
+  out.keyI = Math.max(out.keyI, R.keyFloor * dark);
+  out.wetDark = 1 - (1 - R.wetDark) * dark;
+  const inK = Math.max(0, Math.min(1, indoor));
+  if (inK > 0) {
+    out.hemiI *= 1 + (R.indoorFill - 1) * inK;
+    liftc(out.hemiGround, R.indoorGround, R.indoorGroundMix * inK);
+    liftc(out.hemiSky, R.indoorSky, R.indoorSkyMix * inK);
+  }
+  const cvK = Math.max(0, Math.min(1, cover)) * (1 - inK);
+  if (cvK > 0) {
+    out.hemiI *= 1 + (R.coverFill - 1) * cvK;
+    liftc(out.hemiGround, R.coverGround, R.coverGroundMix * cvK);
+  }
+  out.toneInk = 1 - R.toneCut * Math.max(dark, 0.7 * inK, 0.7 * cvK);
   return out;
 }
 

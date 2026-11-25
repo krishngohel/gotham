@@ -7,7 +7,7 @@
 //
 // The night in a storm is the pre-overhaul look exactly (look.js NIGHT; tests/unit/envClockWeather).
 import * as THREE from 'three';
-import { lookAtHour, applyWeather, makeLook, keyDirection, gradePalette } from './look.js';
+import { lookAtHour, applyWeather, applyReadability, makeLook, keyDirection, gradePalette } from './look.js';
 import { ENV_UNIFORMS } from './surfacePatch.js';
 import { lightningFlash, getAccess } from '../ui/accessibility.js'; // [verify] a11y flash reduction
 
@@ -42,8 +42,9 @@ export function createEnvSystem({ scene, quality, clock, weather, lights, sky, r
     windVec,
     get flash() { return flash; },
     // Per frame. dt: real seconds (0 while photo mode holds time). camPos: the camera (fog banks
-    // near the lake follow the viewer).
-    update(t, dt, camPos) {
+    // near the lake follow the viewer). [light] indoor, cover: 0..1, how far inside a room or under
+    // a deck the player is (world.js; look.js applyReadability).
+    update(t, dt, camPos, indoor = 0, cover = 0) {
       clock.update(dt);
       weather.update(dt);
       const h = clock.hour;
@@ -51,6 +52,7 @@ export function createEnvSystem({ scene, quality, clock, weather, lights, sky, r
       lookAtHour(h, look);
       look.day = day;
       applyWeather(look, weather.params, day, surfaceOK ? weather.snowCover : 0);
+      applyReadability(look, indoor, cover, !!quality.shadows); // [light] the readability floor
       // Lake effect: thicker fog near open lake water (a fog bank you can drive into).
       if (fogBanks && camPos) {
         weather.localAt(camPos.x, camPos.z, local);
@@ -85,7 +87,7 @@ export function createEnvSystem({ scene, quality, clock, weather, lights, sky, r
       // Lights on in the city: windows and lamps (each with its own threshold).
       ENV_UNIFORMS.uEnvWindows.value = look.windows;
       ENV_UNIFORMS.uEnvLamps.value = look.lamps;
-      ENV_UNIFORMS.uEnvWet.value = surfaceOK ? weather.wetness : 0;
+      ENV_UNIFORMS.uEnvWet.value = surfaceOK ? weather.wetness * look.wetDark : 0; // [light] wet darkening follows daylight
       ENV_UNIFORMS.uEnvSnow.value = surfaceOK ? weather.snowCover : 0;
       // Rain or snow: one particle mesh, two looks.
       const p = weather.params;

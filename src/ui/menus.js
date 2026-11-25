@@ -14,6 +14,7 @@ import { DIFFICULTY_INFO } from '../progress/mode.js'; // [prog]
 import { DIFFICULTIES } from '../combat/rules.js'; // [prog]
 import { getAudioPrefs, setAudioPrefs } from '../audio/prefs.js';
 import { buildAccessibilityTab, buildPadBindings, buildPadLook } from './accessibility.js'; // [prog] a11y
+import { buildBrightnessControl } from './brightnessControl.js'; // [light]
 
 const MOVING_AROUND = ['ladder', 'ledge', 'zip', 'wallrun', 'divebomb', 'takedown'];
 const PREDATOR = ['crouch', 'silent', 'perch', 'perchDrop', 'distract', 'vent', 'ledgeStealth', 'spotted', 'rifle'];
@@ -458,6 +459,7 @@ export function createMenus({ root, settings, storage, input, sound = () => {}, 
       body.appendChild(slider('Render scale', settings.renderScale, 0.5, 1, 0.05, (v) => { settings.renderScale = v; }, (v) => `${Math.round(v * 100)}%`));
       body.appendChild(toggle('Dynamic resolution', settings.dynamicRes, (v) => { settings.dynamicRes = v; }));
       body.appendChild(el('p', 'note', 'Lowers the render scale a little when frames run late, and raises it again when there is room.'));
+      buildBrightnessControl(body, settings, a11y); // [light] Brightness + the calibration tile
       body.appendChild(slider('Halftone dots', settings.halftone, 0, 1.5, 0.05, (v) => { settings.halftone = v; }, (v) => `${Math.round(v * 100)}%`));
       // [env] Upper-tier ink lighting (src/render/inkPipeline.js INK_AO / INK_CONTACT / INK_SSR).
       body.appendChild(choice('Ink lighting', settings.inkLight, [['auto', 'Auto (Ultra)'], ['on', 'On'], ['off', 'Off']], (v) => { settings.inkLight = v; }));

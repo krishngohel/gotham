@@ -8,3 +8,5 @@ playwright-report/
 playthrough/
 story-walk/
 contact-shots/
+# [light] scripts/darkness-audit.mjs output (frames, audit.json, audit.md)
+tmp/

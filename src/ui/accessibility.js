@@ -13,6 +13,7 @@
 //                                 numbers the shake, flash, aim and timing code multiplies by
 // The settings menu pieces (Accessibility tab, pad rebinding, per-player pad look) are at the end.
 import { padLayout, PAD_PRESET_DEFS, PAD_REBINDABLE, padButtonName, rebindPad, resolvePadButtons } from '../core/input.js';
+import { buildBrightnessControl } from './brightnessControl.js'; // [light]
 import { ACTIONS } from '../core/bindings.js';
 import { DEFAULT_SETTINGS, SUBTITLE_SIZES } from '../core/settings.js';
 
@@ -203,6 +204,7 @@ export function buildAccessibilityTab(body, settings, h) {
   body.appendChild(h.slider('Aim assist', a.aimAssist, 0, 1, 0.05, (v) => { a.aimAssist = v; }, pct));
   body.appendChild(h.choice('Timing help', a.qteAssist, [['off', 'Off'], ['slow', 'More time'], ['auto', 'Automatic']], (v) => { a.qteAssist = v; }));
   body.appendChild(h.el('h3', '', 'Screen'));
+  buildBrightnessControl(body, settings, h); // [light] the same Brightness as the Video tab
   body.appendChild(h.slider('Camera shake strength', a.shake, 0, 1, 0.05, (v) => { a.shake = v; }, pct));
   body.appendChild(h.toggle('Reduce flashing', a.flashReduce, (v) => { a.flashReduce = v; }));
   body.appendChild(h.toggle('Reduce motion (comic pops, speed lines, zooms, wobble)', a.reducedMotion, (v) => { a.reducedMotion = v; }));

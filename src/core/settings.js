@@ -1,5 +1,6 @@
 import { ACTIONS, DEFAULT_BINDINGS } from './bindings.js';
 import { DEFAULT_MAP_SETTINGS, sanitizeMapSettings } from '../nav/mapSettings.js'; // [map]
+import { BRIGHTNESS, clampBrightness } from '../render/brightness.js'; // [light]
 
 const KEY = 'gotham-settings-v1';
 
@@ -21,6 +22,8 @@ export const DEFAULT_SETTINGS = {
   renderScale: 1,
   dynamicRes: true,
   halftone: 1,
+  // [light] Brightness: a gamma on the finished frame (src/render/brightness.js). 1 = as authored.
+  brightness: BRIGHTNESS.default,
   showFps: true,
   fpsDetails: false,
   // [env] Ink lighting (AO, contact shadows, wet-street reflections): 'auto' follows the tier
@@ -172,6 +175,7 @@ export function sanitizeSettings(raw = {}) {
     renderScale: num(r.renderScale, 0.5, 1, d.renderScale),
     dynamicRes: bool(r.dynamicRes, d.dynamicRes),
     halftone: num(r.halftone, 0, 1.5, d.halftone),
+    brightness: clampBrightness(r.brightness), // [light] an older save has none: the default
     showFps: fpsMigrated ? bool(r.showFps, d.showFps) : d.showFps,
     fpsDetails: bool(r.fpsDetails, d.fpsDetails),
     inkLight: oneOf(r.inkLight, ['auto', 'on', 'off'], d.inkLight), // [env]
