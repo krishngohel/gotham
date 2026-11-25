@@ -12,7 +12,8 @@
     "perf:gate": "node scripts/perf-gate.mjs",
     "verify": "npm test && npm run build",
     "assets": "node scripts/build-assets.mjs",
-    "shots": "node scripts/shots.mjs"
+    "shots": "node scripts/shots.mjs",
+    "test:balance": "node scripts/balance-regress.mjs"
   },
   "dependencies": {
     "three": "^0.186.1",

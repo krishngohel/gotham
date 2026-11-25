@@ -11,7 +11,7 @@ import { classifySuitVertex, classifyGoonVertex, classifyJokerVertex, SUIT_COLOR
 import { suitById } from '../heroes/models/suits.js';
 import { createKit, skirt as coatSkirt, shell as coatShell } from '../heroes/models/kit.js';
 import { createBatmanModel } from '../heroes/models/batman.js';
-import { ENEMY_ROLES, createEnemyLook } from '../heroes/models/enemies.js';
+import { ENEMY_ROLES, createEnemyLook, GANGS } from '../heroes/models/enemies.js';
 import { hairLocks } from '../heroes/models/costume.js';
 import { installFace } from './face.js';
 
@@ -454,7 +454,14 @@ export function createGoon(assets, { type = 'grunt', rng = null, gang = 'joker' 
   const brute = type === 'brute';
   const civilian = type === 'civilian';
   const look = GOON_LOOKS[civilian ? 'civilian' : brute ? 'brute' : type === 'knife' ? 'knife' : type === 'rifle' ? 'rifle' : pick(['striped', 'striped', 'hoodie'])];
-  const scheme = civilian ? CIVILIAN_SCHEME : type === 'knife' ? GOON_SCHEMES[1] : type === 'rifle' ? GOON_SCHEMES[2] : brute ? GOON_SCHEMES[3] : pick(GOON_SCHEMES);
+  const clownScheme = civilian ? CIVILIAN_SCHEME : type === 'knife' ? GOON_SCHEMES[1] : type === 'rifle' ? GOON_SCHEMES[2] : brute ? GOON_SCHEMES[3] : pick(GOON_SCHEMES);
+  // [m45] A night fight names its gang (encounters.js passes it), but only the role figures wore
+  // it: the four original types came out in the Joker's purple and green and a clown mask in every
+  // district (a Hollow Man on Park Row dressed as a clown). Any gang but the Joker's now dresses
+  // them too: its colours on the same wardrobe, and a plain mask in its head colour instead of the
+  // clown face. No gang, or the Joker's (Night One, every old call site): exactly as before.
+  const G = !civilian && gang && gang !== 'joker' ? GANGS[gang] ?? null : null;
+  const scheme = G ? { a: [G.outer, G.top], b: [G.bottom, G.vest] } : clownScheme;
   // Every goon's painted, trimmed body is identical, so they all share one geometry: a new copy
   // per goon meant megabytes of vertex upload (a 30 ms hitch) each time a wave spawned.
   if (goonBody) body.geometry = goonBody;
@@ -485,7 +492,7 @@ export function createGoon(assets, { type = 'grunt', rng = null, gang = 'joker' 
     const maskGeo = new THREE.SphereGeometry(r, 24, 16, Math.PI * 0.025, Math.PI * 0.95, Math.PI * 0.2, Math.PI * 0.55);
     const kind = brute ? 'hockey' : pick(['smile', 'smile', 'sad', 'zigzag']);
     const mask = rigidMesh(
-      maskGeo, addRim(toonMaterial({ map: maskTex(kind) }), 0xffffff, 0.35),
+      maskGeo, addRim(G ? toonMaterial({ color: G.hat }) : toonMaterial({ map: maskTex(kind) }), 0xffffff, 0.35),
       lm.headCenter.clone().add(new THREE.Vector3(0, -0.01, 0.012 * lm.fwd)),
       new THREE.Euler(0, lm.fwd < 0 ? Math.PI : 0, 0),
     );
@@ -494,7 +501,7 @@ export function createGoon(assets, { type = 'grunt', rng = null, gang = 'joker' 
   }
 
   if (look.hat === 'bandana') {
-    const band = rigidMesh(new THREE.CylinderGeometry(r * 1.03, r * 1.05, 0.06, 20, 1, true), toonMaterial({ color: PALETTE.crimson, side: THREE.DoubleSide }), lm.headCenter.clone().add(new THREE.Vector3(0, 0.045, 0)));
+    const band = rigidMesh(new THREE.CylinderGeometry(r * 1.03, r * 1.05, 0.06, 20, 1, true), toonMaterial({ color: G ? G.accent : PALETTE.crimson, side: THREE.DoubleSide }), lm.headCenter.clone().add(new THREE.Vector3(0, 0.045, 0)));
     attachRigid(body, 'Head', band);
   } else if (look.hat === 'beanie') {
     const beanie = rigidMesh(

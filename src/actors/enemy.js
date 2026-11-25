@@ -25,6 +25,9 @@ import { carryPelvis } from '../anim/paired.js';
 import { loadEnemyPack, primeLater } from '../anim/packs.js';
 import { roleKit, roleClips, REACT_TABLE, REACT_CLIPS } from '../enemies/roleKit.js';
 import { createProp, attachProp } from '../heroes/models/props.js';
+import { createAvoidState, avoidSteer, avoidIdle, STUCK_REROUTE } from '../nav/avoid.js'; // [balance]
+// [balance] The moving states that steer round corners (src/nav/avoid.js).
+const AVOID_STATES = new Set(['engage', 'approach', 'flee', 'pickup', 'revive']);
 
 const IDLE_POSES = ['Idle_Talking_Loop', 'Idle_TalkingPhone_Loop', 'Idle_FoldArms_Loop', 'Idle_Loop'];
 // How long a melee blow takes from the end of the wind-up to landing (the clip is sped up so its
@@ -69,7 +72,7 @@ export function createEnemy({ id, type, assets, scene, collision, rng, events = 
   const e = {
     id, type, def, ch, pos, scale, kit,
     health: def.health, alive: true, down: false, stunned: false,
-    state: 'idle', t: 0, stunT: 0, downT: 0, aware: false,
+    state: 'idle', t: 0, stunT: 0, downT: 0, aware: false, av: createAvoidState(), // [balance] av: local avoidance
     ringAngle: rng.range(0, Math.PI * 2), ringDist: rng.range(3.6, 5.8), strafe: rng.chance(0.5) ? 1 : -1, strafeT: rng.range(1, 3),
     attackKind: null, windupDur: 0.6, hitDone: false,
     lungeFrom: new THREE.Vector3(), lungeTo: new THREE.Vector3(), chargeDir: new THREE.Vector3(),
@@ -468,7 +471,8 @@ export function createEnemy({ id, type, assets, scene, collision, rng, events = 
   // `opts.warn` false (knightmare) hides the glyph; the tell is still in the animation.
   e.startWindup = (windup, hero, opts = {}) => {
     e.hitDone = false;
-    e.windupBase = windup * (e.tellScale || 1);
+    // [balance] A spore-dazed thrall (Ivy) telegraphs a third longer: dazed, not trained.
+    e.windupBase = windup * (e.tellScale || 1) * (e.thrall ? 1.35 : 1);
     e.warn = opts.warn !== false;
     const dist = Math.hypot(hero.pos.x - pos.x, hero.pos.z - pos.z);
     // Far off (past where a wind-up's walk-in can close), he runs in first without a tell.
@@ -648,6 +652,13 @@ export function createEnemy({ id, type, assets, scene, collision, rng, events = 
     if (!e.alive) return;
     // A hit on ice shatters it: out cold, whatever the move was.
     if (e.state === 'frozen') { e.shattered = true; e.frozenT = 0; e.health = 0; result = { outcome: 'ko', damage: 0, stun: 0 }; }
+    // [balance] A committed swing shrugs off a plain strike (rules.js windupArmor): the blow is felt
+    // as a flinch layered over the swing, which carries on, tell and all.
+    if (result.outcome === 'absorbed') {
+      const s = sideFrom(from);
+      ch.animator.overlay?.('add', s === 'left' ? 'React_Flinch_L' : 'React_Flinch_R', { weight: 0.6, duration: 0.25 });
+      return false;
+    }
     e.countered = false;
     const wasWindup = e.state === 'windup' || e.state === 'attack' || e.state === 'approach';
     // A medic kneeling over a body is interrupted by any blow.
@@ -795,6 +806,11 @@ export function createEnemy({ id, type, assets, scene, collision, rng, events = 
         // The shield takes it: a jolt on the shield, nothing else (the attack carries on).
         e.knock.copy(tmp).multiplyScalar(0.8);
         if (wasWindup) return false;
+        // [balance] ...and no stun-lock (the parry's [fix1] rule, for the shield): a stream of punches
+        // kept a shield goon in 'hit' for 10 s and more in the balance matrix, so a masher was never
+        // attacked by him. One block reaction, then 1.6 s in which blocks are only a jolt on top.
+        if ((e.blockCd ?? 0) > 0) { ch.animator.overlay?.('add', 'Hit_Chest', { weight: 0.5, duration: 0.2 }); return false; }
+        e.blockCd = 1.6;
         setState('hit');
         if (packed('Shield_BlockHit')) gplay('Shield_BlockHit', { state: 'react', timeScale: 1.3, fade: 0.1 });
         else ch.animator.overlay?.('add', 'Hit_Chest', { weight: 0.6, duration: 0.25 });
@@ -876,6 +892,7 @@ export function createEnemy({ id, type, assets, scene, collision, rng, events = 
     e.moodT += dt;
     if (e.backoffT > 0) e.backoffT -= dt;
     if (e.evadeCd > 0) e.evadeCd -= dt;
+    if (e.blockCd > 0) e.blockCd -= dt; // [balance] shield block reaction cooldown
     if (e.stunT > 0) { e.stunT -= dt; if (e.stunT <= 0) e.stunned = false; }
     if (type === 'harley') {
       if (e.harleyCd.slam > 0) e.harleyCd.slam -= dt;
@@ -1247,6 +1264,14 @@ export function createEnemy({ id, type, assets, scene, collision, rng, events = 
       const ahead = collision.groundBelow(pos.x + moveX * 0.6, pos.y + 0.5, pos.z + moveZ * 0.6, 0.15);
       if (ahead < pos.y - 0.6) { speed = 0; e.nav.arrived = true; }
     }
+    // [balance] Round building corners instead of into them (src/nav/avoid.js, the same avoidance
+    // GCPD officers use), in the fight's moving states; a goon running away who is stuck against a
+    // wall for good is simply gone (out of the fight, as a flee that got away).
+    if (speed && !e.room && !e.air && AVOID_STATES.has(e.state)) {
+      avoidSteer(e.av, collision, pos.x, pos.y, pos.z, moveX, moveZ, dt);
+      moveX = e.av.dx; moveZ = e.av.dz;
+      if (e.state === 'flee' && e.av.stuck >= STUCK_REROUTE) { e.alive = false; e.fled = true; setState('fled'); events?.emit('fled', { target: e }); }
+    } else if (!speed) avoidIdle(e.av);
     if (speed) { pos.x += moveX * speed * dt; pos.z += moveZ * speed * dt; }
     // Keep apart from other goons and from the hero.
     if (e.alive && !e.down) {

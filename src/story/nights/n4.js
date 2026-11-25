@@ -5,6 +5,21 @@
 // Nightwing at the end of it, the climb up the Stack and a stealth boss on its roof.
 // New role this night: the medic (tutorial beat on the market fight). Format:
 // docs/design/story-format.md. Every site below was checked against the live collision.
+// [m45] Four more missions (docs/design/briefs/missions-round.md), each with a reason in the plot:
+//   m4Case     the canister's label leads to a pest-control depot in Chinatown: a scene to scan
+//              and a deduction (three regular buyers, go and ask the one the evidence fits)
+//   m4Broker   Bruce Wayne buys a pot of tea from the man who sold the precursor, then a predator
+//              room on the South Branch quay: the stabiliser there becomes the antidote the night
+//              uses from then on (the officers, Nightwing in the alley)
+//   m4Cordon   the ambulance's last lap gassed Gordon's cordon on the bridge: the officers see a
+//              monster and hunt him into the Loop (`hunted`: src/story/missions/n4/hunted.js; never
+//              harm them), then the strays are found and dosed
+//   m4Balloons the doctor's second delivery: canister balloons over Park Row, from the Batwing,
+//              and the launch crew on the Orpheum roof
+// Second pass (the same four, deeper): the Kettle's yard and a runner over the Chinatown roofs; the
+// three cranes on the quay; a rescue on the El bridge and a second, thinner hunt; a second flight
+// of balloons over the island and the helium truck through Park Row.
+// The masks at the quay are not burlap: somebody else's payroll (the night's last line pays it off).
 import { titleCard } from '../../ui/comicArt.js';
 import { scarecrowPanel } from '../../bosses/defs/scarecrowArt.js';
 import { W, route } from '../rooms.js';
@@ -44,6 +59,49 @@ const SITES = {
   n4Gym: { x: -412, y: 0.15, z: -387 },
   n4Ostrow: { x: -340, y: 0, z: -330 },
   n4Roof: { x: -328, y: 24, z: -344 },
+  // [m45] Chinatown: the depot by the gate, the three buyers, the tea house on the night market
+  n4Toll: { x: -370, y: 0.15, z: -222 },
+  n4CaseDoor: { x: -338, y: 0, z: -143 },
+  n4CaseBook: { x: -324, y: 0.15, z: -143 },
+  n4CaseCups: { x: -325, y: 0.15, z: -157 },
+  n4CaseTracks: { x: -346, y: 0.15, z: -157 },
+  n4Kettle: { x: -415, y: 0, z: -120 },
+  n4Fireworks: { x: -318.5, y: 0.15, z: -110 },
+  n4TempleKitchen: { x: -415, y: 0.15, z: -170 },
+  n4KettleHost: { x: -409, y: 0, z: -118 },
+  n4KettleTable: { x: -424, y: 0, z: -122 },
+  // [m45] the South Branch quay: shed nine under the middle crane
+  n4QuayPerch: { x: -262.5, y: 18.65, z: 2 },
+  n4Shed: { x: -259, y: 0, z: 30 },
+  n4Stabiliser: { x: -259, y: 0, z: 44 },
+  // [m45] the cordon on the Narrows bridge, the roof in the Loop, the three strays
+  n4Bridge: { x: -306, y: 0, z: -419 },
+  n4LoopRoof: { x: -252, y: 26, z: -448 },
+  n4StrayWindow: { x: -238, y: 0, z: -425 },
+  n4StrayLamp: { x: -215, y: 0, z: -366 },
+  n4StrayStairs: { x: -232, y: 0.15, z: -470 },
+  // [m45] the balloons over Park Row and the launch crew on the Orpheum roof
+  n4WingRoof: { x: -478.75, y: 9, z: -380 },
+  n4Sky: { x: -470, y: 62, z: -390 },
+  n4LaunchRoof: { x: -478.75, y: 17, z: -326 },
+  n4Manifest: { x: -478.75, y: 17, z: -338 },
+  // [m45] second pass: the Kettle's yard, the runner's roofs, the cranes, the El, the second sky, the helium truck
+  n4YardRings: { x: -421.5, y: 0, z: -121.5 },
+  n4YardTruck: { x: -427, y: 0, z: -122.5 },
+  n4YardPage: { x: -407, y: 0, z: -118 },
+  n4RunA: { x: -418, y: 13.6, z: -134 },
+  n4RunB: { x: -390, y: 17, z: -134 },
+  n4RunC: { x: -388, y: 10, z: -166 },
+  n4RunD: { x: -388, y: 17, z: -184 },
+  n4RunEnd: { x: -414, y: 12.77, z: -190 },
+  n4CraneSouth: { x: -262.5, y: 18.65, z: 122 },
+  n4CraneNorth: { x: -262.5, y: 18.65, z: -118 },
+  n4Dock: { x: -259, y: 0, z: -92 },
+  n4Book: { x: -259, y: 0, z: -76 },
+  n4ElEast: { x: -240, y: 7.26, z: -479 },
+  n4ElBridge: { x: -283, y: 7.26, z: -479 },
+  n4Sky2: { x: -380, y: 66, z: -330 },
+  n4HeliumCar: { x: -460, y: 0.15, z: -350, yaw: 0 },
 };
 
 const ROOMS = {
@@ -59,9 +117,43 @@ const ROOMS = {
       { type: 'pistol', route: route('pingpong', W(-332, 0, -444, 1.5, Math.PI), W(-346, 0, -444, 1.5, 0)) },
     ],
   },
+  // [m45] Shed nine: the quay apron under the middle crane (the crane cab is the way in), five
+  // hired guns in somebody else's masks. Open ground, long sight lines along the water: the
+  // lamps (real fill light, so the apron reads at night) and the crane legs are what there is to work with.
+  quayRoom: {
+    id: 'quayRoom', site: 'n4Shed', entry: 'n4QuayPerch', radius: 26, gang: 'blackMask',
+    lights: [{ x: -257, y: 3.4, z: 26, r: 5, post: true, fill: true }, { x: -262, y: 3.4, z: 46, r: 4, post: true, fill: true }, { x: -256.5, y: 3.4, z: 11, r: 3.5, post: true, fill: true }],
+    cover: [{ x: -262, y: 0, z: 20, w: 2.4, d: 1.4, h: 1.5 }, { x: -257.5, y: 0, z: 37, w: 1.4, d: 2.4, h: 1.5 }, { x: -263, y: 0, z: 38, w: 1.4, d: 1.4, h: 1.2 }, { x: -247, y: 0, z: 33, w: 1.6, d: 1.4, h: 1.4 }],
+    huddle: { x: -259, y: 0, z: 30 },
+    squad: [
+      { type: 'pistol', route: route('pingpong', W(-263.5, 0, 14, 2, Math.PI), W(-263.5, 0, 50, 2.5, 0)) },
+      { type: 'grunt', route: route('pingpong', W(-255, 0, 30, 2, -Math.PI / 2), W(-241, 0, 30, 2.5, Math.PI / 2)) },
+      { type: 'rifle', route: route('pingpong', W(-258.5, 0, 9, 3, 0), W(-258.5, 0, 22, 2, 0)) },
+      { type: 'medic', route: route('pingpong', W(-260, 0, 52, 3, Math.PI), W(-260, 0, 41, 2, Math.PI)) },
+      { type: 'grunt', route: route('loop', W(-261, 0, 27), W(-261, 0, 34, 1.5, Math.PI / 2), W(-256, 0, 34), W(-256, 0, 27, 1.5, -Math.PI / 2)) },
+    ],
+  },
+  // [m45] second pass. The north dock, under the north crane (where the crane run ends: its cab is
+  // the way in): the crew's foreman and the shipping book. A narrower room than shed nine: the
+  // apron and one side street, four men, a brute who never leaves the book.
+  dockRoom: {
+    id: 'dockRoom', site: 'n4Dock', entry: 'n4CraneNorth', radius: 26, gang: 'blackMask',
+    lights: [{ x: -257.5, y: 3.4, z: -104, r: 4.5, post: true, fill: true }, { x: -262.5, y: 3.4, z: -86, r: 4.5, post: true, fill: true }, { x: -246, y: 3.4, z: -94, r: 4, post: true, fill: true }],
+    cover: [{ x: -262, y: 0, z: -98, w: 1.4, d: 2.4, h: 1.5 }, { x: -258, y: 0, z: -82.5, w: 2.4, d: 1.4, h: 1.5 }, { x: -250, y: 0, z: -87, w: 1.6, d: 1.4, h: 1.4 }],
+    huddle: { x: -259, y: 0, z: -92 },
+    squad: [
+      { type: 'rifle', route: route('pingpong', W(-263, 0, -110, 2.5, 0), W(-263, 0, -72, 2.5, Math.PI)) },
+      { type: 'pistol', route: route('pingpong', W(-256, 0, -90, 2, -Math.PI / 2), W(-240, 0, -90, 2.5, Math.PI / 2)) },
+      { type: 'grunt', route: route('loop', W(-259, 0, -106), W(-259, 0, -96, 1.5, 0), W(-262, 0, -92), W(-259, 0, -86, 1.5, Math.PI)) },
+      { type: 'brute', route: route('pingpong', W(-259.5, 0, -78, 4, Math.PI), W(-259.5, 0, -74, 3, 0)) },
+    ],
+  },
 };
 
 const FIGHTS = {
+  // [balance] optional interrupts on travel steps (docs/design/balance.md 5)
+  n4Masks: { site: 'n4Ostrow', radius: 12, gang: 'scarecrow', act: 3, district: 'narrows', waves: [{ budget: 5, ring: 4.5 }] },
+  n4Carriers: { site: 'n4Car', radius: 12, gang: 'scarecrow', act: 3, district: 'narrows', waves: [{ budget: 6, ring: 4.5 }] },
   // The market: the medic's tutorial (pinned into the first wave), then a fuller squad.
   marketHollow: { site: 'narrowsMarket', radius: 13, gang: 'scarecrow', act: 3, district: 'narrows', waves: [{ budget: 5, ring: 6, lead: 'medic' }, { budget: 7, ring: 7, lead: 'medic' }] },
   rookery: { stealth: 'rookeryRoom' },
@@ -71,6 +163,13 @@ const FIGHTS = {
   // [story2]
   gym: { site: 'n4Gym', radius: 12, gang: 'scarecrow', act: 3, district: 'narrows', waves: [{ budget: 6, ring: 6, lead: 'pistol' }, { budget: 7, ring: 7, lead: 'medic' }] },
   stackGuard: { site: 'n4StackBase', radius: 12, gang: 'scarecrow', act: 3, district: 'narrows', waves: [{ budget: 7, ring: 7, lead: 'pistol' }] },
+  // [m45] optional: a toll on the way off the island
+  n4TollFight: { site: 'n4Toll', radius: 12, gang: 'scarecrow', act: 3, district: 'chinatown', waves: [{ budget: 5, ring: 4.5 }] },
+  quay: { stealth: 'quayRoom' },
+  dock: { stealth: 'dockRoom' },
+  // [m45] The Orpheum's roof is 17 m wide and 36 long: the crew stands along it (the helium rack
+  // at the south end), a rifle first, then the medic who keeps the pumps going.
+  launchCrew: { site: 'n4LaunchRoof', radius: 14, gang: 'scarecrow', act: 3, district: 'parkRow', waves: [{ budget: 6, lead: 'rifle', spots: [[0, -9], [3, -6], [-3, -6], [0, -13], [4, -11], [-4, -11]] }, { budget: 7, lead: 'medic', spots: [[0, 9], [3, 6], [-3, 6], [0, 13], [4, 11], [-4, 11]] }] },
 };
 
 const SCENES = {
@@ -134,6 +233,7 @@ export default {
         { id: 'n4Recap', type: 'cutscene', scene: 'n4Recap' },
         {
           id: 'n4Start', text: 'Head to the Narrows El station. The fog is wrong tonight.', site: 'narrowsFastTravel', radius: 12,
+          interrupts: [{ id: 'n4Masks', at: 'n4Ostrow', radius: 24, fight: 'n4Masks', xp: 80, label: "Optional: the gas-mask sellers are gone", lines: [{ speaker: 'dispatch', portrait: 'radio', text: "Narrows units: men selling gas masks door to door. Before the gas. Somebody tipped them off, and charged them for it." }] }], // [balance]
           title: { text: 'ACT THREE: THE UNDERSIDE', sub: 'Night Four: The Hollow Men' },
           nudge: g('oracle', 'Narrows station, west across the North Branch. Follow the marker, and maybe hold your breath.'),
           lines: [
@@ -206,6 +306,189 @@ export default {
         },
       ],
     },
+    // [m45] The canister's label is a real company's: a pest-control depot by the Chinatown gate.
+    // A scene to read, then a deduction made with her feet: three regular buyers, one fits.
+    {
+      id: 'm4Case', title: 'Pest Control', checkpoint: 'narrowsFastTravel', rewards: ['xp:200'],
+      steps: [
+        {
+          id: 'n4ToChinatown', text: 'The canister label is a real company. Lucky Cricket Pest Control, by the Chinatown gate. Go south.', site: 'chinatownGate', radius: 12,
+          nudge: g('oracle', 'South off the island over the cut bridge, then east along the lantern street. The gate is the one with the green roof and the opinions.'),
+          lines: [
+            g('oracle', 'Got something off the canister while you were bagging it. Under the "pest control" sticker there is a second sticker. Lucky Cricket Pest Control, Chinatown. A real firm, real licence.'),
+            g('oracle', 'He did not cook the base himself. He bought forty drums of something legal and improved it. Their depot is by the Chinatown gate, and nobody there has picked up a phone since noon.'),
+            g('alfred', 'A wholesaler, sir. Even nightmares, it seems, have a supply chain.'),
+          ],
+          banter: [
+            g('oracle', 'That tower on the fork is Wolf Point. Forty floors, all dark, and somebody pays the electric bill on every one of them.'),
+            g('alfred', 'I shall add it to the list, Miss Gordon. The list is becoming a pamphlet.'),
+          ],
+          interrupts: [{ id: 'n4Toll', at: 'n4Toll', radius: 22, fight: 'n4TollFight', xp: 80, label: 'Optional: the toll booth is closed', lines: [v('dispatch', 'Units near the south cut: men in sacks are charging a toll to leave the Narrows. Ten dollars, or your gas mask. Exact change preferred.')] }],
+        },
+        {
+          id: 'n4CaseScan', type: 'scan', text: 'The depot was emptied this afternoon. Scan it for who took the drums. Detective vision.', checkpoint: 'chinatownGate',
+          points: [
+            { site: 'n4CaseDoor', lines: [g('oracle', 'The roller door was unlocked with a key and locked again after. Nobody broke in. This was a customer with an account.')] },
+            { site: 'n4CaseBook', lines: [g('oracle', 'The order book. Forty drums of concentrate, paid in cash, in full, no discount asked for. Somebody did not want a paper trail and did not mind what that cost.')] },
+            { site: 'n4CaseCups', lines: [g('oracle', 'Two cups on the counter. Jasmine tea, one drunk, one untouched. The buyer brought the tea. The clerk was too nervous to drink his.')] },
+            { site: 'n4CaseTracks', lines: [g('oracle', 'Hand truck tracks at the kerb, narrow wheels, heading west. Forty drums, four at a time, on foot. Wherever it went, it went round the corner.')] },
+          ],
+          lines: [g('oracle', 'Shutters down, lights on, nobody home. Four things in there are chemically interesting. Stand by each one until it reads.')],
+        },
+        {
+          id: 'n4Deduce', type: 'fork', text: 'Three regular buyers: the fireworks shop (east), the tea house (west), the temple kitchen (south-west). The evidence fits one. Go and ask.', checkpoint: 'chinatownGate',
+          options: [
+            { id: 'fireworks', text: 'Golden Finch Fireworks', site: 'n4Fireworks', radius: 6, lines: [v('fireworks man', 'Pesticide? Friend, I sell things that go bang. If I wanted to frighten a neighbourhood I would not need a chemist.')] },
+            { id: 'kettle', text: 'The Jade Kettle', site: 'n4Kettle', radius: 8, lines: [g('oracle', 'Jasmine, west, cash. That is how I read it too. Mind the dumpling queue. It has ended better men.')] },
+            { id: 'temple', text: 'The temple kitchen', site: 'n4TempleKitchen', radius: 8, lines: [v('temple cook', 'Forty drums? We buy ant powder. One tin. And we have never paid full price for anything. Ask the abbot. It is practically a vow.')] },
+          ],
+          branches: { fireworks: 'n4WrongFireworks', kettle: 'n4KettleYard', temple: 'n4WrongTemple' }, // [m45] second pass: was n4Kettle; the yard and the runner sit between
+          lines: [
+            g('oracle', 'Lucky Cricket has three customers who buy by the pallet. Golden Finch Fireworks, on the riverside, east. The Jade Kettle tea house, on the night market, west. And the temple kitchen, south-west.'),
+            g('oracle', 'You read the room, not me. Pick the one the evidence fits and go and knock.'),
+          ],
+        },
+        {
+          id: 'n4WrongFireworks', type: 'wait', seconds: 5, next: 'n4BackToKettle',
+          lines: [g('oracle', 'And the hand truck went west. He is east. I should have said that twice.')],
+        },
+        {
+          id: 'n4WrongTemple', type: 'wait', seconds: 5,
+          lines: [g('alfred', 'The order book said cash, sir, in full. I mention it without judgement. Well. With very little.')],
+        },
+        {
+          id: 'n4BackToKettle', text: 'The tea was jasmine. The Jade Kettle, on the night market.', site: 'n4Kettle', radius: 8,
+          nudge: g('oracle', 'The night market is the stall street west of the gate. The Jade Kettle is the one with the queue.'),
+          lines: [g('oracle', 'Jasmine tea on the counter, a hand truck going west, cash in full. That is the Jade Kettle. Night market, west of the gate.')],
+          banter: [g('alfred', 'Even the great detective is permitted one wrong door a night, sir. I keep a tally. It is a short tally.')],
+        },
+        // [m45] second pass: the right door is only an address. The yard behind it says the drums
+        // have already gone, and a runner on the roofs is carrying the paperwork away.
+        {
+          id: 'n4KettleYard', type: 'scan', text: 'The Jade Kettle\'s back yard. The drums came through here. Scan it before you walk in the front.', checkpoint: 'n4Kettle',
+          points: [
+            { site: 'n4YardRings', lines: [g('oracle', 'Forty rust rings on the flagstones, in rows of four. The drums stood here for an hour, no longer. This yard was a platform, not a storeroom.')] },
+            { site: 'n4YardTruck', lines: [g('oracle', 'The hand truck, still warm at the axle. And a second set of wheel marks, wider. A van took them on from here.')] },
+            { site: 'n4YardPage', lines: [g('oracle', 'A carbon copy, torn off a delivery pad. No address. Just "collected, P." and a time. Twenty minutes ago.')] },
+          ],
+          lines: [g('oracle', 'Before you go in the front, go round the back. Whoever bought forty drums did not carry them through a tea room.')],
+        },
+        {
+          id: 'n4Runner', type: 'traverse', text: 'A runner just went up the fire escape with the delivery pad. Stay with him across the roofs to the temple.',
+          gates: ['n4RunA', 'n4RunB', 'n4RunC', 'n4RunD', 'n4RunEnd'], timer: 40, bonus: 8,
+          failTitle: 'LOST HIM', failText: 'He doubled back over the market. Pick him up again from the first roof.',
+          failLines: [g('alfred', 'He knows these roofs, sir. You merely own several of them.')],
+          lines: [
+            g('oracle', 'Movement on the fire escape. One man, a satchel, and the rest of that delivery pad. He is going over the roofs, east then south, toward the temple.'),
+            g('batman', 'He is not running from me. He does not know I am here. He is running to someone.'),
+          ],
+        },
+        {
+          id: 'n4Satchel', type: 'collect', item: 'n4Satchel', site: 'n4RunEnd', radius: 3, text: 'He dropped the satchel on the temple roof and kept running. Take it.',
+          lines: [
+            v('runner', 'I just carry the bag! I do not read the bag! Take the bag!'),
+            g('oracle', 'Let him go. The pad is what matters. Every page is signed for by the same man: D. Pike, and under it a table number. He does business at the Kettle. Back table.'),
+          ],
+        },
+        {
+          id: 'n4KettleDoor', text: 'Back to the Jade Kettle, by the front door this time. Pike will not talk to a mask.', site: 'n4Kettle', radius: 6,
+          nudge: g('alfred', 'The night market, sir, where you started. I have a suit waiting behind the dumpling stall. It has been admired.'),
+          lines: [g('alfred', 'A broker who signs for forty drums and sits down to tea, sir. He will run from the cowl. He will pour for a Wayne.')],
+          banter: [v('dispatch', 'Chinatown units: a man on the temple roof says a very large bat took his bag and was, quote, polite about it.')],
+        },
+      ],
+    },
+    // [m45] The broker will not talk to a mask. He will talk to money: Bruce Wayne, a pot of tea and
+    // a choice of how to lean on him. Then shed nine on the South Branch quay, quietly.
+    {
+      id: 'm4Broker', title: 'The Jade Kettle', checkpoint: 'n4Kettle', rewards: ['xp:250'],
+      steps: [
+        {
+          id: 'n4Kettle', type: 'civvy', outfit: 'suit', text: 'The Jade Kettle. The man who sold the drums drinks here. He will not talk to a mask.',
+          card: 'Bruce Wayne, a long way from the Mile, in a tea house that has never needed him. The broker at the back table sells chemicals by the pallet and questions by the pound.',
+          beats: [
+            { id: 'host', site: 'n4KettleHost', text: 'Madam Shu, who owns the kettle and the room.', lines: [
+              v('madam shu', 'Mr. Wayne. We do not see your sort before midnight. Tea is on the house. Questions are extra.'),
+              g('bruce', 'Then the tea, and one question. Who buys jasmine by the flask and takes it to a pest-control depot?'),
+              v('madam shu', 'Back table. Grey suit. Tips like a man who is being followed. Tonight, I notice, he is.'),
+            ] },
+            { id: 'pike', site: 'n4KettleTable', text: 'The back table. Desmond Pike, chemical broker.', lines: [
+              v('pike', 'Wayne. Of the Waynes. If this is about the Narrows land, I only sell the fertiliser.'),
+              g('bruce', 'Forty drums of concentrate left Lucky Cricket this afternoon on a hand truck. I would like to know where the hand truck stopped.'),
+            ],
+              choice: { key: 'n4.pike', prompt: 'He is deciding what you are', default: 'buyer', options: [
+                { id: 'buyer', tag: 'cover', text: 'A customer. "I have a greenhouse problem. A large one."', effects: { suspicion: { reporter: 1 } }, lines: [v('pike', 'A greenhouse. Naturally. Shed nine, South Branch quay, under the middle crane. Ask for nobody. I only rent the space.')] },
+                { id: 'lean', tag: 'risky', text: 'A threat. "Wayne Chemical buys from your suppliers. We could stop."', effects: { standing: -1, city: 1 }, lines: [v('pike', 'There it is. The teeth behind the smile. Shed nine, South Branch quay, under the middle crane. And I was never your friend, Mr. Wayne, so we have lost nothing.')] },
+                { id: 'honest', tag: 'honest', text: 'The truth. "There are people in hospital. Tell me where it went."', effects: { city: 1, threads: { alfred: 0.1 } }, lines: [v('pike', 'I sold a man something to kill ants. What he did with it after... Shed nine. South Branch quay, under the middle crane. I did not know. Write that down somewhere.')] },
+              ] } },
+          ],
+          endLines: [g('alfred', 'Shed nine. The suit will meet you behind the dumpling stall, sir. Do try not to be seen changing by anyone holding chopsticks.')],
+        },
+        {
+          id: 'n4ToQuay', text: 'Shed nine, South Branch quay. Get up on the middle crane and look before you leap.', site: 'n4QuayPerch', radius: 7,
+          nudge: g('oracle', 'East to the water, over the South Branch. Three cranes on the quay. Yours is the middle one. Grapple the cab.'),
+          lines: [
+            g('oracle', 'Pike rents the shed to a holding company I cannot see the bottom of. What I can see is five heat signatures walking circles on that quay.'),
+            g('alfred', 'I counted his tea, sir. One pot, two hours. A man does not nurse a pot that long unless he is waiting for somebody to tell him it is over.'),
+          ],
+          banter: [
+            v('dispatch', 'Chinatown units: disregard the report of Bruce Wayne buying tea. Caller admits it is, quote, more of a feeling.'),
+            g('oracle', 'The bridges over the South Branch lift for barges. If yours is up, there is a perfectly good river to glide across.'),
+          ],
+        },
+        {
+          id: 'n4QuayRoom', type: 'fight', fight: 'quay', text: 'Shed nine. Five guards on open ground. Use the crane, the crates and the dark between the lamps.', checkpoint: 'n4QuayPerch',
+          tutorial: ['crouch', 'silent'],
+          lines: [
+            g('oracle', 'Those are not Hollow Men. No burlap. Black masks, good boots, the same radio on every belt. Somebody with a payroll is minding the pantry for him.'),
+            v('guard', 'You ever wonder what is in the drums?'),
+            v('guard', 'I wonder what is in my pay packet. It is in my pay packet. I have stopped wondering.'),
+          ],
+        },
+        {
+          id: 'n4Stabiliser', type: 'collect', item: 'n4Stabiliser', site: 'n4Stabiliser', radius: 3, text: 'Take a flask of the stabiliser from the drums. Oracle needs it for an antidote.',
+          lines: [
+            g('oracle', 'The drums on the left are the stabiliser. It is what keeps his toxin from breaking down in the air. Run it backwards and it is most of an antidote.'),
+            g('oracle', 'Bag a flask. Twenty minutes with that and I can stop guessing.'),
+          ],
+        },
+        // [m45] second pass: the guards' last order. Three pallets of concentrate are on the crane
+        // hooks over the South Branch with the hoist brakes on timers; the river feeds the Loop.
+        {
+          id: 'n4Cranes', type: 'traverse', text: 'Three pallets of drums hang over the river on timed hoist brakes. Lock each crane by hand: south, middle, north.',
+          gates: ['n4CraneSouth', 'n4QuayPerch', 'n4CraneNorth'], timer: 45, bonus: 30,
+          failTitle: 'A PALLET WENT IN', failText: 'Oracle caught it downstream with the lock gates. Not twice. From the south crane again.',
+          failLines: [g('oracle', 'I shut the locks on it. That trick works once. Go again, and do not stop to admire the view.')],
+          lines: [
+            g('oracle', 'Bad. One of them hit a switch before he went down. All three cranes are swung out over the water with a pallet on the hook, and the hoist brakes are on a timer.'),
+            g('gordon', 'The South Branch runs into the main stem and the main stem runs through the Loop. If those drums go in, I am evacuating downtown in the dark.'),
+            g('oracle', 'Each cab has a manual lock. South crane first, it has the least time. Then the middle, then the north.'),
+          ],
+        },
+        {
+          id: 'n4CranesDone', type: 'wait', seconds: 4,
+          lines: [
+            g('gordon', 'Harbour unit has all three pallets. Whoever those men work for, they would rather poison a river than lose a shipment.'),
+            g('alfred', 'Not the behaviour of a man in a sack, sir. That is somebody with a ledger.'),
+          ],
+        },
+        {
+          id: 'n4DockRoom', type: 'fight', fight: 'dock', text: 'The north dock, under you. The crew\'s foreman and three more, and the book that says who the drums were for. Quietly.', checkpoint: 'n4CraneNorth',
+          lines: [
+            g('oracle', 'While you are up there, look down. The north dock. Four of them packing up, and the big one has not let go of a shipping book since I started watching.'),
+            v('guard', 'Boss says burn the book.'),
+            v('foreman', 'Boss says a lot of things. The book is how I get paid. Nobody burns how I get paid.'),
+          ],
+        },
+        {
+          id: 'n4Book', type: 'collect', item: 'n4Book', site: 'n4Book', radius: 3, text: 'Take the shipping book.',
+          lines: [
+            g('oracle', 'Hold it up to the lens. Forty drums in, forty out, consigned to a set of initials and a box number. I will have the name by morning. It is not the doctor\'s.'),
+            g('alfred', 'He kept the one thing that could hang his employer, sir, because it also had his wages in it. There is a moral there. I shall not labour it.'),
+          ],
+        },
+      ],
+    },
     {
       id: 'm4Ambulance', title: 'Wrong Ambulance', checkpoint: 'n4Car', rewards: ['xp:250'],
       steps: [
@@ -223,6 +506,86 @@ export default {
           // [story2] its own quarry (the fake ambulance), not the Joker's van
           van: { type: 'ambulance', toast: 'Stop the fake ambulance. Ram it three times!', label: 'AMBULANCE' },
           lines: [g('alfred', 'Ambulances are for helping people, sir. This one has forfeited the courtesy.')],
+        },
+      ],
+    },
+    // [m45] The ambulance vented its last lap along the riverside, and the wind put it on Gordon's
+    // cordon. His officers see a monster. Batman does not hurt police: he runs, hides and comes
+    // back with the antidote (docs/design/wanted.md 3 is the rule; the `hunted` step raises it).
+    {
+      id: 'm4Cordon', title: 'Friendly Fire', checkpoint: 'n4Car', rewards: ['xp:250'],
+      steps: [
+        {
+          id: 'n4ToCordon', text: 'Gordon wants what is left in the van at his cordon. The Narrows bridge, east side of the island.', site: 'n4Bridge', radius: 10,
+          nudge: g('gordon', 'The bascule bridge on the east side, one street up from the El. You will see the lights. And the paperwork.'),
+          lines: [
+            g('gordon', 'That was not driving, that was demolition. Thank you. Bring what is left of its cargo to my cordon on the bridge, before somebody steals it twice.'),
+            g('oracle', 'One thing. That van vented its whole last lap along the riverside, and the wind is out of the west. It is all drifting onto the bridge.'),
+          ],
+          banter: [g('alfred', 'I do hope the Commissioner has masks for his people, sir. Hope being, as ever, the cheaper option.')],
+        },
+        {
+          id: 'n4Hunted', type: 'hunted', text: 'The cordon breathed the toxin. They think you are the monster. Do not hurt them: lose them over the rooftops.', checkpoint: 'n4Bridge', retry: true,
+          at: 'n4Bridge', hide: 'n4LoopRoof', level: 3,
+          heading: 'FRIENDLY FIRE',
+          rules: 'The officers are gassed, not guilty: never strike one. Break their line of sight, get off the street and stay hidden until the search ends. Rooftops and the fog are on your side. The blue marker is a roof nobody is watching.',
+          lines: [
+            v('officer', 'Sarge! The fog! The fog has got WINGS!'),
+            g('gordon', 'Hold your fire! That is an order! ...They cannot hear me. Batman, they breathed it. Half my line. Get out of there, and do not lay a hand on them.'),
+            g('oracle', 'East, over the bridge, into the Loop. I have marked a roof with no windows on the river side. Go. I am working on the antidote as fast as chemistry allows.'),
+          ],
+          escapedLines: [
+            g('gordon', 'They have lost you. They are currently arresting a mailbox. I will take it from here.'),
+            g('alfred', 'Hunted by the police and innocent of everything, sir. Rather like your school reports.'),
+          ],
+          calledOffLines: [g('gordon', 'I have them back on the radio, one at a time, mostly by shouting my own badge number. Stand easy. You are clear.')],
+          failLines: [g('oracle', 'They had you pinned. I jammed their radios and Gordon pulled two of them off you by the collar. Go again, and stay off the street this time.')],
+        },
+        {
+          id: 'n4Strays', type: 'scan', text: 'Three gassed officers ran into the Loop. Find their radios in detective vision and give each one a dose.', hold: 1.5, checkpoint: 'n4LoopRoof',
+          points: [
+            { site: 'n4StrayWindow', lines: [g('oracle', 'Officer Brandt. Behind a newspaper box, arresting his own reflection in a shop window. Dosed. The reflection is being released without charge.')] },
+            { site: 'n4StrayLamp', lines: [g('oracle', 'Officer Okafor, halfway up a lamp post. She says the pavement is looking at her funny. Dosed. Coming down. Slowly.')] },
+            { site: 'n4StrayStairs', lines: [g('oracle', 'Sergeant Diaz, under the El stairs, reading the fog its rights. Dosed. He would like it noted that the fog started it.')] },
+          ],
+          lines: [
+            g('oracle', 'The flask from the quay did it. First batch of antidote is real, and a drone just dropped six doses on your roof. Do not ask what I had to promise the drone.'),
+            g('gordon', 'Three of mine ran east into the Loop before I could stop them. They are armed, they are terrified and they are my responsibility. Find them before a taxi does.'),
+          ],
+        },
+        // [m45] second pass: the fourth one. On the El bridge, on the rails, with a train due; and the
+        // officer he pulls clear tells the radio exactly what grabbed him.
+        {
+          id: 'n4ElRescue', type: 'traverse', text: 'A fourth officer has climbed onto the El bridge and is walking the rails. A train is due. Get up there and get him off.',
+          gates: ['n4ElEast', 'n4ElBridge'], timer: 35, bonus: 10, checkpoint: 'n4StrayStairs',
+          failTitle: 'THE TRAIN', failText: 'Oracle held it at the last signal. She cannot hold it twice. From the station end again.',
+          failLines: [g('oracle', 'I threw the signal to red. The driver is furious and the timetable is ruined. You have until he gets the all clear.')],
+          lines: [
+            g('gordon', 'There is a fourth. Patrolman Reyes. He went up the El stairs and he is out on the bridge span, on the rails, telling the river to put its hands up.'),
+            g('oracle', 'West Line train is two minutes out and it does not stop for hallucinations. Up onto the deck at the station end, then out over the water.'),
+          ],
+        },
+        {
+          id: 'n4HuntedAgain', type: 'hunted', text: 'Reyes is safe, dosed, and on the radio saying the monster grabbed him. They are coming again. Lose them on the island.', checkpoint: 'n4ElBridge', retry: true,
+          at: 'n4ElBridge', hide: 'n4Roof', level: 2,
+          heading: 'ONCE MORE',
+          rules: 'The officers who are still gassed heard that call. Same rule: never strike one. West this time, onto the island roofs, and stay out of sight until the search ends.',
+          lines: [
+            v('reyes', 'All units, it had me! It had me by the collar! It was very gentle! Send everyone!'),
+            g('gordon', 'Reyes, get off the air. Batman, I am sorry. The ones I have not dosed yet are coming your way. I am pulling them back as fast as I can stick needles in them.'),
+          ],
+          escapedLines: [g('gordon', 'That is the last of them dosed. Nobody is chasing you now but me, and I only want the paperwork.')],
+          calledOffLines: [g('gordon', 'Stand easy. Every officer on that bridge has had the antidote and a cup of tea. You are clear.')],
+          failLines: [g('oracle', 'They boxed you in on the span. I cut their radios again. Go again, and go west.')],
+        },
+        {
+          id: 'n4Doses', text: 'Take the last doses back to Gordon at the bridge.', site: 'n4Bridge', radius: 10,
+          nudge: g('gordon', 'The bridge, where you left us. It is safe now. Mostly we are just embarrassed.'),
+          lines: [
+            g('gordon', 'Diaz is asking for you by name. That is new. Bring whatever you have left. My medics have run out of ideas and blankets.'),
+            g('oracle', 'And B? The doses work. Hold on to one. Somebody you know may need it before morning.'),
+          ],
+          banter: [v('dispatch', 'All units: the monster on the Narrows bridge has been downgraded to a person of interest. The fog remains at large.')],
         },
       ],
     },
@@ -304,11 +667,71 @@ export default {
         },
       ],
     },
+    // [m45] The doctor's second delivery: weather balloons with a canister under each, let go from
+    // Park Row into a west wind. From the Batwing, above the fog; then the crew that filled them.
+    {
+      id: 'm4Balloons', title: 'Second Delivery', checkpoint: 'n4AlleyGoal', rewards: ['xp:250'],
+      steps: [
+        {
+          // The Batwing only picks her up from high ground (src/vehicles/batwing.js canCall): the
+          // mission roof, south of the alley, is the nearest flat one.
+          id: 'n4ToWingRoof', text: 'Canister balloons are rising off Park Row. Get up onto the mission roof, south of the alley: the Batwing needs high ground to pick you up.', site: 'n4WingRoof', radius: 7,
+          nudge: g('alfred', 'The Park Row mission, sir, the low flat roof just south of the theatre. The aircraft will not come down into an alley. It has standards.'),
+          lines: [
+            g('oracle', 'New problem, and it is above you. Weather balloons going up off a roof on Park Row. Twelve of them, a canister under each, and a west wind that ends in the Loop.'),
+            g('gordon', 'I cannot shoot at those over a neighbourhood. Tell me you have something that can.'),
+            g('alfred', 'The Batwing is inbound, sir. Find it a roof. Master Dick is in good hands. Mine, on the radio. He is already complaining.'),
+          ],
+        },
+        {
+          id: 'n4BalloonsUp', type: 'armada', text: 'Pop every canister balloon from the Batwing before the wind carries them over the Loop. (Not aboard? Call it from any roof.)', site: 'n4Sky', talk: 'over',
+          balloons: 12, field: { rx: 60, ry: 14, rz: 70 },
+          lines: [g('oracle', 'Twelve on my scope, drifting east at walking pace. Fly through them or dart them. Either way, do it over the river side of the row, not the houses.')],
+        },
+        {
+          id: 'n4LaunchFight', type: 'fight', fight: 'launchCrew', text: 'The launch crew is on the roof of the old Orpheum, filling the next batch. Stop them.', checkpoint: 'n4LaunchRoof',
+          lines: [
+            g('oracle', 'Last one popped. They came off the roof of the Orpheum, the shut theatre beside the alley, and there is a second rack up there half full of helium.'),
+            v('hollowMan', 'Doc said nobody looks up in this town.'),
+            v('hollowMan', 'Doc has not met the one fella who lives up there.'),
+          ],
+        },
+        {
+          id: 'n4Manifest', type: 'collect', item: 'n4Manifest', site: 'n4Manifest', radius: 3, text: 'Take the launch sheet off the helium rack.',
+          lines: [
+            g('oracle', 'There will be a launch sheet on that rack. He is a scientist. He writes everything down. It is his worst habit.'),
+            g('alfred', 'Twelve balloons to keep you busy over Park Row, sir. One does wonder what he wanted you too busy to notice.'),
+          ],
+        },
+        // [m45] second pass: the sheet has two columns. The second flight went up from the truck
+        // while the roof was being cleared, and the truck is leaving with what is left.
+        {
+          id: 'n4BalloonsEast', type: 'armada', text: 'The launch sheet lists a second flight, already over the Narrows and drifting for the river. Pop every one from the Batwing.', site: 'n4Sky2', talk: 'over',
+          balloons: 14, field: { rx: 70, ry: 14, rz: 60 },
+          lines: [
+            g('oracle', 'Two columns on that sheet. The second flight went up from a truck in the street while you were busy up here. Fourteen, higher, and already over the island.'),
+            g('alfred', 'The aircraft is coming back round for you, sir. Do stay on the roof. It sulks if it has to look for you.'),
+          ],
+        },
+        {
+          id: 'n4HeliumBoard', type: 'board', text: 'The helium truck is pulling out of Park Row with the last rack. The Batmobile is on the street east of the theatre.', site: 'n4HeliumCar', talk: 'over',
+          nudge: g('alfred', 'The car is on the street east of the theatre, sir. Nose pointing at the problem.'),
+          lines: [g('oracle', 'Sky is clear. The truck that carried the helium is not: a pickup with one more rack on the bed, circling Park Row looking for a quiet street to finish the job.')],
+        },
+        {
+          id: 'n4HeliumChase', type: 'chase', text: 'Ram the helium truck three times before it lets the last rack go.', site: 'n4HeliumCar',
+          path: [{ x: -460, z: -419 }, { x: -520, z: -419 }, { x: -520, z: -298 }, { x: -460, z: -298 }],
+          van: { type: 'pickup', color: 0x8a7a44, toast: 'Stop the helium truck. Ram it three times!', label: 'HELIUM' },
+          lines: [g('alfred', 'Do mind the cylinders, sir. Helium is harmless. What is tied to it is not.')],
+        },
+      ],
+    },
     {
       id: 'm4Stack', title: 'The Stack', checkpoint: 'n4StackBase', rewards: ['xp:250'],
       steps: [
         {
           id: 'n4ToStack', text: 'Back to the Narrows. The Stack, the tall tenement in the middle of the island.', site: 'n4StackBase', radius: 10,
+          interrupts: [{ id: 'n4Carriers', at: 'n4Car', radius: 24, fight: 'n4Carriers', xp: 80, label: "Optional: the canister crew is down", lines: [{ speaker: 'oracle', portrait: 'oracle', text: "Six of his carriers moving canisters on foot, two streets from the Stack. Take them now and there is less in the air later." }] }], // [balance]
           nudge: g('nightwing', 'Tallest junk pile on the island, B. It has a satellite dish growing out of a shed growing out of a bathroom.'),
           lines: [
             g('nightwing', 'Okay. I am back. For the record, what I saw in there was mostly you in a tutu. I am going to need to talk to someone about that.'),

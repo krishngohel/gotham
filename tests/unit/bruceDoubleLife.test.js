@@ -146,10 +146,11 @@ describe('the night follows you into the day', () => {
     dayDrift(s, { keptToday: 0, crimesLastNight: 0 });
     expect(s.standing).toBe(57);
     expect(s.city).toBe(56);
-    expect(s.credit).toBe(2);
+    // [balance] one credit per 10 Standing banked (was 20): 57 Standing banks 5.
+    expect(s.credit).toBe(5);
     expect(s.day).toBe(1);
-    expect(spendCredit(s, 3).ok).toBe(false);
-    expect(spendCredit(s, 2).ok).toBe(true);
+    expect(spendCredit(s, 6).ok).toBe(false);
+    expect(spendCredit(s, 5).ok).toBe(true);
     expect(rndBudget(s)).toBeGreaterThan(0);
     s.rnd.frozen = 'prototype';
     expect(rndBudget(s)).toBe(0);

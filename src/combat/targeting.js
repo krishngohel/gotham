@@ -34,3 +34,9 @@ export function selectAttackTarget(origin, dir, enemies, { range = 14, focus = n
   if (ok(focus) && Math.hypot(focus.x - origin.x, focus.z - origin.z) <= focusRange) return focus;
   return selectTarget(origin, null, enemies, { range, allowDown });
 }
+
+// [balance] Whether a press of `action` may attach to this enemy. A spore-dazed civilian (Ivy's
+// thralls, `e.thrall`) is never what a strike, kick, throw or special lands on: only a deliberate
+// cape, batarang or counter reaches him (and frees him).
+const NO_THRALL = new Set(['punch', 'kick', 'throw', 'special']);
+export const attachable = (e, action) => !e.thrall || !NO_THRALL.has(action);

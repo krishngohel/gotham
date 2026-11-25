@@ -17,6 +17,7 @@ import { toonMaterial } from '../render/toon.js';
 import { snapToRoad, spawnSpot, predictRoute, roadblockSpots, spikeSpot } from './placement.js';
 import { convertAttack } from './rules.js';
 import { lerpAngle } from './netCodec.js'; // [verify]
+import { createAvoidState, avoidSteer, avoidIdle, STUCK_REROUTE, STUCK_GIVE_UP } from '../nav/avoid.js'; // [balance]
 
 const CRUISE = { police: 23, police_van: 19 };
 const yAxis = new THREE.Vector3(0, 1, 0);
@@ -247,6 +248,7 @@ export function createPoliceUnits({ scene, world, assets, quality, caps, index, 
     return null;
   }
   function despawnOfficer(o) {
+    if (o.av) avoidIdle(o.av);
     o.active = false; o.mode = 'idle'; o.restrained = false;
     if (o.ch) o.ch.root.visible = false;
   }
@@ -604,14 +606,21 @@ export function createPoliceUnits({ scene, world, assets, quality, caps, index, 
         if (o.path) o.path.push({ x: tx, y: ty, z: tz });
       }
     }
+    // [balance] Stuck (walking on the spot for 2 s): route along the sidewalks now; stuck for good
+    // where nobody can see him: he goes (a fresh officer spawns on a sidewalk if still wanted).
+    if (o.av?.stuck >= STUCK_REROUTE && o.repathT > 0.2) { o.repathT = 0; o.direct = false; }
+    if (o.av?.stuck >= STUCK_GIVE_UP && !visible(o.x, o.y, o.z)) { despawnOfficer(o); return; }
     if (o.direct || !o.path) { moveOfficer(o, dt, tx, tz, speed); return; }
     while (o.pi < o.path.length - 1 && Math.hypot(o.path[o.pi].x - o.x, o.path[o.pi].z - o.z) < 1.5) o.pi++;
     const p = o.path[o.pi];
     moveOfficer(o, dt, p.x, p.z, speed);
   }
   function moveOfficer(o, dt, tx, tz, speed) {
-    const dx = tx - o.x, dz = tz - o.z, d = Math.hypot(dx, dz);
+    let dx = tx - o.x, dz = tz - o.z;
+    const d = Math.hypot(dx, dz);
     if (d < 0.05) return;
+    // [balance] Local avoidance round building corners (src/nav/avoid.js), the same goons use.
+    if (d > 1.2) { o.av ??= createAvoidState(); avoidSteer(o.av, collision, o.x, o.y, o.z, dx, dz, dt); dx = o.av.dx * d; dz = o.av.dz * d; }
     const wantYaw = Math.atan2(dx, dz);
     let dy = Math.atan2(Math.sin(wantYaw - o.yaw), Math.cos(wantYaw - o.yaw));
     o.yaw += Math.max(-8 * dt, Math.min(8 * dt, dy));

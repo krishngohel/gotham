@@ -17,10 +17,16 @@ const Y = 0;
 const ARENA = { x: 294, y: Y, z: -712, r: 15 };
 const NODES = [[288, -706], [300, -706], [294, -721], [286, -716], [302, -716]].map(([x, z]) => ({ x, y: Y, z }));
 const EDGE = [[280, -699], [308, -699], [281, -725], [307, -725], [294, -697]].map(([x, z]) => ({ x, y: Y, z }));
-const WINDOWS = [1, 2, 2];
+// [balance] One more window in the first and last phases: the average scripted player beat her in
+// 2 min 15 s with 21 HP lost (target 3-6 min, never trivial). Windows are structure, not health.
+const WINDOWS = [2, 2, 3];
 const NODE_COUNT = [3, 5, 5];
 const THRALLS = [4, 6, 6];
 const CUT_T = 1.5;
+// [balance] Solo, a cut node regrows after this long in Overgrowth (was 12 s: five nodes 6-12 m
+// apart, 1.5 s each, with thralls swinging, could not all be cut in time; the scripted player
+// stalled there for minutes). Story/hard scale it by the tier's window.
+const REGROW_SOLO = 22;
 
 const LINES = {
   guard: ['The roots hold me up. Cut them, if you can bear to hurt a garden.', 'Thorns, darling. All the way down.', 'You cannot punch photosynthesis.'],
@@ -72,7 +78,8 @@ export const ivyDef = makeVillainBoss({
   sim(b) {
     const me = b.heroes[0];
     if (!me || !b.data.nodes) return null;
-    for (const e of b.data.thralls) if (e.alive && !e.down && dist2(e.pos, me.pos) < 2.6) return { action: 'cape' };
+    // [balance] Keep cutting: a thrall who swings is countered (the bot answers tells itself), and a
+    // counter frees him as the cape does. Chasing thralls with the cape never got a node cut.
     if (b.e.vulnerable > 0) return { goTo: b.actor.pos, stop: 1.8, action: 'punch' };
     const left = b.data.nodes.filter((n) => n.on && !n.cut);
     if (left.length) { let best = left[0]; for (const n of left) if (dist2(n, me.pos) < dist2(best, me.pos)) best = n; return { goTo: best, stop: 0.6, hold: true }; }
@@ -180,7 +187,7 @@ function think(dt, b) {
   // Vine lash at range (red: dodge or get behind a hedge).
   b.data.aimCool -= dt;
   if (b.data.aimCool <= 0 && tgt && b.e.state !== 'open' && b.e.state !== 'aim') {
-    b.data.aimCool = (b.phase === 0 ? 4.2 : 3.4) + b.rng.next() * 1.4;
+    b.data.aimCool = (b.phase === 0 ? 3.6 : 2.9) + b.rng.next() * 1.2; // [balance] was 4.2 / 3.4
     const at = b.punish ?? tgt;
     b.actor.aim(at, { windup: 1 * b.tier.tell, clip: 'OverhandThrow', fire: (h) => {
       if (!h) return;
@@ -202,8 +209,11 @@ function env(dt, b) {
   const dual = b.phase === 2 && b.players > 1;
   for (const n of b.data.nodes) {
     if (!n.on || n.cut) continue;
-    const on = heroes.some((h) => Math.hypot(h.pos.x - n.x, h.pos.z - n.z) < 1.7 && Math.abs(h.pos.y - n.y) < 2);
-    n.held = on ? n.held + dt : Math.max(0, n.held - dt * 2);
+    // [balance] A counter or a cape steps her off the node for a moment: the cut so far is kept
+    // (it drained at twice real time and every thrall's swing reset it; the scripted player never
+    // finished a cut in eight minutes). The plate reads a little wider, too.
+    const on = heroes.some((h) => Math.hypot(h.pos.x - n.x, h.pos.z - n.z) < 2 && Math.abs(h.pos.y - n.y) < 2);
+    n.held = on ? n.held + dt : Math.max(0, n.held - dt * 0.4);
     if (n.held < CUT_T) continue;
     n.held = 0;
     n.cut = true; n.t = 0; n.armedAt = b.t;
@@ -219,7 +229,7 @@ function env(dt, b) {
     // Unpaired cuts older than three seconds grow back.
     for (const n of b.data.nodes) if (n.on && n.cut && !n.paired && b.t - n.armedAt > 3) { n.cut = false; paintNode(b, n); }
   } else if (b.phase === 2) {
-    for (const n of b.data.nodes) if (n.on && n.cut) { n.t += dt; if (n.t > 12 && b.e.vulnerable <= 0) { n.cut = false; n.t = 0; paintNode(b, n); } }
+    for (const n of b.data.nodes) if (n.on && n.cut) { n.t += dt; if (n.t > REGROW_SOLO * b.tier.window && b.e.vulnerable <= 0) { n.cut = false; n.t = 0; paintNode(b, n); } }
   }
   // Every node cut: the shield falls.
   if (b.e.vulnerable <= 0 && b.e.state !== 'open' && b.data.nodes.filter((n) => n.on).every((n) => n.cut)) {

@@ -211,7 +211,7 @@ describe('run time', () => {
   });
   it('the Wayne branch spends Standing through the provider', () => {
     const t = setup();
-    let standing = 12;
+    let standing = 8; // [balance] Wayne Scholars costs 6 now (was 10, standing 12)
     setStandingProvider({ getStanding: () => standing, spendStanding: (n) => { if (standing < n) return false; standing -= n; return true; } });
     expect(t.w.buy('wayneScholars').ok).toBe(true);
     expect(standing).toBe(2);

@@ -8,6 +8,7 @@ export const XP = {
   trophy: 150, crimeStopped: 200, glassBroken: 50, wallBroken: 50,
   chainPerGoon: 50, swarmPerGoon: 60, crateOpened: 200, missionDone: 500,
   vanChaseStopped: 200, // a free-roam side chase won: the same payout as a street crime stopped
+  campaignMission: 300, // [balance] a story mission finished (scripts/economy-sim.mjs)
 };
 // A medal's worth; a better medal pays the difference.
 export const MEDAL_XP = { bronze: 150, silver: 300, gold: 500 };

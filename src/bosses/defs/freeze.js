@@ -30,7 +30,8 @@ const VENTS = [
   { vent: { x: -328, y: Y, z: 123 }, valve: { x: -323.5, y: Y, z: 123 } },
 ];
 const HEAT = [{ x: -355, y: Y, z: 107 }, { x: -325, y: Y, z: 137 }];
-const WINDOWS = [1, 2, 2];
+// [balance] One more window per phase: the average scripted player beat him in 31 s (target 3-6 min).
+const WINDOWS = [3, 3, 3]; // phase 3 at 4 windows: five deaths to the frozen roof in one run
 
 const LINES = {
   guard: ['My suit is rated to two hundred below. Your knuckles are not.', 'You are wasting heat, Batman.', 'Strike me again. I could use the exercise.'],

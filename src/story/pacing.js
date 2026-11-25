@@ -14,7 +14,7 @@ import { typeDuration, holdDuration } from '../ui/radioQueue.js';
 
 export const PANEL_S = 2.5;
 // Panels per comic scene (src/game/scenes.js; a night's own scenes declare `panels` on the step).
-export const SCENE_PANELS = { intro: 5, card: 2, crates: 2, rig: 3, antidote: 2, actOne: 1, actTwo: 1, actThree: 1, bossIntro: 2, bossEnd: 2, death: 1, finale: 0 };
+export const SCENE_PANELS = { intro: 3, card: 2, crates: 2, rig: 3, antidote: 2, actOne: 1, actTwo: 1, actThree: 1, bossIntro: 2, bossEnd: 2, death: 1, finale: 0 };
 const FINALE_REEL_S = 21; // src/game/finale.js: the roof sequence before the credits
 const lineS = (l) => typeDuration(l.text ?? '') + holdDuration(l.text ?? '');
 

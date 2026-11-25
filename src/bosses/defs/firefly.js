@@ -22,6 +22,13 @@ const ARENA = { x: 345, z: -330, r: 70 };
 const CENTRE = { x: 345, y: Y, z: -330 };
 const RAMS = [2, 3, 3];
 const HIGH = 11;
+// [m67] The swoop, in numbers. He flies his line at SWOOP.speed. He used to be low for a flat 2.2 s
+// (44 m) however far away the ring was: played by keyboard, the ring was beyond that on 13 swoops
+// of 25, so a driver waiting on the ring (what the objective says to do) could not be hit by him
+// at all. Now he stays low until he is past the ring (capped: a car that has left the drive does
+// not drag him across the park). The tell, the number of rams and the armour are unchanged.
+export const SWOOP = { speed: 20, low: 2.2, past: 0.6, maxLow: 4.5, climb: 1.4, ramSpeed: 8, reach: 4.6 };
+export const swoopLow = (reach) => Math.min(SWOOP.maxLow, Math.max(SWOOP.low, (reach || 0) / SWOOP.speed + SWOOP.past));
 const V = () => (typeof window !== 'undefined' ? window.__game?.vehicles ?? null : null);
 
 const LINES = {
@@ -30,6 +37,7 @@ const LINES = {
   swoop: ['Coming in hot!', 'Duck!', 'Low pass!', 'Watch the paint!'],
   rammed: ['My thrusters!', 'You hit a man with a car! Who does that?', 'Ow. Ow. Ow, and also ow.'],
   miss: ['Too slow, Bat.', 'Missed me by a mile. Well. A metre.', 'Better luck next lap.'],
+  parked: ['A parked car? I have flown through car parks, Bat.', 'You have to be MOVING to hurt me!', 'Standing still. Bold. Useless, but bold.'],
   refuel: ['Fill her up!', 'Topped off. Thanks, little drone.', 'Unleaded. My favourite.'],
   lanes: ['Every lane is the fast lane tonight.', 'Burn out!'],
   foot: ['On foot? Brave. Stupid, but brave.', 'Walking? On my highway?'],
@@ -47,6 +55,7 @@ export const fireflyDef = makeVillainBoss({
   setup(ctx, b) {
     b.data.kit = bossKit(ctx, b);
     b.data.ring = null;
+    b.data.lane = [];
     b.data.drones = [];
     // A trail of flame behind him: one reused line (no lights).
     const g = new THREE.BufferGeometry();
@@ -62,12 +71,13 @@ export const fireflyDef = makeVillainBoss({
     if (s && s.low) return { drive: { x: b.actor.pos.x, z: b.actor.pos.z }, boost: true };
     if (s) return { drive: { x: s.to.x, z: s.to.z } };
     const d = b.data.drones.find((x) => x.alive);
-    if (d) return { drive: { x: d.p.x, z: d.p.z } };
+    // [balance] Cut the drone off on its way to him (a point between the two), not chase its tail.
+    if (d) return { drive: { x: d.p.x * 0.6 + b.actor.pos.x * 0.4, z: d.p.z * 0.6 + b.actor.pos.z * 0.4 }, boost: true };
     return { drive: { x: CENTRE.x + Math.sin(b.t * 0.3) * 25, z: CENTRE.z + Math.cos(b.t * 0.3) * 25 } };
   },
   hazards: (b) => ({ swoop: b.data.swoop ? { t: Math.round(b.data.swoop.t * 100) / 100, low: !!b.data.swoop.low } : null, drones: b.data.drones.filter((d) => d.alive).map((d) => [Math.round(d.p.x), Math.round(d.p.z)]), discs: b.data.kit.netHazards(), rams: b.data.rams ?? 0 }),
   phase: {
-    torchlight: phaseHooks('Ram him when he swoops low. His firebombs land where you are heading.', LINES.open),
+    torchlight: phaseHooks('He dives along the marked line to the ring. Be on it and moving when he comes through. His firebombs land where you are heading.', LINES.open),
     refuel: phaseHooks('Fuel drones are coming in: drive through them before they reach him. Ram him three times.', LINES.refuel),
     burnOut: phaseHooks('The lanes are burning in waves. Ram him three more times.', LINES.lanes),
   },
@@ -109,6 +119,7 @@ function stop(b) {
   b.data.drones = [];
   b.data.swoop = null;
   b.data.ring = null;
+  releaseLane(b);
 }
 
 function armour(b, dmg) {
@@ -159,9 +170,13 @@ function think(dt, b) {
   if (!s && b.data.swoopCool <= 0) {
     const to = { x: driverPos.x, y: Y, z: driverPos.z };
     const dx = to.x - a.pos.x, dz = to.z - a.pos.z, d = Math.hypot(dx, dz) || 1;
-    b.data.swoop = { t: 0, tell: 1.5 * b.tier.tell, from: { x: a.pos.x, y: a.pos.y, z: a.pos.z }, to, dir: { x: dx / d, z: dz / d }, low: false, hit: false, fuelled: b.data.fuelled, again: b.phase === 2 && b.rng.next() < 0.5 };
+    b.data.swoop = { t: 0, tell: 1.5 * b.tier.tell, from: { x: a.pos.x, y: a.pos.y, z: a.pos.z }, to, dir: { x: dx / d, z: dz / d }, low: false, hit: false, fuelled: b.data.fuelled, again: b.phase === 2 && b.rng.next() < 0.5, lowT: swoopLow(d), warned: false };
     b.data.fuelled = false;
     b.data.ring = K.markers.place('gate', { x: to.x, y: Y - 1.2, z: to.z }, { color: b.data.swoop.fuelled ? 0x7fd8ff : 0xf08a24, scale: 1.4 });
+    // [m67] His line, drawn on the ground from the ring back toward him (the ring alone marks a
+    // point, and a point is not something a driver can line a car up on).
+    releaseLane(b);
+    for (const back of [9, 18, 27]) if (back < d - 4) b.data.lane.push(K.markers.place('plate', { x: to.x - (dx / d) * back, y: Y, z: to.z - (dz / d) * back }, { color: b.data.swoop.fuelled ? 0x7fd8ff : 0xf08a24, scale: 0.9 - back * 0.012 }));
     a.e.glyph = 'red';
     D.events.emit('word', { text: 'WHIIINE', pos: a.pos.clone().setY(a.pos.y + 1.5), big: false });
     b.say(b.actor.pick(LINES.swoop), 1.4);
@@ -244,14 +259,20 @@ function swoopTick(dt, b, s, bm) {
     return;
   }
   // Low and fast along his line, then up again.
-  s.low = s.t < s.tell + 2.2;
+  s.low = s.t < s.tell + s.lowT;
   a.e.glyph = null;
-  const speed = 20;
+  const speed = SWOOP.speed;
   a.pos.x += s.dir.x * speed * dt; a.pos.z += s.dir.z * speed * dt;
   const wantY = s.low ? Y + 1.6 : HIGH;
   a.pos.y += (wantY - a.pos.y) * Math.min(1, dt * (s.low ? 5 : 1.6));
   a.ch.animator.play('Jog_Fwd_Loop', { fade: 0.15 });
-  if (s.low && !s.hit && bm && Math.abs(bm.v?.speed ?? 0) > 8 && dist2(bm.group.position, a.pos) < 4.6) {
+  // [m67] He went through a car that was not moving fast enough to count: say so (it used to pass in silence).
+  if (s.low && !s.hit && !s.warned && bm && Math.abs(bm.v?.speed ?? 0) <= SWOOP.ramSpeed && dist2(bm.group.position, a.pos) < SWOOP.reach) {
+    s.warned = true;
+    D.events.emit('word', { text: 'TOO SLOW!', pos: a.pos.clone().setY(a.pos.y + 1.4), big: false });
+    b.say(b.actor.pick(LINES.parked), 2);
+  }
+  if (s.low && !s.hit && bm && Math.abs(bm.v?.speed ?? 0) > SWOOP.ramSpeed && dist2(bm.group.position, a.pos) < SWOOP.reach) {
     s.hit = true;
     if (s.fuelled) {
       b.say('Afterburners! Can not touch this!', 1.8);
@@ -266,16 +287,22 @@ function swoopTick(dt, b, s, bm) {
       if (b.data.rams >= RAMS[b.phase]) { endSwoop(b, s); b.next(); return; }
     }
   }
-  if (s.t > s.tell + 3.6) {
-    if (!s.hit) b.say(b.actor.pick(LINES.miss), 1.6);
+  if (s.t > s.tell + s.lowT + SWOOP.climb) {
+    if (!s.hit && !s.warned) b.say(b.actor.pick(LINES.miss), 1.6);
     endSwoop(b, s);
     if (s.again && !s.second) { b.data.swoopCool = 0.6; b.data.secondNext = true; }
   }
   void K;
 }
 
+function releaseLane(b) {
+  for (const m of b.data.lane ?? []) b.data.kit.markers.release(m);
+  b.data.lane = [];
+}
+
 function endSwoop(b, s) {
   b.data.kit.markers.release(b.data.ring); b.data.ring = null;
+  releaseLane(b);
   b.data.swoop = null;
   b.actor.e.glyph = null;
   b.data.swoopCool = b.data.secondNext ? 0.6 : (b.phase === 0 ? 5 : 4.2) * b.tier.tell + b.rng.next();

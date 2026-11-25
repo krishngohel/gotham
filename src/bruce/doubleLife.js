@@ -266,11 +266,15 @@ export function missCommitment(state, c) {
 // ---- day and night boundaries ----
 // The systems push against each other: a day with no Wayne commitment kept lets Standing slide;
 // a night with no crime stopped lets the City slide; Standing banks Wayne credit.
+// [balance] Standing banked per credit each day (was 20: about 23 credit over the whole campaign
+// against a 170-credit Wayne branch; docs/design/balance.md 6).
+export const WAYNE_BANK_PER = 10;
+
 export function dayDrift(state, { keptToday = 0, crimesLastNight = null } = {}) {
   const changes = [];
   if (!keptToday) changes.push(...applyEffects(state, { standing: -3 }, 'no Wayne commitments kept'));
   if (crimesLastNight === 0) changes.push(...applyEffects(state, { city: -4 }, 'no patrol last night'));
-  const bank = Math.floor(state.standing / 20);
+  const bank = Math.floor(state.standing / WAYNE_BANK_PER);
   if (bank) changes.push(...applyEffects(state, { credit: bank }, 'the Foundation banks your standing'));
   state.day += 1;
   return changes;

@@ -793,7 +793,7 @@ export async function startGame({ canvas, hudRoot, params, onProgress = () => {}
       e.place(p, yaw);
       return e;
     };
-    const encounters = createEncounters({ spawn, despawn, combat, events, collision: world.collision, stealth, getPlayerCount: () => players.count });
+    const encounters = createEncounters({ spawn, despawn, combat, events, collision: world.collision, stealth, getPlayerCount: () => players.count, getDifficulty: () => settings.difficulty }); // [balance] getDifficulty
     // ---- Part I: interiors (see src/world/interiors.js) ----
     const interiors = createInteriors({ hero, events, rain: world.rain, collision: world.collision });
     const trophies = createTrophies(scene, progress.trophies);

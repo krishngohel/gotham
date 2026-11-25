@@ -6,7 +6,7 @@ import { SCENES } from './scenes.js';
 import { checkpointFor } from './objectives.js';
 // [story] The campaign (workstream J1): a mission runner that is a superset of the old linear walk,
 // and the story runtime that loads later nights, their sites, fights and new step types.
-import { createRunner } from '../story/runner.js';
+import { createRunner, resumeCheckpoint } from '../story/runner.js';
 import { createStoryRuntime } from '../story/storyRuntime.js';
 import { bannerText, createGate } from './storyCues.js';
 import { createNudge } from './nudge.js';
@@ -152,7 +152,9 @@ export function createFlow(d) {
       if (y > -Infinity && Math.abs(y - at.y) < 3) return { x, y, z };
       return { ...at };
     }
-    const cp = checkpointFor(steps, objectives.index) ?? story.startSite;
+    // [m23] Later nights: never put her down on the goal of the travel step she is on (a resumed
+    // save would finish it unplayed): src/story/runner.js resumeCheckpoint. Night One is unchanged.
+    const cp = story.nightOne ? checkpointFor(steps, objectives.index) ?? story.startSite : resumeCheckpoint(steps, objectives.index, { site, start: story.startSite });
     return { ...(site(cp) ?? SITES.start) };
   }
 

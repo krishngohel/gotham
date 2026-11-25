@@ -209,7 +209,11 @@ export function createFollowCamera(camera, collision) {
       // [move] Above the floor under the camera, not above y 0.4: on Lower Gotham's lower deck, the
       // river walk or a dip in the Bristol hills the old fixed floor lifted the camera up into the
       // deck overhead (the driving camera on the lower deck showed the road from inside the car).
-      const camFloor = collision.groundBelow ? collision.groundBelow(camera.position.x, lookAt.y, camera.position.z, 0.1) : -Infinity;
+      // [polish] Only floors at the feet's level or below count (feet + a step): a parked car, a
+      // parapet, a prop or a slightly higher roof next door under the camera lifted it by up to a
+      // metre (sampled from lookAt height); those are obstacles, and the pull-in ray above keeps
+      // the camera out of them.
+      const camFloor = collision.groundBelow ? collision.groundBelow(camera.position.x, focus.y + 0.45, camera.position.z, 0.1) : -Infinity;
       const minY = (camFloor > -Infinity ? camFloor : 0) + 0.4;
       if (camera.position.y < minY) camera.position.y = minY;
       if (s.shake > 0) {

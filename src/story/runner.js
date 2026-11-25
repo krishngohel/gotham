@@ -68,4 +68,26 @@ export function createRunner(steps, startIndex = 0) {
 
 // The respawn point for a step: its own checkpoint, or the nearest earlier one (same as
 // objectives.js checkpointFor, re-exported so night code needs one import).
-export { checkpointFor } from '../game/objectives.js';
+import { checkpointFor } from '../game/objectives.js';
+export { checkpointFor };
+
+// [m23] Where a save resumed on step `index` (or a hero who went down on it) is put: the step's
+// checkpoint, as checkpointFor says, EXCEPT when that would stand her on the step's own goal. Many
+// travel steps carry the checkpoint of the beat they lead to (a mission's checkpoint lands on its
+// first step, which is usually the walk there): resuming on one put the hero down at its marker,
+// the step finished unplayed and the save came back one step further on. For a step that ends by
+// reaching its site (`reach`, `collect`, `interior`), the nearest earlier checkpoint that is not
+// inside the goal is used instead, then the night's start. Pure. Returns a site id (or point).
+const REACH_TYPES = new Set([undefined, 'reach', 'collect', 'interior']);
+export function resumeCheckpoint(steps, index, { site = () => null, start = null } = {}) {
+  const s = steps[index];
+  const own = checkpointFor(steps, index) ?? start;
+  if (!s || !REACH_TYPES.has(s.type) || !s.site) return own;
+  const goal = site(s.site);
+  if (!goal) return own;
+  const r = (s.radius ?? 8) + 3;
+  const inside = (id) => { const p = site(id); return !!p && Math.hypot(p.x - goal.x, p.z - goal.z) < r && Math.abs((p.y ?? 0) - (goal.y ?? 0)) < 6; };
+  if (!inside(own)) return own;
+  for (let i = index - 1; i >= 0; i--) { const c = steps[i].checkpoint; if (c && !inside(c)) return c; }
+  return start && !inside(start) ? start : own;
+}

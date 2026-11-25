@@ -36,7 +36,7 @@ const c = (who, text) => ({ who, text });
 // dialogue either way.
 const CINEMATIC = {
   // Prologue: a slow push toward the Batsignal as the beam bends into a grin.
-  intro: { shots: [{ from: { x: -26, y: 52, z: 8 }, to: { x: -7, y: 44.4, z: -7 }, look: { x: -12, y: 43.6, z: -12 }, dur: 5 }], lines: [c('joker', 'Good evening, Gotham. Try to keep up, Bat.')] },
+  intro: { shots: [{ from: { x: -26, y: 52, z: 8 }, to: { x: -7, y: 44.4, z: -7 }, look: { x: -12, y: 43.6, z: -12 }, dur: 3.5 }], lines: [c('joker', 'Good evening, Gotham. Try to keep up, Bat.')] },
   // (The act openers' establishing orbits went with the act title cards: [story] J1 pacing pass.)
   // The Courier's mask comes off: a push toward Nightwing by the Ace Chemicals gate.
   // Built around wherever Batman stands when the step begins (flow.js revealShots): Nightwing

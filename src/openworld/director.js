@@ -31,13 +31,35 @@ const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
 // one at a time while a story objective is waiting (and never near it); the full cap in free roam.
 // Results are shared frozen objects (no allocation per frame).
 const HALT = Object.freeze({ spawn: false, age: false, cap: 0 });
-const STOP_TYPES = new Set(['fight', 'boss', 'cutscene', 'chase', 'battle', 'armada', 'board', 'puzzle', 'fear']);
+const STOP_TYPES = new Set(['fight', 'boss', 'cutscene', 'chase', 'battle', 'armada', 'board', 'puzzle', 'fear',
+  // [m23] A story case, rescue or police escape is a set piece too: nothing else starts on top of it.
+  // Nor on a timed traversal run: Night Two's drone run passes 12 m from the Pemberton penthouse
+  // encounter's doorway, which engaged mid-run once the step was 25 s old and then held the story.
+  'case', 'rescue', 'evade', 'traverse',
+  // [m67] Nights Six and Seven's set pieces (src/story/missions/n6, n7): the same rule.
+  'freeing', 'hack', 'escape', 'caseboard', 'tail']);
+// [m23] The story's hold, for every night and every step type (one rule, not a list): the open
+// world starts nothing new and shows no invitation while a main story beat is in play. A beat is
+// any typed step (a fight, a scan, a case, a run, a choice, a pick-up, getting in the car...), and
+// a plain travel step once a hero is within STORY_NEAR metres of where it ends (arriving at the
+// beat). The long travel legs between beats stay free roam: that is where crimes, side missions
+// and predator encounters belong (docs/design/story-format.md 7). Pure.
+export const STORY_NEAR = 90;
+export function storyHold({ mode = 'play', hasStep = false, stepType = null, targetDist = Infinity } = {}) {
+  if (mode !== 'play') return true;
+  if (!hasStep || stepType === 'credits' || stepType === 'nightEnd') return false;
+  if (stepType && stepType !== 'reach') return true;
+  return targetDist < STORY_NEAR;
+}
+// Held by the story: nothing new spawns or engages; what is already live plays out and ages away.
+const STORY = Object.freeze({ spawn: false, age: true, cap: 0 });
 const GOV = new Map();
 const gov = (spawn, cap) => { const k = (spawn ? 100 : 0) + cap; let g = GOV.get(k); if (!g) { g = Object.freeze({ spawn, age: true, cap }); GOV.set(k, g); } return g; };
-export function governor({ mode = 'play', stepType = null, freeRoam = false, challenge = false, photo = false, mission = false, sinceStep = 999, quality = 'high' } = {}) {
+export function governor({ mode = 'play', stepType = null, freeRoam = false, challenge = false, photo = false, mission = false, sinceStep = 999, quality = 'high', story = false } = {}) {
   const cap = CAPS[quality] ?? CAPS.high;
   if (mode !== 'play' || challenge || photo || mission) return HALT;
   if (STOP_TYPES.has(stepType)) return HALT;
+  if (story) return STORY; // [m23]
   if (freeRoam || !stepType || stepType === 'credits' || stepType === 'nightEnd') return gov(true, cap);
   // A story objective is waiting: at most a couple of crimes, and a quiet spell after a new step.
   return gov(sinceStep > GAP.storyQuiet, Math.min(2, cap));

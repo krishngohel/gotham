@@ -5,7 +5,8 @@
 //   2 'umbrella'  He comes down swinging. The umbrella stops every strike from the front (he says
 //                 so). A batarang or the Batclaw (a stun) knocks it aside and opens a window; so
 //                 does a hit from behind, which in co-op means one player draws him while the other
-//                 flanks. Countered swings stagger him but do not open him. Three windows.
+//                 flanks. Countered swings stagger him but do not open him. Four windows ([balance]); after one the
+//                 umbrella is braced for a few seconds.
 //   3 'blizzard'  A gas umbrella: freezing clouds lobbed where the heroes stand, three per volley,
 //                 then he must reload (a window). A few bodyguards come back. Two windows.
 // Kiting is punished: a hero who stays out of reach gets the next burst or lob (rules.js). Co-op
@@ -37,6 +38,18 @@ export const penguinDef = makeVillainBoss({
   lines: { guard: LINES.guard },
   targeting: { leash: 13, kiteT: 3.5, swapEvery: 8 },
   phases: [{ id: 'guards', name: 'The bodyguards' }, { id: 'umbrella', name: 'The umbrella' }, { id: 'blizzard', name: 'The blizzard' }],
+  // [balance] The scripted player's hint (scripts/lib/player-bot.mjs): bodyguards first (his bursts
+  // are red aims the bot dodges itself); then a batarang knocks the umbrella aside between his
+  // swings; in the blizzard, stay out of the clouds and strike when he reloads.
+  sim(b) {
+    const me = b.heroes[0];
+    if (!me) return null;
+    if (b.e.vulnerable > 0) return { goTo: b.actor.pos, stop: 1.6, action: 'punch' };
+    const inCloud = (b.data.clouds ?? []).find((c) => Math.hypot(c.x - me.pos.x, c.z - me.pos.z) < CLOUD_R + 0.5);
+    if (inCloud) { const dx = me.pos.x - inCloud.x, dz = me.pos.z - inCloud.z, d = Math.hypot(dx, dz) || 1; return { goTo: { x: me.pos.x + (dx / d) * 4, y: me.pos.y, z: me.pos.z + (dz / d) * 4 }, stop: 0.3 }; }
+    if (b.phase === 1 && b.e.state !== 'windup' && b.e.state !== 'swing') return { goTo: b.actor.pos, stop: 5, action: 'batarang' };
+    return null;
+  },
   setup(ctx, b) {
     const { actor, e } = b;
     const deps = b.deps;
@@ -53,7 +66,9 @@ export const penguinDef = makeVillainBoss({
       }
       return hit(result, from, opts);
     };
-    e.onStun = () => { if (b.phase === 1 && !(e.vulnerable > 0)) openUp(b, 'gadget'); };
+    // [balance] After a window the umbrella is braced for a few seconds: a second batarang straight
+    // away bounces off (the scripted player emptied this phase in 8 s by throwing every 0.8 s).
+    e.onStun = () => { if (b.phase === 1 && !(e.vulnerable > 0)) { if (b.t - (b.data.openedAt ?? -99) < 6) { b.say('Not twice, Detective. Manners.', 1.6); return; } openUp(b, 'gadget'); } };
   },
   phase: {
     guards: {
@@ -75,9 +90,9 @@ export const penguinDef = makeVillainBoss({
       idle(dt, b) { b.actor.tick(dt, null, b.target); ensureListed(b); },
       windowClosed(b) {
         b.data.windows += 1;
-        b.inPhase = b.data.windows / 3;
+        b.inPhase = b.data.windows / 4;
         b.say(b.actor.pick(LINES.open), 2);
-        if (b.data.windows >= 3) b.next();
+        if (b.data.windows >= 4) b.next(); // [balance] was 3
       },
     },
     blizzard: {
@@ -117,6 +132,7 @@ function ensureListed(b) {
 }
 
 function openUp(b, how) {
+  b.data.openedAt = b.t + 4 * b.tier.window; // [balance] braced again from when this window ends
   b.say(b.actor.pick(LINES.open), 2);
   b.actor.open(4 * b.tier.window);
   b.deps.events.emit('bossVulnerable', { id: 'penguin', how });

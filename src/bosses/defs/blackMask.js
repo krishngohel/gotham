@@ -15,7 +15,8 @@ import { makeVillainBoss, brawl } from './brawler.js';
 import { bossKit, windowsDone, dist2 } from './kit.js';
 import { shotLands } from '../actor.js';
 
-const WINDOWS = [2, 2, 2];
+// [balance] Three windows a phase (was two): the average scripted player beat him in 101 s.
+const WINDOWS = [2, 3, 2]; // 3-3-3: five deaths in one run; 2-2-2: beaten in 101 s
 const LINES = {
   guard: ['I have watched every tape of you. Every one.', 'Predictable.', 'You hit like a man with a schedule.', 'That is not how you beat a shield. I know. I read your file.'],
   open: ['Let us talk business, Batman. Your methods, my margins.', 'I bought the toxin. I bought the frost. I bought the fire. I can buy you.', 'I switched your toys back on so you could not blame them. Generous, no?'],

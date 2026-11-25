@@ -27,6 +27,9 @@ export const STEP_TYPES = [
   'scan', 'traverse', 'puzzle', 'fork', 'fear', 'nightEnd', 'wait',
   // [story2] the double life inside the nights (src/story/lifeSteps.js)
   'life', 'dilemma', 'civvy',
+  'hunted', // [m45] Night Four: lose a scripted police response (src/story/missions/n4/hunted.js)
+  // [m23] Nights Two and Three's missions (src/story/missions/n2, n3)
+  'case', 'rescue', 'evade', 'carTail',
 ];
 
 const NIGHTS = new Map();

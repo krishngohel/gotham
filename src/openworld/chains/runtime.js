@@ -209,7 +209,7 @@ export function createChains(ow, { crimes, stealthEnc, cases, bossDeps = null })
       if ((lookT -= dt) > 0) return;
       lookT = 0.5;
       announce();
-      if (ow.busy() || stealthEnc?.active || cases?.active) return;
+      if (ow.busy() || ow.storyHeld?.() || stealthEnc?.active || cases?.active) return; // [m23] storyHeld: never on top of a story beat
       for (const m of ALL_MISSIONS) {
         if (done(m) || !unlocked(m)) continue;
         const p = siteOf(m.start);

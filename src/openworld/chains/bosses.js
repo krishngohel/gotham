@@ -24,6 +24,9 @@ export const catBurglarDef = (opts) => makeVillainBoss({
   intro: 'owCatIntro', outro: 'owCatOutro',
   lines: { guard: ['Too slow, darling.', 'Missed me. Again.', 'You will have to be quicker than that.'] },
   targeting: { leash: 18, kiteT: 6, swapEvery: 7 },
+  // [balance] The scripted player's hint (scripts/lib/player-bot.mjs): the tells are read by the
+  // bot itself (red pounce: dodge; blue whip: counter); over the roofs, run her down.
+  sim: (b) => (b.phase === 1 ? { goTo: b.actor.pos, stop: 1.2, action: b.e.vulnerable > 0 ? 'punch' : null } : b.e.vulnerable > 0 ? { goTo: b.actor.pos, stop: 1.6, action: 'punch' } : null),
   phase: {
     rhythm: { enter: (b) => { b.data.windows = 0; b.say('Every roof in this city has a way down, Bat. I know all of them.'); }, update: (dt, b) => pounceWhip(dt, b, 1), windowClosed: (b) => { if (++b.data.windows >= 2) b.next(); else b.inPhase = 0.5; } },
     rooftops: {
@@ -57,7 +60,9 @@ export const catBurglarDef = (opts) => makeVillainBoss({
       windowClosed(b) { b.next(); },
       exit(b) { if (b.arena.saved) { Object.assign(b.arena, b.arena.saved); b.arena.saved = null; } b.actor.place({ x: b.arena.x, y: b.arena.y, z: b.arena.z }); },
     },
-    lives: { enter: (b) => { b.data.windows = 0; b.say('Fine. No more games.'); }, update: (dt, b) => pounceWhip(dt, b, 1.35), windowClosed: (b) => { if (++b.data.windows >= 2) b.win(); else b.inPhase = 0.5; } },
+    // [balance] Back on the combat list: the roof chase took her off it, and a whip nobody can counter
+    // was a soft-lock (the scripted player waited seven minutes in this phase).
+    lives: { enter: (b) => { b.data.windows = 0; b.deps.combat.setEnemies([b.e]); b.say('Fine. No more games.'); }, update: (dt, b) => pounceWhip(dt, b, 1.35), windowClosed: (b) => { if (++b.data.windows >= 2) b.win(); else b.inPhase = 0.5; } },
   },
 });
 // Pounce (red: dodge it), then the whip (blue: counter it). Countering the whip opens her up;
@@ -91,6 +96,8 @@ export const clayBruteDef = (opts) => makeVillainBoss({
   intro: 'owClayIntro', outro: 'owClayOutro',
   lines: { guard: ['Punch the mud. Go on. See what happens.', 'I am the ground you stand on.', 'You cannot break what has no shape.'] },
   targeting: { leash: 20, kiteT: 8, swapEvery: 8 },
+  // [balance] Hold the lever while he follows you into the sweep; strike when he is open.
+  sim: (b) => { const st = opts.sites.clay[b.phase]; if (b.e.vulnerable > 0) return { goTo: b.actor.pos, stop: 1.6, action: 'punch' }; return st ? { goTo: st.lever, stop: 1.2 } : null; },
   phase: Object.fromEntries(opts.sites.clay.map((s, i) => [`stage${i}`, {
     enter(b) {
       b.data.windows = 0; b.data.hold = 0; b.data.cool = 0;
@@ -127,6 +134,19 @@ export const twoFaceDef = (opts) => makeVillainBoss({
   intro: 'owTwoFaceIntro', outro: 'owTwoFaceOutro',
   lines: { guard: ['The coin has not decided you get to hit me.', 'Not your turn.', 'Fifty-fifty. Always.'] },
   targeting: { leash: 22, kiteT: 7, swapEvery: 6 },
+  // [balance] Heads: his call is the truth. From Tails on it may be a lie: a player with the cowl's
+  // detective vision on sees the real plate light up within 7 m (opts.detectiveNear), so the bot
+  // walks to the plate between the two, looks, then stands on the lit one.
+  sim: (b) => {
+    if (b.e.vulnerable > 0) return { goTo: b.actor.pos, stop: 1.6, action: 'punch', detective: false };
+    const R = b.data.round, A = b.arena;
+    if (!R) return null;
+    const pts = [{ x: A.x - 7, y: A.y, z: A.z + 4 }, { x: A.x + 7, y: A.y, z: A.z + 4 }];
+    if (b.phase === 0) return { goTo: pts[R.said], stop: 0.8 };
+    const me = b.heroes[0];
+    const near = me && Math.hypot(me.pos.x - pts[R.said].x, me.pos.z - pts[R.said].z) < 6.5;
+    return near || R.looked ? ((R.looked = true), { goTo: pts[R.truth], stop: 0.8, detective: true }) : { goTo: pts[R.said], stop: 0.8, detective: true };
+  },
   phase: Object.fromEntries(['heads', 'tails', 'edge'].map((id, pi) => [id, {
     enter(b) { b.data.windows = 0; flip(b, pi); },
     update(dt, b) { coinRound(dt, b, pi, opts); },
@@ -189,15 +209,29 @@ export const mercenaryDef = (opts) => makeVillainBoss({
   intro: 'owMercIntro', outro: 'owMercOutro',
   lines: { guard: ['You are not the hunter tonight.', 'Paid in advance. Nothing personal.', 'Try that from behind. Oh, wait.'] },
   targeting: { leash: 30, kiteT: 12, swapEvery: 9 },
+  // [balance] Hunt the hunter: crouched, out of his cone (0.7 rad either side of where he walks),
+  // round to his back, then in. Steel: the tells are the bot's own (counter three, strike).
+  sim: (b) => {
+    if (b.e.vulnerable > 0) return { goTo: b.actor.pos, stop: 1.6, action: 'punch', crouch: false };
+    if (b.phase === 2 || !b.actor.ch.root.visible) return { crouch: false };
+    const me = b.heroes[0];
+    if (!me) return null;
+    const yaw = b.actor.ch.yaw, p = b.actor.pos, fx = Math.sin(yaw), fz = Math.cos(yaw);
+    const ahead = ((me.pos.x - p.x) * fx + (me.pos.z - p.z) * fz) > -1;
+    // In front: swing wide to his side first; behind: close in.
+    const side = ((me.pos.x - p.x) * fz - (me.pos.z - p.z) * fx) >= 0 ? 1 : -1;
+    const goal = ahead ? { x: p.x + fz * side * 7 - fx * 2, y: p.y, z: p.z - fx * side * 7 - fz * 2 } : { x: p.x - fx * 1.4, y: p.y, z: p.z - fz * 1.4 };
+    return { goTo: goal, stop: 0.6, crouch: true };
+  },
   phase: {
-    hunt: { enter: (b) => { b.data.windows = 0; b.data.wp = 0; b.say('I was paid to bring back a cape. I prefer it with you in it.'); }, update: (dt, b) => hunt(dt, b, 1), windowClosed: (b) => { if (++b.data.windows >= 2) b.next(); else b.inPhase = 0.5; } },
+    hunt: { enter: (b) => { b.data.windows = 0; b.data.wp = 0; b.say('I was paid to bring back a cape. I prefer it with you in it.'); }, update: (dt, b) => hunt(dt, b, 1), windowClosed: (b) => { if (++b.data.windows >= 3) b.next(); else b.inPhase = b.data.windows / 3; } }, // [balance] 3 windows (was 2)
     smoke: {
       enter(b) { b.data.windows = 0; b.data.hidden = 6; b.deps.events.emit('smoke', { pos: b.actor.pos.clone() }); b.actor.show(false); b.deps.combat.setEnemies([]); b.ctx.adds(5, { at: b.arena, gang: 'blackMask', act: 4 }); b.say('Smoke. Then knives. Then me.'); },
       idle(dt, b) { b.data.hidden -= dt; if (b.data.hidden <= 0) { b.actor.show(true); b.deps.combat.setEnemies([b.e]); b.data.hidden = Infinity; } },
       update: (dt, b) => hunt(dt, b, 1.35),
       windowClosed(b) { b.next(); },
     },
-    blade: { enter: (b) => { b.data.windows = 0; b.say('Enough hide and seek. Steel.'); }, update: (dt, b) => brawl(dt, b, { counters: 3, windup: 0.55, every: [0.9, 1.7], redChance: 0.35, kind: 'joker', openFor: 4 }), windowClosed: (b) => { if (++b.data.windows >= 2) b.win(); else b.inPhase = 0.5; } },
+    blade: { enter: (b) => { b.data.windows = 0; b.say('Enough hide and seek. Steel.'); }, update: (dt, b) => brawl(dt, b, { counters: 3, windup: 0.55, every: [0.9, 1.7], redChance: 0.35, kind: 'joker', openFor: 4 }), windowClosed: (b) => { if (++b.data.windows >= 3) b.win(); else b.inPhase = b.data.windows / 3; } }, // [balance] 3 windows (was 2; beaten in 74 s)
   },
 });
 function hunt(dt, b, k) {

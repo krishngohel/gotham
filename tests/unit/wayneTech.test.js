@@ -16,6 +16,14 @@ function setup({ xp = 0, owned = [], dev = false } = {}) {
 }
 
 describe('XP from play', () => {
+  it('[balance] campaign missions and optional objectives pay, replays do not', () => {
+    const t = setup();
+    t.events.emit('missionComplete', { night: 'n2', mission: 'm2A', replay: false });
+    t.events.emit('missionComplete', { night: 'n2', mission: 'm2A', replay: true });
+    t.events.emit('missionComplete', { night: 'side', mission: 'chainX', replay: false });
+    t.events.emit('xpGain', { amount: 60, reason: 'n2Belfry' });
+    expect(t.w.xp).toBe(300 + 60);
+  });
   it('knockouts, trophies and chains pay', () => {
     const t = setup();
     for (let i = 0; i < 3; i++) t.events.emit('ko', {});

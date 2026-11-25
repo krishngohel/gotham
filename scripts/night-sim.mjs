@@ -149,10 +149,10 @@ async function playStep(page, s, r) {
       await realRun('fear', 'fear', { goal: s.at });
       return rec;
     }
-    case 'chase': case 'battle': {
-      rec.est = s.type === 'chase' ? 70 : 110; r.est += rec.est;
+    case 'chase': case 'battle': case 'armada': { // [m45] armada (n4): the Batwing's own dev path
+      rec.est = s.type === 'chase' ? 70 : s.type === 'armada' ? 100 : 110; r.est += rec.est;
       await page.waitForTimeout(1500);
-      await page.evaluate(() => window.__game.vehicles?.debugWin?.());
+      await page.evaluate(() => { window.__game.vehicles?.debugWin?.(); window.__game.batwing?.debugWin?.(); });
       return rec;
     }
     case 'board': {
@@ -161,7 +161,7 @@ async function playStep(page, s, r) {
       await page.evaluate(() => { const v = window.__game.vehicles; if (v && !v.active) v.enter(v.batmobile); });
       return rec;
     }
-    case 'scan': case 'traverse': case 'puzzle': case 'fork': case 'dilemma': case 'civvy': {
+    case 'scan': case 'traverse': case 'puzzle': case 'fork': case 'dilemma': case 'civvy': case 'hunted': { // [m45] hunted (n4, the hunt): its debugSolve is the hiding place
       const pts = await page.evaluate(() => {
         const G = window.__game, st = G.flow.objectives.step, site = (x) => G.flow.story.site(x);
         const P = (p) => { const q = typeof p === 'string' ? site(p) : p; return q ? { x: q.x, y: q.y, z: q.z } : null; };
@@ -188,6 +188,47 @@ async function playStep(page, s, r) {
         if (p.off) { await tp({ x: p.at.x + 4, y: p.at.y, z: p.at.z + 4 }); await page.waitForTimeout(300); }
       }
       await page.evaluate(() => { window.__game.state.detectiveOn = false; });
+      return rec;
+    }
+    // [m23] Nights Two and Three: a case (evidence, the board, the trail), a rescue (the guards are
+    // fought for real, then each lock is worked), an escape from the police (go to ground; a search
+    // still running after 90 s is stood down). The walking and the reading are estimates.
+    case 'case': case 'rescue': case 'evade': case 'carTail': {
+      const t0 = Date.now();
+      let walked = 0, stops = 0, fought = 0, from = s.hero;
+      for (let pass = 0; pass < 40; pass++) {
+        const now = await page.evaluate(() => { const G = window.__game, st = G.flow.objectives.step; return { id: st?.id, pts: (G.flow.story.debugSolve() ?? []).map((p) => ({ at: p.at ? { x: p.at.x, y: p.at.y, z: p.at.z } : null, hold: p.hold ?? 0.6, clear: !!p.clear })), foes: (G.enemies ?? []).filter((e) => e.alive).length }; });
+        if (now.id !== s.id) break;
+        if (s.type === 'rescue' && now.foes > 0 && now.pts[0]?.at && !fought) {
+          // Walk into the guards and fight them (the same scripted player as any fight).
+          fought = 1;
+          await tp({ x: now.pts[0].at.x, y: now.pts[0].at.y, z: now.pts[0].at.z + 7 });
+          if (want('fight')) {
+            const f0 = Date.now();
+            await page.evaluate(() => { window.__sim.mode = 'fight'; });
+            while ((Date.now() - f0) / 1000 < 100 && (await page.evaluate(() => (window.__game.enemies ?? []).some((e) => e.alive)))) await page.waitForTimeout(500);
+            await page.evaluate(() => { window.__sim.mode = 'off'; });
+            rec.real = (Date.now() - f0) / 1000; r.real += rec.real;
+          }
+          await page.evaluate(() => window.__game.winFight());
+          continue;
+        }
+        await page.evaluate(() => { window.__game.state.detectiveOn = true; });
+        for (const p of now.pts) {
+          if (p.clear) await page.evaluate(() => window.__game.winFight());
+          if (!p.at) continue;
+          walked += Math.hypot(p.at.x - from.x, p.at.z - from.z); from = p.at; stops += 1;
+          await tp(p.at);
+          await page.waitForTimeout(p.hold * 1000);
+        }
+        await page.evaluate(() => { window.__game.state.detectiveOn = false; });
+        if (s.type === 'evade' && (Date.now() - t0) / 1000 < 90) { await page.waitForTimeout(1000); continue; }
+        const acted = await page.evaluate(() => { const st = window.__game.flow.story, cur = window.__game.flow.objectives.step; return cur ? !!st.stepTypes[cur.type]?.debugAct?.() : false; });
+        if (acted && s.type === 'evade') { rec.assisted = true; r.assisted.push(s.id); }
+        await page.waitForTimeout(600);
+      }
+      rec.est = travel(walked) + stops * (s.type === 'case' ? 8 : 4) + (s.type === 'case' ? 35 : 0) + (s.type === 'evade' ? 75 : 0) + (s.type === 'carTail' ? 90 : 0) + (s.type === 'rescue' && !want('fight') ? 60 : 0);
+      r.est += rec.est;
       return rec;
     }
     default: {

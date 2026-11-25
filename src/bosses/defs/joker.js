@@ -9,8 +9,19 @@ export function jokerDef(boss, { follow, hero }) {
     id: 'joker', name: 'THE JOKER', villain: 'joker', site: 'arena', legacyBar: true,
     phases: [{ id: 'balcony', name: 'The balcony' }, { id: 'gas', name: 'Laughing gas' }, { id: 'dance', name: 'The last dance' }],
     intro: 'bossIntro', outro: 'bossEnd',
+    // [balance] The scripted player's hint (scripts/lib/player-bot.mjs): batarang him while he
+    // winds up a gas throw, strike while he is stunned or knocked, finish him when he staggers.
+    sim(h) {
+      const j = h.boss.joker;
+      if (!j) return null;
+      if (j.finishable) return { goTo: j.pos, stop: 2.5, action: 'special' };
+      if (j.state === 'throw') return { action: 'batarang' };
+      if (j.state === 'stunned' || j.state === 'knocked') return { goTo: j.pos, stop: 1.6, action: 'punch' };
+      return null;
+    },
     create(ctx) {
       return {
+        simHandle: { boss }, // [balance] for sim() (not `handle`: the director treats that as a framework actor)
         begin() {
           boss.begin();
           // He opens from his balcony ten metres up: face him and tilt the camera up, then settle.

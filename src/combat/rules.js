@@ -21,8 +21,68 @@ export const DIFFICULTY = {
   hard: { damage: 1.5, windup: 0.45, gap: [1.6, 3], maxWindups: 2, heroHealth: 100, budget: 4, rangedBudget: 2, counterWarnings: true, tellMin: 0.35, smart: 0.85, dodgeMul: 1.3, healAfterFight: 0.35, regen: { delay: 6, rate: 3, cap: 0.5 }, openHold: [0.5, 1.4] },
   knightmare: { damage: 1.75, windup: 0.42, gap: [1.4, 2.6], maxWindups: 3, heroHealth: 100, budget: 5, rangedBudget: 2, counterWarnings: false, tellMin: 0.32, smart: 1, dodgeMul: 1.5, healAfterFight: 0, regen: { delay: 8, rate: 0, cap: 0 }, openHold: [0.3, 0.9] },
 };
+// [balance] windupArmor: a committed attack is not stopped by a plain strike. Auto-attach sends a
+// mashed punch into whoever is winding up, and a punch used to interrupt him: mashing countered by
+// accident and the tells meant nothing (docs/design/balance.md 3). On normal and up, a goon in his
+// wind-up or swing takes the damage of the moves listed but keeps swinging (outcome 'absorbed'),
+// once `after` of the wind-up has gone (the first instant is still a fair trade); only a counter,
+// a dodge, a stun (cape, batarang, gadgets), a knockdown or the role's answer stops him. Story keeps
+// the old rule: any blow interrupts.
+const WINDUP_ARMOR = {
+  normal: { moves: ['punch', 'travel', 'beatdown'], after: 0.2 },
+  hard: { moves: ['punch', 'kick', 'travel', 'beatdown'], after: 0 },
+  knightmare: { moves: ['punch', 'kick', 'travel', 'beatdown', 'heavy'], after: 0 },
+};
+for (const [k, v] of Object.entries(WINDUP_ARMOR)) DIFFICULTY[k].windupArmor = v;
+// [balance] Pressure on hard and knightmare (docs/design/balance.md 2: a skilled player lost no
+// health on hard): more attackers may commit at once and they come back sooner. Tells, health and
+// damage are unchanged.
+// minSpacing: seconds between two attackers starting on the same hero (director default 0.35):
+// shorter, so a third can overlap the two a counter takes and has to be dodged.
+Object.assign(DIFFICULTY.hard, { maxWindups: 3, budget: 5, gap: [1.3, 2.6], minSpacing: 0.2 });
+// openHold 0.6-1.2 (was 0.3-0.9): with four attackers allowed at once, a skilled bot dropped beside a
+// baton crew was down in 2.8 s, before any tell could be read.
+Object.assign(DIFFICULTY.knightmare, { maxWindups: 4, budget: 6, gap: [1.1, 2.2], minSpacing: 0.12, openHold: [0.6, 1.2] });
+DIFFICULTY.story.minSpacing = 0.35;
+// Normal keeps its pacing (gap, open hold, spacing): tried quicker (gap 1.8-3.4, hold 0.8-2, spacing
+// 0.3), the e2e 'right answers win on normal' player ended a mixed-role fight on 3 HP, then lost one.
+DIFFICULTY.normal.minSpacing = 0.35;
+
+// [balance] Squad size by tier: hard and knightmare bring more of the same goons into a wave (the
+// count grows, never the health). Night One's waves are hand-written lists, so on the top tiers a
+// masher used to win its grunt fights before anyone swung (docs/design/balance.md 2).
+export const WAVE_SCALE = { story: 1, normal: 1, hard: 1.25, knightmare: 1.5 };
+export const WAVE_MAX = 9;
+export function scaleForDifficulty(entries, difficulty) {
+  const k = WAVE_SCALE[difficulty] ?? 1;
+  // Never past WAVE_MAX goons from this alone (no quality tier caps fight squads; co-op adds on top).
+  const extra = Math.min(Math.round(entries.length * k), Math.max(entries.length, WAVE_MAX)) - entries.length;
+  if (extra <= 0) return entries;
+  const pool = entries.filter((e) => e.type !== 'brute' && e.type !== 'heavy' && e.type !== 'joker' && e.type !== 'harley' && e.type !== 'sniper');
+  if (!pool.length) return entries;
+  const out = entries.slice();
+  for (let i = 0; i < extra; i++) {
+    const src = pool[i % pool.length];
+    const a = (i + 1) * 2.1 + 0.7;
+    // Close to a written spot (whose ground the fight's author checked); the squad spreads itself.
+    out.push({ ...src, dx: src.dx + Math.cos(a) * 0.8, dz: src.dz + Math.sin(a) * 0.8 });
+  }
+  return out;
+}
+
 // The tier for an id; anything unknown (an old or edited setting) plays as normal.
 export const difficultyOf = (id) => DIFFICULTY[id] ?? DIFFICULTY.normal;
+
+// [balance] Whether a blow that would land as a plain 'hit' is shrugged off by a committed attack
+// (DIFFICULTY.*.windupArmor). enemy: { state, t, windupDur, def }. Bosses have their own rules.
+export function windupHolds(move, enemy, difficulty) {
+  const a = difficultyOf(difficulty).windupArmor;
+  if (!a || !enemy || enemy.def?.boss || enemy.stunned) return false;
+  if (enemy.state !== 'windup' && enemy.state !== 'attack') return false;
+  if (!a.moves.includes(move)) return false;
+  if (enemy.state === 'windup' && (enemy.t ?? 0) < (enemy.windupDur ?? 0) * a.after) return false;
+  return true;
+}
 
 // Health after a fight ends: a share of max given back, never less than the hero already has.
 export function healAfterFight(difficulty, health, max) {

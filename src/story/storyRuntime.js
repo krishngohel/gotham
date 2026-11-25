@@ -32,6 +32,11 @@ import { createViewFx } from './viewFx.js';
 import { createLifeSteps, endingFor } from './lifeSteps.js';
 import { createEndgame } from './endgame.js';
 import { overheardFor, GANG_IDLE } from './storyBarks.js';
+import { n4StepTypes } from './missions/n4/index.js'; // [m45] Night Four's own step type (hunted)
+// [m23] Nights Two and Three: the case, rescue and evade step types (src/story/missions/n2, n3)
+import { createN2Steps } from './missions/n2/index.js';
+import { createN3Steps } from './missions/n3/index.js';
+import { buildMissionSteps } from './missions/stepRegistry.js'; // [m67] step types that live beside their missions
 
 const g2 = (speaker, text) => ({ speaker, portrait: speaker, text });
 
@@ -142,6 +147,9 @@ export function createStoryRuntime(f) {
   const types = createStepTypes(stepCtx);
   const lifeKit = createLifeSteps(stepCtx);
   Object.assign(types, lifeKit.types);
+  Object.assign(types, n4StepTypes(stepCtx)); // [m45]
+  { const mctx = { ...stepCtx, encounters, collision, fight: (id) => fight(id), isReplica }; Object.assign(types, createN2Steps(mctx), createN3Steps(mctx)); } // [m23]
+  Object.assign(types, buildMissionSteps(stepCtx)); // [m67]
   // [story2] A fight of spore-dazed civilians (step.thralls): a stun wakes one; anything else lands
   // on someone who did nothing wrong, and the city (and the night's tally) remembers.
   const harmed = new WeakSet();

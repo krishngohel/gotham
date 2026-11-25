@@ -9,7 +9,7 @@ import { SITES } from '../world/mapData.js';
 import { REGION_SITES, REGION_CRIME_SPOTS, districtAt as districtAtData } from '../world/regions/data.js';
 import { SCENES } from '../game/scenes.js';
 import { CRIME_SPOTS } from '../game/crimes.js';
-import { createCityDirector, governor } from './director.js';
+import { createCityDirector, governor, storyHold } from './director.js';
 import { createGeo } from './geo.js';
 import { createCrimeRuntime } from './crimeRuntime.js';
 import { createChaseAdapter } from './chaseAdapter.js';
@@ -85,6 +85,7 @@ export function createOpenWorld(deps) {
     },
     xp: (amount, source = 'openworld') => { if (amount > 0) events.emit('storyReward', { id: `xp:${Math.round(amount)}`, night: 'side', source }); },
     busy: () => storyBusy(),
+    storyHeld: () => storyHeld(), // [m23]
     teleport: (p) => { const h = deps.hero; if (!h) return; const g = deps.collision?.groundBelow?.(p.x, (p.y ?? 0) + 4, p.z, 0.3); h.teleport({ x: p.x, y: g > -Infinity ? g : p.y ?? 0, z: p.z }, p.yaw ?? h.bat?.yaw ?? 0); if (list().length > 1) flow?.bringAlong?.(); },
     registerScenes: (map) => { for (const [k, fn] of Object.entries(map)) if (!SCENES[k]) SCENES[k] = () => fn(); },
     playScene: (name) => flow?.playScene?.(name) ?? Promise.resolve(),
@@ -157,6 +158,16 @@ export function createOpenWorld(deps) {
     const st = stepType();
     return ['fight', 'boss', 'cutscene'].includes(st) || !!deps.challengeActive?.() || !!deps.bosses?.active && !chains.active;
   }
+  // [m23] A main story beat is in play (director.js storyHold): nothing of the open world's starts
+  // or announces itself on top of it. One check, used by the governor (crimes, walking into a
+  // predator encounter), the predator encounters' "nearby" hint and the side chains' start markers.
+  function storyHeld() {
+    const step = flow?.objectives?.step ?? null;
+    const target = flow?.target ?? null;
+    let d = Infinity;
+    if (target) for (const h of ow.heroes()) d = Math.min(d, Math.hypot(h.pos.x - target.x, h.pos.z - target.z));
+    return storyHold({ mode: flow?.mode ?? 'play', hasStep: !!step && !flow?.objectives?.done, stepType: step ? (step.type ?? 'reach') : null, targetDist: d });
+  }
   function gov() {
     const st = stepType();
     const target = flow?.target ?? null;
@@ -164,7 +175,7 @@ export function createOpenWorld(deps) {
       mode: flow?.mode ?? 'play', stepType: st, freeRoam: !target || st === 'credits' || st === 'nightEnd',
       challenge: !!deps.challengeActive?.(), photo: !!deps.photoActive?.(),
       mission: !!(chains.active || stealthEnc.active || collect.busy || cases.active?.stage === 'confront'),
-      sinceStep: crimes.sinceStep, quality: quality.name,
+      sinceStep: crimes.sinceStep, quality: quality.name, story: storyHeld(),
     });
   }
 
@@ -246,12 +257,13 @@ export function createOpenWorld(deps) {
     if (repT <= 0 && rep) { repT = 10; store.rep = rep.toJSON(); }
     // Walking into an unplayed predator encounter's yard in free roam starts it there (2 Hz).
     nearT -= dt;
-    if (nearT <= 0) { nearT = 0.5; if (g.spawn && !storyBusy() && !chains.active && !cases.active && !collect.busy && !stealthEnc.active && !crimes.focus) stealthEnc.engageNear(14); }
+    if (nearT <= 0) { nearT = 0.5; if (g.spawn && !storyBusy() && !flow?.objectives?.step?.quiet /* [m67] a story step marked quiet: no open-world predator encounter starts under it */ && !chains.active && !cases.active && !collect.busy && !stealthEnc.active && !crimes.focus) stealthEnc.engageNear(14); }
   }
 
   // ---------------------------------------------------------------- Batcomputer
   const api = {
     ow, director, crimes, stealthEnc, cases, collect, chains, board, geo, store, progress,
+    modal: deps.modal ?? null, // [m67] the pause-for-an-overlay pair the case board uses (story caseboard steps)
     update,
     get governor() { return gov(); },
     headline: () => deps.civilians?.headline?.() ?? '',

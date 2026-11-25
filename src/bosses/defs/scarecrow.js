@@ -8,7 +8,7 @@
 //                        outside his cone: caught, a short window, five strikes. Twice.
 //   3 'The Last Dose'    the roof floods with toxin; he fights hand to hand (counter his blue
 //                        swings, dodge the red), surrounded by goons that are not there. Striking a
-//                        phantom spikes the fear meter. Two windows and he is done.
+//                        phantom spikes the fear meter. Three windows and he is done.
 // A full fear meter is a panic: a hit of real damage and the meter drops back. No health sponge:
 // phases are windows; difficulty scales tells, windows and the fear rates (src/bosses/rules.js).
 import * as THREE from 'three';
@@ -57,6 +57,21 @@ export const scarecrowDef = makeVillainBoss({
   lines: { guard: LINES.guard },
   targeting: { leash: 10, kiteT: 3.5, swapEvery: 8 },
   phases: [{ id: 'searchlight', name: 'The Searchlight' }, { id: 'rounds', name: 'House Calls' }, { id: 'lastDose', name: 'The Last Dose' }],
+  // [balance] The scripted player's hint (scripts/lib/player-bot.mjs). 1: a predator room (the
+  // bot's own stealth: crouched, from behind). 2: round to his back outside his cone, crouched, then
+  // in. 3: his swings are the bot's own tells; it never strikes a phantom (it skips hallucinations).
+  sim(b) {
+    const me = b.heroes[0];
+    if (!me) return null;
+    if (b.phase === 0) return { mode: 'stealth' };
+    if (b.e.vulnerable > 0) return { goTo: b.actor.pos, stop: 1.6, action: 'punch', crouch: false };
+    if (b.phase === 2) return { crouch: false };
+    const yaw = b.actor.ch.yaw, p = b.actor.pos, fx = Math.sin(yaw), fz = Math.cos(yaw);
+    const ahead = ((me.pos.x - p.x) * fx + (me.pos.z - p.z) * fz) > -0.5;
+    const side = ((me.pos.x - p.x) * fz - (me.pos.z - p.z) * fx) >= 0 ? 1 : -1;
+    const goal = ahead ? { x: p.x + fz * side * 6 - fx * 2.5, y: p.y, z: p.z - fx * side * 6 - fz * 2.5 } : { x: p.x - fx * 1.2, y: p.y, z: p.z - fz * 1.2 };
+    return { goTo: goal, stop: 0.5, crouch: true };
+  },
   setup(ctx, b) {
     const D = b.deps;
     b.data.fear = 0;
@@ -238,7 +253,7 @@ export const scarecrowDef = makeVillainBoss({
       },
       windowClosed(b) {
         b.data.caught += 1;
-        if (b.data.caught >= 2) { b.next(); return; }
+        if (b.data.caught >= 2) { b.next(); return; } // [balance] tried 3: a skilled run never caught him a third time in 10 min
         b.say('Twice? No. Once was a fluke.', 2.4);
         setTimeout(() => { if (b.phase === 1) vanish(b); }, 1300);
       },
@@ -267,13 +282,15 @@ export const scarecrowDef = makeVillainBoss({
         D.combat.setEnemies([b.e, ...b.data.phantoms]);
       },
       update(dt, b) {
-        b.data.addFear(3 * b.tier.damage * dt);
+        // [balance] One shared meter for two heroes filled as fast as for one, and a panic doses both:
+        // the co-op scripted pair went down five times here. Two players: 60 % of the passive rate.
+        b.data.addFear(3 * b.tier.damage * dt * (b.players > 1 ? 0.6 : 1));
         brawl(dt, b, { counters: 2, windup: 0.65, every: [1.3, 2.3], redChance: 0.35, kind: 'knife', openFor: 4 });
       },
       idle(dt, b) { env(dt, b); keepListed(b); },
       windowClosed(b) {
         b.data.windows += 1;
-        if (b.data.windows >= 2) { b.next(); return; }
+        if (b.data.windows >= 3) { b.next(); return; } // [balance] was 2
         b.say('Is that... is that MY fear? How unpleasant.', 2.6);
       },
       exit(b) {

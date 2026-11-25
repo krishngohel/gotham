@@ -3,11 +3,12 @@
 import { FIGHTS } from './fights.js';
 import { SITES } from '../world/mapData.js';
 import { scaleWave } from '../players/coopRules.js';
+import { scaleForDifficulty } from '../combat/rules.js'; // [balance]
 
 const siteOf = (f) => (typeof f.site === 'string' ? SITES[f.site] : f.site);
 
 // getPlayerCount: heroes in the fight; co-op adds goons to every wave (src/players/coopRules.js).
-export function createEncounters({ spawn, despawn, combat, events, collision, stealth = null, getPlayerCount = () => 1 }) {
+export function createEncounters({ spawn, despawn, combat, events, collision, stealth = null, getPlayerCount = () => 1, getDifficulty = () => 'normal' }) {
   let fight = null;
   let def = null;
   let id = null;
@@ -24,7 +25,8 @@ export function createEncounters({ spawn, despawn, combat, events, collision, st
   function placeWave(index, awake) {
     const site = siteOf(fight);
     // Predator rooms keep their authored squads: their goons are placed on catwalks and routes.
-    const entries = fight.stealth ? fight.waves[index] : scaleWave(fight.waves[index], getPlayerCount());
+    // [balance] ...and by difficulty (rules.js WAVE_SCALE; not boss adds, already tiered by the boss rules).
+    const entries = fight.stealth ? fight.waves[index] : scaleWave(fight.bossAdds ? fight.waves[index] : scaleForDifficulty(fight.waves[index], getDifficulty()), getPlayerCount());
     const made = entries.map(({ type, dx, dz, y: wy, gang }) => {
       const x = site.x + dx, z = site.z + dz;
       // Stealth squads start on catwalks and balconies: look for the floor from their own height.

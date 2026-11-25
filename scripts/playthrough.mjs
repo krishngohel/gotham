@@ -28,13 +28,19 @@ const start = process.env.START;
 // carries on past Night One's credits through every night written so far.
 const night = process.env.NIGHT;
 const campaign = process.env.CAMPAIGN === '1' || !!night;
+// [m45] UNTIL=n5: stop once that night is done (the run has just entered the night after it), so
+// NIGHT=n4 UNTIL=n5 plays two nights and still prints every check below. The NET check then compares
+// the guest's night and step with the host's there, instead of asking for the credits.
+const until = process.env.UNTIL ?? null;
 // P2=bot: the same run with a second local player (a scripted bot, split screen; workstream D1).
 // P2KIT picks its hero (default Robin, a roster kit with its own model, traversal and moves).
 const p2 = process.env.P2 === 'bot' ? `&p2=bot&p2kit=${process.env.P2KIT ?? 'robin'}` : '';
 // [onboard] abilities=story: ?god=1 alone opens every ability (a sandbox); the run plays the story's
 // gates instead and checks the order they open in (below).
+page.setDefaultNavigationTimeout(Number(process.env.READY_MS ?? 30000)); // [m23]
 await page.goto(base + (night ? `?new=1&night=${night}${start ? `&at=${start}` : ''}&god=1` : start ? `?at=${start}&god=1` : '?new=1&god=1') + '&abilities=story' + p2 + (NET ? '&net=broadcast' : '') + (process.env.QUALITY ? `&q=${process.env.QUALITY}` : '')); // [story2] QUALITY=potato: no auto-tier reload under load; [verify] the game reads ?q= (src/game/game.js tierChoice), not ?quality=
-await page.waitForFunction(() => window.__game?.state?.ready && window.__game.state.frame > 20, null, { timeout: 90000 });
+// [m23] READY_MS: a longer wait for the first frame on a machine busy with other runs (default 90 s).
+await page.waitForFunction(() => window.__game?.state?.ready && window.__game.state.frame > 20, null, { timeout: Number(process.env.READY_MS ?? 90000) });
 if (!start && !night) await page.evaluate(() => { document.querySelector('.mbtn.primary').click(); document.querySelector('.suit-card.suit-m').click(); });
 await page.waitForFunction(() => window.__game?.gadgets, null, { timeout: 60000 });
 // [net] The guest joins with the room code the host's invite shows, and picks Robin.
@@ -82,7 +88,10 @@ async function skipTalk() {
   if (NET) await guest.evaluate(() => { const G = window.__game; if (G.comic?.playing) G.comic.skip(); if (document.querySelector('.credits-menu .mbtn') && G.flow?.mode === 'credits') G.__sawCredits = true; });
 }
 const nightsSeen = [];
+let stuckId = null, stuckN = 0; // [m23]
+const missionSince = new Map(); // [m23] when each mission step type's step began (solveMission)
 let lastNight = null;
+let stopAt = null; // [m45] UNTIL
 // [net2] The nights the guest page was on, in order (it must follow the host into each one).
 const guestNights = [];
 for (let guard = 0; guard < (campaign ? 2400 : 600); guard++) {
@@ -90,9 +99,17 @@ for (let guard = 0; guard < (campaign ? 2400 : 600); guard++) {
   await skipTalk();
   const s = await state();
   if (process.env.DEBUG_TRACE) console.log(guard, JSON.stringify(s), NET ? JSON.stringify(await guestState()) : '');
-  if (s.night !== lastNight) { lastNight = s.night; nightsSeen.push(s.night); console.log('night', s.night); }
+  if (s.night !== lastNight) { const prev = lastNight; lastNight = s.night; nightsSeen.push(s.night); console.log('night', s.night); if (until && prev === until) stopAt = `${s.night} ${s.id}`; }
+  // [m23] A step that has not moved in 40 passes says why (what is holding the story, where the hero is).
+  if (s.id === stuckId) { if (++stuckN % 40 === 0) console.log('STUCK', s.night, s.id, JSON.stringify(await page.evaluate(() => { const G = window.__game, ow = G.side?.openworld; return { hero: [Math.round(G.hero.pos.x), Math.round(G.hero.pos.y), Math.round(G.hero.pos.z)], control: G.hero.control?.name ?? null, hold: G.side?.flowHooks?.holdStory?.() ?? null, stealth: ow?.stealthEnc?.active?.id ?? null, crimes: ow?.crimes?.live?.filter((c) => c.engaged).map((c) => c.type) ?? [], chain: !!ow?.chains?.active, wanted: [G.wanted?.level, G.wanted?.stateName], vehicle: G.vehicles?.active?.kind ?? null, enemies: (G.enemies ?? []).filter((e) => e.alive).length }; }))); }
+  else { stuckId = s.id; stuckN = 0; }
   if (NET) { const gn = await guest.evaluate(() => window.__game.flow.story?.night?.id ?? 'n1'); if (gn !== guestNights.at(-1)) { guestNights.push(gn); console.log('guest night', gn); } }
-  if (!s.id) break;
+  if (stopAt) {
+    // [m45] give an online guest a moment to follow into the same night before the comparison
+    if (NET) { await guest.waitForFunction((n) => (window.__game.flow.story?.night?.id ?? 'n1') === n, s.night, { timeout: 20000 }).catch(() => {}); const gn = await guest.evaluate(() => window.__game.flow.story?.night?.id ?? 'n1'); if (gn !== guestNights.at(-1)) { guestNights.push(gn); console.log('guest night', gn); } }
+    console.log(`UNTIL ${until}: reached, stopping at ${stopAt}`);
+    break;
+  }
   // [story] A campaign night's last beat with no night after it: the run is done.
   if (campaign && s.type === 'nightEnd' && s.mode === 'play' && s.last) { await page.waitForTimeout(1500); const st = await state(); if (st.id === s.id) break; continue; }
   if (s.mode === 'cutscene' || s.mode === 'dead') {
@@ -120,7 +137,16 @@ for (let guard = 0; guard < (campaign ? 2400 : 600); guard++) {
   // [story2] The double life: a dilemma goes to Batman's side (P2=bot covers both when it can), a
   // civvy walk visits each beat and takes each choice's default, a life test branches on its own.
   if (s.type === 'dilemma' || s.type === 'civvy') { await solveLife(page); await page.waitForTimeout(600); continue; }
+  // [m23] Nights Two and Three: a case, a rescue, an escape from the police (src/story/missions).
+  if (['case', 'rescue', 'evade', 'carTail'].includes(s.type)) { await solveMission(page, s); await page.waitForTimeout(500); continue; }
+  // [m67] Mission step types (src/story/missions/**): a freeing and a hack are stood at point by point,
+  // an escape goes to ground where the step suggests and waits for the city to lose it (or for the
+  // mercy call), a case board is answered on the board itself, a tail is won like any chase.
+  if (['freeing', 'hack', 'escape', 'caseboard'].includes(s.type)) { await solveMission67(page, s); await page.waitForTimeout(600); continue; }
+  if (s.type === 'tail') { await page.evaluate(() => { const v = window.__game.vehicles; if (v && !v.active) v.enter(v.batmobile); v?.debugWin?.(); }); continue; }
   if (s.type === 'life') { await page.waitForTimeout(500); continue; }
+  // [m45] Night Four's hunted step: go to ground where the step suggests and wait out the real search.
+  if (s.type === 'hunted') { await solveLife(page); await page.waitForTimeout(600); continue; }
   if (s.type === 'wait' || s.type === 'nightEnd') { await page.waitForTimeout(800); continue; }
   if (s.type === 'boss') {
     // Clear the goon waves, then force the phases along.
@@ -175,8 +201,10 @@ if (NET) {
   console.log('guest ended at', JSON.stringify(g), JSON.stringify(gp), 'host at', JSON.stringify(hp));
   const same = gp.night === hp.night && gp.id === hp.id;
   const nightsOk = !campaign || guestNights.join('>') === nightsSeen.join('>');
-  console.log(gp.sawCredits && same && nightsOk ? `NET: guest followed the host to the end (same night ${hp.night}, same step ${hp.id}; nights ${guestNights.join(' > ')})` : `NET: MISMATCH between host and guest (guest nights ${guestNights.join(' > ')})`);
-  if (!(gp.sawCredits && same && nightsOk)) process.exitCode = 1;
+  // [m45] an UNTIL run stops before the credits; [m23] a run started at a later night (NIGHT=n2) never passes Night One's credits
+  const sawEnd = gp.sawCredits || !!night || (!!until && nightsSeen.at(-2) === until);
+  console.log(sawEnd && same && nightsOk ? `NET: guest followed the host to the end (same night ${hp.night}, same step ${hp.id}; nights ${guestNights.join(' > ')})` : `NET: MISMATCH between host and guest (guest nights ${guestNights.join(' > ')})`);
+  if (!(sawEnd && same && nightsOk)) process.exitCode = 1;
   console.log(guestErrors.length ? `GUEST ERRORS:\n${guestErrors.join('\n')}` : 'no guest console errors');
 }
 if (campaign) console.log('nights played:', nightsSeen.join(' > '));
@@ -242,4 +270,57 @@ async function solveStep(page) {
     if (st.off) { await page.evaluate((p) => window.__game.teleport({ x: p.at.x + 4, y: p.at.y, z: p.at.z + 4 }), st); await page.waitForTimeout(300); }
   }
   await page.evaluate(() => { window.__game.state.detectiveOn = false; });
+}
+
+// [m23] Plays a mission step type that says where to stand (story.debugSolve: evidence and trail
+// points with detective vision on, each lock of a rescue once its guards are down, a place to go to
+// ground) and does the one thing standing cannot (its debugAct: the case board's answer). An escape
+// that has not ended after 150 s is stood down through the wanted system's own clear().
+async function solveMission(page, s) {
+  const key = `${s.night}.${s.id}`;
+  if (!missionSince.has(key)) missionSince.set(key, Date.now());
+  const pts = await page.evaluate(() => (window.__game.flow.story.debugSolve() ?? []).map((p) => ({ at: p.at ? { x: p.at.x, y: p.at.y, z: p.at.z } : null, hold: p.hold ?? 0.6, clear: !!p.clear })));
+  await page.evaluate(() => { window.__game.state.detectiveOn = true; });
+  for (const p of pts) {
+    if (p.clear) { await page.evaluate(() => window.__game.winFight()); await page.waitForTimeout(300); }
+    if (p.at) await page.evaluate((q) => { const G = window.__game; if (G.vehicles?.active) G.vehicles.exit(); G.teleport({ x: q.x, y: q.y, z: q.z }); }, p.at);
+    // An online partner goes to ground too (their own hero, on their own page): the search only
+    // ends when nobody is in sight.
+    if (NET && s.type === 'evade' && p.at) await guest.evaluate((q) => window.__game.teleport?.({ x: q.x + 1.5, y: q.y, z: q.z }), p.at).catch(() => {});
+    if (p.clear) { await page.waitForTimeout(700); await page.evaluate(() => window.__game.winFight()); }
+    await page.waitForTimeout(p.hold * 1000);
+    if ((await page.evaluate(() => window.__game.flow.objectives.step?.id)) !== s.id) break;
+  }
+  await page.evaluate(() => { window.__game.state.detectiveOn = false; });
+  if (s.type === 'evade' && Date.now() - missionSince.get(key) < 150000) return;
+  const acted = await page.evaluate(() => { const st = window.__game.flow.story, cur = window.__game.flow.objectives.step; return cur ? !!st.stepTypes[cur.type]?.debugAct?.() : false; });
+  if (acted && s.type === 'evade') console.log(`${key}: the search outlasted 150 s; stood down through wanted.clear()`);
+}
+
+// [m67] Plays a mission step type: its own debugSolve() says where to stand and for how long.
+async function solveMission67(page, s) {
+  const plan = await page.evaluate(() => {
+    const G = window.__game, st = G.flow.objectives.step, T = G.flow.story.stepTypes[st.type];
+    return { id: st.id, pts: (T.debugSolve?.(st) ?? []).map((p) => ({ at: p.at ? { x: p.at.x, y: p.at.y, z: p.at.z } : null, hold: p.hold ?? 0.5, wait: !!p.wait })), order: T.debugOrder?.(st) ?? null };
+  });
+  const same = () => page.evaluate((id) => window.__game.flow.objectives.step?.id === id, plan.id);
+  await page.evaluate(() => { window.__game.state.detectiveOn = true; });
+  for (const st of plan.pts) {
+    if (!(await same())) break;
+    if (st.at) await page.evaluate((p) => { const G = window.__game; if (G.vehicles?.active) G.vehicles.exit(); G.teleport({ x: p.at.x, y: p.at.y, z: p.at.z }); }, st);
+    // A hold is game time (slower than the wall clock on a loaded machine): wait for the point to count.
+    const left = () => page.evaluate(() => { const G = window.__game, x = G.flow.objectives.step; return G.flow.story.stepTypes[x?.type]?.debugLeft?.() ?? null; });
+    const before = await left();
+    for (let k = 0; k < 60; k++) { await page.waitForTimeout(Math.max(250, (st.hold * 1000) / 4)); if (k >= 3 && (before == null || !(await same()) || (await left()) < before)) break; }
+    // An escape: stay put until the step is over (the search drains, or the chase is called off).
+    for (let k = 0; st.wait && k < 420 && (await same()); k++) { await page.waitForTimeout(500); await page.evaluate(() => { if (window.__game.radio?.playing) window.__game.radio.skip(); }); }
+  }
+  await page.evaluate(() => { window.__game.state.detectiveOn = false; });
+  if (plan.order) {
+    // The case board opens once the evidence is in: type the order, submit, let it close.
+    await page.waitForSelector('.case-board .cb-card', { timeout: 60000 });
+    for (const n of plan.order) await page.keyboard.press(String(n));
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('.case-board', { state: 'detached', timeout: 10000 });
+  }
 }

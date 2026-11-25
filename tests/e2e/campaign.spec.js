@@ -55,13 +55,14 @@ test("Night One's credits lead into Night Two, with free roam kept", async ({ pa
 });
 
 test('Night Two plays start to finish with a scripted player and a co-op bot', async ({ page }) => {
-  test.setTimeout(900000);
+  test.setTimeout(1800000); // [m23] the night is three times as long as it was
   const errors = await collectErrors(page);
   await page.goto('/?new=1&night=n2&god=1&p2=bot&p2kit=robin');
   await page.waitForFunction(ready, null, { timeout: 90000 });
   await page.waitForFunction(() => window.__game.flow?.story?.night?.id === 'n2', null, { timeout: 30000 });
   const seen = new Set();
-  for (let guard = 0; guard < 900; guard++) {
+  const since = new Map(); // [m23] when each step was first seen (an escape's last resort)
+  for (let guard = 0; guard < 2600; guard++) {
     await page.waitForTimeout(350);
     const s = await page.evaluate(() => {
       const G = window.__game; const st = G.flow.objectives.step;
@@ -73,12 +74,15 @@ test('Night Two plays start to finish with a scripted player and a co-op bot', a
     if (s.night !== 'n2') break;
     if (!s.id) break;
     seen.add(s.id);
+    if (!since.has(s.id)) since.set(s.id, Date.now());
+    s.age = Date.now() - since.get(s.id);
     if (s.mode !== 'play') continue;
     if (s.type === 'nightEnd') { await page.waitForTimeout(1500); continue; }
     await page.evaluate(async (s) => {
       const G = window.__game, step = G.flow.objectives.step, site = (x) => G.flow.story.site(x);
       const tp = (p, up = 0) => { if (G.vehicles?.active) G.vehicles.exit(); if (p) G.teleport({ x: p.x, y: p.y + up, z: p.z }); };
       const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      G.flow.story.debugAnswer?.(); // [m23] a phone call mid-step: its default answer
       switch (s.type) {
         case 'fight': if (G.flow.target) tp(G.flow.target); await wait(500); G.winFight(); break;
         case 'boss': G.winFight(); await wait(800); if (G.bosses.active) G.bosses.debugWin(); await wait(1800); break;
@@ -90,7 +94,26 @@ test('Night Two plays start to finish with a scripted player and a co-op bot', a
         case 'fork': tp(site(step.options[0].site)); break;
         case 'fear': tp(site(step.site)); break;
         case 'wait': case 'radio': case 'courier': case 'ally': case 'cutscene': break;
-        default: if (s.site) tp(s.site);
+        default: {
+          // [m23] The mission step types (a case, a rescue, an escape, a tail, and the other nights'
+          // own): each says where to stand (story.debugSolve, as scripts/playthrough.mjs uses it)
+          // and does what standing cannot (its debugAct: the case board's answer, a tail's finish).
+          const story = G.flow.story, pts = story.debugSolve?.() ?? null;
+          if (!pts) { if (s.site) tp(s.site); break; }
+          G.state.detectiveOn = true;
+          for (const p of pts) {
+            if (p.clear) G.winFight();
+            if (p.at) tp(p.at);
+            if (p.clear) { await wait(700); G.winFight(); }
+            await wait((p.hold ?? 0.6) * 1000);
+            story.debugAnswer?.();
+            if (G.flow.objectives.step !== step) break;
+          }
+          G.state.detectiveOn = false;
+          // An escape ends by itself once everyone has gone to ground; only a search that outlasts
+          // two and a half minutes is stood down.
+          if (G.flow.objectives.step === step && (s.type !== 'evade' || s.age > 150000)) story.stepTypes[step.type]?.debugAct?.();
+        }
       }
     }, s);
   }

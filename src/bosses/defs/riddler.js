@@ -54,6 +54,8 @@ export const riddlerDef = makeVillainBoss({
   // with detective vision, stand on the answer, then strike while the shield is down.
   sim(b) {
     if (b.e.vulnerable > 0) return { goTo: b.actor.pos, stop: 1.8, action: 'punch', detective: false };
+    // [balance] A person reads the riddle card first (about eight seconds): meanwhile, fight his crew.
+    if (b.t < 8 && !b.data.solved) return null;
     const ps = b.data.panels ?? [];
     const un = ps.find((p) => !p.scanned);
     if (un) return { goTo: un.at, stop: 0.7, detective: true };
@@ -107,13 +109,28 @@ function startRiddle(b, i) {
   b.deps.hud.card?.(`RIDDLE ${i + 1} OF 3`, `${r.text}  Scan the panels on the roof to read them, then stand on your answer.`, 12000);
   if (b.data.lock && i === 0) setTimeout(() => b.deps.hud.card?.('TWO PLAYERS', 'An answer only counts while your partner holds the orange LOCK plate in the middle.', 7000), 12500);
   b.deps.combat.setEnemies(b.deps.combat.enemies.filter((x) => x !== b.e));
+  // [balance] Every question opens with his crew on the roof: read, scan and answer under pressure
+  // (the scripted player answered all three in under a minute with nothing in the way).
+  setTimeout(() => { if (b.phase === i && !b.done) crew(b, 4 + i * 2, `riddlerOpen${i}`); }, 1500);
 }
 
-function riddleTick(dt, b, i) {
+// Puts him back on the combat list if something replaced it (exported for the unit test).
+export function keepListed(b) {
+  const C = b.deps.combat;
+  if (!b.done && !C.enemies.includes(b.e)) C.setEnemies([...C.enemies, b.e]);
+}
+
+export function riddleTick(dt, b, i) {
   const { actor } = b;
   b.data.markers.update(dt);
   if (b.data.solved) {
     // The last answer dropped his shield: he is on the combat list and open.
+    // [m23] ...and has to stay on it. His crew is an encounter squad spawned while he was shielded
+    // (so the director never pinned him), and encounters.publish() rewrites the combat list on
+    // every knockout: one crew goon going down after the final answer took him off the list for
+    // good, no strike could land and every window was "missed" for ever (the stall the balance
+    // pass saw in 2 of 6 runs: the runs that answered before the crew was cleared).
+    keepListed(b);
     if (b.data.reopenT > 0) { b.data.reopenT -= dt; zap(dt, b); if (b.data.reopenT <= 0) actor.open(6 * b.tier.window); }
     else if (b.e.state !== 'open' && b.e.state !== 'knocked' && b.e.vulnerable <= 0) actor.ch.animator.play('Idle_Loop', { fade: 0.3 });
     return;

@@ -69,6 +69,10 @@ export function createWayneTech({ events, progress, save, hero, combat, hud, eff
   events.on('chainDone', (d) => { if (creditsOwner('chainDone', d)) award(chainXp(d.count, d.stealth), 'chain'); });
   events.on('swarmDone', (d) => { if (creditsOwner('swarmDone', d)) award(XP.swarmPerGoon * d.count, 'swarm'); });
   events.on('cacheFound', ({ xp }) => award(xp, 'cache'));
+  // [balance] Campaign missions and optional objectives paid nothing: the story emits
+  // missionComplete (not missionDone, which side chains use) and xpGain for optionals, and nobody
+  // listened. A replayed mission pays nothing again (docs/design/balance.md 6).
+  events.on('missionComplete', (d = {}) => { if (!d.replay && d.night && d.night !== 'side' && d.night !== 'n1') award(XP.campaignMission, 'mission'); });
   events.on('challengeDone', ({ id, medal }) => {
     const gain = medalXp(w.medals[id] ?? null, medal);
     if (!gain) return;

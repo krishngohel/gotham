@@ -13,8 +13,8 @@
 // The combat object itself answers for player 0's fighter (combo, chains, gadgetApi, ...), so old
 // call sites keep working; fighterFor(heroOrPlayer) reaches the others.
 import * as THREE from 'three';
-import { resolveHit, DIFFICULTY, inShockwave, shouldDiveBomb } from './rules.js';
-import { selectTarget, selectAttackTarget } from './targeting.js';
+import { resolveHit, DIFFICULTY, inShockwave, shouldDiveBomb, windupHolds } from './rules.js';
+import { selectTarget, selectAttackTarget, attachable } from './targeting.js';
 import { createCombo } from './combo.js';
 import { createDirector } from './director.js';
 import { createInputBuffer } from './inputBuffer.js';
@@ -35,7 +35,7 @@ import { createChainControl, CHAIN_SHOTS } from './chainControl.js';
 import { BASE_EFFECTS, hurtDamage } from '../progress/upgrades.js';
 import { pickTarget } from '../players/targeting.js';
 import { withPlayer } from '../core/events.js';
-import { createSquadPlanner, shouldSteal } from '../enemies/squad.js';
+import { createSquadPlanner, shouldSteal, rushDowned } from '../enemies/squad.js';
 import { createFear, createReputation } from '../enemies/fear.js';
 import { regenStep } from './rules.js';
 import { can } from '../abilities/gate.js'; // [onboard] ability gates at each trigger
@@ -221,10 +221,15 @@ export function createCombat({ hero = null, players = null, follow, time, events
       // Story's armour break (rules.js DIFFICULTY.story.armorBreak): a run of shrugged-off blows
       // stuns an armoured goon as a cape would.
       const armorBreak = DIFFICULTY[difficulty]?.armorBreak;
-      if (armorBreak && result.outcome === 'immune') {
+      // [balance] ...and on story a run of blows into a riot shield staggers it the same way (a
+      // masher on story died to Night Two's shield goons: nothing he pressed ever got through).
+      // ...and the stun baton's shock (a masher on story died to Night Three's baton crews).
+      if (armorBreak && (result.outcome === 'immune' || result.outcome === 'blocked' || result.outcome === 'shocked')) {
         target.armorHits = (target.armorHits ?? 0) + 1;
         if (target.armorHits >= armorBreak) { target.armorHits = 0; result = { outcome: 'stun', damage: 0, stun: 1.6 }; }
-      } else if (result.outcome !== 'immune') target.armorHits = 0;
+      } else if (result.outcome !== 'immune' && result.outcome !== 'blocked' && result.outcome !== 'shocked') target.armorHits = 0;
+      // [balance] A committed attack keeps coming through a plain strike (rules.js windupArmor).
+      if (result.outcome === 'hit' && !assist && windupHolds(move, target, difficulty)) result = { ...result, outcome: 'absorbed' };
       const wasAttacking = target.applyHit(result, hero.pos, { power, launch, react, move, aerial: aerial || AERIAL.has(move) });
       if (wasAttacking) director.release(target.id);
       // Aggro: it turns on whoever hit it (src/players/targeting.js).
@@ -244,7 +249,7 @@ export function createCombat({ hero = null, players = null, follow, time, events
         return result;
       }
       if (!assist || combo.value > 0) combo.hit();
-      if (result.outcome === 'chip') { stopOn(0.03, target); cam.addShake(0.04); return result; }
+      if (result.outcome === 'chip' || result.outcome === 'absorbed') { stopOn(0.03, target); cam.addShake(0.04); return result; }
       const felt = !assist || target.pos.distanceTo(hero.pos) < ASSIST_FEEL;
       const big = result.outcome === 'ko' || result.outcome === 'knockdown';
       // Freeze both fighters on the contact frame, longer for a knockdown or a critical.
@@ -1128,7 +1133,10 @@ export function createCombat({ hero = null, players = null, follow, time, events
       if (stealthStartHook && (action === 'punch' || action === 'kick') && can(hero, 'silentTakedown') && stealthStartHook(action, ctx)) return true;
       const inAir = hero.state === 'air' || hero.state === 'glide';
       const all = alive().filter((e) => e.state !== 'grabbed');
-      const list = action === 'block' ? all : all.filter(canSee);
+      // [balance] A spore-dazed civilian (Ivy's thralls, `e.thrall`) is never the target a strike,
+      // a kick or a throw attaches to: only a deliberate cape, batarang or counter reaches him (they
+      // free him). Auto-attach used to send a press meant for the goon beside him into him.
+      const list = action === 'block' ? all : all.filter((e) => canSee(e) && attachable(e, action));
       if (action === 'block') {
         // Counters answer the wind-ups coming at this hero (in single player: every wind-up).
         const windups = list.filter((e) => e.state === 'windup' && e.def.counterable && e.pos.distanceTo(hero.pos) < 7.5 && aimedAtMe(e))
@@ -1510,7 +1518,10 @@ export function createCombat({ hero = null, players = null, follow, time, events
       }
       if (best) best.nextInLine = true;
     }
+    for (const e of squadBuf) e.rushing = false;
     planner.plan(planPlayers, squadBuf);
+    // [balance] A downed co-op player: one or two goons (by difficulty) rush the body and hold it.
+    if (fighters.length > 1) for (let i = 0; i < fighters.length; i++) if (fighters[i].hero.dead) rushDowned(fighters[i].hero.pos, squadBuf, 1 + Math.round(DIFFICULTY[difficulty]?.smart ?? 0.6));
     // Steal: a goon already in the inner ring takes the token of one still walking in from far.
     for (const holder of squadBuf) {
       if (!holder.holdsToken || holder.state !== 'approach') continue;
@@ -1521,6 +1532,7 @@ export function createCombat({ hero = null, players = null, follow, time, events
         const cd = Math.hypot(c.pos.x - hp.x, c.pos.z - hp.z);
         if (shouldSteal({ holdsToken: true, dist: hd }, { holdsToken: false, ring: c.ring, dist: cd }) && director.steal?.(holder.id, c.id)) {
           holder.state = 'engage'; holder.t = 0;
+          events.emit('tokenSteal', { from: holder, to: c }); // [balance] observed by scripts/balance-matrix.mjs
           const f = aggroOf(c);
           const dd = DIFFICULTY[difficulty];
           c.startWindup(Math.max(dd.windup, (dd.tellMin ?? 0) - STRIKE_LAND_TIME) + (c.def.counterable ? effects.counterWindow : 0), f.hero, { warn: dd.counterWarnings !== false });
@@ -1586,7 +1598,9 @@ export function createCombat({ hero = null, players = null, follow, time, events
     for (const e of enemies) {
       if (!e.alive || e.state !== 'surrender') continue;
       for (const f of fighters) {
-        if (f.hero.dead || f.hero.pos.distanceTo(e.pos) > 1.7) continue;
+        // [balance] Level reach, scaled by his size: a surrendered brute (scale 1.25) on a step could
+        // not be reached at 1.7 m straight-line, and the fight never ended (balance matrix, funhouse).
+        if (f.hero.dead || Math.hypot(f.hero.pos.x - e.pos.x, f.hero.pos.z - e.pos.z) > 1.7 * (e.scale ?? 1) + 0.2 || Math.abs(f.hero.pos.y - e.pos.y) > 1.8) continue;
         f.takedown(e, 'zipTie', { crit: false });
         events.emit('word', { text: 'ZIP!', pos: e.pos.clone().setY(e.pos.y + 1.4) });
         events.emit('zipTie', withPlayer({ target: e }, f.player));

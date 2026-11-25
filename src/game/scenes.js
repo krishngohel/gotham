@@ -4,18 +4,15 @@ import { jokerTV, jokerCard, titleCard } from '../ui/comicArt.js';
 const J = (text, x = 50, y = 5, extra = {}) => ({ text, x, y, joker: true, ...extra });
 
 export const SCENES = {
+  // [balance] The opening, made punchy (owner: the start drags): one page, three panels, the same
+  // story (the rain, the signal turned into a grin, the stolen WayneTech toys and Smilex, midnight).
   intro: (stage) => [
     {
       panels: [
-        { span: 'wide', img: stage.shot({ cam: [34, 74, 70], look: [-30, 30, -70] }), caption: 'Gotham City, an hour before midnight. The rain has not let up in three days.' },
-        { img: stage.shot({ cam: [-5, 44.2, -2], look: [-12, 43.6, -12], hero: null }), caption: 'Then the Batsignal flickers, and for a moment the light on the clouds is not a bat anymore. It is a grin.', captionPos: 'bottom' },
-        { img: jokerTV('grin'), balloons: [J("Good evening, Gotham! Tonight's program is brought to you by... ME! HA HA HA!", 50, 5, { w: 80 })] },
-        { span: 'wide', img: jokerTV('smug'), balloons: [J("I borrowed Wayne Tech's finest toys, the airwaves, and all the Smilex one city can hold. Come and get them, Bats! HA HA HA!", 50, 5, { w: 70 })] },
+        { span: 'wide', img: stage.shot({ cam: [34, 74, 70], look: [-30, 30, -70] }), caption: 'Gotham City, an hour before midnight. Three days of rain, and then the Batsignal turns into a grin.' },
+        { img: jokerTV('grin'), balloons: [J("Good evening, Gotham! I borrowed Wayne Tech's finest toys and all the Smilex one city can hold. Come and get them, Bats! HA HA HA!", 50, 5, { w: 80 })] },
+        { img: stage.shot({ cam: [3.2, 42.8, 23], look: [-4, 47, 8], fov: 50, hero: { at: [0.5, 42, 17.5], yaw: -2.7, anim: 'Idle_Loop' } }), caption: 'Midnight is coming, and the Joker has a head start.', captionPos: 'bottom' },
       ],
-    },
-    {
-      layout: 'single',
-      panels: [{ span: 'full', img: stage.shot({ cam: [3.2, 42.8, 23], look: [-4, 47, 8], fov: 50, hero: { at: [0.5, 42, 17.5], yaw: -2.7, anim: 'Idle_Loop' } }), caption: 'Gotham needs Batman. Midnight is coming, and the Joker has a head start.', captionPos: 'bottom' }],
     },
   ],
 

@@ -31,6 +31,8 @@ const n = (branch, id, name, text, demo, { cost = 1, requires = [], act = 1, her
   id, branch, name, text, demo, cost, currency: branch === 'wayne' ? 'standing' : 'xp', requires, act, heroes, effect,
 });
 
+// [balance] Wayne branch costs cut by about a third (170 -> 108 credit) to match what the double
+// life banks over the campaign (doubleLife.js WAYNE_BANK_PER; docs/design/balance.md 6).
 export const NODES = [
   // ---------------- Armor ----------------
   n('armor', 'plating1', 'Reinforced Plating', 'Max health +25.', 'Shrug off one more punch per fight.', { effect: [['maxHealthBonus', 'add', 25]] }),
@@ -116,15 +118,15 @@ export const NODES = [
   n('vehicle', 'afterburner', 'Afterburner', 'A longer, hotter boost.', 'A blue cone and a sonic thump.', { cost: 2, requires: ['ramPlates'], act: 4, effect: [['carAfterburner', 'set', true]] }),
 
   // ---------------- Wayne (Standing) ----------------
-  n('wayne', 'wayneScholars', 'Wayne Scholars', 'All XP +10%.', 'Interns at Applied Sciences crunch your fight data.', { cost: 10, act: 1, effect: [['xpMult', 'mul', 1.1]] }),
-  n('wayne', 'appliedSciences', 'Applied Sciences Budget', 'A weekly delivery of gadget parts to the Batcave.', 'A crate with a sticky note from Lucius.', { cost: 15, act: 1, effect: [['rndDelivery', 'set', true]] }),
-  n('wayne', 'alfredAlibis', "Alfred's Alibis", 'Suspicion grows 20% slower.', '"Master Bruce was at the opera. I have the ticket stub."', { cost: 10, act: 1, effect: [['suspicionMult', 'mul', 0.8]] }),
-  n('wayne', 'batmobileFunding', 'Batmobile Modules', 'Unlocks the Batmobile pursuit modules.', 'A new bay door opens in the cave.', { cost: 20, requires: ['appliedSciences'], act: 2, effect: [['pursuitModules', 'set', true]] }),
-  n('wayne', 'oracleNetwork', 'Oracle Network', 'Crimes show on the map before they start.', 'A ping, a district, a countdown.', { cost: 20, requires: ['appliedSciences'], act: 2, effect: [['crimeForewarning', 'set', true]] }),
-  n('wayne', 'nightNurse', 'Night Nurse', 'Fatigue recovers 50% faster.', 'Stitches, tea and four hours of sleep.', { cost: 15, requires: ['alfredAlibis'], act: 2, effect: [['fatigueRecovery', 'mul', 1.5]] }),
-  n('wayne', 'downtownCave', 'Downtown Cave', 'A second cave entrance downtown for fast travel.', 'A lift behind a parking garage wall.', { cost: 25, requires: ['appliedSciences'], act: 3, effect: [['downtownCave', 'set', true]] }),
-  n('wayne', 'foundationFund', 'Foundation Fund', 'Every week, one district cools down a notch.', 'New streetlights; fewer muggings.', { cost: 25, requires: ['alfredAlibis'], act: 3, effect: [['heatRelief', 'add', 1]] }),
-  n('wayne', 'alliesOnCall', 'Allies on Call', 'Summon Nightwing or Robin into a fight.', 'A whistle, a flip, and backup.', { cost: 30, requires: ['oracleNetwork'], act: 4, effect: [['alliesOnCall', 'set', true]] }),
+  n('wayne', 'wayneScholars', 'Wayne Scholars', 'All XP +10%.', 'Interns at Applied Sciences crunch your fight data.', { cost: 6, act: 1, effect: [['xpMult', 'mul', 1.1]] }),
+  n('wayne', 'appliedSciences', 'Applied Sciences Budget', 'A weekly delivery of gadget parts to the Batcave.', 'A crate with a sticky note from Lucius.', { cost: 10, act: 1, effect: [['rndDelivery', 'set', true]] }),
+  n('wayne', 'alfredAlibis', "Alfred's Alibis", 'Suspicion grows 20% slower.', '"Master Bruce was at the opera. I have the ticket stub."', { cost: 6, act: 1, effect: [['suspicionMult', 'mul', 0.8]] }),
+  n('wayne', 'batmobileFunding', 'Batmobile Modules', 'Unlocks the Batmobile pursuit modules.', 'A new bay door opens in the cave.', { cost: 12, requires: ['appliedSciences'], act: 2, effect: [['pursuitModules', 'set', true]] }),
+  n('wayne', 'oracleNetwork', 'Oracle Network', 'Crimes show on the map before they start.', 'A ping, a district, a countdown.', { cost: 12, requires: ['appliedSciences'], act: 2, effect: [['crimeForewarning', 'set', true]] }),
+  n('wayne', 'nightNurse', 'Night Nurse', 'Fatigue recovers 50% faster.', 'Stitches, tea and four hours of sleep.', { cost: 10, requires: ['alfredAlibis'], act: 2, effect: [['fatigueRecovery', 'mul', 1.5]] }),
+  n('wayne', 'downtownCave', 'Downtown Cave', 'A second cave entrance downtown for fast travel.', 'A lift behind a parking garage wall.', { cost: 16, requires: ['appliedSciences'], act: 3, effect: [['downtownCave', 'set', true]] }),
+  n('wayne', 'foundationFund', 'Foundation Fund', 'Every week, one district cools down a notch.', 'New streetlights; fewer muggings.', { cost: 16, requires: ['alfredAlibis'], act: 3, effect: [['heatRelief', 'add', 1]] }),
+  n('wayne', 'alliesOnCall', 'Allies on Call', 'Summon Nightwing or Robin into a fight.', 'A whistle, a flip, and backup.', { cost: 20, requires: ['oracleNetwork'], act: 4, effect: [['alliesOnCall', 'set', true]] }),
 
   // ---------------- Kit branches (one small branch per hero family) ----------------
   n('kit', 'nw.escrimaCharge', 'Live Wire', 'Escrima flurry comes back 20% sooner.', 'The sticks crackle and swing again.', { heroes: ['nightwing'], effect: [['sigCooldownMult', 'mul', 0.8]] }),

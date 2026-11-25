@@ -10,6 +10,7 @@
 //   scenario, after the asset packs have landed (they load on real time).
 // - Hooks run after every virtual frame (window.__v.after: [fn]) for samplers.
 import { chromium } from 'playwright-core';
+import { setPriority, constants as osConst } from 'node:os';
 
 export const FPS = 60;
 const ARGS = ['--mute-audio', '--ignore-gpu-blocklist', '--use-angle=d3d11'];
@@ -75,7 +76,10 @@ function virtualClock() {
 
 // Opens a page on the game. q: the query string ('?at=f1&god=1'). Returns the harness.
 export async function openGame(url, q, { headless = true, init = [] } = {}) {
+  if (process.env.LOWPRI !== '0') { try { setPriority(osConst.priority.PRIORITY_BELOW_NORMAL); } catch { /* fine */ } } // [balance] children inherit it
   const browser = await chromium.launch({ args: ARGS, headless });
+  // [balance] A shared machine: this script and its browser run below normal priority (LOW=1).
+  if (process.env.LOWPRI !== '0') { try { setPriority(osConst.priority.PRIORITY_BELOW_NORMAL); const pid = browser.process?.()?.pid; if (pid) setPriority(pid, osConst.priority.PRIORITY_BELOW_NORMAL); } catch { /* not allowed: fine */ } }
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   const errors = [];
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));

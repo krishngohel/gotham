@@ -210,6 +210,6 @@ export function createBossDirector(deps) {
     get barState() { return active && def && ctrl && !def.legacyBar ? { id: def.id, name: def.name, phases: def.phases.length, phase: ctrl.phase ?? phase, inPhase: ctrl.inPhase ?? 0, colors: def.colors ?? null } : null; },
     // Dev and the night simulator: what a scripted player should do against this boss right now
     // (the def's sim(b) -> { goTo?, action?, hold? } or null: just fight).
-    simHint() { const h = ctrl?.handle; return active && h && def?.sim ? def.sim(h) : null; },
+    simHint() { const h = ctrl?.handle ?? ctrl?.simHandle; return active && h && def?.sim ? def.sim(h) : null; },
   };
 }

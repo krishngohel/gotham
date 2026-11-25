@@ -111,3 +111,26 @@ export function createSquadPlanner({ innerSlots = 6 } = {}) {
     },
   };
 }
+
+// [balance] Rush a downed co-op player: the `count` nearest melee goons (no token, not ranged) take
+// slots in a tight ring round the body, so the partner has to fight through them to revive (and a
+// goon standing over a body is a readable "go and get him" for the partner). Writes slotX/slotZ,
+// ring 'inner' and `rushing` on the chosen ones; returns how many. Allocation-free.
+export function rushDowned(body, enemies, count) {
+  let n = 0;
+  for (let k = 0; k < count; k++) {
+    let best = null, bd = Infinity;
+    for (let i = 0; i < enemies.length; i++) {
+      const e = enemies[i];
+      if (!e.alive || e.ranged || e.holdsToken || e.rushing) continue;
+      const d = Math.hypot(e.x - body.x, e.z - body.z);
+      if (d < bd) { bd = d; best = e; }
+    }
+    if (!best || bd > 25) break;
+    const a = (k / Math.max(1, count)) * Math.PI * 2 + 0.6;
+    best.slotX = body.x + Math.sin(a) * 1.6; best.slotZ = body.z + Math.cos(a) * 1.6;
+    best.ring = 'inner'; best.rushing = true;
+    n += 1;
+  }
+  return n;
+}

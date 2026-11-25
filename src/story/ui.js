@@ -11,8 +11,10 @@ export function createStoryUi(getRoot) {
     if (timerEl) return timerEl;
     timerEl = document.createElement('div');
     timerEl.className = 'story-timer';
+    // [m45] top 16px: above the HUD card (.hud-card; its title starts about 70px down the screen). At 84px the
+    // chip sat on a riddle card's title for as long as the card showed.
     // [verify] a11y: font sizes here scale with --a11y-text (settings.access.textSize).
-    timerEl.style.cssText = `position:absolute;left:50%;top:84px;transform:translateX(-50%) skewX(-8deg);font:calc(28px * var(--a11y-text, 1)) ${FONT};letter-spacing:2px;color:#f2c94c;background:rgba(11,11,18,.85);border:3px solid #0b0b12;box-shadow:4px 4px 0 #0b0b12;padding:2px 14px;display:none;pointer-events:none;z-index:3`;
+    timerEl.style.cssText = `position:absolute;left:50%;top:16px;transform:translateX(-50%) skewX(-8deg);font:calc(28px * var(--a11y-text, 1)) ${FONT};letter-spacing:2px;color:#f2c94c;background:rgba(11,11,18,.85);border:3px solid #0b0b12;box-shadow:4px 4px 0 #0b0b12;padding:2px 14px;display:none;pointer-events:none;z-index:3`;
     root().appendChild(timerEl);
     return timerEl;
   }

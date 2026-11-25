@@ -242,3 +242,23 @@ state, so only same-moment A/B comparisons mean anything):
       only; harmless, but the two views show different centre cards for a few seconds.
 - [ ] (Bruce/K) `roomEnter` / `roomExit` (src/world/interiors.js) have no listener: the story radio
       and the lightning comic words could use them to go quiet indoors (polish list, Bruce section).
+      Firefly's vehicle boss never driven by a sim; `suit:questionMarkCowl` is not a real suit id.
+- [ ] Onboarding: comic/cinematic time in Night One unchanged (~33 s in the opening stretch); the
+      skill tree does not say "arrives in Night N"; partners can still call vehicles through co-op seats.
+
+## Balance pass findings (`[balance]`, docs/design/balance.md)
+- [ ] **Nights are ~17-21 minutes for an average player** (measured fights and bosses, modelled
+      travel), not 35-55: the 60-90 minute target needs about three times the content (3-4 more
+      missions a night). Balance added optional skirmishes and longer bosses only.
+- [ ] Side-chain bosses not beaten by the scripted player: the Clay Man (it never reached the first
+      lever from the arena edge: check the lever sites are reachable on foot), the Two-Faced DA (the
+      bot loses the plates across levels), the Cat Burglar's 'Nine Lives' (stalls after the roof
+      chase even with her back on the combat list). Needs a human run each.
+- [ ] Firefly: the bot drives the Batmobile through `startPilot` but lines up only some rams
+      (reached phase 2 once in 10 min). A person should judge whether the swoop line is readable.
+- [ ] Riddler: one run of three stalled for 10 minutes in the last question (crew squad + panels);
+      the other two finished in 73-92 s.
+- [ ] Night One's Joker (boss.js, untouched: Night One is sacred) is over in about a minute for an
+      average player.
+- [ ] Lieutenant reinforcements were never seen in the balance fight set (no act-5 lieutenant in
+      those squads); medic revives were attempted in 14 fights and finished twice.

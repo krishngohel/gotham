@@ -137,6 +137,7 @@ export function createStealthEncounters(ow) {
       nearT -= dt;
       if (nearT > 0) return;
       nearT = 0.5;
+      if (ow.storyHeld?.()) return; // [m23] not over a story beat: it announces itself when the beat is done
       const m = api.marker();
       if (m && !announced.has(m.id)) {
         announced.add(m.id);

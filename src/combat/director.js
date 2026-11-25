@@ -67,6 +67,7 @@ export function createDirector({ maxWindups = 2, gap = [2.2, 4], minSpacing = 0.
       if (o.gap) gap = o.gap;
       if (o.budget !== undefined) budget = o.budget;
       if (o.rangedBudget !== undefined) rangedBudget = o.rangedBudget;
+      if (o.minSpacing !== undefined) minSpacing = o.minSpacing; // [balance] per difficulty
     },
     // How many melee wind-ups are going for one target right now.
     activeOn: onTarget,
