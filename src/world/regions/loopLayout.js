@@ -62,7 +62,10 @@ export const EL = {
   // West Line: west out of the Loop along the z -479 street. Its east end is a terminal beside the
   // rectangle's west leg; it runs to x -580 when the western districts join (they build their own
   // stretch to these numbers). Inside the Loop region it is built to the region edge.
-  westLine: { z: -479, eastX: -100, westX: -580, regionEdgeX: -266 },
+  // [polish2] Beyond the Loop the western districts' stretch is built by el.js buildElWest: the
+  // tracks end at trackWestX (a four-car train standing against the buffers there is centred on
+  // the Park Row terminus at x -520), the deck a little past them at deckWestX.
+  westLine: { z: -479, eastX: -100, westX: -580, regionEdgeX: -266, trackWestX: -551, deckWestX: -557 },
 };
 
 // Stations: centre, the axis the line runs along ('x' or 'z'), and one stair per platform
@@ -75,6 +78,13 @@ export const EL_STATIONS = [
   { id: 'elCityHall', name: 'CITY HALL', line: 'loop', x: 90, z: -449, along: 'z', stairs: [{ side: -1, top: -10, dir: -1 }, { side: 1, top: 10, dir: 1 }] },
   { id: 'elWestJunction', name: 'WELLS JUNCTION', line: 'west', x: -132, z: -479, along: 'x', stairs: [{ side: -1, top: 7, dir: 1 }, { side: 1, top: 17, dir: 1 }] },
   { id: 'elCanal', name: 'CANAL', line: 'west', x: -226, z: -479, along: 'x', stairs: [{ side: -1, top: -6, dir: -1 }, { side: 1, top: 26, dir: 1 }] },
+];
+// [polish2] The West Line's stations beyond the Loop (the plots westLayout.js WEST.el.stations
+// keeps clear). Each platform straddles its cross street the way an El station sits over an
+// avenue; the stairs come down onto the corridor street's sidewalks either side of it.
+export const EL_WEST_STATIONS = [
+  { id: 'elNarrows', name: 'NARROWS', line: 'west', region: 'narrows', x: -370, z: -479, along: 'x', stairs: [{ side: -1, top: -10, dir: -1 }, { side: 1, top: 10, dir: 1 }] },
+  { id: 'elParkRow', name: 'PARK ROW', line: 'west', region: 'parkRow', x: -520, z: -479, along: 'x', stairs: [{ side: -1, top: -10, dir: -1 }, { side: 1, top: 10, dir: 1 }] },
 ];
 // The ground footprint of every station stair, from its head to a little past its foot, padded:
 // street furniture and lamps keep out of these so the way up stays clear.
@@ -97,7 +107,7 @@ export const inStairZone = (zones, x, z) => zones.some((r) => x >= r.minX && x <
 // districts' builders; positions are theirs to adjust to their streets.
 export const WEST_LINE_PLANNED = [
   { id: 'elNarrows', name: 'NARROWS', x: -370, z: -479 },
-  { id: 'elParkRow', name: 'PARK ROW', x: -520, z: -390 },
+  { id: 'elParkRow', name: 'PARK ROW', x: -520, z: -479 },
   { id: 'elChinatown', name: 'CHINATOWN', x: -520, z: -120 },
   { id: 'elYards', name: 'THE YARDS', x: -520, z: 100 },
 ];
@@ -135,8 +145,8 @@ export function loopTrack(offset = EL.track, dir = 1, seg = 8) {
 function polar(c, r, a) { return { x: c.cx + r * Math.cos(a), z: c.cz + r * Math.sin(a) }; }
 
 // The West Line track at `offset` (north track -2.2, south +2.2), from its west end (x westX,
-// clipped to `westX` given) to the junction terminal's buffer stop.
-export function westTrack(offset, westX = EL.westLine.regionEdgeX + 4) {
+// clipped to `westX` given; by default the built end at Park Row) to the junction terminal's buffer stop.
+export function westTrack(offset, westX = EL.westLine.trackWestX) {
   const z = EL.westLine.z + offset;
   return [{ x: westX, y: EL.railTop, z }, { x: EL.westLine.eastX - 2, y: EL.railTop, z }];
 }
@@ -181,7 +191,8 @@ export function westLineData() {
     deckHalf: EL.deckHalf, track: EL.track, column: EL.column, bent: EL.bent,
     platformTop: EL.platformTop, platformIn: EL.platformIn, platformOut: EL.platformOut,
     eastX: EL.westLine.eastX, westX: EL.westLine.westX, builtToX: EL.westLine.regionEdgeX,
-    stations: EL_STATIONS.filter((s) => s.line === 'west').map(({ id, name, x, z }) => ({ id, name, x, z })),
+    trackWestX: EL.westLine.trackWestX, deckWestX: EL.westLine.deckWestX,
+    stations: [...EL_STATIONS.filter((s) => s.line === 'west'), ...EL_WEST_STATIONS].map(({ id, name, x, z }) => ({ id, name, x, z })),
     planned: WEST_LINE_PLANNED,
   };
 }

@@ -5,12 +5,18 @@ import { buildNarrows } from './narrows.js';
 import { buildParkRow } from './parkRow.js';
 import { buildChinatown } from './chinatown.js';
 import { buildYards } from './yards.js';
+import { buildElWest } from './el.js';
+import { X_STREETS } from './westLayout.js';
+
+// [polish2] The El West Line's structure over each district's stretch of the z -479 street (el.js).
+const EL_CROSS_X = X_STREETS.filter((s) => !s.quay).map((s) => s.x);
+const withEl = (build, region) => (ctx, env) => { build(ctx, env); buildElWest(ctx, region, EL_CROSS_X); };
 
 export const WEST_BUILDERS = {
-  westRiver: buildWestRiver,
+  westRiver: withEl(buildWestRiver, 'westRiver'),
   quay: buildQuay,
-  narrows: buildNarrows,
-  parkRow: buildParkRow,
+  narrows: withEl(buildNarrows, 'narrows'),
+  parkRow: withEl(buildParkRow, 'parkRow'),
   chinatown: buildChinatown,
   yards: buildYards,
 };

@@ -256,13 +256,24 @@ function church(ctx) {
     ctx.buckets.add('painted', g, TEAL);
     ctx.buckets.add('painted', new THREE.ConeGeometry(r * 0.35, r * 1.4, 8).translate(x, y + drumH + r * 2.4, z), TEAL);
     ctx.buckets.add('painted', cylinder(0.06, 0.06, 1.8, x, y + drumH + r * 3.4, z, 4), GOLD);
+    // [polish2] A gold collar where the dome sits on its drum, a gold orb under the spike, and
+    // dark arched lights round the drum.
+    ctx.buckets.add('painted', cylinder(r * 0.82, r * 0.82, 0.28, x, y + drumH + 0.06, z, 12), GOLD);
+    ctx.buckets.add('painted', new THREE.SphereGeometry(r * 0.13, 8, 6).translate(x, y + drumH + r * 3.12, z), GOLD);
+    for (let k = 0; k < 8; k++) {
+      const a = (k / 8) * Math.PI * 2 + Math.PI / 8;
+      ctx.buckets.add('painted', box(r * 0.2, drumH * 0.55, 0.1, 0, 0, 0).rotateY(a).translate(x + Math.sin(a) * r * 0.75, y + drumH * 0.5, z + Math.cos(a) * r * 0.75), 0x2a2620);
+    }
     ctx.collision.addBox(x - r * 0.7, y, z - r * 0.7, x + r * 0.7, y + drumH + r * 1.8, z + r * 0.7, 'dome');
     ctx.grapple.push({ x, y: y + drumH + r * 1.8, z, nx: 0, nz: 1, perch: true });
     ctx.halos.add(x, y + drumH + r * 3.4 + 1, z, GOLD, 2.2);
     ctx.facades.push({ minX: x - r, minY: y, minZ: z - r, maxX: x + r, maxY: y + drumH + r * 2.6, maxZ: z + r, style: 'stone' });
   };
-  dome(C.x, C.z, C.h, 4.2, 4);
-  for (const s of [-1, 1]) dome(C.x + s * (C.w / 2 - 2.5), C.z + C.d / 2 - 2.5, C.h, 1.8, 1.6);
+  // [polish2] The domes own the district's skyline now (polish list: "Odessa domes small"): the
+  // great dome half as big again on a taller drum, and four lesser ones at the corners (there
+  // were two, at the front, 1.8 m in radius).
+  dome(C.x, C.z, C.h, 6.3, 5.5);
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) dome(C.x + sx * (C.w / 2 - 3.4), C.z + sz * (C.d / 2 - 3.4), C.h, 2.9, 2.6);
   const fz = C.z + C.d / 2;
   ctx.buckets.add('painted', box(3, 4, 0.12, C.x, 2.15, fz + 0.06), 0x3a2a1c);
   glow(ctx, box(1.6, 1.6, 0.08, C.x, 8.5, fz + 0.06), 0xd8b46a);
@@ -275,10 +286,13 @@ function bathhouse(ctx) {
   building(ctx, { id: 'odessaBaths', x: B.x, z: B.z, w: B.w, d: B.d, h: B.h, style: 'stone', roof: 'flat', parapet: true, cornice: true, storefront: false, tiers: [], props: 'none', neon: [], district: 'littleOdessa' });
   for (const s of [-1, 1]) {
     const x = B.x + s * (B.w / 2 - 3), z = B.z + B.d / 2 - 3;
-    solid(ctx, 'painted', cylinder(1.4, 1.4, 1.6, x, B.h + 0.8, z, 10), { color: CREAM, tag: 'drum' });
-    ctx.buckets.add('painted', new THREE.SphereGeometry(2, 10, 7).scale(1, 1.3, 1).translate(x, B.h + 2.8, z), TEAL);
-    ctx.buckets.add('painted', new THREE.ConeGeometry(0.6, 2, 8).translate(x, B.h + 5.4, z), TEAL);
-    ctx.grapple.push({ x, y: B.h + 1.6, z, nx: 0, nz: 1, perch: true });
+    // [polish2] the baths' pair, half as big again, with gold collars and tips
+    solid(ctx, 'painted', cylinder(2.1, 2.1, 2.2, x, B.h + 1.1, z, 10), { color: CREAM, tag: 'drum' });
+    ctx.buckets.add('painted', cylinder(2.3, 2.3, 0.22, x, B.h + 2.2, z, 10), GOLD);
+    ctx.buckets.add('painted', new THREE.SphereGeometry(2.9, 10, 7).scale(1, 1.3, 1).translate(x, B.h + 4.9, z), TEAL);
+    ctx.buckets.add('painted', new THREE.ConeGeometry(0.9, 2.8, 8).translate(x, B.h + 9.2, z), TEAL);
+    ctx.buckets.add('painted', cylinder(0.05, 0.05, 1.4, x, B.h + 11.2, z, 4), GOLD);
+    ctx.grapple.push({ x, y: B.h + 2.2, z, nx: 0, nz: 1, perch: true });
   }
   for (let k = 0; k < 4; k++) ctx.steam.push({ x: B.x - 9 + k * 6, y: B.h + 0.5, z: B.z - 5, s: 1.2 });
   for (let k = 0; k < 4; k++) solid(ctx, 'steel', cylinder(0.3, 0.3, 1.2, B.x - 9 + k * 6, B.h + 0.6, B.z - 5, 8));

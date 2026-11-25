@@ -17,7 +17,7 @@
 //     bridges   [{ id, x, z, axis }]                       movable bridges (live state from world.bridges)
 //   }
 import { REGION_DATA, WATER_BODIES, REGION_SITES, WORLD_BOUNDS, DISTRICTS, districtAt as regionDistrictAt, regionDataAt } from '../world/regions/data.js';
-import { EL, EL_STATIONS, loopTrack, westTrack } from '../world/regions/loopLayout.js';
+import { EL, EL_STATIONS, EL_WEST_STATIONS, loopTrack, westTrack } from '../world/regions/loopLayout.js';
 
 export const CITY_BOUNDS = { minX: WORLD_BOUNDS.minX, maxX: WORLD_BOUNDS.maxX, minZ: WORLD_BOUNDS.minZ, maxZ: WORLD_BOUNDS.maxZ };
 
@@ -118,12 +118,16 @@ export function footprintsFromWorld({ roofs = [], boxes = [] } = {}) {
 
 // Fast-travel points: El stations (one per station, between its two platforms), Batwing drop
 // sites (any other site flagged fastTravel), and the Batcave's entrances.
-export function fastTravelPoints(sites = REGION_SITES, stations = EL_STATIONS, districtAt = regionDistrictAt) {
+// [polish2] Every El station: the Loop's and the West Line's beyond it.
+export const ALL_EL_STATIONS = [...EL_STATIONS, ...EL_WEST_STATIONS];
+export function fastTravelPoints(sites = REGION_SITES, stations = ALL_EL_STATIONS, districtAt = regionDistrictAt) {
   const out = [];
   for (const s of stations) {
     // Arrive on a platform (the station's own centre is over the tracks).
     const plat = Object.values(sites).find((q) => q.station === s.id);
-    const at = plat ?? { x: s.x, y: EL.platformTop, z: s.z };
+    // (No platform site: the middle of the station's north or west platform.)
+    const mid = (EL.platformIn + EL.platformOut) / 2;
+    const at = plat ?? { x: s.along === 'z' ? s.x - mid : s.x, y: EL.platformTop, z: s.along === 'x' ? s.z - mid : s.z };
     out.push({ id: s.id, kind: 'el', x: at.x, y: at.y ?? EL.platformTop, z: at.z, label: titleCase(s.name), line: s.line, district: districtAt(s.x, s.z) });
   }
   for (const [id, s] of Object.entries(sites)) {
@@ -202,9 +206,9 @@ export function buildCityMap({ graph = null, footprints = [], groundAt = null, s
 
   const el = {
     tracks: elTracks(),
-    stations: EL_STATIONS.map((s) => ({ id: s.id, name: titleCase(s.name), x: s.x, y: EL.platformTop, z: s.z, line: s.line })),
+    stations: ALL_EL_STATIONS.map((s) => ({ id: s.id, name: titleCase(s.name), x: s.x, y: EL.platformTop, z: s.z, line: s.line })),
   };
-  return { bounds: { ...b }, water, land, districts, streets, el, buildings, landmarks, fastTravel: fastTravelPoints(sites, EL_STATIONS, districtAt), bridges };
+  return { bounds: { ...b }, water, land, districts, streets, el, buildings, landmarks, fastTravel: fastTravelPoints(sites, ALL_EL_STATIONS, districtAt), bridges };
 }
 
 // The district record of the model at (x, z), or null.

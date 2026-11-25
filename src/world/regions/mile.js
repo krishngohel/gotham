@@ -12,6 +12,7 @@ import { hydrant, newsBoxes, trashCan, mailbox, manhole, puddle, trashBags, phon
 import { addGargoyle, plinth } from '../gargoyles.js';
 import { addLadder, addZipline } from '../climbables.js';
 import { MILE, MILE_COLUMNS, MILE_ROWS } from './loopLayout.js';
+import { icebergFront, boulevardDressing } from './mileDressing.js'; // [polish2]
 import { slab, lampAt, dashes, crosswalk, signPlane, flagpole, busShelter, newsstand, avenueTree, STONE, BRONZE } from './loopKit.js';
 
 const D = 'gothamMile';
@@ -69,6 +70,7 @@ function icebergLounge(ctx) {
   lightSpot(ctx, b.x, 3.5, cz + 1, ICE, 24, 14);
   ctx.reflect.push({ x: b.x, y: 0.16, z: cz + 1.5, h: 4, color: ICE, w: 2.5, len: 7, k: 0.4 });
   edgeGrapples(ctx, b.x, cz, 12, 2.8, 4.6, 4);
+  icebergFront(ctx, b); // [polish2] the street face: waterline, shards, fins, lounge windows
   // Rooftop iceberg: shards round a lit core (stand on the low shards, perch on the peak).
   const ry = 22;
   const shards = [[0, 0, 5.2, 9], [-4, 2, 3.2, 6], [4, -1, 3.6, 7], [1, 4, 2.8, 5], [-2, -4, 3, 5.5]];
@@ -308,5 +310,6 @@ export function buildMile(ctx) {
   addZipline(ctx.climbables, { x: 172, y: 41, z: -628 }, { x: 128, y: 27, z: -628 });
   addZipline(ctx.climbables, { x: 131, y: 31, z: -683 }, { x: 181.5, y: 13.2, z: -683 });
   addZipline(ctx.climbables, { x: -14, y: 58.6, z: -686 }, { x: -14, y: 13, z: -671 });
+  boulevardDressing(ctx); // [polish2] pennants, bulbs, benches, flower boxes, centrepieces
   return sites;
 }

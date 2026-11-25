@@ -11,9 +11,10 @@ import * as THREE from 'three';
 import { box, cylinder } from '../buckets.js';
 import {
   add, addBox, block, stair, table, chair, rug, textTexture, picture,
-  ROCK, ROCK_D, STEEL, CYAN, BRASS, CREAM, WARM, STONE_D,
+  ROCK as ROCK_PILLAR, STEEL, CYAN, BRASS, CREAM, WARM, STONE_D,
 } from './pocketKit.js';
 import { dressCave, rail } from './caveDressing.js'; // [polish] depth, waterfall, railed walkways, the set pieces
+import { rockTone } from './caveRock.js'; // [polish2] rock tones from height and the lamps' pools
 
 export const CAVE_ORIGIN = Object.freeze({ x: 2000, y: 0, z: -2400 });
 export const CAVE_BOUNDS = Object.freeze({ x0: -46, x1: 46, z0: -36, z1: 36, y: 0, h: 32 });
@@ -81,6 +82,9 @@ export function buildBatcave(ctx) {
   // ---- the rock: a floor, walls round the cavern (collision), a ceiling, rocks and stalactites ----
   add(ctx, 'painted', box(B.x1 - B.x0 + 4, 0.4, B.z1 - B.z0 + 4, 0, -0.2, 0), 0x2a2c30);
   const T = 3;
+  // [polish2] The bounding walls and the roof go dark (they were the same mid grey as the rocks
+  // in front of them): the ribs, beds and boulders read against them, and gaps become recesses.
+  const ROCK = 0x121317, ROCK_D = 0x08090b;
   block(ctx, B.x0 - T, -1, B.z0 - T, B.x1 + T, B.h + 2, B.z0, ROCK, { key: 'wall', tag: 'building' });
   block(ctx, B.x0 - T, -1, B.z1, -4, B.h + 2, B.z1 + T, ROCK, { key: 'wall', tag: 'building' });
   block(ctx, 4, -1, B.z1, B.x1 + T, B.h + 2, B.z1 + T, ROCK, { key: 'wall', tag: 'building' });
@@ -103,16 +107,17 @@ export function buildBatcave(ctx) {
     if (side === 3 && Math.abs(x) < 14) continue; // keep the waterfall clear
     if (side === 1 && z > -10 && z < -2) continue; // and the tunnel
     const r = 2 + rnd() * 4;
-    add(ctx, 'painted', new THREE.IcosahedronGeometry(r, 0).scale(1, 1.6 + rnd() * 2, 1).translate(x, rnd() * 18, z), rnd() < 0.5 ? ROCK : ROCK_D);
+    const sy = 1.6 + rnd() * 2, by = rnd() * 18;
+    add(ctx, 'painted', new THREE.IcosahedronGeometry(r, 0).scale(1, sy, 1).translate(x, by, z), rockTone(x, by, z, rnd() < 0.5 ? 0.85 : 0.2));
   }
   for (let i = 0; i < (rich ? 60 : 24); i++) {
     const x = B.x0 + 4 + rnd() * (B.x1 - B.x0 - 8), z = B.z0 + 4 + rnd() * (B.z1 - B.z0 - 8), L = 2 + rnd() * 6;
-    add(ctx, 'painted', new THREE.ConeGeometry(0.4 + rnd() * 0.8, L, 5).rotateX(Math.PI).translate(x, B.h - L / 2, z), ROCK_D);
+    add(ctx, 'painted', new THREE.ConeGeometry(0.4 + rnd() * 0.8, L, 5).rotateX(Math.PI).translate(x, B.h - L / 2, z), 0x0d0e12);
   }
 
   // ---- the lift ledge, high on the north-west wall, and its stair down to the deck ----
   block(ctx, -44, LEDGE - 0.6, -34, -32, LEDGE, -24, STONE_D, { tag: 'floor' });
-  add(ctx, 'painted', cylinder(2.2, 3.4, LEDGE - 0.6, -38, (LEDGE - 0.6) / 2, -29, 8), ROCK);
+  add(ctx, 'painted', cylinder(2.2, 3.4, LEDGE - 0.6, -38, (LEDGE - 0.6) / 2, -29, 8), ROCK_PILLAR);
   addBox(ctx, -40.5, 0, -31.5, -35.5, LEDGE - 0.6, -26.5, 'pillar');
   // The lift cage the clock brings you down in.
   for (const [x, z] of [[-43.4, -31.4], [-43.4, -26.6], [-38.8, -31.4], [-38.8, -26.6]]) add(ctx, 'painted', box(0.12, 3.2, 0.12, x, LEDGE + 1.6, z), BRASS);

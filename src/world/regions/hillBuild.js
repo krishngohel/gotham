@@ -180,19 +180,109 @@ export function roadRibbon(ctx, points, width, { key = 'asphalt', lift = 0.04, u
   ctx.buckets.add(key, g);
 }
 
-// A faceted boulder filling a box (jittered corners, so the ink pass draws rock, not a crate).
+// [polish2] World-space value noise: the same point always gets the same number, so neighbouring
+// rock boxes displace their shared edges alike and their beds line up.
+function h3(x, y, z) { const v = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453; return v - Math.floor(v); }
+function vnoise(x, y, z) {
+  const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
+  const fx = x - xi, fy = y - yi, fz = z - zi;
+  const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy), sz = fz * fz * (3 - 2 * fz);
+  const L = (a, b, t) => a + (b - a) * t;
+  return L(L(L(h3(xi, yi, zi), h3(xi + 1, yi, zi), sx), L(h3(xi, yi + 1, zi), h3(xi + 1, yi + 1, zi), sx), sy),
+    L(L(h3(xi, yi, zi + 1), h3(xi + 1, yi, zi + 1), sx), L(h3(xi, yi + 1, zi + 1), h3(xi + 1, yi + 1, zi + 1), sx), sy), sz);
+}
+
+// A rock face filling a box (the ink pass draws rock, not a crate).
+// [polish2] The polish list's "cliffs and gorge walls look like stacked slabs": each box used to be
+// one jittered crate with a flat lid, so a cliff read as a pile of them. Now the box is cut finer
+// and every vertex moves by noise of its WORLD position: upright ribs and gullies that carry
+// across the joints between boxes, beds that step in and out at the same heights all along the
+// face, tops that are no longer one plane, and colour in dipping beds (darker at the foot, moss
+// on the caps). The rng is drawn exactly as before (the same numbers in the same order: nothing
+// placed after a rock moves), and the collision boxes are the caller's and unchanged.
 export function boulder(ctx, rng, minX, minY, minZ, maxX, maxY, maxZ, color = DARK_STONE) {
   const w = maxX - minX, h = maxY - minY, d = maxZ - minZ;
-  const g = new THREE.BoxGeometry(w + 0.5, h, d + 0.5, 1, Math.max(1, Math.round(h / 4)), 1);
-  const p = g.attributes.position;
-  const jit = new Map();
-  for (let i = 0; i < p.count; i++) {
-    const k = `${p.getX(i).toFixed(2)},${p.getY(i).toFixed(2)},${p.getZ(i).toFixed(2)}`;
-    if (!jit.has(k)) jit.set(k, [rng.range(-0.45, 0.45), p.getY(i) > h / 2 - 0.01 ? rng.range(-0.25, 0) : rng.range(-0.3, 0.3), rng.range(-0.45, 0.45)]);
-    const [a, b, c] = jit.get(k);
-    p.setXYZ(i, p.getX(i) + a, p.getY(i) + b, p.getZ(i) + c);
+  // The old crate's draws, kept: three numbers per corner of a box cut every 4 m of height.
+  const coarse = new THREE.BoxGeometry(w + 0.5, h, d + 0.5, 1, Math.max(1, Math.round(h / 4)), 1);
+  const cp = coarse.attributes.position;
+  const seen = new Set();
+  for (let i = 0; i < cp.count; i++) {
+    const k = `${cp.getX(i).toFixed(2)},${cp.getY(i).toFixed(2)},${cp.getZ(i).toFixed(2)}`;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    rng.range(-0.45, 0.45);
+    if (cp.getY(i) > h / 2 - 0.01) rng.range(-0.25, 0); else rng.range(-0.3, 0.3);
+    rng.range(-0.45, 0.45);
   }
+  coarse.dispose();
+  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2, cz = (minZ + maxZ) / 2;
+  // Potato cuts each box half as fine and stands no flakes (hard rule 5).
+  const lite = (ctx.quality?.crowdDensity ?? 1) < 0.5;
+  const seg = (L, m) => Math.max(1, Math.min(lite ? 3 : 6, Math.round(L / (lite ? m * 2 : m))));
+  const g = new THREE.BoxGeometry(w + 0.5, h, d + 0.5, seg(w, 3), seg(h, 2.2), seg(d, 3));
+  const p = g.attributes.position, nrm = g.attributes.normal;
+  const base = new THREE.Color(color), moss = new THREE.Color(MOSS), c = new THREE.Color();
+  const colors = new Float32Array(p.count * 3);
+  for (let i = 0; i < p.count; i++) {
+    const lx = p.getX(i), ly = p.getY(i), lz = p.getZ(i);
+    const X = lx + cx, Y = ly + cy, Z = lz + cz;
+    const top = ly > h / 2 - 0.01, bottom = ly < -h / 2 + 0.01;
+    // Upright ribs: the same push for every height at this (x, z).
+    // On a face they push it out into a buttress or let it fall back into a gully (up to ~1.6 m).
+    const rib = vnoise(X * 0.24, 0.5, Z * 0.24);
+    const rx = (vnoise(X * 0.31, 0.5, Z * 0.31) - 0.5) * 1.2, rz = (vnoise(X * 0.31 + 40, 7.5, Z * 0.31 + 11) - 0.5) * 1.2;
+    // Beds: every ~2.5 m of height the face steps out or in, the same all along the cliff.
+    const bed = vnoise(X * 0.035, Y * 0.42 + X * 0.012, Z * 0.035) - 0.5;
+    const ox = Math.abs(lx) > w / 2 ? Math.sign(lx) : 0, oz = Math.abs(lz) > d / 2 ? Math.sign(lz) : 0;
+    const push = (rib - 0.42) * 3.2 + bed * 1.4;
+    let dx = rx + ox * push, dz = rz + oz * push, dy = 0;
+    // Tops stay within a hand of the collision lid; along a cliff's brow they rise and dip a
+    // little so the skyline is not ruled. The foot is buried anyway.
+    if (top) { dy = (ox || oz) && h > 5 ? (vnoise(X * 0.45, 3.3, Z * 0.45) - 0.55) * 0.9 : -0.3 * vnoise(X * 0.5, 3.3, Z * 0.5); dx *= 0.7; dz *= 0.7; }
+    else if (!bottom) dy = (vnoise(X * 0.2, Y * 0.7, Z * 0.2) - 0.5) * 0.7;
+    p.setXYZ(i, lx + dx, ly + dy, lz + dz);
+    // Colour: beds a step lighter or darker, shade gathering toward the foot, moss on the caps.
+    const band = Math.sin(Y * 1.15 + X * 0.045 + Z * 0.03 + vnoise(X * 0.05, 1.5, Z * 0.05) * 3);
+    // Gullies sit in shade, buttresses catch the light.
+    let k = 0.7 + rib * 0.5 + (band > 0.25 ? 0.07 : band < -0.45 ? -0.06 : 0) + (vnoise(X * 0.4, Y * 0.4, Z * 0.4) - 0.5) * 0.1;
+    k *= 0.74 + 0.26 * Math.min(1, Math.max(0, (Y - minY) / 5));
+    c.copy(base).multiplyScalar(k);
+    if (nrm.getY(i) > 0.9) c.lerp(moss, 0.45);
+    colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   const f = g.toNonIndexed();
   f.computeVertexNormals();
-  ctx.buckets.add('painted', f.translate((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2), color);
+  ctx.buckets.add('painted', f.translate(cx, cy, cz), color);
+  // Flakes: on a tall face, a slab or two of rock standing a little proud of it and leaning in,
+  // so the wall has pillars and joints with real edges for the ink to find. Placed by a hash of
+  // the box's position (both long sides: one is inside the hill).
+  if (lite || h < 6 || Math.max(w, d) < 3) return;
+  const alongX = w >= d;
+  const L = alongX ? w : d;
+  for (const side of [-1, 1]) {
+    const n = 1 + (h3(cx * 0.37, side, cz * 0.53) > 0.45 ? 1 : 0);
+    for (let q = 0; q < n; q++) {
+      const r0 = h3(cx * 0.71 + q * 3.1, side * 2.3, cz * 0.29), r1 = h3(cx * 0.13, q * 5.7 + side, cz * 0.91), r2 = h3(cx * 0.57 + side, cz * 0.23, q + 0.5);
+      const fw = 1.6 + r0 * Math.min(3.4, L * 0.45), fh = h * (0.5 + r1 * 0.42), ft = 0.9 + r2 * 0.9;
+      const along = (r1 - 0.5) * Math.max(0, L - fw) + (q ? (r0 - 0.5) * 2 : 0);
+      const fg = new THREE.BoxGeometry(alongX ? fw : ft, fh, alongX ? ft : fw, 1, 2, 1);
+      const fp = fg.attributes.position;
+      // Taper to a broken top: pull the upper corners in and stagger them.
+      for (let i = 0; i < fp.count; i++) {
+        const yy = fp.getY(i);
+        if (yy > fh / 2 - 0.01) fp.setXYZ(i, fp.getX(i) * (alongX ? 0.55 + r2 * 0.3 : 1), yy - h3(fp.getX(i) + cx, q + 1.5, fp.getZ(i) + cz) * fh * 0.14, fp.getZ(i) * (alongX ? 1 : 0.55 + r2 * 0.3));
+        else if (Math.abs(yy) < 0.01) fp.setXYZ(i, fp.getX(i) * (alongX ? 0.9 : 1.15), yy, fp.getZ(i) * (alongX ? 1.15 : 0.9));
+      }
+      const off = side * ((alongX ? d : w) / 2 + 0.25 + ft * 0.2 + (rib0(cx, cz) - 0.42) * 2.2);
+      const fx = cx + (alongX ? along : off), fz = cz + (alongX ? off : along);
+      const ff = fg.toNonIndexed();
+      ff.computeVertexNormals();
+      const lean = side * (0.03 + r0 * 0.05);
+      if (alongX) ff.rotateX(-lean); else ff.rotateZ(lean);
+      c.copy(base).multiplyScalar(0.82 + r1 * 0.42);
+      ctx.buckets.add('painted', ff.rotateY((r2 - 0.5) * 0.3).translate(fx, minY + fh / 2, fz), c.getHex());
+    }
+  }
 }
+const rib0 = (x, z) => vnoise(x * 0.24, 0.5, z * 0.24);

@@ -30,7 +30,10 @@ export function createVehicleFx(scene, quality = {}) {
     scene.add(skids);
   }
   if (budget.smoke > 0) {
-    smoke = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.5, 0), new THREE.MeshBasicMaterial({ color: 0xbfc4cc, transparent: true, opacity: 0.35, depthWrite: false }), budget.smoke);
+    // [polish2] Rounder and fainter (polish list: "chunky smoke"): the puffs were 20-sided balls
+    // growing to 2.8 m at 35 % opacity. One subdivision more, lower opacity, and update() keeps
+    // them small, squat and drifting (they shrink away at the end instead of popping).
+    smoke = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.5, 1), new THREE.MeshBasicMaterial({ color: 0xc6cad0, transparent: true, opacity: 0.2, depthWrite: false }), budget.smoke);
     smoke.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     smoke.layers.set(LAYER_FX);
     smoke.count = budget.smoke;
@@ -76,10 +79,11 @@ export function createVehicleFx(scene, quality = {}) {
         any = true;
         smokeLife[i] -= dt * 0.9;
         const k = Math.max(0, smokeLife[i]);
-        smokePos[i * 3 + 1] += dt * 0.8;
-        const s = k > 0 ? 0.6 + (1 - k) * 2.2 : 0;
-        at.set(smokePos[i * 3], smokePos[i * 3 + 1], smokePos[i * 3 + 2]);
-        sc.set(s, s, s);
+        smokePos[i * 3 + 1] += dt * 0.55;
+        // Swell to ~1.5 m across over the first two thirds of its life, then thin away.
+        const s = k > 0 ? (0.45 + (1 - k) * 1.25) * Math.min(1, k * 3.2) : 0;
+        at.set(smokePos[i * 3] + Math.sin(i * 2.4 + k * 3) * 0.12, smokePos[i * 3 + 1], smokePos[i * 3 + 2] + Math.cos(i * 1.7 + k * 3) * 0.12);
+        sc.set(s * (1 + (i % 3) * 0.12), s * 0.62, s * (1 + ((i + 1) % 3) * 0.12));
         m4.compose(at, q.identity(), sc);
         smoke.setMatrixAt(i, m4);
       }

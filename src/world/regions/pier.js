@@ -310,7 +310,15 @@ function funhouse(ctx, cx, cz) {
   solid(ctx, 'painted', box(w, h, d, cx, DECK + h / 2, cz), { color: 0x4a2f5c, tag: 'building' });
   ctx.facades.push({ minX: cx - w / 2, minY: DECK, minZ: cz - d / 2, maxX: cx + w / 2, maxY: DECK + h, maxZ: cz + d / 2, style: 'brick' });
   // Scalloped crown and stripes.
-  for (let k = 0; k < 6; k++) ctx.buckets.add('painted', new THREE.CylinderGeometry(2, 2, 0.6, 12, 1, false, 0, Math.PI).rotateX(Math.PI / 2).translate(cx - w / 2 + 2 + k * 4, DECK + h, zf - 0.2), k % 2 ? YEL : PALETTE.jokerGreen);
+  // [polish2] The crown stands on the roofline: six scallops rising above it with a brass ball on
+  // each (they were half-discs turned on their sides, hanging 2 m down the face and over the eyes).
+  for (let k = 0; k < 6; k++) {
+    const sx = cx - w / 2 + 2 + k * 4;
+    ctx.buckets.add('painted', new THREE.CylinderGeometry(2, 2, 0.6, 12, 1, false, -Math.PI / 2, Math.PI).rotateX(-Math.PI / 2).translate(sx, DECK + h, zf - 0.2), k % 2 ? YEL : PALETTE.jokerGreen);
+    ctx.buckets.add('painted', new THREE.SphereGeometry(0.34, 8, 6).translate(sx, DECK + h + 2.25, zf - 0.2), BRASSY);
+  }
+  // Brows over the eyes, so the face keeps its leer now the crown is off them.
+  for (const s of [-1, 1]) ctx.buckets.add('painted', box(3.6, 0.45, 0.2, 0, 0, 0).rotateZ(s * 0.28).translate(cx + s * 4.6, DECK + 9.9, zf + 0.2), 0x241430);
   for (let x = cx - w / 2 + 1; x < cx + w / 2; x += 2) ctx.buckets.add('painted', box(1, h - 1, 0.1, x, DECK + (h - 1) / 2, zf + 0.06), 0x5d3a72);
   // The face: two eyes (lit), a nose, a great grin framing the doorway.
   for (const s of [-1, 1]) {
@@ -323,7 +331,9 @@ function funhouse(ctx, cx, cz) {
   for (let k = 0; k < 7; k++) ctx.buckets.add('painted', box(0.9, 0.9, 0.2, cx - 3.6 + k * 1.2, DECK + 3.9, zf + 0.35), CREAM);
   ctx.buckets.add('painted', box(3.2, 3.2, 0.1, cx, DECK + 1.6, zf + 0.08), 0x0e0a12);
   glow(ctx, box(3, 0.1, 0.1, cx, DECK + 3.25, zf + 0.15), PALETTE.jokerGreen);
-  neonWord(ctx, 'THE GIGGLEWORKS', cx, DECK + h + 1.6, zf, 0, 1, { h: 1.8, color: PALETTE.jokerGreen, back: true, halo: 6 });
+  // [polish2] The name rides above the crown on two posts (it sat among the scallops).
+  neonWord(ctx, 'THE GIGGLEWORKS', cx, DECK + h + 3.7, zf - 0.6, 0, 1, { h: 1.8, color: PALETTE.jokerGreen, back: true, halo: 6 });
+  for (const s of [-1, 1]) ctx.buckets.add('painted', box(0.18, 3.0, 0.18, cx + s * 6.5, DECK + h + 1.5, zf - 0.75), 0x241430);
   board(ctx, 'MIRROR MAZE INSIDE', 'FIND YOURSELF. THEN LEAVE.', cx + 10, DECK + 2.2, zf + 2.5, 0, 1, { w: 3, bg: PALETTE.jokerPurple, base: DECK });
   for (const x of [cx - w / 2 + 2, cx, cx + w / 2 - 2]) ctx.grapple.push({ x, y: DECK + h, z: zf, nx: 0, nz: 1 });
   ctx.grapple.push({ x: cx, y: DECK + h, z: cz, nx: 0, nz: 1, perch: true });

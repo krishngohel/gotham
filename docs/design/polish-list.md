@@ -5,6 +5,7 @@ fixed. The final polish wave works through this; tick items off with the commit 
 
 ## Characters
 - [x] Batman's emblem tip gaps: 3677ea7. Future and gaslight Batmen on the reworked chassis: 2fc305b. Gunner vs baton silhouettes: be30593. Red Hood holsters: 5b6db24 (shots/polish/chars). Cape hem: tried and reverted (8fdaed9).
+      [polish2] Cape hem: not attempted (out of time after the world, cave, vehicle and ink items).
 - [ ] Batman's cape renders pale blue from behind in play (noon and night, after the environment
       merge); it should read near-black/dark navy with a lighter lining at most. Check the cape
       material, the time-of-day light grade and the `[env]` wind edit in hero.js.
@@ -16,21 +17,47 @@ fixed. The final polish wave works through this; tick items off with the commit 
       [polish] carry poses for tray and umbrella: aa260f6 (an upper-body overlay; waiters at the gala use it too). Musculature and colour borders not touched.
 
 ## Vehicles
-- [ ] Batmobile reads lean and very dark; needs bulk and rim lighting (assigned to L3).
-- [~] Nightwing bike fairing too upright; deco fenders read as flaps; chunky smoke.
-      [polish] not done in the polish wave (no time after items 1-3).
+- [~] Batmobile reads lean and very dark; needs bulk and rim lighting (assigned to L3).
+      [polish2] 24e85e2: flank pods between the tyres and a fuller midsection, on top of L3's bulk and
+      rim pass (shots/polish2/vehicles). Still an open-wheeled car: a heavier tail and haunches over
+      the rear wheels were left alone (the wheels swivel sideways in battle mode and need the room).
+- [x] Nightwing bike fairing too upright; deco fenders read as flaps; chunky smoke.
+      [polish2] 24e85e2: the bike has its own raked fairing, low screen and belly pan; deco fenders
+      keep their depth to both ends (sedan and cab); tyre smoke is rounder, smaller and fainter.
+      The smoke was changed in code and not looked at in a burnout.
 
 ## City
 - [~] Wayne Tower silhouette not distinctive; Iceberg Lounge plain from the street; Gotham Mile
       boulevard a little empty.
       [polish] Wayne Tower done: c9fc76e (crown, spire, lit W monograms and setback bands on the far skyline; shots/polish/city). Iceberg Lounge and Gotham Mile not done.
-- [ ] Park Row repetitive from the air; the Yards sparse and dark between landmarks; Odessa domes small.
-- [ ] Bristol cliffs and gorge walls look like stacked slabs.
-- [ ] The Mirror sculpture reads plainly; funhouse crown overlaps its eyes.
-- [ ] Lake water flat (partly addressed by `[env]` water work — re-check).
+      [polish2] f59bc31: the Iceberg Lounge's street face (a waterline with the berg above and below it,
+      lit fins, lounge windows, icicles) and the boulevard (pennants, median bulbs, benches, flower
+      boxes, a fountain, a statue and a clock, kerb shrubs). No parked cars on the boulevard (they
+      would stand in traffic lanes). shots/polish2/districts.
+- [~] Park Row repetitive from the air; the Yards sparse and dark between landmarks; Odessa domes small.
+      [polish2] Odessa domes: edd1b57 (done). The Yards: ae68acb (steel stock yard under a gantry
+      crane, raw-material bays, freight on the two empty tracks, three flood masts; the night aerial
+      is still dark away from them). Park Row: ae68acb, partial: roofs now differ (tones, bulkheads,
+      skylights, chimneys, ducts) but the blocks are the same heights and sizes as before (those come
+      from the region's seed), so from high up it still reads as a grid of similar flats.
+- [x] Bristol cliffs and gorge walls look like stacked slabs.
+      [polish2] 06bdd76: rock boxes cut finer and displaced by world-space noise, standing flakes,
+      shaded beds; same rng draws and collision boxes.
+- [x] The Mirror sculpture reads plainly; funhouse crown overlaps its eyes.
+      [polish2] d7600d1.
+- [x] Lake water flat (partly addressed by `[env]` water work — re-check).
+      [polish2] 5bf8449: two-tone swell patches and near crest ticks on every water body. Same commit:
+      the harbour lighthouse's flat wedge fades along its length (from above it covered Blackgate
+      in yellow; shots/polish2/districts/before-blackgate-aerial.jpg).
 - [~] El: riders can drop through the train floor on curves; West Line structure not built west of
       x -266 (corridor reserved on z -479, stations at x -370 and -520).
       [polish] riders stay on through curves: 7aa7caa (elRide.test). West Line west of x -266 still not built.
+      [polish2] 7342c3d: built from x -266 to a terminus at Park Row (deck to x -557, tracks to -551):
+      bents, deck, track bed, Narrows (x -370) and Park Row (x -520) stations with stairs, the
+      shuttles run the whole line and call at Canal, the Narrows and Park Row; the map and fast
+      travel list both stations (elWest.test). Potato and Low run one two-car shuttle instead of
+      two four-car ones (the first gate run failed on visible skinned meshes at the Narrows site:
+      84 against a budget of 60 x1.15). Tick: [x] for the West Line half of this item.
 - [ ] Some core views use more draw calls than before chunking; halo pool at ~4.6k of 6k.
 - [ ] Core parked cars raised chunk triangles 37k -> 45.5k (`PARKED_DETAIL` switch exists).
 
@@ -38,6 +65,12 @@ fixed. The final polish wave works through this; tick items off with the commit 
 - [~] Ultra ink lighting: teal hatched artefact under the hero's feet on a wet roof; overall effect
       is subtle — decide whether it earns its place, tune or restrict to streets.
       [polish] not done.
+      [polish2] 5a6b809: cause found and fixed. Two things: SSR accepted the hero's own rim light as a
+      light source (teal dashes by his boots), and the depth-only AO counted a flat floor's nearer
+      pixels as occluders at a steep camera pitch (the whole roof, and wet streets, hatched).
+      Isolated by switching each effect off in the same frame (shots/polish2/ink). SSR now needs a
+      lit area round the hit; AO measures occluders above the surface's tangent plane. Whether the
+      effect earns its place was not decided here.
 - [ ] Split screen: shadows and light pool follow the pair's midpoint.
 
 ## Combat
@@ -96,6 +129,10 @@ fixed. The final polish wave works through this; tick items off with the commit 
       waterfall). Dress them: chandeliers, guests in groups, a band, drapes; cave scale, depth,
       stalactites, lit platforms, the vehicles and trophies visible.
       [polish] 6fb1579 + 1047ce3: Manor dressed room by room, the gala with conversation groups in formal looks, a band and waiters, the cave with depth, a waterfall, railed lit walkways, a screen wall, trophies. Before/after: docs/design/shots/polish/interiors/. The cave is better, not yet great (see the hand-back).
+      [polish2] 7285e8f: the cave's rock no longer one grey: tones from height and each lamp's pool,
+      dipping strata round the walls, black recesses, floor-to-roof columns and arches in
+      silhouette, light shafts and washes; walls and roof go near black. Baked colour and additive
+      cards only, no lights. shots/polish2/batcave.
 - [ ] Six of eight collision scenes built (missing: Iceberg Lounge, museum hall). Vault suit choice
       applies on next load. Batcycle display-only. Story radio keeps running inside interiors;
       lightning comic words show indoors. Not host-only for online guests yet.

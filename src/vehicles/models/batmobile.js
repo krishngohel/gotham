@@ -72,7 +72,10 @@ function buildTemplate(skinName) {
     [-2.2, 0.3, 0.98, 0.82, 1.0, 0.7],
     [-2.95, 0.34, 0.88, 0.78, 0.92, 0.62],
     [-3.3, 0.42, 0.7, 0.7, 0.8, 0.48],
-  ].map(([z, y0, hw, ym, yt, ht]) => [z, y0, hw + 0.09 * K, ym + 0.04 * K, yt + 0.07 * K, ht + 0.06 * K]).map(([z, y0, hw, ym, yt, ht]) => ({ z, pts: ring8(y0, hw - 0.14, hw, ym, ht, yt) }))));
+  // [polish2] ...and fuller still between the axles (the list: "reads lean"): the two midship
+  // stations swell a hand wider and taller; the stations beside the wheels keep their clearance.
+  ].map(([z, y0, hw, ym, yt, ht]) => (z < 1 && z > -1 ? [z, y0, hw + 0.08 * K, ym + 0.03 * K, yt + 0.05 * K, ht + 0.03 * K] : [z, y0, hw, ym, yt, ht]))
+    .map(([z, y0, hw, ym, yt, ht]) => [z, y0, hw + 0.09 * K, ym + 0.04 * K, yt + 0.07 * K, ht + 0.06 * K]).map(([z, y0, hw, ym, yt, ht]) => ({ z, pts: ring8(y0, hw - 0.14, hw, ym, ht, yt) }))));
   if (K) {
     for (const s of [-1, 1]) {
       // Shoulder armour slabs either side of the cockpit, and a raised plate over each fender line.
@@ -111,6 +114,20 @@ function buildTemplate(skinName) {
       { z: -1.3, pts: [[-0.12, 0.3], [-0.12, 0.68], [0.06, 0.72], [0.2, 0.58], [0.22, 0.34], [0.12, 0.28], [0.0, 0.26], [-0.08, 0.27]] },
     ]);
     hull((s < 0 ? mirrorX(sill) : sill).translate(s * 0.98, 0, 0), sk.armour);
+    if (K) {
+      // [polish2] A flank pod outboard of each sill, filling the gap between the tyres: a faceted
+      // armour box out to the tyres' own line, chamfered top and bottom, with a lit seam and
+      // two vent slots. The car's plan stops being a thin hull with four wheels on sticks.
+      const pod = loft([
+        { z: 1.22, pts: [[0.0, 0.34], [0.0, 0.7], [0.1, 0.74], [0.22, 0.66], [0.26, 0.42], [0.18, 0.32], [0.08, 0.3], [0.02, 0.31]] },
+        { z: 0.9, pts: [[0.0, 0.26], [0.0, 0.78], [0.16, 0.84], [0.4, 0.72], [0.46, 0.4], [0.34, 0.26], [0.16, 0.22], [0.04, 0.23]] },
+        { z: -0.85, pts: [[0.0, 0.26], [0.0, 0.8], [0.16, 0.86], [0.42, 0.74], [0.48, 0.4], [0.36, 0.26], [0.16, 0.22], [0.04, 0.23]] },
+        { z: -1.18, pts: [[0.0, 0.34], [0.0, 0.72], [0.1, 0.76], [0.24, 0.68], [0.28, 0.42], [0.2, 0.32], [0.08, 0.3], [0.02, 0.31]] },
+      ]);
+      hull((s < 0 ? mirrorX(pod) : pod).translate(s * 1.16, 0, 0), sk.body);
+      lamp(boxAt(0.02, 0.025, 1.7, s * 1.645, 0.56, 0.02), 'pursuit', sk.accent, 0x1a2a33);
+      for (const vz of [0.55, -0.5]) hull(boxAt(0.03, 0.14, 0.34, s * 1.63, 0.44, vz), sk.dark, { ink: false });
+    }
     // A row of bolt heads along the sill: comic armour detail.
     for (let k = 0; k < 6; k++) hull(boxAt(0.03, 0.05, 0.05, s * 1.25, 0.5, 0.9 - k * 0.38), sk.dark, { ink: false });
   }

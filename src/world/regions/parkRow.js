@@ -6,6 +6,7 @@
 // still: one lamp, no clutter), the Lantern Arms hotel, the Last Resort mission, the boarded-up
 // Foundling Home, and a freight viaduct striding down the west blocks' alley from the Yards. The
 // El West Line corridor (z -479) crosses with a station plot at x -520 left clear for workstream H1.
+import { roofVariety } from './westDressing.js'; // [polish2]
 import * as THREE from 'three';
 import { PALETTE } from '../../config/palette.js';
 import { box, cylinder } from '../buckets.js';
@@ -64,7 +65,7 @@ export function buildParkRow(ctx) {
         list.push(...fillSub(ctx, sub, faces, {
           depth: x0 === -566 ? [9, 11] : [10, 12.5], lot: [9, 6.5], floors: [2, 4], styles: ['stone', 'stone', 'brick', 'brick'],
           storefront: pawnRow ? 0.5 : 0.25, fireEscape: 0.5, parapet: true, props: 'none', district: 'parkRow', tag: 'pr', avoid,
-          onBuilt: (bb) => dressFlat(ctx, bb, pawnRow),
+          onBuilt: (bb) => { dressFlat(ctx, bb, pawnRow); roofVariety(ctx, bb); }, // [polish2] roofs differ from the air
         }));
       }
       for (const a of alleys) {

@@ -218,12 +218,22 @@ function lighthouse(ctx) {
   // Rotating beam: a flat comic wedge in the signal colour. One plane lies flat (the fan you see
   // from the roofs) and one stands on edge (the triangle you see from the docks).
   const wedge = () => {
-    const g = new THREE.PlaneGeometry(150, 30, 1, 1).translate(75, 0, 0);
+    // [polish2] The wedge thins out along its length (vertex alpha: full at the lamp, gone at its
+    // far end). At one flat strength it lay over Blackgate and the harbour as a slab of yellow
+    // from any high camera; the fan and the triangle near the tower are as they were.
+    const g = new THREE.PlaneGeometry(150, 30, 4, 1).translate(75, 0, 0);
     const p = g.attributes.position;
-    for (let i = 0; i < p.count; i++) if (p.getX(i) < 1) p.setY(i, Math.sign(p.getY(i)) * 0.5);
+    const rgba = new Float32Array(p.count * 4);
+    for (let i = 0; i < p.count; i++) {
+      const t = p.getX(i) / 150;
+      if (p.getX(i) < 1) p.setY(i, Math.sign(p.getY(i)) * 0.5);
+      else p.setY(i, Math.sign(p.getY(i)) * (0.5 + 14.5 * t));
+      rgba.set([1, 1, 1, Math.pow(Math.max(0, 1 - t), 1.5)], i * 4);
+    }
+    g.setAttribute('color', new THREE.BufferAttribute(rgba, 4));
     return g;
   };
-  const beamMat = new THREE.MeshBasicMaterial({ color: PALETTE.signal, transparent: true, opacity: 0.16, depthWrite: false, side: THREE.DoubleSide });
+  const beamMat = new THREE.MeshBasicMaterial({ color: PALETTE.signal, transparent: true, opacity: 0.2, depthWrite: false, side: THREE.DoubleSide, vertexColors: true });
   const beam = new THREE.Group();
   beam.add(new THREE.Mesh(wedge().rotateX(-Math.PI / 2), beamMat), new THREE.Mesh(wedge(), beamMat));
   beam.position.set(x, 27.1, z);

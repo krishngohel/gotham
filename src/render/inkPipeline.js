@@ -135,6 +135,7 @@ void main() {
       vec3 q = P;
       float stepL = 0.35 + dc * 0.02;
       vec3 hitCol = vec3(0.0);
+      vec2 hitUv = vUv;
       float hit = 0.0;
       for (int i = 0; i < 16; i++) {
         q += R * stepL;
@@ -147,11 +148,22 @@ void main() {
         if (behind > 0.05 && behind < 3.0 + stepL) {
           // A watery wobble along the streak: each scanline band samples a little to the side.
           uv2.x += (fract(sin(floor(frag.y / 3.0) * 78.233) * 43758.5453) - 0.5) * 0.012;
-          hitCol = sColor(uv2).rgb; hit = 1.0 - float(i) / 16.0; break;
+          hitCol = sColor(uv2).rgb; hitUv = uv2; hit = 1.0 - float(i) / 16.0; break;
         }
       }
       float lum = luma(hitCol);
       float bright = step(0.5, lum) * hit;
+      // [polish2] Only lit AREAS reflect (a window, a sign, a lamp's glow): a bright hit a pixel or
+      // two wide is a character's rim light or an edge highlight, not a light source. Those used
+      // to be accepted, which put teal dashes on a wet roof beside the hero's own boots (the
+      // polish list's "teal hatched artefact under the hero's feet"): the ray from the roof at
+      // his feet meets his rim-lit legs within a metre. The neighbours
+      // on both diagonals 3 px out must be lit as well (four more reads, on bright hits only).
+      if (bright > 0.0) {
+        vec2 nb = uTexel * 3.0, nc = vec2(nb.x, -nb.y);
+        float around = min(min(luma(sColor(hitUv + nb).rgb), luma(sColor(hitUv - nb).rgb)), min(luma(sColor(hitUv + nc).rgb), luma(sColor(hitUv - nc).rgb)));
+        bright *= step(0.3, around);
+      }
       // Thin horizontal pen strokes with gaps (every other scanline band, broken along x).
       float band = floor(frag.y / 2.0);
       float gap = step(0.5, fract(band * 0.5)) * step(0.3, fract(sin(band * 12.9898 + floor(frag.x / 17.0) * 4.1) * 43758.5453));
@@ -188,15 +200,22 @@ void main() {
 #ifdef INK_AO
     // Ambient occlusion from depth (8 taps on a ring 0.7 m wide in the world): how much nearby
     // geometry stands in front of this pixel. Never multiplied into the colour: it becomes ink.
+    // [polish2] Occluders are measured above this pixel's own surface (along its normal), not by
+    // raw depth: seen at a steep pitch a flat roof's nearer pixels are all "in front" in depth,
+    // so half the ring counted and the whole floor went to hatching (the other half of the
+    // polish list's wet-roof artefact). A tap now counts when it stands 6 cm or more proud of the
+    // tangent plane, within 1.6 m.
     float rad = 0.7 * uProj.y / dc * 0.5;
     float occ = 0.0;
+    vec3 Na = normalize(sNormal(vUv).xyz * 2.0 - 1.0);
+    vec3 Pa = viewPos(vUv, dc);
     for (int i = 0; i < 8; i++) {
       float a = float(i) * 0.785398 + hash(frag) * 0.6;
       vec2 o = vec2(cos(a), sin(a)) * rad * (0.5 + 0.5 * fract(float(i) * 0.618));
       o.x *= uTexel.x / uTexel.y;
       float sd = viewDepth(vUv + o);
-      float dz = dc - sd;
-      occ += step(0.06, dz) * (1.0 - smoothstep(0.8, 1.6, dz));
+      vec3 dlt = viewPos(vUv + o, sd) - Pa;
+      occ += step(0.06, dot(Na, dlt)) * (1.0 - smoothstep(0.8, 1.6, length(dlt)));
     }
     inkOcc = max(inkOcc, occ / 8.0);
 #endif

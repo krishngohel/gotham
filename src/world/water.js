@@ -49,6 +49,17 @@ void main() {
   float shore = exp(-(p.y - vBank.x) / vBank.z) + vBank.w * exp(-(vBank.y - p.y) / vBank.z);
   float streak = smoothstep(0.7, 0.95, noise(vec2(p.x * 0.35, 0.0))) * smoothstep(0.6, 0.85, noise(vec2(p.x * 0.3, p.y * 2.2 - uTime * 0.6)));
   col += uGlow * streak * shore * 0.45 * uLamps;
+  // [polish2] The water is not one tone up close either: broad patches a step lighter and a step
+  // darker with hard comic edges, drifting with the wind, out to the middle distance...
+  float sw2 = noise(vec2(p.x * 0.026 + uTime * 0.012 * uWindK, p.y * 0.11 - uTime * 0.035 * uWindK));
+  float nearK = 1.0 - smoothstep(150.0, 340.0, d);
+  col = mix(col, col * 1.32 + uSky * 0.06, step(0.61, sw2) * nearK * 0.5);
+  col = mix(col, col * 0.74, step(sw2, 0.36) * nearK * 0.55);
+  // ...and short pen ticks of wave crest near the viewer, each a shallow arc in its own cell.
+  vec2 cell = vec2(p.x * 0.2 + floor(p.y * 0.8) * 0.37, p.y * 0.8 + uTime * 0.16 * uWindK);
+  vec2 ci = floor(cell), cf = fract(cell);
+  float tick = step(0.7, hash(ci)) * smoothstep(0.11, 0.0, abs(cf.y - 0.5 - 0.2 * sin(cf.x * 3.1416)) - 0.02) * smoothstep(0.08, 0.25, cf.x) * smoothstep(0.92, 0.75, cf.x);
+  col = mix(col, uPaper * 0.42 + uSky * 0.25, tick * (1.0 - smoothstep(25.0, 95.0, d)) * 0.5);
   col = mix(col, uPaper * 0.3, ripple * 0.22);
   col = mix(col, uInk, smoothstep(0.62, 0.7, n) * 0.4);
   // [env] A reflection of the sky in a band of broken horizontal dashes at middle distance, so the

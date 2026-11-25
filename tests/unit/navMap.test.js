@@ -32,7 +32,7 @@ describe('city map model', () => {
       expect(md.rects.some((r) => md.cx >= r.minX && md.cx <= r.maxX && md.cz >= r.minZ && md.cz <= r.maxZ), d.id).toBe(true);
     }
     expect(model.el.tracks).toHaveLength(2);
-    expect(model.el.stations.map((s) => s.id)).toEqual(['elRiverside', 'elLafayette', 'elKane', 'elCityHall', 'elWestJunction', 'elCanal']);
+    expect(model.el.stations.map((s) => s.id)).toEqual(['elRiverside', 'elLafayette', 'elKane', 'elCityHall', 'elWestJunction', 'elCanal', 'elNarrows', 'elParkRow']); // [polish2] the West Line's stations beyond the Loop are built
     expect(model.buildings[0]).toMatchObject({ x: 0, z: 0, district: 'gcpd' });
   });
   it('classes the streets: avenue, street, alley, bridge, ramp, lower deck, highway, paths', () => {
@@ -62,7 +62,7 @@ describe('city map model', () => {
   it('lists the movable bridges and the fast-travel points (El stations, Batwing drops, Batcave doors)', () => {
     expect(model.bridges.map((b) => b.id)).toEqual(expect.arrayContaining(['bridgeW', 'bridgeE']));
     const ft = fastTravelPoints(REGION_SITES);
-    expect(ft.filter((p) => p.kind === 'el')).toHaveLength(6);
+    expect(ft.filter((p) => p.kind === 'el')).toHaveLength(8); // [polish2] + Narrows and Park Row
     const ids = ft.map((p) => p.id);
     for (const id of ['mileBatwingDrop', 'bristolOverlook', 'blackgateDock', 'batcaveDowntown', 'batcaveMouth']) expect(ids).toContain(id);
     expect(new Set(ids).size).toBe(ids.length);

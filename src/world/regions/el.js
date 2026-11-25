@@ -14,7 +14,7 @@ import { PALETTE } from '../../config/palette.js';
 import { box, cylinder } from '../buckets.js';
 import { solid, glow, lightSpot, edgeGrapples } from '../cityBuilder.js';
 import { createElTrain, EL_CAR } from '../../vehicles/models/elTrain.js';
-import { EL, EL_STATIONS, LOOP, loopTrack, westTrack, pathTable, pathPoint, pathProject } from './loopLayout.js';
+import { EL, EL_STATIONS, EL_WEST_STATIONS, LOOP, loopTrack, westTrack, pathTable, pathPoint, pathProject } from './loopLayout.js';
 import { createSchedule } from './elSchedule.js';
 import { slab, railing, stair, signPlane, EL_STEEL } from './loopKit.js';
 
@@ -205,6 +205,32 @@ export function buildElStructure(ctx) {
   return sites;
 }
 
+// [polish2] The West Line beyond the Loop (x -266 west to Park Row): the same bents, girders, deck,
+// track bed and stations as the Loop's stretch, built a district at a time so each piece lands in
+// its own region's chunks. `region`: 'westRiver' (over the fixed span on the North Branch),
+// 'narrows' (the island and the channel bridge) or 'parkRow' (to the terminus). No rng: the
+// regions' seeds draw exactly what they drew before. The cross streets come from the west layout
+// (passed in, so this file keeps to the Loop's numbers).
+const WEST_SPANS = { westRiver: [-300, -266], narrows: [-450, -300], parkRow: [EL.westLine.deckWestX, -450] };
+export function buildElWest(ctx, region, crossX = []) {
+  const W = EL.westLine;
+  const [a, b] = WEST_SPANS[region];
+  elRun(ctx, true, a, b, W.z, crossX);
+  const t0 = Math.max(a, W.trackWestX);
+  for (const off of [-EL.track, EL.track]) {
+    trackBed(ctx, [{ x: t0, z: W.z + off }, { x: b, z: W.z + off }]);
+    if (t0 > a) {
+      // The terminus: buffer stops on both tracks, a red lamp on each.
+      solid(ctx, 'painted', box(0.5, 1.0, 2.2, t0 - 0.6, EL.railTop + 0.4, W.z + off), { color: 0xb8342c, tag: 'buffer' });
+      glow(ctx, box(0.12, 0.25, 0.25, t0 - 0.3, EL.railTop + 1.1, W.z + off), PALETTE.crimson);
+    }
+  }
+  if (t0 > a) railing(ctx, false, W.z - EL.deckHalf, W.z + EL.deckHalf, a + 0.15, DECK_TOP, { color: EL_STEEL });
+  const sites = [];
+  for (const st of EL_WEST_STATIONS) if (st.region === region) sites.push(...elStation(ctx, st));
+  return sites;
+}
+
 // ======================================================================================
 // Trains
 // ======================================================================================
@@ -238,16 +264,22 @@ const FAR = 1e7;
 // Train definitions for the current track layout. Pure (tests read it): the Loop's two tracks in
 // opposite directions, the West Line's two tracks as shuttles. `perTrack` trains share each Loop
 // track half a cycle apart (fewer on low tiers).
-export function trainDefs({ perTrack = 2 } = {}) {
+// [polish2] `west`: how many West Line shuttles run (1 or 2) and how long they are. The low tiers
+// run one two-car shuttle: every car is skinned meshes the Narrows and Park Row now see, and the
+// perf budget for those views was recorded before the line reached them.
+export function trainDefs({ perTrack = 2, west = { trains: 2, cars: 4 } } = {}) {
   const defs = [];
   const loopStops = (T) => EL_STATIONS.filter((s) => s.line === 'loop').map((s) => pathProject(T, s.x, s.z));
   for (const [off, dir, id] of [[EL.track, 1, 'loopOuter'], [-EL.track, -1, 'loopInner']]) {
     const T = pathTable(loopTrack(off, dir));
     for (let k = 0; k < perTrack; k++) defs.push({ id: `${id}${k}`, table: T, closed: true, stops: loopStops(T), cars: 4, phase: k / perTrack });
   }
-  for (const [off, id, phase] of [[-EL.track, 'westNorth', 0], [EL.track, 'westSouth', 0.5]]) {
+  for (const [off, id, phase] of [[-EL.track, 'westNorth', 0], [EL.track, 'westSouth', 0.5]].slice(0, west.trains)) {
     const T = pathTable(westTrack(off));
-    defs.push({ id, table: T, closed: false, stops: [], cars: 4, phase });
+    // [polish2] The shuttles call at Canal and the Narrows on the way (distances of each station's
+    // centre along the track; the runtime turns them into where the train's rear end stands).
+    const stops = [...EL_STATIONS.filter((s) => s.id === 'elCanal'), ...EL_WEST_STATIONS].map((s) => pathProject(T, s.x, s.z + off));
+    defs.push({ id, table: T, closed: false, stops, cars: west.cars, phase });
   }
   return defs;
 }
@@ -257,7 +289,7 @@ export function trainDefs({ perTrack = 2 } = {}) {
 // audio (El layer) and anything else can poll: { id, x, y, z, speed, yaw, stopped, visible }.
 export function createElTrains(ctx, { perTrack = null } = {}) {
   const density = ctx.quality?.crowdDensity ?? 1;
-  const defs = trainDefs({ perTrack: perTrack ?? (density >= 0.5 ? 2 : 1) });
+  const defs = trainDefs({ perTrack: perTrack ?? (density >= 0.5 ? 2 : 1), west: density >= 0.75 ? { trains: 2, cars: 4 } : { trains: 1, cars: 2 } });
   const pitch = EL_CAR.length + EL_CAR.coupleGap;
   const trains = [];
   const tmp = { x: 0, y: 0, z: 0, yaw: 0 };
@@ -272,7 +304,7 @@ export function createElTrains(ctx, { perTrack = null } = {}) {
     // Open tracks: the schedule runs the train's rear end from 0 to (track - train length).
     const schedule = def.closed
       ? createSchedule({ length: def.table.length, stops: def.stops.map((s) => s + length / 2), closed: true })
-      : createSchedule({ length: Math.max(1, def.table.length - length), closed: false });
+      : createSchedule({ length: Math.max(1, def.table.length - length), stops: def.stops.map((s) => s - length / 2), closed: false });
     const group = ctx.collision.addMoverGroup();
     const cars = consist.cars.map((car, i) => {
       car.group.removeFromParent();
@@ -289,8 +321,10 @@ export function createElTrains(ctx, { perTrack = null } = {}) {
     });
     // Lamp halos start inside the Loop (halos.freeze files each halo under the 512 m cell it sits
     // in at build time; the trains never leave that cell's cull box).
-    const head = ctx.halos.add(0, EL.railTop + 1.4, -449, 0xfff2c8, 3.2);
-    const tail = ctx.halos.add(0, EL.railTop + 1.3, -449, PALETTE.crimson, 1.6);
+    // [polish2] The West Line's trains spend most of their run west of the Loop: theirs start there.
+    const hx = def.closed ? 0 : -400, hz = def.closed ? -449 : EL.westLine.z;
+    const head = ctx.halos.add(hx, EL.railTop + 1.4, hz, 0xfff2c8, 3.2);
+    const tail = ctx.halos.add(hx, EL.railTop + 1.3, hz, PALETTE.crimson, 1.6);
     const state = { id: def.id, x: 0, y: EL.railTop, z: 0, speed: 0, yaw: 0, stopped: true, visible: false, line: def.id.startsWith('west') ? 'west' : 'loop' };
     trains.push({ def, consist, cars, schedule, length, group, head, tail, state, dir: 0, lastS: 0 });
   }

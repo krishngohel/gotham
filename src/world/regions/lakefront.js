@@ -347,6 +347,43 @@ export function mirrorArch(ctx, cx, cz, yaw = 0.35) {
   const band = new THREE.ExtrudeGeometry(new THREE.Shape([...outer.map((p) => p.clone().multiplyScalar(0.93)), ...[...inner].map((p) => p.clone().multiplyScalar(1.05))]), { depth: D + 0.6, bevelEnabled: false, curveSegments: 4 });
   band.translate(0, 0.15, -(D + 0.6) / 2).rotateY(yaw).translate(cx, 0, cz);
   ctx.buckets.add('painted', band, 0x6f7f8e);
+  // [polish2] Polished steel, drawn the way a comic draws chrome (polish list: "the Mirror reads
+  // plainly"): hard bands following the arch, each a little prouder of the face than the last: a
+  // night-sky band, a thin warm horizon line under it, a pale band of city glow, and a white
+  // glint along the outer edge. t runs from the inner edge (0) to the outer (1).
+  const ring = (t0, t1, proud, color, key = 'painted') => {
+    const pts = (t) => outer.map((o, i) => { const q = inner[inner.length - 1 - i]; return new THREE.Vector2(q.x + (o.x - q.x) * t, q.y + (o.y - q.y) * t); });
+    const sh = new THREE.Shape([...pts(t1), ...pts(t0).reverse()]);
+    const gg = new THREE.ExtrudeGeometry(sh, { depth: D + proud * 2, bevelEnabled: false, curveSegments: 4 });
+    gg.translate(0, 0.15, -(D + proud * 2) / 2).rotateY(yaw).translate(cx, 0, cz);
+    ctx.buckets.add(key, gg, color);
+  };
+  ring(0.16, 0.44, 0.36, 0x1d2a40);
+  ring(0.44, 0.5, 0.4, 0xd89a5c);
+  ring(0.5, 0.74, 0.36, 0x8fa6be);
+  ring(0.84, 0.9, 0.42, 0xf4f8fc);
+  // Four-point glints where the light catches the crown and one shoulder.
+  const cs = Math.cos(yaw), sn = Math.sin(yaw);
+  for (const [lx, ly, r] of [[-2.6, RY - 0.25, 0.9], [6.6, 7.6, 0.6]]) {
+    for (const side of [-1, 1]) {
+      const off = side * (D / 2 + 0.5);
+      const gx = cx + lx * cs + off * sn, gz = cz - lx * sn + off * cs;
+      for (const a of [0, Math.PI / 2]) glow(ctx, box(r * 2, 0.07, 0.04, 0, 0, 0).rotateZ(a + 0.3).rotateY(yaw).translate(gx, ly + 0.15, gz), 0xffffff);
+    }
+    ctx.halos.add(cx + lx * cs, ly + 0.3, cz - lx * sn, 0xdfeeff, r * 3.2);
+  }
+  // Its reflection in the plaza: a dark polished oval under the arch with the arch's pale curve
+  // lying in it, and a ring of low uplights round the two feet.
+  const pool = new THREE.CircleGeometry(1, 28).scale(RX + 3.5, 5.2, 1).rotateX(-Math.PI / 2).rotateY(yaw).translate(cx, 0.17, cz);
+  ctx.buckets.add('painted', pool, 0x232b38);
+  for (const side of [-1, 1]) {
+    const arc = new THREE.RingGeometry(0.72, 0.8, 24, 1, 0, Math.PI).scale(RX, 4.6, 1).rotateX(-Math.PI / 2).rotateY(yaw + (side > 0 ? 0 : Math.PI)).translate(cx, 0.185, cz);
+    ctx.buckets.add('painted', arc, 0x7f93ab);
+  }
+  for (const k of [-1, 1]) for (const side of [-1, 1]) {
+    const ux = cx + k * 8.3 * cs + side * 2.2 * sn, uz = cz - k * 8.3 * sn + side * 2.2 * cs;
+    glow(ctx, cylinder(0.22, 0.22, 0.08, ux, 0.2, uz, 8), 0xcfe6ff);
+  }
   // Collision: boxes along the arch's band (walls at the steep feet, a ridge across the crown).
   const c = Math.cos(yaw), s = Math.sin(yaw);
   for (let i = 0; i < N; i++) {

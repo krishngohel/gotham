@@ -6,6 +6,7 @@
 // a turntable, signal gantries), a junkyard with a car crusher, the cold-storage plant (later
 // someone's frozen headquarters) and a power substation. The freight viaduct comes down a ramp
 // out of the stockyards into the rail yard.
+import { yardsFill } from './westDressing.js'; // [polish2]
 import * as THREE from 'three';
 import { PALETTE } from '../../config/palette.js';
 import { box, cylinder, tiledBox } from '../buckets.js';
@@ -59,6 +60,8 @@ export function buildYards(ctx) {
   // The viaduct from Park Row comes down a ramp in the stockyards to the 90 street.
   viaductSegment(ctx, R.minZ, 40, { startStop: false });
   viaductRamp(ctx, 40, 82);
+  // [polish2] The open ground between the landmarks: stock yard, heaps, more freight, floodlights.
+  yardsFill(ctx, { boxcar, tankCar, flatCar, floodMast, tracksZ: TRACKS_Z });
 }
 
 // A crossing signal: a post with two red lamps that alternate, a crossbuck.

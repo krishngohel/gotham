@@ -152,7 +152,13 @@ function decoFenders(b, p, pal, h, bh) {
       const span = z > peakZ ? z0 - peakZ : peakZ - z1;
       const u = Math.min(1, Math.abs(z - peakZ) / span);
       const yt = ref + (crest - ref) * Math.cos(u * Math.PI / 2) ** 0.7;
-      st.push({ z, pts: section(yt, z > peakZ - r && z < peakZ + r ? r * 0.98 : Math.max(board, yt - 0.3)) });
+      // [polish2] The skirt keeps real depth to both ends (polish list: "deco fenders read as
+      // flaps"): it used to rise to meet the crown, so each fender thinned to a blade at its tip
+      // and where it met the running board. Now the free end stays a rounded pontoon nose that
+      // drops past the tyre's shoulder, and the board end is a solid shoulder the board runs into.
+      const boardEnd = ref < board + 0.2;
+      const skirt = z > peakZ - r && z < peakZ + r ? r * 0.98 : boardEnd ? Math.max(board - 0.12, yt - 0.4) : Math.max(0.24, yt - 0.42);
+      st.push({ z, pts: section(yt, skirt) });
     }
     return st;
   };
@@ -160,8 +166,8 @@ function decoFenders(b, p, pal, h, bh) {
   for (const s of [-1, 1]) {
     const mirror = (g) => (s < 0 ? g.scale(-1, 1, 1) : g).translate(s * fx, 0, 0);
     // Front: low at the nose, cresting over the wheel, sweeping down to the running board.
-    const front = loft(sweep(p.L / 2 - 0.08, fz - r - 0.7, fz + 0.05, r + 0.18, board + 0.02));
-    const rear = loft(sweep(rz + r + 0.55, -p.L / 2 + 0.15, rz - 0.05, board + 0.04, r + 0.3, 7));
+    const front = loft(sweep(p.L / 2 - 0.08, fz - r - 0.7, fz + 0.05, r + 0.24, board + 0.15));
+    const rear = loft(sweep(rz + r + 0.55, -p.L / 2 + 0.15, rz - 0.05, board + 0.15, r + 0.34, 7));
     for (const g of [front, rear]) {
       if (s < 0) { const ix = g.index.array; for (let i = 0; i < ix.length; i += 3) { const t = ix[i + 1]; ix[i + 1] = ix[i + 2]; ix[i + 2] = t; } }
       b.add(mirror(g), { ...col, smooth: true }); // smooth-shaded: a rounded pontoon, not facets

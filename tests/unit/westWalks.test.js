@@ -127,7 +127,12 @@ describe('the west side is walkable and drivable', () => {
   });
   it('nothing tall stands in the El corridor envelope or the station plots', () => {
     const E = WEST.el;
-    const bad = city.collision.boxes.filter((b) => b && b.maxY > 4.5 && b.minY < 9 && b.maxX > E.minX && b.minX < E.maxX
+    // [polish2] The West Line itself is built there now (el.js buildElWest): its own columns, deck,
+    // buffers, platforms, stairs, landings, deck-level railings and trains are what it is for.
+    // Everything else is held to the rule as before.
+    const EL_OWN = ['elColumn', 'elDeck', 'buffer', 'platform', 'landing', 'stair', 'train', 'trainFloor', 'trainRoof']; // and the shuttle's cars
+    const bad = city.collision.boxes.filter((b) => b && !b.removed && b.maxY > 4.5 && b.minY < 9 && b.maxX > E.minX && b.minX < E.maxX
+      && !EL_OWN.includes(b.tag) && !(b.tag === 'railing' && b.minY >= E.railY - 0.5)
       && ((b.maxZ > E.envelope.minZ && b.minZ < E.envelope.maxZ) || E.stations.some((s) => b.maxX > s.minX && b.minX < s.maxX && b.maxZ > s.minZ && b.minZ < s.maxZ))
       && !['prop', 'bound', 'tree'].includes(b.tag)
       && !(b.maxX - b.minX < 0.5 && b.maxZ - b.minZ < 0.5)); // lamp posts may stand on the sidewalks

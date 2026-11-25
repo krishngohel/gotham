@@ -11,7 +11,7 @@ import { chromium } from 'playwright-core';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const UP = 5.4, DECK = 4;
+const UP = 5.4, DECK = 4, LEDGE_Y = 14;
 export const INTERIOR_SHOTS = [
   // Wayne Manor (origin 2000, 0, -2000)
   ['manor-hall', 'manor', [7.6, 2.0, 9.2], [-6, 3.2, -3]],
@@ -34,6 +34,11 @@ export const INTERIOR_SHOTS = [
   ['cave-trophies', 'cave', [-28, 3.0, -6], [-41, 2, -12]],
   ['cave-medbay', 'cave', [-24, 2.6, 10], [-35, 1, 17]],
   ['cave-sim', 'cave', [16, 5, -2], [31, 0, 18]],
+  // [polish2] depth: from the lift ledge to the fall, across the floor to the back wall, up at the roof
+  ['cave-depth-ledge', 'cave', [-34, LEDGE_Y + 1.8, -26], [2, 6, 30]],
+  ['cave-depth-floor', 'cave', [24, 1.8, 6], [-20, 9, -34]],
+  ['cave-depth-roof', 'cave', [8, DECK + 1.8, 4], [-30, 24, 30]],
+  ['cave-depth-bay', 'cave', [10, 1.8, 14], [-22, 8, 32]],
 ];
 
 async function main(base, out, q = 'high') {

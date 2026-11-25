@@ -14,6 +14,7 @@ import * as THREE from 'three';
 import { box, cylinder } from '../buckets.js';
 import { add, addBox, ROCK, ROCK_D, STEEL, CYAN, BRASS } from './pocketKit.js';
 import { softGlow, lightPool, seeded } from './dressing.js';
+import { caveDepth, rockTone } from './caveRock.js'; // [polish2] strata, recesses, columns, pooled light
 
 const DECK = 4;
 const DARK = 0x16181c, EDGE = 0x5ad8ff, AMBER = 0xd9a92c;
@@ -42,7 +43,10 @@ function rib(ctx, x, z, h, r, rnd, color) {
   let y = 0, rr = r;
   while (y < h) {
     const seg = 3 + rnd() * 4;
-    add(ctx, 'painted', new THREE.DodecahedronGeometry(rr, 0).scale(1, seg / rr * 0.7, 1).rotateY(rnd() * 3).translate(x + (rnd() - 0.5) * 0.8, y + seg * 0.45, z + (rnd() - 0.5) * 0.8), color);
+    // [polish2] each chunk takes its tone from where it sits (caveRock.js rockTone); `color` (the
+    // old flat grey or dark grey) only nudges it lighter or darker.
+    const tone = rockTone(x, y + seg * 0.45, z, color === ROCK ? 0.85 : 0.25);
+    add(ctx, 'painted', new THREE.DodecahedronGeometry(rr, 0).scale(1, seg / rr * 0.7, 1).rotateY(rnd() * 3).translate(x + (rnd() - 0.5) * 0.8, y + seg * 0.45, z + (rnd() - 0.5) * 0.8), tone);
     y += seg * 0.8;
     rr *= 0.86 + rnd() * 0.1;
   }
@@ -189,12 +193,12 @@ export function dressCave(ctx, rich) {
     rib(ctx, x, z, 30, 2.6 + rnd() * 1.6, rnd, i % 3 ? ROCK_D : ROCK);
   }
   const spires = [[-30, 28, 7], [26, 31, 9], [40, 26, 6], [-42, 22, 8], [-8, -32, 5], [40, -32, 7], [-24, -33, 6], [16, -33, 8]];
-  for (const [x, z, L] of spires) spike(ctx, x, 0, z, L, 1.2, false, ROCK);
+  for (const [x, z, L] of spires) spike(ctx, x, 0, z, L, 1.2, false, rockTone(x, L * 0.4, z, 0.7));
   // Stalactites in clusters (not scattered singly), long ones over the open floor.
   for (const [cx, cz, n] of [[-20, 20, 7], [18, 24, 6], [0, -2, 5], [30, -2, 6], [-34, -6, 5], [-8, 30, 6], [14, -28, 5], [36, 14, 4]]) {
     for (let k = 0; k < (rich ? n : Math.ceil(n / 2)); k++) {
       const L = 3 + rnd() * 9;
-      spike(ctx, cx + (rnd() - 0.5) * 7, 32, cz + (rnd() - 0.5) * 7, L, 0.4 + rnd() * 0.9, true, rnd() < 0.6 ? ROCK_D : ROCK);
+      spike(ctx, cx + (rnd() - 0.5) * 7, 32, cz + (rnd() - 0.5) * 7, L, 0.4 + rnd() * 0.9, true, rnd() < 0.6 ? 0x0c0d11 : 0x15171c); // [polish2] the roof's teeth are silhouettes
     }
     if (rich) batCluster(ctx, cx + 1, 31.6, cz - 1, 6 + Math.floor(rnd() * 6), rnd);
   }
@@ -210,6 +214,9 @@ export function dressCave(ctx, rich) {
   }
   for (const [x, z, w, d] of [[-18, 14, 4, 2.4], [14, 12, 3, 2], [-30, -26, 5, 3], [32, 4, 3.4, 2]]) add(ctx, 'glow', new THREE.CircleGeometry(1, 16).scale(w / 2, d / 2, 1).rotateX(-Math.PI / 2).translate(x, 0.03, z), 0x101c26);
   for (const x of [-4.6, -4.2]) add(ctx, 'painted', box(0.12, 0.08, 7, x, 0.04, 11.5), 0x101114);
+
+  // ---- [polish2] depth: strata, recesses, columns and an arch, pooled light (caveRock.js) ----
+  caveDepth(ctx, rich);
 
   // ---- the waterfall ----
   waterfall(ctx, rich);

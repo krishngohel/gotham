@@ -50,11 +50,30 @@ function wingBikeTemplate() {
   const b = new VehicleBuilder({ outline: 0.02, name: 'wingbike' });
   const pal = [0x15161b, 0x1f6fd6];
   const r = 0.31;
-  const info = buildBike(b, { wheelR: r, wb: 1.4, tyreW: 0.15, hub: 0x1f6fd6, fairing: true, seat: 0x101114 }, pal);
-  // His stripe: a blue chevron along the tank and fairing.
+  // [polish2] The shared sport fairing stood nearly upright with its screen on end (polish list:
+  // "fairing too upright"). This bike gets its own: a long nose reaching out over the front wheel
+  // and rising in one raked line to a low, laid-back screen, with a belly pan under the engine.
+  const info = buildBike(b, { wheelR: r, wb: 1.4, tyreW: 0.15, hub: 0x1f6fd6, fairing: false, seat: 0x101114 }, pal);
+  const fz = 0.7;
+  b.add(loft([
+    { z: fz + 0.34, pts: ring8(r + 0.3, 0.03, 0.05, r + 0.36, 0.03, r + 0.4) },
+    { z: fz + 0.12, pts: ring8(r + 0.24, 0.09, 0.13, r + 0.42, 0.08, r + 0.52) },
+    { z: fz - 0.16, pts: ring8(r + 0.2, 0.15, 0.2, r + 0.5, 0.12, r + 0.64) },
+    { z: fz - 0.46, pts: ring8(r + 0.24, 0.17, 0.21, r + 0.56, 0.13, r + 0.7) },
+    { z: fz - 0.66, pts: ring8(r + 0.34, 0.15, 0.18, r + 0.56, 0.11, r + 0.66) },
+  ]), { color: pal[0], paint: 1, bone: 'wheel0' });
+  b.add(boxAt(0.24, 0.34, 0.025).rotateX(-1.22).translate(0, r + 0.74, fz - 0.3), { to: 'glass', color: C.glass, bone: 'wheel0' });
+  // Belly pan: a shallow keel from behind the front wheel to the swing arm.
+  b.add(loft([
+    { z: 0.36, pts: ring8(r - 0.12, 0.07, 0.1, r - 0.02, 0.1, r + 0.1) },
+    { z: 0.0, pts: ring8(r - 0.2, 0.12, 0.15, r - 0.04, 0.15, r + 0.12) },
+    { z: -0.36, pts: ring8(r - 0.14, 0.08, 0.11, r - 0.02, 0.11, r + 0.08) },
+  ]), { color: pal[0], paint: 1 });
+  // His stripe: a blue chevron along the tank and up the fairing's flank.
   for (const s of [-1, 1]) {
     b.add(boxAt(0.02, 0.04, 0.6, s * 0.175, r + 0.6, -0.25), { color: pal[1], ink: false });
-    b.add(boxAt(0.02, 0.05, 0.36, s * 0.225, r + 0.62, 0.42), { color: pal[1], ink: false, bone: 'wheel0' });
+    b.add(boxAt(0.02, 0.05, 0.62, 0, 0, 0).rotateX(-0.42).translate(s * 0.215, r + 0.52, fz - 0.14), { color: pal[1], ink: false, bone: 'wheel0' });
+    b.add(boxAt(0.02, 0.03, 0.5, s * 0.16, r - 0.02, 0.0), { color: pal[1], ink: false });
   }
   return { tpl: b.template(), info };
 }

@@ -31,6 +31,11 @@ const MODELS = {
   jokerVan: { span: 0.9, build: async () => (await import('/src/vehicles/vehicleModels.js')).createJokerVan().group },
   droneTank: { span: 0.8, build: async () => (await import('/src/vehicles/vehicleModels.js')).createDroneTank().group },
   streetCar: { span: 0.8, build: async () => (await import('/src/vehicles/vehicleModels.js')).createStreetCar(0x2f3f5a, 'sedan').group },
+  // [polish2] the hero bikes and the deco sedan (fenders)
+  wingbike: { span: 0.42, build: async () => (await import('/src/vehicles/models/heroBikes.js')).createWingBike().group },
+  batcycle: { span: 0.46, build: async () => (await import('/src/vehicles/models/heroBikes.js')).createBatcycle().group },
+  decoSedan: { span: 0.8, build: async () => (await import('/src/vehicles/vehicleModels.js')).createStreetVehicle('sedan_deco', { color: 0x6a1f2a }).group },
+  taxi: { span: 0.8, build: async () => (await import('/src/vehicles/vehicleModels.js')).createStreetVehicle('taxi', {}).group },
 };
 await p.evaluate(() => {
   const G = window.__game;
