@@ -1,0 +1,25 @@
+
+Running 2 tests using 1 worker
+
+  x  1 tests\e2e\coopSplit.spec.js:153:1 › two-player story slice: brawl, Batmobile chase with a passenger, Harley, the boss to the end (47.6s)
+  ok 2 tests\e2e\progression.spec.js:56:1 › save slots: copy, delete with confirmation, export and import round trip (20.9s)
+
+
+  1) tests\e2e\coopSplit.spec.js:153:1 › two-player story slice: brawl, Batmobile chase with a passenger, Harley, the boss to the end 
+
+    TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.
+
+      177 |   await page.waitForTimeout(1500);
+      178 |   await shot(page, '06-chase-passenger');
+    > 179 |   await page.waitForFunction(() => window.__game.vehicles.debugWin(), null, { timeout: 30000, polling: 400 });
+          |              ^
+      180 |   await page.waitForFunction(() => window.__game.flow.objectives.step?.type !== 'chase', null, { timeout: 20000 });
+      181 |   // Harley.
+      182 |   await page.evaluate(() => window.__game.jump('harleyFight'));
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\coopSplit.spec.js:179:14
+
+    Error Context: test-results\coopSplit-two-player-story-b4f2e--Harley-the-boss-to-the-end\error-context.md
+
+  1 failed
+    tests\e2e\coopSplit.spec.js:153:1 › two-player story slice: brawl, Batmobile chase with a passenger, Harley, the boss to the end 
+  1 passed (1.2m)

@@ -1,0 +1,371 @@
+{
+ "when": "2026-11-24T23:46:18.974Z",
+ "urlA": "http://localhost:5851/",
+ "urlB": "http://localhost:5851/",
+ "labels": [
+  "a1",
+  "a2"
+ ],
+ "rounds": 3,
+ "measureMs": 2500,
+ "cpu": 0,
+ "weak": false,
+ "pairs": [
+  [
+   "low",
+   "low"
+  ]
+ ],
+ "summary": [
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "frameRatio": 0.9642187672290219,
+   "frameMin": 0.9024029969685271,
+   "frameMax": 0.9842739597210249,
+   "jsRatio": 0.9666340189356839,
+   "jsMin": 0.8956296517393773,
+   "jsMax": 0.9847589079130031,
+   "fpsA": 276,
+   "fpsB": 255,
+   "callsA": 260,
+   "callsB": 260
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "frameRatio": 0.9823810807168846,
+   "frameMin": 0.9743845145680008,
+   "frameMax": 1.049117325552371,
+   "jsRatio": 0.9847867739197218,
+   "jsMin": 0.9847819960545914,
+   "jsMax": 1.0433615011252273,
+   "fpsA": 337,
+   "fpsB": 343,
+   "callsA": 125,
+   "callsB": 125
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "frameRatio": 0.9808584870273371,
+   "frameMin": 0.9117098967514479,
+   "frameMax": 1.298596407512185,
+   "jsRatio": 0.9842598499387423,
+   "jsMin": 0.9158435754189943,
+   "jsMax": 1.3169395973154363,
+   "fpsA": 315,
+   "fpsB": 288,
+   "callsA": 210,
+   "callsB": 210
+  }
+ ],
+ "results": [
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "round": 0,
+   "order": "AB",
+   "a": {
+    "frameMs": 3.6276,
+    "medMs": 3.5,
+    "jsMs": 3.063,
+    "calMs": 2.4,
+    "frameN": 1.5115,
+    "jsN": 1.27625,
+    "p95Ms": 6.1,
+    "frames": 650,
+    "calls": 260,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 3.4978,
+    "medMs": 3.3,
+    "jsMs": 2.9608,
+    "calMs": 2.4,
+    "frameN": 1.4574166666666666,
+    "jsN": 1.2336666666666667,
+    "p95Ms": 6.1,
+    "frames": 674,
+    "calls": 260,
+    "prof": null
+   },
+   "frameRatio": 0.9642187672290219,
+   "jsRatio": 0.9666340189356839,
+   "rawFrameRatio": 0.9642187672290219,
+   "calRatio": 1
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "round": 0,
+   "order": "AB",
+   "a": {
+    "frameMs": 2.9757,
+    "medMs": 2.8,
+    "jsMs": 2.4739,
+    "calMs": 2.7,
+    "frameN": 1.102111111111111,
+    "jsN": 0.9162592592592592,
+    "p95Ms": 5.1,
+    "frames": 801,
+    "calls": 125,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.6847,
+    "medMs": 2.6,
+    "jsMs": 2.2558,
+    "calMs": 2.5,
+    "frameN": 1.07388,
+    "jsN": 0.9023199999999999,
+    "p95Ms": 4.7,
+    "frames": 884,
+    "calls": 125,
+    "prof": null
+   },
+   "frameRatio": 0.9743845145680008,
+   "jsRatio": 0.9847867739197218,
+   "rawFrameRatio": 0.90220788385926,
+   "calRatio": 0.9259259259259258
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "round": 0,
+   "order": "AB",
+   "a": {
+    "frameMs": 3.1768,
+    "medMs": 3.1,
+    "jsMs": 2.685,
+    "calMs": 2.4,
+    "frameN": 1.3236666666666668,
+    "jsN": 1.1187500000000001,
+    "p95Ms": 5.1,
+    "frames": 757,
+    "calls": 210,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 3.017,
+    "medMs": 3,
+    "jsMs": 2.5615,
+    "calMs": 2.5,
+    "frameN": 1.2067999999999999,
+    "jsN": 1.0246,
+    "p95Ms": 5.3,
+    "frames": 789,
+    "calls": 210,
+    "prof": null
+   },
+   "frameRatio": 0.9117098967514479,
+   "jsRatio": 0.9158435754189943,
+   "rawFrameRatio": 0.9496978091160916,
+   "calRatio": 1.0416666666666667
+  },
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "round": 1,
+   "order": "BA",
+   "a": {
+    "frameMs": 3.8283,
+    "medMs": 3.6,
+    "jsMs": 3.2415,
+    "calMs": 2.4,
+    "frameN": 1.5951250000000001,
+    "jsN": 1.350625,
+    "p95Ms": 6.2,
+    "frames": 623,
+    "calls": 260,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 3.9251,
+    "medMs": 3.8,
+    "jsMs": 3.3251,
+    "calMs": 2.5,
+    "frameN": 1.57004,
+    "jsN": 1.33004,
+    "p95Ms": 6.4,
+    "frames": 608,
+    "calls": 260,
+    "prof": null
+   },
+   "frameRatio": 0.9842739597210249,
+   "jsRatio": 0.9847589079130031,
+   "rawFrameRatio": 1.025285374709401,
+   "calRatio": 1.0416666666666667
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "round": 1,
+   "order": "BA",
+   "a": {
+    "frameMs": 2.9684,
+    "medMs": 2.9,
+    "jsMs": 2.4839,
+    "calMs": 2.4,
+    "frameN": 1.2368333333333335,
+    "jsN": 1.0349583333333334,
+    "p95Ms": 4.9,
+    "frames": 807,
+    "calls": 125,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.9161,
+    "medMs": 2.8,
+    "jsMs": 2.4461,
+    "calMs": 2.4,
+    "frameN": 1.2150416666666668,
+    "jsN": 1.0192083333333333,
+    "p95Ms": 5,
+    "frames": 819,
+    "calls": 125,
+    "prof": null
+   },
+   "frameRatio": 0.9823810807168846,
+   "jsRatio": 0.9847819960545914,
+   "rawFrameRatio": 0.9823810807168846,
+   "calRatio": 1
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "round": 1,
+   "order": "BA",
+   "a": {
+    "frameMs": 3.4042,
+    "medMs": 3.2,
+    "jsMs": 2.8819,
+    "calMs": 2.5,
+    "frameN": 1.36168,
+    "jsN": 1.15276,
+    "p95Ms": 5.8,
+    "frames": 703,
+    "calls": 210,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 3.4726,
+    "medMs": 3.3,
+    "jsMs": 2.95,
+    "calMs": 2.6,
+    "frameN": 1.3356153846153844,
+    "jsN": 1.1346153846153846,
+    "p95Ms": 5.8,
+    "frames": 691,
+    "calls": 210,
+    "prof": null
+   },
+   "frameRatio": 0.9808584870273371,
+   "jsRatio": 0.9842598499387423,
+   "rawFrameRatio": 1.0200928265084308,
+   "calRatio": 1.04
+  },
+  {
+   "pair": "low:low",
+   "site": "gcpd roof",
+   "round": 2,
+   "order": "AB",
+   "a": {
+    "frameMs": 3.4778,
+    "medMs": 3.4,
+    "jsMs": 2.9674,
+    "calMs": 2.4,
+    "frameN": 1.4490833333333333,
+    "jsN": 1.2364166666666667,
+    "p95Ms": 5.5,
+    "frames": 685,
+    "calls": 261,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 4.5768,
+    "medMs": 4.3,
+    "jsMs": 3.8758,
+    "calMs": 3.5,
+    "frameN": 1.307657142857143,
+    "jsN": 1.1073714285714285,
+    "p95Ms": 7.4,
+    "frames": 517,
+    "calls": 260,
+    "prof": null
+   },
+   "frameRatio": 0.9024029969685271,
+   "jsRatio": 0.8956296517393773,
+   "rawFrameRatio": 1.316004370579102,
+   "calRatio": 1.4583333333333335
+  },
+  {
+   "pair": "low:low",
+   "site": "docks",
+   "round": 2,
+   "order": "AB",
+   "a": {
+    "frameMs": 2.6811,
+    "medMs": 2.6,
+    "jsMs": 2.2457,
+    "calMs": 2.5,
+    "frameN": 1.0724399999999998,
+    "jsN": 0.89828,
+    "p95Ms": 4.3,
+    "frames": 890,
+    "calls": 128,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 2.9253,
+    "medMs": 2.7,
+    "jsMs": 2.4368,
+    "calMs": 2.6,
+    "frameN": 1.1251153846153845,
+    "jsN": 0.9372307692307691,
+    "p95Ms": 5.2,
+    "frames": 809,
+    "calls": 125,
+    "prof": null
+   },
+   "frameRatio": 1.049117325552371,
+   "jsRatio": 1.0433615011252273,
+   "rawFrameRatio": 1.0910820185744659,
+   "calRatio": 1.04
+  },
+  {
+   "pair": "low:low",
+   "site": "clock plaza",
+   "round": 2,
+   "order": "AB",
+   "a": {
+    "frameMs": 2.9339,
+    "medMs": 2.8,
+    "jsMs": 2.4585,
+    "calMs": 2.4,
+    "frameN": 1.2224583333333334,
+    "jsN": 1.024375,
+    "p95Ms": 5.2,
+    "frames": 810,
+    "calls": 209,
+    "prof": null
+   },
+   "b": {
+    "frameMs": 3.9687,
+    "medMs": 3.8,
+    "jsMs": 3.3726,
+    "calMs": 2.5,
+    "frameN": 1.58748,
+    "jsN": 1.34904,
+    "p95Ms": 6.3,
+    "frames": 603,
+    "calls": 210,
+    "prof": null
+   },
+   "frameRatio": 1.298596407512185,
+   "jsRatio": 1.3169395973154363,
+   "rawFrameRatio": 1.3527045911585263,
+   "calRatio": 1.0416666666666667
+  }
+ ]
+}

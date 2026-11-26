@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createObjectives, checkpointFor } from '../../src/game/objectives.js';
 import { STEPS } from '../../src/game/story.js';
+import { N1_SITES, N1_FIGHTS } from '../../src/story/missions/n1/index.js';
 import { PROMPT_IDS } from '../../src/ui/prompts.js';
 import { FIGHTS } from '../../src/game/fights.js';
 import { SITES } from '../../src/world/mapData.js';
@@ -65,11 +66,13 @@ describe('story data', () => {
     for (const s of STEPS) {
       expect(ids.has(s.id), `duplicate ${s.id}`).toBe(false);
       ids.add(s.id);
-      if (s.site) expect(SITES[s.site], `site ${s.id}`).toBeDefined();
-      if (s.checkpoint) expect(SITES[s.checkpoint], `checkpoint ${s.id}`).toBeDefined();
-      if (s.at) expect(SITES[s.at], `at ${s.id}`).toBeDefined();
-      if (s.to) expect(SITES[s.to], `to ${s.id}`).toBeDefined();
-      if (s.type === 'fight') expect(FIGHTS[s.fight], `fight ${s.id}`).toBeDefined();
+      // [m1] The added missions' places and fights are the night's own (src/story/missions/n1).
+      const place = (id) => SITES[id] ?? N1_SITES[id];
+      if (s.site) expect(place(s.site), `site ${s.id}`).toBeDefined();
+      if (s.checkpoint) expect(place(s.checkpoint), `checkpoint ${s.id}`).toBeDefined();
+      if (s.at) expect(place(s.at), `at ${s.id}`).toBeDefined();
+      if (s.to) expect(place(s.to), `to ${s.id}`).toBeDefined();
+      if (s.type === 'fight') expect(FIGHTS[s.fight] ?? N1_FIGHTS[s.fight], `fight ${s.id}`).toBeDefined();
       if (s.type === 'interior') expect(SITES[s.room], `room ${s.id}`).toBeDefined();
       if (s.type !== 'cutscene' && s.type !== 'credits') expect(typeof s.text, s.id).toBe('string');
     }

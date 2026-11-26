@@ -1,0 +1,27 @@
+
+Running 1 test using 1 worker
+
+grapple chain: 480 m, 3 lines, 3 perfect boosts, 0 street touchdowns
+  x  1 tests\e2e\movement.spec.js:44:1 › grapple-boost chaining crosses the Loop without touching the street (1.1m)
+
+
+  1) tests\e2e\movement.spec.js:44:1 › grapple-boost chaining crosses the Loop without touching the street 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 3
+    Received:   3
+
+      80 |   console.log(`grapple chain: ${(end.x - start.x).toFixed(0)} m, ${links} lines, ${perfect} perfect boosts, ${street} street touchdowns`);
+      81 |   expect(end.x).toBeGreaterThan(200);
+    > 82 |   expect(links).toBeGreaterThan(3);
+         |                 ^
+      83 |   expect(perfect).toBeGreaterThan(1);
+      84 |   expect(street).toBe(0);
+      85 |   expect(errors).toEqual([]);
+        at ~\Documents\Projects\gotham-ln2-verify\tests\e2e\movement.spec.js:82:17
+
+    Error Context: test-results\movement-grapple-boost-cha-149eb-without-touching-the-street\error-context.md
+
+  1 failed
+    tests\e2e\movement.spec.js:44:1 › grapple-boost chaining crosses the Loop without touching the street 

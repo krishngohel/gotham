@@ -35,6 +35,30 @@ export async function optimizeAnims(file) {
   await io.write(path.join(DIR, file), doc);
 }
 
+// Rotation keys as normalised 16-bit integers (glTF core allows it for rotation outputs; three's
+// GLTFLoader scales them back to floats). Halves a clip's rotation data at ~3e-5 precision. Used by
+// the lazy packs (scripts/bake-packs.mjs); the preloaded packs are left as they are.
+export async function quantizeRotations(file) {
+  const doc = await io.read(path.join(DIR, file));
+  const done = new Set();
+  for (const anim of doc.getRoot().listAnimations()) {
+    for (const ch of anim.listChannels()) {
+      if (ch.getTargetPath() !== 'rotation') continue;
+      const acc = ch.getSampler().getOutput();
+      if (done.has(acc) || acc.getNormalized()) continue;
+      done.add(acc);
+      const f = acc.getArray();
+      const q = new Int16Array(f.length);
+      for (let i = 0; i < f.length; i += 4) {
+        const l = Math.hypot(f[i], f[i + 1], f[i + 2], f[i + 3]) || 1;
+        for (let k = 0; k < 4; k++) q[i + k] = Math.round((f[i + k] / l) * 32767);
+      }
+      acc.setArray(q).setNormalized(true);
+    }
+  }
+  await io.write(path.join(DIR, file), doc);
+}
+
 export async function optimizeMesh(file) {
   const doc = await io.read(path.join(DIR, file));
   await doc.transform(quantize({ pattern: /^(NORMAL|WEIGHTS_0|JOINTS_0)$/, quantizeNormal: 10, quantizeWeight: 8 }), prune());

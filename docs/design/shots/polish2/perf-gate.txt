@@ -1,0 +1,23 @@
+potato gcpd roof     calls 192  tris 254679  skinnedVis 60  lights 0  matrixWalk 2182  programs 119  gameMs 2.2  worldMs 0.6  renderMs 7.2  hero.capeMs 0.8  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 10.6
+potato docks         calls 110  tris 153403  skinnedVis 59  lights 0  matrixWalk 2029  programs 119  gameMs 1.9  worldMs 0.6  renderMs 5.4  hero.capeMs 0.7  civiliansMs 0  wantedMs 0  sandboxMs 0  jsMs 8.6
+potato neon street   calls 159  tris 275837  skinnedVis 61  lights 0  matrixWalk 2160  programs 119  gameMs 2.2  worldMs 0.7  renderMs 7.3  hero.capeMs 0.8  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 10.8
+potato ace chemicals calls 186  tris 258491  skinnedVis 59  lights 0  matrixWalk 2058  programs 119  gameMs 2  worldMs 0.6  renderMs 6.4  hero.capeMs 0.7  civiliansMs 0  wantedMs 0  sandboxMs 0  jsMs 10
+potato clock plaza   calls 154  tris 224159  skinnedVis 59  lights 0  matrixWalk 2061  programs 119  gameMs 1.9  worldMs 0.6  renderMs 5.9  hero.capeMs 0.7  civiliansMs 0  wantedMs 0  sandboxMs 0  jsMs 9.3
+potato loop el       calls 176  tris 270777  skinnedVis 76  lights 0  matrixWalk 2280  programs 120  gameMs 1.9  worldMs 0.6  renderMs 6.5  hero.capeMs 0.7  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 10
+potato narrows       calls 197  tris 249834  skinnedVis 68  lights 0  matrixWalk 2192  programs 120  gameMs 1.9  worldMs 0.6  renderMs 6.7  hero.capeMs 0.7  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 10.3
+low    gcpd roof     calls 251  tris 289839  skinnedVis 60  lights 2  matrixWalk 2225  programs 118  gameMs 2  worldMs 0.6  renderMs 7.7  hero.capeMs 0.7  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 11.1
+low    docks         calls 128  tris 152307  skinnedVis 59  lights 2  matrixWalk 2053  programs 118  gameMs 2  worldMs 0.7  renderMs 6.2  hero.capeMs 0.7  civiliansMs 0  wantedMs 0  sandboxMs 0  jsMs 9.8
+low    neon street   calls 200  tris 257457  skinnedVis 60  lights 2  matrixWalk 2206  programs 118  gameMs 2  worldMs 0.6  renderMs 7.1  hero.capeMs 0.7  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 10.3
+low    ace chemicals calls 191  tris 253601  skinnedVis 59  lights 2  matrixWalk 2145  programs 118  gameMs 2.1  worldMs 0.7  renderMs 7.1  hero.capeMs 0.8  civiliansMs 0  wantedMs 0  sandboxMs 0  jsMs 10.8
+low    clock plaza   calls 207  tris 299903  skinnedVis 59  lights 2  matrixWalk 2176  programs 118  gameMs 2  worldMs 0.7  renderMs 7.2  hero.capeMs 0.7  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 10.8
+low    loop el       calls 204  tris 285422  skinnedVis 95  lights 0  matrixWalk 2350  programs 119  gameMs 2  worldMs 0.6  renderMs 7.1  hero.capeMs 0.7  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 10.4
+low    narrows       calls 272  tris 308412  skinnedVis 70  lights 0  matrixWalk 2382  programs 119  gameMs 2.2  worldMs 0.8  renderMs 9.1  hero.capeMs 0.8  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 12.5
+high   gcpd roof     calls 386  tris 470325  skinnedVis 64  lights 6  matrixWalk 2346  programs 130  gameMs 3.1  worldMs 1  renderMs 11.3  hero.capeMs 1.1  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 15.8
+high   docks         calls 163  tris 235905  skinnedVis 62  lights 6  matrixWalk 2244  programs 130  gameMs 2.4  worldMs 0.9  renderMs 9.1  hero.capeMs 0.8  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 12.9
+high   neon street   calls 263  tris 359089  skinnedVis 59  lights 6  matrixWalk 2230  programs 130  gameMs 2.4  worldMs 0.8  renderMs 10.4  hero.capeMs 0.8  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 14.4
+high   ace chemicals calls 278  tris 427933  skinnedVis 69  lights 6  matrixWalk 2318  programs 130  gameMs 1.9  worldMs 0.6  renderMs 7.7  hero.capeMs 0.8  civiliansMs 0  wantedMs 0  sandboxMs 0  jsMs 11.2
+high   clock plaza   calls 365  tris 591178  skinnedVis 76  lights 6  matrixWalk 2477  programs 130  gameMs 2.2  worldMs 0.8  renderMs 9.9  hero.capeMs 0.8  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 13.4
+high   loop el       calls 284  tris 382764  skinnedVis 117  lights 0  matrixWalk 2625  programs 130  gameMs 2  worldMs 0.7  renderMs 8.4  hero.capeMs 0.7  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 11.8
+high   narrows       calls 423  tris 540941  skinnedVis 89  lights 0  matrixWalk 2560  programs 130  gameMs 1.9  worldMs 0.6  renderMs 9.3  hero.capeMs 0.7  civiliansMs 0.1  wantedMs 0  sandboxMs 0  jsMs 12.5
+
+perf gate: all within budget

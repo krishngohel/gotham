@@ -67,6 +67,16 @@ test('explosive gel opens the Monarch booth and the trophy inside', async ({ pag
 test('a WayneTech purchase shows on the page and survives a reload', async ({ page }) => {
   const errors = await collectErrors(page);
   await boot(page, 'at=toNeon&god=1&new=1');
+  // A new game started at toNeon owns the gadgets of every earlier step, so the first live frame
+  // puts up the returning-player "WAYNETECH DELIVERY!" card. The level-up card is queued behind
+  // it (src/ui/cardQueue.js) and a queue that is dismissed when action starts can drop it, which
+  // is why this test used to see the delivery card instead of LEVEL 2. Wait for the delivery
+  // news to finish and its card to come down, then level up with nothing else on screen.
+  // (The news leaves the gadget system on the first live frame, but the HUD puts its card up a
+  // moment later, so wait for the card itself to come and go.)
+  await page.waitForFunction(() => window.__game.gadgets.newsPending === false, null, { timeout: 30000 });
+  await expect(page.locator('.hud-card.show')).toContainText('WAYNETECH DELIVERY', { timeout: 20000 });
+  await expect(page.locator('.hud-card.show')).toHaveCount(0, { timeout: 30000 });
   await page.evaluate(() => window.__game.wayne.award(1000, 'test'));
   await expect(page.locator('.hud-card.show')).toContainText('LEVEL 2');
   await page.keyboard.press('Escape');

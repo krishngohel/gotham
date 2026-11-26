@@ -1,0 +1,54 @@
+{
+ "q": "low",
+ "base": "http://localhost:5850/",
+ "rounds": [
+  {
+   "longTasks": [
+    55
+   ],
+   "jsHitches": 2,
+   "jsMax": 54.1,
+   "seconds": 64,
+   "frames": 10499,
+   "medMs": 6,
+   "p95Ms": 8.4,
+   "maxMs": 50.7,
+   "hitches": [
+    {
+     "ms": 50.7,
+     "x": 0,
+     "z": -53,
+     "mode": "drive",
+     "district": "city",
+     "js": 4.1,
+     "programs": 116,
+     "textures": 336,
+     "geometries": 2086
+    },
+    {
+     "ms": 37,
+     "x": 0,
+     "z": -80,
+     "mode": "drive",
+     "district": "city",
+     "js": 4.4,
+     "programs": 116,
+     "textures": 336,
+     "geometries": 2086
+    }
+   ]
+  },
+  {
+   "longTasks": [],
+   "jsHitches": 0,
+   "jsMax": 12.6,
+   "seconds": 64,
+   "frames": 11741,
+   "medMs": 5.4,
+   "p95Ms": 6.9,
+   "maxMs": 16.2,
+   "hitches": []
+  }
+ ],
+ "errors": []
+}

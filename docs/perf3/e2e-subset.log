@@ -1,0 +1,17 @@
+
+Running 10 tests using 1 worker
+
+  ok  1 tests\e2e\bruce.spec.js:34:1 › Bristol -> the Manor -> the clock passage -> every cave station -> suit up -> out through the waterfall (1.0m)
+  ok  2 tests\e2e\bruce.spec.js:156:1 › the gala: the signal mid-toast, played to stay and to slip away; the meters and the next night carry it (16.0s)
+  ok  3 tests\e2e\bruce.spec.js:191:1 › a Bruce day: breakfast with a split lip and the reporter at the table, the 9 a.m. vote, the night starts in the cave (14.6s)
+  ok  4 tests\e2e\bruce.spec.js:229:1 › co-op: two players go through the cave together; the partner is the ward in a Bruce scene (14.1s)
+  ok  5 tests\e2e\render.spec.js:15:1 › two views render side by side, both non-blank and different (10.9s)
+  ok  6 tests\e2e\render.spec.js:52:1 › a software renderer gets the hardware-acceleration dialog (9.4s)
+  ok  7 tests\e2e\smoke.spec.js:13:1 › title screen renders with no errors (8.7s)
+  ok  8 tests\e2e\smoke.spec.js:23:1 › new game: suit select, intro comic, then play (15.2s)
+  ok  9 tests\e2e\smoke.spec.js:40:1 › a fight can be won and advances the story (8.7s)
+  ok 10 tests\e2e\smoke.spec.js:52:1 › boss fight begins after its comic (9.2s)
+
+  10 passed (2.8m)
+
+~\Documents\Projects\gotham-ln2-perf3>

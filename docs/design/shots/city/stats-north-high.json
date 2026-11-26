@@ -1,0 +1,374 @@
+{
+ "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "q": "high",
+ "shots": {
+  "bristol-manor-drive": {
+   "calls": 104,
+   "tris": 140084,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 99,
+     "tris": 125162
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 0.7,
+   "p95Ms": 1
+  },
+  "bristol-manor-aerial": {
+   "calls": 76,
+   "tris": 121280,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 71,
+     "tris": 106358
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 1.1,
+   "p95Ms": 2
+  },
+  "bristol-cliff-lake": {
+   "calls": 72,
+   "tris": 112456,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 67,
+     "tris": 97534
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 0.8,
+   "p95Ms": 1.5
+  },
+  "bristol-village": {
+   "calls": 213,
+   "tris": 288332,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 208,
+     "tris": 273410
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 1,
+   "p95Ms": 1.2
+  },
+  "bristol-overlook": {
+   "calls": 297,
+   "tris": 358804,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 290,
+     "tris": 343742
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 1.1,
+   "p95Ms": 1.3
+  },
+  "bristol-cemetery": {
+   "calls": 34,
+   "tris": 72796,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 29,
+     "tris": 57874
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 0.5,
+   "p95Ms": 0.6
+  },
+  "bristol-lane": {
+   "calls": 259,
+   "tris": 337278,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 252,
+     "tris": 322216
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 1,
+   "p95Ms": 1.5
+  },
+  "bristol-glide": {
+   "calls": 185,
+   "tris": 261462,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 180,
+     "tris": 246540
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 0.9,
+   "p95Ms": 1.3
+  },
+  "blackgate-from-docks": {
+   "calls": 94,
+   "tris": 135271,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 87,
+     "tris": 120209
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 0.7,
+   "p95Ms": 1.2
+  },
+  "blackgate-causeway": {
+   "calls": 67,
+   "tris": 108973,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 60,
+     "tris": 93911
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 0.6,
+   "p95Ms": 0.8
+  },
+  "blackgate-aerial": {
+   "calls": 77,
+   "tris": 125771,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 70,
+     "tris": 110709
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 0.6,
+   "p95Ms": 0.8
+  },
+  "blackgate-yard": {
+   "calls": 79,
+   "tris": 141257,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 72,
+     "tris": 126195
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 0.6,
+   "p95Ms": 1
+  },
+  "blackgate-wall": {
+   "calls": 61,
+   "tris": 73920,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 54,
+     "tris": 58858
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 0.6,
+   "p95Ms": 0.7
+  },
+  "blackgate-landing": {
+   "calls": 112,
+   "tris": 165865,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 105,
+     "tris": 150803
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 0.7,
+   "p95Ms": 1.1
+  },
+  "traffic-core-street": {
+   "calls": 290,
+   "tris": 381562,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 6,
+     "tris": 15060
+    },
+    {
+     "target": "rt",
+     "calls": 283,
+     "tris": 366500
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 1.4,
+   "p95Ms": 3.9
+  },
+  "traffic-loop-signals": {
+   "calls": 251,
+   "tris": 333401,
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 4,
+     "tris": 14920
+    },
+    {
+     "target": "rt",
+     "calls": 246,
+     "tris": 318479
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "medianMs": 1.3,
+   "p95Ms": 2.1
+  }
+ }
+}

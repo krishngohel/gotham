@@ -1,0 +1,41 @@
+n1 Night One: The Long Night steps  51 | hard stops  8 (radio-only 0, comics 6, cinematics 3) | camera cuts 10 | no agency 78 s
+    intro                  cutscene  18.2 s
+    card                   cutscene  5 s
+    rewardCrates           cutscene  5 s
+    rewardRig              cutscene  7.5 s
+    rewardAntidote         cutscene  5 s
+    courierReveal          radio     5.7 s
+    boss                   boss      5 s
+    finale                 cutscene  26.7 s
+n2 Night Two: Cold Feet      steps  22 | hard stops  3 (radio-only 0, comics 3, cinematics 0) | camera cuts  3 | no agency 18 s
+    n2Recap                cutscene  5 s
+    n2Twist                cutscene  7.5 s
+    penguinBoss            boss      5 s
+n3 Night Three: Know-It-All  steps  26 | hard stops  3 (radio-only 0, comics 3, cinematics 0) | camera cuts  3 | no agency 18 s
+    n3Recap                cutscene  5 s
+    n3Twist                cutscene  7.5 s
+    riddlerBoss            boss      5 s
+n4 Night Four: The Hollow Men steps  24 | hard stops  3 (radio-only 0, comics 3, cinematics 0) | camera cuts  3 | no agency 18 s
+    n4Recap                cutscene  5 s
+    n4Twist                cutscene  7.5 s
+    n4Boss                 boss      5 s
+n5 Night Five: Cold Storage  steps  26 | hard stops  3 (radio-only 0, comics 3, cinematics 0) | camera cuts  3 | no agency 18 s
+    n5Recap                cutscene  5 s
+    n5Twist                cutscene  7.5 s
+    n5Boss                 boss      5 s
+n6 Night Six: Overgrowth     steps  26 | hard stops  3 (radio-only 0, comics 3, cinematics 0) | camera cuts  3 | no agency 15 s
+    n6Recap                cutscene  5 s
+    n6Twist                cutscene  5 s
+    n6Boss                 boss      5 s
+n7 Night Seven: Slow Burn    steps  19 | hard stops  3 (radio-only 0, comics 3, cinematics 0) | camera cuts  3 | no agency 15 s
+    n7Recap                cutscene  5 s
+    n7Twist                cutscene  5 s
+    n7Boss                 boss      5 s
+n8 Night Eight: Hostile Takeover steps  18 | hard stops  4 (radio-only 0, comics 4, cinematics 0) | camera cuts  4 | no agency 20 s
+    n8Recap                cutscene  5 s
+    n8File                 cutscene  5 s
+    n8Boss                 boss      5 s
+    n8Breakout             cutscene  5 s
+n9 Night Nine: The Last Laugh steps  20 | hard stops  2 (radio-only 0, comics 2, cinematics 0) | camera cuts  2 | no agency 10 s
+    n9Recap                cutscene  5 s
+    n9Boss                 boss      5 s

@@ -1,0 +1,42 @@
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 625 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                2.63 kB │ gzip:     1.08 kB
+dist/assets/index-DAcVdu8r.css                61.11 kB │ gzip:    12.85 kB
+dist/assets/rolldown-runtime-DK3Fl9T5.js       0.15 kB │ gzip:     0.15 kB
+dist/assets/webrtc-DaTv0QBI.js                 0.25 kB │ gzip:     0.19 kB
+dist/assets/multiView-D7-AIifR.js              0.67 kB │ gzip:     0.43 kB
+dist/assets/batgirl-BIzailyq.js                1.70 kB │ gzip:     0.98 kB
+dist/assets/superman-ptataAe0.js               1.96 kB │ gzip:     1.07 kB
+dist/assets/gaslightBat--LVFvIPr.js            1.99 kB │ gzip:     1.12 kB
+dist/assets/futureBat-CQn8o77L.js              2.04 kB │ gzip:     1.18 kB
+dist/assets/robin-YuZszpJW.js                  2.87 kB │ gzip:     1.46 kB
+dist/assets/redHood-BlILFrDQ.js                4.32 kB │ gzip:     2.17 kB
+dist/assets/perfBench-ChATQXpt.js              6.06 kB │ gzip:     2.77 kB
+dist/assets/perfProbe-BRww22LZ.js              6.77 kB │ gzip:     2.85 kB
+dist/assets/villains-g8akFs_0.js              10.71 kB │ gzip:     3.85 kB
+dist/assets/toon-B5PsMgrP.js                  15.53 kB │ gzip:     5.51 kB
+dist/assets/netUi-BmRg2FOy.js                 23.69 kB │ gzip:     9.12 kB
+dist/assets/mocapData.heroes-BdoF-pnP.js      28.90 kB │ gzip:     9.89 kB
+dist/assets/mocapData.story-CJQsz-Nt.js       54.78 kB │ gzip:    11.52 kB
+dist/assets/dist-4ZQI-8Lr.js                  74.49 kB │ gzip:    26.58 kB
+dist/assets/netGame-Dhv_tyJV.js               77.02 kB │ gzip:    29.20 kB
+dist/assets/mocapData.enemies-BO5I2aqQ.js     78.81 kB │ gzip:    21.02 kB
+dist/assets/mocapData.combat2-Z2xHdMM6.js     83.78 kB │ gzip:    25.21 kB
+dist/assets/characters-D_PK8aPO.js           133.19 kB │ gzip:    46.76 kB
+dist/assets/mocapData.civ-cMEvPG9c.js        134.51 kB │ gzip:    27.83 kB
+dist/assets/palette-DwK0gHr0.js              277.22 kB │ gzip:    75.13 kB
+dist/assets/index-DqENyn_7.js              2,936.49 kB │ gzip: 1,025.32 kB
+
+[33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/heroes/models/nightwing.js is dynamically imported by src/heroes/kitModels.js but also statically imported by src/actors/nightwingChar.js, dynamic import will not move module into another chunk.
+[39m
+[33m[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 1500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/net/transport/webrtc.js is dynamically imported by src/net/signal/signallers.js but also statically imported by src/net/game/netGame.js, src/net/signal/signallers.js, dynamic import will not move module into another chunk.
+[39m
+[32m✓ built in 517ms[39m

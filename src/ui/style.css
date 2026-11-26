@@ -3,9 +3,15 @@ html, body { margin: 0; height: 100%; background: var(--ink); overflow: hidden; 
 canvas#game { display: block; width: 100vw; height: 100vh; }
 
 .loading { position: fixed; inset: 0; display: grid; place-items: center; background: var(--ink); z-index: 10; }
-.loading .cover { width: min(560px, 86vw); padding: 36px 32px; background: var(--paper); color: var(--ink); border: 4px solid var(--ink); box-shadow: 10px 10px 0 var(--signal); transform: rotate(-1.2deg); }
-.loading .kicker { font: 600 18px 'Barlow Condensed', sans-serif; letter-spacing: 3px; text-transform: uppercase; }
-.loading h1 { margin: 8px 0 22px; font: 64px/0.95 'Bangers', cursive; letter-spacing: 2px; text-transform: uppercase; }
+.loading .cover { width: min(560px, 86vw); padding: 30px 34px 26px; background: var(--paper); color: var(--ink); border: 4px solid var(--ink); box-shadow: 10px 10px 0 var(--signal); transform: rotate(-1.2deg); }
+.loading .kicker { font: 600 15px 'Barlow Condensed', sans-serif; letter-spacing: 4px; text-transform: uppercase; opacity: 0.75; }
+.loading h1 { margin: 4px 0 0; font: 96px/0.9 'Bangers', cursive; letter-spacing: 5px; text-transform: uppercase; }
+.loading .band { display: inline-block; margin: 2px 0 22px 4px; padding: 2px 14px 0; background: var(--ink); transform: skew(-10deg); box-shadow: 5px 5px 0 var(--crimson); }
+.loading .band i { display: block; font: normal 38px/1.05 'Bangers', cursive; letter-spacing: 3px; color: var(--signal); text-transform: uppercase; transform: skew(10deg); }
+.loading .tip { min-height: 2.5em; margin: 16px 0 0; font: 21px/1.2 'Patrick Hand SC', cursive; opacity: 0; transition: opacity 0.25s; }
+.loading .tip::before { content: 'TIP  '; font: 700 15px 'Barlow Condensed', sans-serif; letter-spacing: 2px; color: var(--crimson); }
+.loading .tip.in { opacity: 1; }
+.loading.mobile .tip, .loading.error .tip { display: none; }
 .loading .bar { height: 10px; border: 3px solid var(--ink); }
 .loading .bar i { display: block; height: 100%; width: 40%; background: var(--ink); animation: load 1.2s ease-in-out infinite alternate; }
 .loading .mobile-note { display: none; font: 22px 'Patrick Hand SC', cursive; margin: 18px 0 0; }
@@ -17,6 +23,15 @@ canvas#game { display: block; width: 100vw; height: 100vh; }
 @keyframes load { to { width: 100%; } }
 
 .hud { position: fixed; inset: 0; pointer-events: none; font-family: 'Barlow Condensed', sans-serif; color: var(--paper); z-index: 5; }
+/* A player's own panel (combo, chains, health). Slot 0 adds no box of its own, so one player's HUD
+   lays out exactly as before; slot 1 (co-op) mirrors it in the bottom-right corner. */
+.hud-slot { display: contents; }
+.hud-slot[data-slot="1"] .hud-health { left: auto; right: 28px; bottom: 60px; }
+.hud-slot[data-slot="1"] .hud-combo { left: auto; top: auto; right: 40px; bottom: 250px; text-align: right; }
+.hud-slot[data-slot="1"] .hud-chains { left: auto; top: auto; right: 44px; bottom: 192px; }
+.hud-slot[data-slot="1"] .hud-health .bar { stroke: var(--signal); }
+.hud-slot.down .hud-health .bar { stroke: #ff5a4a; }
+.hud-slot.down .hud-health .bat { opacity: 0.4; }
 .hud-health { position: absolute; left: 28px; bottom: 24px; width: 120px; height: 120px; filter: drop-shadow(3px 3px 0 var(--ink)); }
 .hud-health .track { fill: none; stroke: rgba(11, 11, 18, 0.85); stroke-width: 12; }
 .hud-health .bar { fill: none; stroke: var(--paper); stroke-width: 7; transition: stroke-dasharray 0.25s; }
@@ -145,13 +160,28 @@ kbd { display: inline-block; min-width: 1.4em; padding: 0 6px; margin: 0 2px; bo
 .mbtn.on { background: var(--ink); color: var(--paper); }
 .mbtn.listening { background: var(--crimson); color: #fff; }
 .mbtn.back { margin-top: 16px; }
-.title-menu { width: min(760px, 94vw); background: transparent; border: 0; box-shadow: none; transform: none; color: var(--paper); }
-.title-menu .logo { display: flex; flex-direction: column; margin-bottom: 26px; transform: rotate(-2deg); }
-.title-menu .kicker { font: 600 20px 'Barlow Condensed', sans-serif; letter-spacing: 6px; text-transform: uppercase; color: var(--signal); }
-.title-menu .l1 { font: 78px/0.95 'Bangers', cursive; letter-spacing: 2px; color: var(--paper); -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill; text-shadow: 6px 6px 0 var(--ink); }
-.title-menu .l2 { font: 150px/0.9 'Bangers', cursive; letter-spacing: 4px; color: var(--signal); -webkit-text-stroke: 5px var(--ink); paint-order: stroke fill; text-shadow: 9px 9px 0 var(--ink); }
-.title-menu .mlist { width: min(360px, 90%); }
-.title-menu .foot { margin-top: 20px; font: 600 16px 'Barlow Condensed', sans-serif; color: rgba(239, 230, 207, 0.75); letter-spacing: 1px; }
+.mbtn:focus { outline: none; }
+.menu-layer .mbtn:focus:not(.tm-link) { background: var(--signal); box-shadow: 6px 6px 0 var(--ink); } /* [polish] pad focus shows even after a mouse click */
+/* [polish] Title: the name, one primary action, grouped secondary actions, a row of links; the city on the right. */
+.menu-layer:has(.title-menu) { place-items: center start; padding-left: clamp(16px, 7vw, 120px); background: linear-gradient(90deg, rgba(11, 11, 18, 0.9) 0%, rgba(11, 11, 18, 0.62) 34%, rgba(11, 11, 18, 0) 62%); }
+.title-menu { width: min(500px, 92vw); max-height: 96vh; padding: 8px 14px 8px 8px; background: transparent; border: 0; box-shadow: none; transform: none; color: var(--paper); overflow: auto; scrollbar-width: none; }
+.title-menu .logo { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: clamp(14px, 3vh, 28px); transform: rotate(-2deg); transform-origin: left center; }
+.title-menu .l1 { font: clamp(84px, 15vh, 132px)/0.86 'Bangers', cursive; letter-spacing: 6px; color: var(--paper); -webkit-text-stroke: 4px var(--ink); paint-order: stroke fill; text-shadow: 7px 7px 0 var(--ink); }
+.title-menu .l2 { margin: 2px 0 0 6px; padding: 2px 16px 0; background: var(--ink); transform: skew(-10deg); box-shadow: 6px 6px 0 var(--crimson); }
+.title-menu .l2 i { display: block; font: normal clamp(34px, 6.2vh, 50px)/1.05 'Bangers', cursive; letter-spacing: 3px; color: var(--signal); transform: skew(10deg); }
+.title-menu .kicker { margin: 12px 0 0 8px; font: 600 14px 'Barlow Condensed', sans-serif; letter-spacing: 4px; text-transform: uppercase; color: rgba(239, 230, 207, 0.7); }
+.title-menu .mbtn.tm-primary:focus { box-shadow: 6px 6px 0 var(--ink), 0 0 0 4px var(--paper); }
+.title-menu .tm-primary { display: flex; flex-direction: column; width: 100%; padding: 10px 20px 9px; font-size: calc(34px * var(--a11y-text, 1)); line-height: 1; }
+.title-menu .tm-sub { margin-top: 4px; font: 600 15px 'Barlow Condensed', sans-serif; letter-spacing: 1px; text-transform: none; opacity: 0.78; }
+.title-menu .tm-group { margin-top: clamp(10px, 2.2vh, 18px); }
+.title-menu .tm-label { margin-bottom: 7px; padding-bottom: 3px; font: 700 13px 'Barlow Condensed', sans-serif; letter-spacing: 4px; text-transform: uppercase; color: var(--signal); border-bottom: 2px solid rgba(242, 210, 75, 0.3); }
+.title-menu .tm-row { display: flex; flex-wrap: wrap; gap: 8px 10px; }
+.title-menu .tm-btn { flex: 1 1 0; min-width: 120px; padding: 7px 10px; font-size: calc(18px * var(--a11y-text, 1)); text-align: center; box-shadow: 3px 3px 0 var(--ink); }
+.title-menu .tm-links { display: flex; flex-wrap: wrap; gap: 2px 22px; margin-top: clamp(12px, 2.6vh, 22px); }
+.title-menu .mbtn.tm-link { padding: 4px 0 2px; font-size: calc(17px * var(--a11y-text, 1)); color: var(--paper); background: none; border: 0; border-bottom: 3px solid transparent; box-shadow: none; transform: none; }
+.title-menu .mbtn.tm-link:hover, .title-menu .mbtn.tm-link:focus { color: var(--signal); border-bottom-color: var(--signal); background: none; box-shadow: none; transform: none; }
+.title-menu .foot { margin-top: 14px; font: 600 14px 'Barlow Condensed', sans-serif; color: rgba(239, 230, 207, 0.58); letter-spacing: 0.5px; }
+@media (max-height: 560px) { .title-menu .kicker, .title-menu .foot { display: none; } }
 .suits { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 14px; }
 .suit-menu { width: min(760px, 94vw); }
 .suit-card { display: grid; gap: 6px; padding: 14px; background: #fff8e6; border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); cursor: pointer; text-align: left; font-family: 'Patrick Hand SC', cursive; transition: transform 0.08s; }
@@ -160,6 +190,8 @@ kbd { display: inline-block; min-width: 1.4em; padding: 0 6px; margin: 0 2px; bo
 .suit-card .swatch img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; transform: scale(1.04); transition: transform 0.12s; }
 .suit-card:hover .swatch img, .suit-card:focus-visible .swatch img { transform: scale(1.1); }
 .suit-card.suit-gold .swatch { background-color: #fbe9b5; }
+.suit-card.locked { opacity: 0.55; cursor: not-allowed; }
+.suit-card.locked:hover { transform: none; background: #fff8e6; }
 .suit-card.suit-gold .swatch img { filter: sepia(1) saturate(2.4) hue-rotate(-12deg) brightness(1.02) contrast(1.05); }
 .suit-card .sname { font: 26px 'Bangers', cursive; letter-spacing: 1px; }
 .suit-card .sdesc { font-size: 17px; line-height: 1.15; }
@@ -432,6 +464,473 @@ kbd { display: inline-block; min-width: 1.4em; padding: 0 6px; margin: 0 2px; bo
 /* The "What's new" page: same comic-card style as Controls and Progress. */
 .whatsnew-menu { width: min(720px, 94vw); }
 .wn-lead { font: 23px 'Patrick Hand SC', cursive; margin: 2px 0 14px; color: var(--crimson); }
-.wn-list { display: grid; gap: 9px; margin-bottom: 14px; }
+.wn-list { display: grid; gap: 8px; margin-bottom: 14px; }
+.wn-sec { margin: 10px 0 0; padding-bottom: 2px; border-bottom: 3px solid var(--ink); } /* [polish] */
+.wn-sec:first-child { margin-top: 0; }
+.whatsnew-menu .wn-row { margin: 0; }
+.whatsnew-menu .wn-back { margin-top: 4px; }
 .wn-row { font: 19px/1.3 'Patrick Hand SC', cursive; padding: 8px 14px; background: #fff8e6;
   border: 2px solid var(--ink); border-left: 7px solid var(--signal); }
+
+/* ---- Split screen (workstream D1): each player's HUD is confined to its own view ----
+   contain makes the panel the containing block for its fixed children (speed lines, the action
+   panel, the gadget wheel, the impact panel moved into it), and container units size text to the
+   half-width view instead of the window. Single player never gets the class. */
+.hud.split { inset: auto; contain: layout paint; container-type: size; overflow: hidden; }
+.hud.split .speed-lines, .hud.split .action-panel, .hud.split .gwheel, .hud.split .impact-panel { position: absolute; }
+.hud.split .hud-caption { right: 14px; top: 14px; max-width: min(300px, 46cqw); font-size: 19px; }
+.hud.split .hud-card { width: min(460px, 88cqw); top: 84px; }
+.hud.split .hud-card .card-title { font-size: 28px; }
+.hud.split .hud-card .card-text { font-size: 19px; }
+.hud.split .hud-hint { max-width: min(520px, 80cqw); font-size: 18px; bottom: 128px; }
+.hud.split .hud-banner { max-width: min(620px, 88cqw); font-size: 30px; }
+.hud.split .hud-boss { width: min(460px, 60cqw); }
+.hud.split .hud-combo .n { font-size: 64px; }
+.hud.split .hud-health { width: 96px; height: 96px; left: 16px; bottom: 14px; }
+.hud.split .hud-chains { top: 92px; }
+.hud.split .gw-ring { transform: scale(0.72); }
+.hud.split .player-tag { display: block; }
+.player-tag { display: none; position: absolute; left: 14px; bottom: 116px; padding: 1px 8px; font: 20px 'Bangers', cursive; letter-spacing: 1px; color: var(--ink); background: var(--paper); border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); transform: rotate(-3deg); }
+.hud.split[data-player="1"] .player-tag { background: var(--signal); }
+.hud.split[data-player="1"] .hud-health .bar { stroke: var(--signal); }
+.hud.split .grapple-dot { position: absolute; }
+canvas.no-cursor { cursor: none; }
+.hud.split .ghud { left: 118px; bottom: 14px; transform: scale(0.86); transform-origin: left bottom; }
+.revive-ring { position: absolute; width: 56px; height: 56px; transform: translate(-50%, -50%); pointer-events: none; z-index: 3; }
+.revive-ring svg { width: 56px; height: 56px; filter: drop-shadow(2px 2px 0 var(--ink)); }
+.revive-ring .bg { fill: rgba(11, 11, 18, 0.55); stroke: var(--paper); stroke-width: 4; }
+.revive-ring .fill { fill: none; stroke: var(--signal); stroke-width: 7; }
+.revive-ring b { position: absolute; inset: 0; display: grid; place-items: center; font: 30px 'Bangers', cursive; color: #ff5a4a; -webkit-text-stroke: 1.5px var(--ink); }
+.revive-ring span { position: absolute; left: 50%; top: 60px; transform: translateX(-50%) rotate(-2deg); white-space: nowrap; padding: 2px 8px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); font: 17px/1.2 'Patrick Hand SC', cursive; }
+.revive-ring span kbd { font: inherit; font-weight: 700; }
+
+/* ---- Co-op hero select (workstream D1) ---- */
+.hero-select { position: fixed; inset: 0; z-index: 31; display: none; pointer-events: none; font-family: 'Barlow Condensed', sans-serif; }
+.hero-select.show { display: block; }
+.hs-title { position: absolute; left: 50%; top: 18px; transform: translateX(-50%) rotate(-1.5deg); padding: 6px 22px; background: var(--signal); color: var(--ink); border: 4px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); font: 38px 'Bangers', cursive; letter-spacing: 1.5px; white-space: nowrap; }
+.hs-cols { position: absolute; inset: 90px 24px 64px; display: flex; justify-content: space-between; gap: 24px; }
+.hs-col { pointer-events: auto; width: min(340px, 30vw); align-self: flex-start; padding: 14px 16px 12px; background: #fffdf5; color: var(--ink); border: 4px solid var(--ink); box-shadow: 7px 7px 0 var(--ink); transform: rotate(-0.8deg); }
+.hs-col[data-slot="1"] { transform: rotate(0.8deg); }
+.hs-col.ready { background: #fff4c2; }
+.hs-col.waiting { opacity: 0.9; display: grid; gap: 10px; }
+.hs-player { font: 22px 'Bangers', cursive; letter-spacing: 1px; color: var(--crimson); -webkit-text-stroke: 1px var(--ink); }
+.hs-player small { font: 15px 'Barlow Condensed', sans-serif; color: var(--ink); -webkit-text-stroke: 0; margin-left: 6px; }
+.hs-join { font: 22px/1.3 'Patrick Hand SC', cursive; text-align: center; padding: 18px 6px; }
+.hs-join b { font-family: 'Bangers', cursive; letter-spacing: 1px; }
+.hs-hero { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 4px 0 2px; }
+.hs-name { flex: 1; text-align: center; font: 36px/1 'Bangers', cursive; letter-spacing: 1.5px; }
+.hs-arrow { width: 36px; height: 36px; border: 3px solid var(--ink); background: var(--signal); color: var(--ink); font-size: 16px; cursor: pointer; box-shadow: 2px 2px 0 var(--ink); }
+.hs-arrow.small { width: 28px; height: 28px; font-size: 12px; }
+.hs-tag { font: 19px/1.2 'Patrick Hand SC', cursive; text-align: center; min-height: 2.4em; }
+.hs-style { margin: 6px auto 8px; width: fit-content; padding: 2px 10px; background: var(--ink); color: var(--paper); font: 17px 'Bangers', cursive; letter-spacing: 1px; transform: skewX(-8deg); }
+.hs-stats { display: grid; gap: 4px; margin-bottom: 8px; }
+.hs-stat { display: grid; grid-template-columns: 76px 1fr; align-items: center; font-weight: 700; font-size: 15px; text-transform: uppercase; }
+.hs-stat i { height: 10px; border: 2px solid var(--ink); background: linear-gradient(90deg, var(--crimson) calc(var(--v) * 100%), transparent 0); }
+.hs-sig b { font: 18px 'Bangers', cursive; letter-spacing: 1px; }
+.hs-sig ul { margin: 2px 0 8px 18px; padding: 0; font: 18px/1.25 'Patrick Hand SC', cursive; }
+.hs-suits { display: flex; align-items: center; justify-content: center; gap: 8px; font: 20px 'Patrick Hand SC', cursive; }
+.hs-suits em { font-style: normal; font-size: 15px; opacity: 0.7; }
+.hs-lock { margin-top: 4px; text-align: center; color: var(--crimson); font: 16px 'Patrick Hand SC', cursive; }
+.hs-ready { margin-top: 10px; text-align: center; font: 30px 'Bangers', cursive; letter-spacing: 2px; color: var(--crimson); }
+.hs-keys { margin-top: 6px; text-align: center; font-size: 14px; opacity: 0.75; }
+.hs-foot { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); pointer-events: auto; display: flex; gap: 12px; align-items: center; }
+.hs-foot .hs-note { padding: 4px 12px; background: var(--paper); color: var(--ink); border: 3px solid var(--ink); font: 19px 'Patrick Hand SC', cursive; }
+.coop-prompt { position: fixed; inset: 0; z-index: 32; display: none; place-items: center; background: rgba(11, 11, 18, 0.6); }
+.coop-prompt.show { display: grid; }
+.coop-prompt .box { max-width: min(560px, 90vw); padding: 18px 22px; background: #fffdf5; color: var(--ink); border: 4px solid var(--ink); box-shadow: 7px 7px 0 var(--ink); text-align: center; transform: rotate(-1deg); }
+.coop-prompt h3 { margin: 0 0 6px; font: 34px 'Bangers', cursive; letter-spacing: 1.5px; color: var(--crimson); -webkit-text-stroke: 1.5px var(--ink); }
+.coop-prompt p { margin: 0 0 12px; font: 22px/1.3 'Patrick Hand SC', cursive; }
+.join-hint { position: fixed; right: 16px; top: 50%; z-index: 6; padding: 4px 10px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); font: 17px 'Patrick Hand SC', cursive; transform: rotate(1.5deg); pointer-events: none; opacity: 0; transition: opacity 0.4s; }
+.join-hint.show { opacity: 0.92; }
+/* Co-op comms wheel, marks and quick-chat balloons (workstream D1) */
+.comms-wheel { position: absolute; left: 50%; top: 50%; width: 0; height: 0; display: none; pointer-events: none; z-index: 7; }
+.comms-wheel.show { display: block; }
+.cw-item { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%) rotate(-1deg); white-space: nowrap; padding: 4px 10px; background: var(--paper); color: var(--ink); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font: 19px 'Patrick Hand SC', cursive; }
+.cw-item.cw-mark { background: #ffe9a8; }
+.cw-item.on { background: var(--signal); transform: translate(-50%, -50%) scale(1.12) rotate(-1deg); }
+.cw-center { position: absolute; transform: translate(-50%, -50%); padding: 2px 8px; background: var(--ink); color: var(--paper); font: 18px 'Bangers', cursive; letter-spacing: 1px; }
+.ping-pin { position: absolute; transform: translate(-50%, -100%); pointer-events: none; z-index: 4; display: flex; flex-direction: column; align-items: center; }
+.ping-pin i { width: 18px; height: 18px; background: #ff5a4a; border: 3px solid var(--ink); transform: rotate(45deg); box-shadow: 2px 2px 0 var(--ink); }
+.ping-pin.ping-here i { background: var(--signal); }
+.ping-pin.ping-help i { background: #49b4ff; }
+.ping-pin span { margin-top: 4px; padding: 0 6px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); font: 16px 'Bangers', cursive; letter-spacing: 1px; }
+.ping-pin.by-1 span { background: var(--signal); }
+.chat-bubble { position: absolute; transform: translate(-50%, -100%); padding: 4px 10px; background: #fff; color: var(--ink); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 3px 3px 0 var(--ink); font: 19px 'Patrick Hand SC', cursive; white-space: nowrap; pointer-events: none; z-index: 4; }
+/* Split: player 2's panel mirrors player 1's (health, gadget and tag in the outer corner), so the
+   bottom middle is free for the shared dialogue panel; cards sit under the objective caption. */
+.hud.split[data-player="1"] .hud-health { left: auto; right: 16px; }
+.hud.split[data-player="1"] .ghud { left: auto; right: 118px; transform-origin: right bottom; }
+.hud.split[data-player="1"] .gh-swarm { left: auto; right: 60px; }
+.hud.split[data-player="1"] .player-tag { left: auto; right: 14px; }
+.hud.split[data-player="1"] .st-crouch { left: auto; right: 28px; }
+.hud.split .hud-card { top: 132px; }
+.hud.split .hud-banner { font-size: 24px; max-width: 80cqw; }
+.coop-split .dlg-panel { right: auto; left: 50%; margin-left: max(-230px, -19vw); width: min(460px, 38vw); bottom: 12px; }
+.coop-split .fps { right: auto; left: 50%; bottom: auto; top: 4px; transform: translateX(-50%) rotate(-1.5deg); }
+.coop-split .vehicle-toast { bottom: 150px; }
+
+/* [prog] suits: the wardrobe (Batcave suit vault, src/ui/wardrobe.js) */
+.wardrobe-layer { position: fixed; inset: 0; z-index: 32; display: grid; place-items: center; background: radial-gradient(ellipse at center, rgba(11, 11, 18, 0.4), rgba(11, 11, 18, 0.9)); }
+.menu.wardrobe-menu { width: min(1040px, 94vw); max-height: 90vh; }
+.wd-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.wd-grid { grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); }
+.wd-card { position: relative; align-content: start; }
+.wd-card .swatch { height: 170px; }
+.wd-card.wearing { background: var(--signal); box-shadow: 7px 7px 0 var(--ink); }
+.wd-card.locked, .wd-card.tailored { opacity: 0.6; cursor: not-allowed; }
+.wd-card.locked .swatch img { filter: grayscale(1) brightness(0.35) !important; }
+.wd-card.locked:focus-visible, .wd-card.tailored:focus-visible { opacity: 0.9; background: #fff8e6; outline: 3px dashed var(--ink); outline-offset: 3px; }
+.wd-badge { position: absolute; left: 6px; top: 6px; padding: 2px 8px; background: var(--ink); color: var(--signal); font: 18px 'Bangers', cursive; letter-spacing: 1px; transform: rotate(-4deg); }
+.wd-perk { font: 700 15px/1.15 'Barlow Condensed', sans-serif; padding: 4px 6px; border: 2px dashed var(--ink); opacity: 0.75; }
+.wd-perk.active { border-style: solid; background: var(--ink); color: var(--signal); opacity: 1; }
+.wd-perk.none { border: none; padding: 0; font-style: italic; }
+.wd-note { margin: 6px 0; font: 19px/1.2 'Patrick Hand SC', cursive; }
+.wd-foot { display: flex; align-items: center; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+.wd-keys { font: 16px 'Barlow Condensed', sans-serif; opacity: 0.7; }
+
+/* [prog] Skill tree page (src/ui/skillTree/treePage.js) */
+.st-menu { width: min(1180px, 92vw); max-height: 92vh; overflow: hidden; display: grid; grid-template-rows: auto auto auto 1fr auto auto; }
+.st-xp { grid-template-columns: auto 1fr auto; }
+.st-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.st-tab { padding: 4px 10px; font-size: 15px; }
+.st-view { position: relative; height: min(40vh, 420px); overflow: hidden; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); cursor: grab; touch-action: none;
+  background: radial-gradient(circle, rgba(11, 11, 18, 0.16) 1.2px, transparent 1.6px) 0 0 / 10px 10px, #f7efd9; }
+.st-view:active { cursor: grabbing; }
+.st-board { position: absolute; left: 0; top: 0; transform-origin: 0 0; transition: transform 0.18s ease-out; }
+.st-calm .st-board, .st-calm .wt-card.buyable { transition: none; animation: none; }
+.st-lines { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+.st-link { fill: none; stroke: var(--ink); stroke-width: 3; stroke-dasharray: 7 5; opacity: 0.55; }
+.st-link.on { stroke-dasharray: none; opacity: 1; stroke-width: 4; }
+.st-band { position: absolute; left: 0; width: 132px; padding: 6px 8px; border-right: 3px solid var(--ink); background: var(--paper); box-shadow: 3px 3px 0 var(--ink); transform: rotate(-0.6deg); }
+.st-bname { font: 24px/1 'Bangers', cursive; letter-spacing: 1px; }
+.st-bblurb { font: 14px/1.1 'Patrick Hand SC', cursive; margin-top: 3px; }
+.st-band-wayne { background: #e6ecf7; }
+.st-band-kit { background: #f7e1e1; }
+.st-node.wt-card { position: absolute; width: 150px; height: 58px; margin: 0; padding: 4px 8px; display: grid; grid-template-rows: auto auto; align-content: center; gap: 0; overflow: hidden; }
+.st-node .wt-name { font-size: 15px; line-height: 1.05; }
+.st-node .st-cost { position: absolute; right: 4px; top: 2px; font: 700 11px 'Barlow Condensed', sans-serif; }
+.st-node .wt-state { font-size: 11px; }
+.st-node.cur-standing { border-style: double; border-width: 5px; }
+.st-node.act { background: #cfc8b6; opacity: 0.55; }
+.st-node:focus-visible, .st-node:focus { outline: 4px solid var(--crimson); outline-offset: 2px; z-index: 2; }
+.st-node.owned::after { content: ''; position: absolute; left: 4px; bottom: 4px; width: 10px; height: 10px; background: var(--ink); clip-path: polygon(0 50%, 40% 100%, 100% 0, 85% 0, 40% 70%, 15% 40%); }
+.st-detail { margin-top: 10px; padding: 8px 12px; min-height: 88px; background: #fffdf5; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); transform: rotate(0.3deg); }
+.st-dname { font: 26px/1 'Bangers', cursive; letter-spacing: 1px; }
+.st-dmeta { font: 700 13px 'Barlow Condensed', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+.st-dtext { font: 18px/1.15 'Patrick Hand SC', cursive; margin-top: 2px; }
+.st-ddemo { font: italic 16px/1.15 'Patrick Hand SC', cursive; color: #4b4b57; }
+.st-dstate { font: 700 14px 'Barlow Condensed', sans-serif; text-transform: uppercase; }
+.st-dstate.buyable { color: var(--crimson); }
+.st-foot { display: flex; align-items: center; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+.st-hint { font: 15px 'Patrick Hand SC', cursive; flex: 1; }
+.st-respec.off { opacity: 0.5; }
+.station-placeholder { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-1deg); z-index: 40; padding: 20px 26px; background: var(--paper); color: var(--ink); border: 4px solid var(--ink); box-shadow: 8px 8px 0 var(--ink); }
+
+/* [prog] a11y (wave 3 L1): subtitles, telegraph shapes and patterns, text size, reduced motion and flashes. */
+.subtitles { position: fixed; left: 50%; bottom: 3vh; transform: translateX(-50%); width: min(1100px, 92vw); z-index: 25; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.subtitles .sub-line { max-width: 100%; padding: 4px 12px; background: rgba(11, 11, 18, var(--sub-bg, 0.6)); color: #fff; font: var(--sub-size, 24px)/1.25 'Barlow Condensed', sans-serif; text-align: center; text-shadow: 0 0 3px #000, 1px 1px 0 #000; border-radius: 3px; }
+.subtitles .sub-name { color: var(--signal); font-weight: 700; letter-spacing: 0.5px; }
+.subtitles .sub-line.radio .sub-name { color: var(--detective); }
+.glyph path.pat { display: none; stroke: none; }
+.a11y-glyph-patterns .glyph path.pat { display: inline; }
+.glyph path.mark { fill: var(--ink); stroke: none; }
+.glyph[data-tell="ranged"] path.shape, .glyph[data-tell="ranged"] path.pat { fill-rule: evenodd; }
+.a11y-legend { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 10px 0; font: 18px 'Patrick Hand SC', cursive; }
+.a11y-tell { display: inline-flex; align-items: center; gap: 6px; }
+.glyph-demo { display: inline-block; width: 26px; height: 36px; }
+.glyph-demo svg { width: 100%; height: 100%; }
+.glyph-demo path.shape { stroke: var(--ink); stroke-width: 3; fill: var(--detective); }
+.glyph-demo[data-tell="unblockable"] path.shape, .glyph-demo[data-tell="ranged"] path.shape { fill: #ff4b3b; }
+.glyph-demo[data-tell="special"] path.shape { fill: var(--signal); }
+.glyph-demo path.pat { display: none; stroke: none; }
+.a11y-glyph-patterns .glyph-demo path.pat { display: inline; }
+.glyph-demo path.mark { fill: var(--ink); }
+/* Stealth awareness: searching is a dashed ring, hostile a spiked burst, not only a colour. */
+.st-aware[data-c="yellow"] .bg { stroke-dasharray: 4 3; }
+.st-aware[data-c="red"]::before { content: ''; position: absolute; inset: -7px; background: var(--ink); clip-path: polygon(50% 0, 61% 26%, 90% 10%, 74% 39%, 100% 50%, 74% 61%, 90% 90%, 61% 74%, 50% 100%, 39% 74%, 10% 90%, 26% 61%, 0 50%, 26% 39%, 10% 10%, 39% 26%); z-index: -1; }
+/* Text size (settings.access.textSize -> --a11y-text). */
+.hud-caption { font-size: calc(22px * var(--a11y-text, 1)); }
+.hud-hint { font-size: calc(22px * var(--a11y-text, 1)); }
+.hud-banner { font-size: calc(38px * var(--a11y-text, 1)); }
+.hud-card .card-title { font-size: calc(34px * var(--a11y-text, 1)); }
+.hud-card .card-text { font-size: calc(23px * var(--a11y-text, 1)); }
+.dlg-name { font-size: calc(15px * var(--a11y-text, 1)); }
+.dlg-text { font-size: calc(20px * var(--a11y-text, 1)); }
+.mbtn { font-size: calc(24px * var(--a11y-text, 1)); }
+.mbtn.primary { font-size: calc(28px * var(--a11y-text, 1)); }
+.mbtn.small { font-size: calc(18px * var(--a11y-text, 1)); }
+.help-row, .set-row { font-size: calc(19px * var(--a11y-text, 1)); }
+.tip, .note { font-size: calc(18px * var(--a11y-text, 1)); }
+.menu h3 { font-size: calc(26px * var(--a11y-text, 1)); }
+/* Reduced motion: no pops, slides or tilts on the comic overlays. */
+.a11y-reduced-motion .glyph, .a11y-reduced-motion .glyph.edge, .a11y-reduced-motion .st-aware svg, .a11y-reduced-motion .hud-caption.new { animation: none !important; }
+.a11y-reduced-motion .hud-banner.show { animation: objbannerCalm 2.3s linear forwards; }
+@keyframes objbannerCalm { 0% { opacity: 0; transform: translate(-50%, -50%); } 10%, 85% { opacity: 1; transform: translate(-50%, -50%); } 100% { opacity: 0; transform: translate(-50%, -50%); } }
+.a11y-reduced-motion .hud-card { transition: opacity 0.2s; }
+.a11y-reduced-motion .glyph.edge { transform: scale(0.85); }
+.a11y-reduced-motion .action-panel::before { transform: none !important; }
+.a11y-reduced-motion .impact-panel.out { transform: none; }
+/* Flash reduction: a softer damage vignette that fades more slowly. */
+.a11y-flash-reduce .hud-flash { background: radial-gradient(ellipse at center, transparent 55%, rgba(200, 30, 40, 0.35) 100%); }
+.a11y-flash-reduce .hud-flash.fade { animation-duration: 0.9s; }
+
+/* [prog] photo: photo mode upgrade (src/ui/photoMode.js). The overlay follows the photographer's
+   view rect in split screen (inline left/top/width/height); the panel scrolls. */
+.photo-overlay { inset: auto; left: 0; top: 0; }
+.menu.photo-panel { overflow-y: auto; width: 340px; }
+.photo-panel h2 .ph-who { font-size: 0.6em; opacity: 0.7; }
+.photo-panel .ph-sec { margin: 10px 0 2px; font: 700 13px 'Barlow Condensed', sans-serif; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.65; border-bottom: 2px solid var(--ink); }
+.photo-panel .ph-row.off { opacity: 0.4; }
+.photo-panel .ph-row input[type="range"] { width: 150px; border: 0; padding: 0; background: none; accent-color: var(--ink); }
+.photo-panel .ph-adds { flex-wrap: wrap; justify-content: flex-start; gap: 4px; }
+.photo-panel .ph-adds .mbtn { padding: 2px 8px; font-size: 15px; }
+.photo-panel .ph-status { min-height: 1.2em; margin: 6px 0 0; }
+.photo-panel .ph-help summary { cursor: pointer; font: 16px 'Patrick Hand SC', cursive; margin-top: 6px; }
+.menu.photo-gallery { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-0.4deg); width: min(760px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow-y: auto; padding: 16px 18px; z-index: 24; }
+.photo-gallery .ph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.photo-gallery .ph-cell { position: relative; border: 3px solid var(--ink); background: #fffdf5; }
+.photo-gallery .ph-cell img { display: block; width: 100%; height: auto; cursor: zoom-in; }
+.photo-gallery .ph-gdel { position: absolute; top: 4px; right: 4px; padding: 0 6px; font-size: 13px; }
+.photo-gallery .ph-big { display: none; width: 100%; margin-top: 10px; border: 3px solid var(--ink); }
+.photo-gallery .ph-big.on { display: block; }
+@media (max-width: 600px) { .menu.photo-panel { width: calc(100vw - 32px); right: 16px; } }
+
+/* [prog] gadgets (wave 3): the wheel's page strip and empty slots, the hacking minigame, the loadout station. */
+.gw-panel.empty, .gw-panel.empty.locked { background: transparent; border-style: dashed; box-shadow: none; }
+.gw-panel.empty .gw-lock, .gw-panel.empty .gw-icon { display: none; }
+.gw-page { display: none; margin-top: 6px; padding-top: 4px; border-top: 2px dashed var(--ink); font: 15px/1.15 'Patrick Hand SC', cursive; }
+.gw-page.on { display: block; }
+.hackgame { position: fixed; left: 50%; top: 62%; z-index: 7; width: min(420px, 86vw); transform: translate(-50%, -50%) rotate(-1deg); padding: 10px 16px 12px; background: #fffdf5; color: var(--ink);
+  border: 4px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); display: none; pointer-events: none; text-align: center; }
+.hackgame.show { display: block; }
+.hk-title { font: 26px/1 'Bangers', cursive; letter-spacing: 1.5px; color: var(--crimson); -webkit-text-stroke: 1px var(--ink); }
+.hk-label { font: 17px/1.2 'Patrick Hand SC', cursive; margin: 2px 0 8px; }
+.hk-bar { position: relative; height: 26px; background: #20242c; border: 3px solid var(--ink); }
+.hk-win { position: absolute; top: 0; bottom: 0; background: #7cff9a; box-shadow: inset 0 0 0 2px var(--ink); }
+.hk-needle { position: absolute; top: -6px; bottom: -6px; width: 4px; margin-left: -2px; background: var(--signal); box-shadow: 0 0 0 2px var(--ink); }
+.hk-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font: 700 18px 'Barlow Condensed', sans-serif; }
+.hk-key { padding: 0 8px; border: 2px solid var(--ink); border-bottom-width: 4px; border-radius: 4px; background: #fff8e6; }
+.hk-result { min-height: 1.1em; font: 22px/1 'Bangers', cursive; letter-spacing: 1px; }
+.hackgame.win { background: #e9ffe9; }
+.hackgame.lose { background: #ffe3e3; }
+.gloadout { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; background: rgba(11, 11, 18, 0.72); }
+.gloadout .menu { width: min(820px, 94vw); }
+.gl-pages { display: grid; gap: 14px; margin: 12px 0; }
+.gl-page h3 { margin: 0 0 6px; font: 22px 'Bangers', cursive; letter-spacing: 1px; }
+.gl-slots { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; }
+.gl-slot { position: relative; aspect-ratio: 1; padding: 4px; background: #fff8e6; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); cursor: pointer; }
+.gl-slot svg { width: 100%; height: 100%; }
+.gl-slot b { position: absolute; left: 3px; top: 1px; font: 14px 'Bangers', cursive; }
+.gl-slot.locked { background: #3a3a44; }
+.gl-slot.empty { background: transparent; border-style: dashed; box-shadow: none; }
+.gl-slot.fixed { cursor: not-allowed; }
+.gl-slot.held { background: var(--signal); transform: translate(-2px, -2px) rotate(-2deg); }
+.gl-slot:focus-visible { outline: 3px solid var(--detective); outline-offset: 2px; }
+.gl-info { min-height: 3.2em; font: 18px/1.2 'Patrick Hand SC', cursive; }
+.gl-actions { display: flex; gap: 10px; justify-content: flex-end; }
+@media (max-width: 560px) { .gl-slots { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.g-ico ellipse { fill: none; stroke: var(--ink); stroke-width: 3.2; }
+
+/* [prog] Autosave indicator, save slots and the new-game difficulty row */
+.autosave-mark { position: fixed; right: 18px; bottom: 14px; z-index: 30; display: flex; align-items: center; gap: 6px; padding: 3px 10px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font: 700 14px 'Barlow Condensed', sans-serif; letter-spacing: 1px; text-transform: uppercase; opacity: 0; transition: opacity 0.25s; pointer-events: none; }
+.autosave-mark.show { opacity: 1; }
+.autosave-mark svg { width: 28px; height: 14px; fill: var(--ink); animation: asFlap 0.5s ease-in-out infinite alternate; }
+@keyframes asFlap { from { transform: scaleY(1); } to { transform: scaleY(0.6); } }
+.title-slot { margin-top: 6px; font: 700 15px 'Barlow Condensed', sans-serif; letter-spacing: 1px; text-transform: uppercase; opacity: 0.8; }
+.slots-menu { width: min(860px, 96vw); }
+.slot-list { display: grid; gap: 10px; }
+.slot-card { padding: 8px 12px; background: #fffdf5; color: var(--ink); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+.slot-card.active { background: #fff4c2; }
+.slot-card.empty .slot-sum { opacity: 0.6; }
+.slot-card.guest { background: #e6ecf7; }
+.slot-head { display: flex; gap: 8px; align-items: baseline; font: 24px 'Bangers', cursive; letter-spacing: 1px; }
+.slot-badge { font: 700 12px 'Barlow Condensed', sans-serif; padding: 1px 6px; background: var(--ink); color: var(--paper); text-transform: uppercase; }
+.slot-badge.ng { background: var(--crimson); }
+.slot-sum { font: 18px 'Patrick Hand SC', cursive; }
+.slot-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.mbtn.danger { background: #f3c9c9; }
+.slot-panel { min-height: 24px; margin: 10px 0; font: 18px 'Patrick Hand SC', cursive; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.slot-panel.bad { color: var(--crimson); }
+.slot-code { width: 100%; font: 12px monospace; }
+.newgame-row { margin: 0 0 10px; }
+.diff-list, .mods { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.mods-label { font: 700 14px 'Barlow Condensed', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+.diff-card.on { background: var(--signal); outline: 3px solid var(--ink); }
+.diff-desc { font: 17px/1.2 'Patrick Hand SC', cursive; min-height: 2.4em; margin: 4px 0; }
+.no-hud .hud { display: none !important; }
+
+/* [onboard] HUD flow (src/ui/hudDirector.js): one easing for everything that arrives on the HUD
+   (opacity + a small rise/scale, 260 ms in, 200 ms out), the approach reveal under the caption,
+   compact chips, the goal hand-off and the marker burst. Transform and opacity only. */
+:root { --hud-ease-in: cubic-bezier(0.2, 0.8, 0.25, 1); --hud-ease-out: cubic-bezier(0.4, 0, 1, 1); }
+.hud-banner.show { animation: objbanner2 2.3s linear forwards; }
+@keyframes objbanner2 {
+  0% { opacity: 0; transform: translate(-50%, calc(-50% + 14px)) rotate(-1.5deg) scale(0.94); animation-timing-function: var(--hud-ease-in); }
+  11% { opacity: 1; transform: translate(-50%, -50%) rotate(-1.5deg) scale(1); }
+  80% { opacity: 1; transform: translate(-50%, -50%) rotate(-1.5deg) scale(1); animation-timing-function: var(--hud-ease-out); }
+  100% { opacity: 0; transform: translate(-30%, -230%) rotate(-1deg) scale(0.45); }
+}
+.hud-card { transition: opacity 0.26s var(--hud-ease-in), transform 0.26s var(--hud-ease-in); transform: translate(-50%, 12px) scale(0.97) rotate(-1.2deg); }
+.hud-card.show { transform: translate(-50%, 0) scale(1) rotate(-1.2deg); }
+.hud-hint { transition: opacity 0.26s var(--hud-ease-in), transform 0.26s var(--hud-ease-in); transform: translate(-50%, 12px) scale(0.97) rotate(0.6deg); }
+.hud-hint.show { transform: translate(-50%, 0) scale(1) rotate(0.6deg); }
+.radio, .side-toast { transition: opacity 0.26s var(--hud-ease-in), transform 0.26s var(--hud-ease-in); }
+.hud-caption.new { animation: newobj2 0.42s var(--hud-ease-in); }
+@keyframes newobj2 { 0% { opacity: 0.2; transform: translateY(-8px) rotate(-1deg) scale(1.04); } 100% { opacity: 1; transform: rotate(-1deg) scale(1); } }
+.hud-caption.done { animation: objdone 0.6s var(--hud-ease-in); }
+@keyframes objdone { 0% { box-shadow: 5px 5px 0 var(--ink); } 30% { transform: rotate(-1deg) scale(1.05); box-shadow: 5px 5px 0 var(--ink), 0 0 0 6px var(--paper); } 100% { transform: rotate(-1deg) scale(1); box-shadow: 5px 5px 0 var(--ink); } }
+/* The goal ahead: under the caption, faded in by distance (hud.setApproach writes opacity and
+   transform inline). */
+.hud-arrive { position: absolute; right: 34px; top: 96px; max-width: 300px; padding: 4px 10px 5px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font: calc(18px * var(--a11y-text, 1))/1.15 'Patrick Hand SC', cursive; opacity: 0; transform: translateY(10px) scale(0.96) rotate(-1deg); pointer-events: none; will-change: opacity, transform; }
+.hud-arrive .arrive-k { font: 15px 'Bangers', cursive; letter-spacing: 1.5px; color: var(--crimson); margin-right: 6px; }
+.hud-arrive.promote { transition: opacity 0.3s var(--hud-ease-out), transform 0.3s var(--hud-ease-out); opacity: 0 !important; transform: translateY(-40px) scale(1.05) rotate(-1deg) !important; }
+.hud-chips { position: absolute; right: 28px; top: 132px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; pointer-events: none; }
+.hud-chip { padding: 3px 10px 4px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font: calc(17px * var(--a11y-text, 1))/1.15 'Patrick Hand SC', cursive; opacity: 0; transform: translateX(14px); transition: opacity 0.26s var(--hud-ease-in), transform 0.26s var(--hud-ease-in); max-width: 300px; }
+.hud-chip.in { opacity: 1; transform: none; }
+.hud-chip.out { opacity: 0; transform: translateX(10px); transition-duration: 0.2s; transition-timing-function: var(--hud-ease-out); }
+.hud-chip.ability { background: var(--signal); }
+.hud-chip.ability::before { content: 'NEW  '; font-family: 'Bangers', cursive; color: var(--crimson); letter-spacing: 1px; }
+.hud-chip.practised::before { content: '\2713  '; font-weight: 700; }
+.hud-chip.checkpoint::before { content: '\25C6  '; }
+.hud.split .hud-arrive { right: 14px; top: 78px; max-width: min(260px, 44cqw); }
+.hud.split .hud-chips { right: 14px; top: 112px; }
+/* Compact HUD: the centre stays clear; cards come as chips, the caption is smaller. */
+.hud.compact .hud-caption { font-size: calc(18px * var(--a11y-text, 1)); max-width: 260px; padding: 6px 10px; }
+.hud.compact .hud-arrive { top: 78px; }
+.hud.compact .hud-chips { top: 108px; }
+/* The objective marker: fades out as she arrives instead of vanishing, and bursts when reached. */
+.waypoint { transition: opacity 0.2s linear; }
+.waypoint.burst svg { animation: wpburst 0.55s var(--hud-ease-out) forwards; }
+@keyframes wpburst { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.6); opacity: 0; } }
+.a11y-reduced-motion .hud-banner.show { animation: objbannerCalm 2.3s linear forwards; }
+.a11y-reduced-motion .hud-card, .a11y-reduced-motion .hud-hint, .a11y-reduced-motion .hud-chip { transition: opacity 0.2s linear; }
+.a11y-reduced-motion .hud-card, .a11y-reduced-motion .hud-card.show { transform: translate(-50%, 0) rotate(-1.2deg); }
+.a11y-reduced-motion .hud-hint, .a11y-reduced-motion .hud-hint.show { transform: translate(-50%, 0) rotate(0.6deg); }
+.a11y-reduced-motion .hud-chip { transform: none; }
+.a11y-reduced-motion .hud-caption.new, .a11y-reduced-motion .hud-caption.done, .a11y-reduced-motion .waypoint.burst svg { animation: none; }
+
+/* [onboard] A scripted lock (Night Eight's gauntlet): a standing note under the caption. */
+.hud-locks { position: absolute; right: 28px; top: 96px; max-width: 300px; padding: 4px 10px 5px; background: var(--ink); color: var(--paper); border: 2px solid var(--paper); box-shadow: 3px 3px 0 var(--crimson); font: calc(17px * var(--a11y-text, 1))/1.15 'Patrick Hand SC', cursive; opacity: 0; transform: translateY(-6px); transition: opacity 0.26s var(--hud-ease-in), transform 0.26s var(--hud-ease-in); pointer-events: none; }
+.hud-locks::before { content: 'LOCKED  '; font-family: 'Bangers', cursive; letter-spacing: 1px; color: var(--crimson); }
+.hud-locks.show { opacity: 1; transform: none; }
+.hud-locks.show ~ .hud-arrive, .hud-locks.show ~ .hud-chips { margin-top: 34px; }
+.hud.split .hud-locks { right: 14px; top: 78px; }
+.a11y-reduced-motion .hud-locks { transform: none; transition: opacity 0.2s linear; }
+
+/* [onboard] The column under the objective caption: a lock note, chips, the goal ahead, stacked
+   below however tall the caption is (hud.setObjective writes --cap-bottom once per goal). */
+.hud-under { position: absolute; right: 28px; top: var(--cap-bottom, 96px); display: flex; flex-direction: column; align-items: flex-end; gap: 6px; pointer-events: none; max-width: 320px; }
+.hud-under .hud-arrive, .hud-under .hud-chips, .hud-under .hud-locks { position: static; right: auto; top: auto; }
+.hud-under .hud-locks:not(.show) { display: none; }
+.hud.split .hud-under { right: 14px; max-width: min(280px, 46cqw); }
+.hud.compact .hud-under { top: var(--cap-bottom, 78px); }
+
+/* [polish] HUD layout grammar (src/ui/hudLayout.js): corner chips, side panels, one centre card,
+   prompts at the bottom centre, and the middle band left to the action. One type scale: titles
+   in Bangers 18 (side) / 28 (centre), body text in Patrick Hand 18 (side) / 20 (centre, prompts),
+   20 px from the screen edge for side panels. */
+/* The feed (left, under the minimap): stacked top-down by src/ui/sideHud.js. */
+.side-hud.feed .ch-panel, .side-hud.feed .radio, .side-hud.feed .side-toast { left: 20px; top: 236px; max-width: 330px; }
+.side-hud.feed .radio, .side-hud.feed .side-toast { padding: 6px 12px 8px; box-shadow: 4px 4px 0 var(--ink);
+  transition: opacity 0.26s var(--hud-ease-in), transform 0.26s var(--hud-ease-in), top 0.26s var(--hud-ease-in); }
+.side-hud.feed .radio-title, .side-hud.feed .toast-title { font-size: calc(18px * var(--a11y-text, 1)); letter-spacing: 1.2px; }
+.side-hud.feed .radio-text, .side-hud.feed .toast-text { font-size: calc(18px * var(--a11y-text, 1)); line-height: 1.2; }
+/* The dialogue (right, low): clear of the prompt below it and the job card above. */
+.dlg-panel { right: 20px; bottom: 168px; width: min(460px, 40vw); gap: 10px; }
+.dlg-portrait { width: 72px; height: 72px; }
+.dlg-body { padding: 8px 14px 10px; border-width: 4px; box-shadow: 5px 5px 0 var(--ink); }
+.dlg-text { font-size: calc(19px * var(--a11y-text, 1)); }
+/* The tutorial prompt (bottom centre): narrower and one size smaller, so it never reaches the
+   dialogue's column or the vitals corner. */
+.hud-hint { bottom: 36px; max-width: min(600px, 52vw); padding: 8px 16px; font-size: calc(20px * var(--a11y-text, 1)); }
+.hud-hint kbd { font-size: 0.82em; }
+/* The centre card: higher (clear of the road ahead and the objective marker on it), narrower
+   (clear of the minimap and the caption), under the boss bar when one is up. */
+.hud-card { top: 72px; width: min(440px, 38vw); padding: 10px 18px 12px; }
+.hud-card .card-title { font-size: calc(28px * var(--a11y-text, 1)); }
+.hud-card .card-text { font-size: calc(20px * var(--a11y-text, 1)); line-height: 1.25; }
+.hud:has(.hud-boss.show) .hud-card { top: 108px; }
+.hud-boss { width: min(500px, 44vw); top: 18px; }
+.hud-caption { font-size: calc(20px * var(--a11y-text, 1)); padding: 9px 13px; }
+/* The job card: in the column under the caption (owHud.js moves it there). */
+.hud-under .ow-panel { position: static; width: 270px; transform: none; top: auto; right: auto; margin-top: 2px; }
+.hud-under .ow-panel .ow-job { margin-bottom: 4px; }
+.hud-under .ow-panel .ow-list { text-align: right; }
+.ow-panel .ow-text { font-size: calc(16px * var(--a11y-text, 1)); }
+/* The car radio's dial: the dialogue's corner, which is free while she drives and tunes. */
+.radio-dial { top: auto; right: 40px; bottom: 150px; }
+/* Status (bottom right): the autosave chip stacks above the frame counter. */
+.autosave-mark { bottom: 46px; }
+/* Compact HUD: noticeably less. Smaller corners, no trophies line, no nearby list, no toasts,
+   no portraits, smaller prompts and sound words; centre cards come as chips (hudDirector). */
+.hud.compact .minimap { zoom: 0.78; }
+.hud.compact .wanted-readout { zoom: 0.8; left: calc((var(--mm-size, 176px) * 0.78 + 30px) / 0.8); }
+.hud.compact .hud-caption { font-size: calc(17px * var(--a11y-text, 1)); max-width: 250px; padding: 5px 10px; box-shadow: 3px 3px 0 var(--ink); }
+.hud.compact .hud-caption .trophies { display: none; }
+.hud.compact .hud-under .ow-list { display: none; }
+.hud.compact .hud-under .ow-panel { width: 230px; }
+.hud.compact .ow-panel .ow-text { display: none; }
+.hud.compact .hud-health { zoom: 0.78; }
+.hud.compact .ghud { zoom: 0.78; }
+.hud.compact .hud-hint { font-size: calc(17px * var(--a11y-text, 1)); max-width: min(460px, 44vw); padding: 5px 12px; bottom: 24px; }
+.hud.compact .hud-chip { font-size: calc(15px * var(--a11y-text, 1)); }
+.hud.compact .sfx { font-size: calc(44px * var(--a11y-text, 1)); -webkit-text-stroke-width: 2px; text-shadow: 3px 3px 0 var(--ink); }
+.hud.compact .sfx.big { font-size: calc(68px * var(--a11y-text, 1)); -webkit-text-stroke-width: 3px; text-shadow: 5px 5px 0 var(--ink); }
+body.hud-compact .side-hud .side-toast { display: none; }
+body.hud-compact .side-hud.feed .ch-panel, body.hud-compact .side-hud.feed .radio { max-width: 260px; }
+body.hud-compact .dlg-panel { width: min(360px, 34vw); bottom: 120px; }
+body.hud-compact .dlg-portrait { display: none; }
+body.hud-compact .dlg-text { font-size: calc(17px * var(--a11y-text, 1)); }
+body.hud-compact .autosave-mark { transform: scale(0.85); transform-origin: right bottom; }
+/* Split screen: each view keeps the same grammar at its own scale (cards are chips there). */
+.hud.split .hud-hint { font-size: calc(16px * var(--a11y-text, 1)); max-width: min(420px, 70cqw); bottom: 118px; padding: 5px 12px; }
+.hud.split .hud-under .ow-panel { width: min(240px, 40cqw); }
+.hud.split .hud-under .ow-list { display: none; }
+.coop-split .side-hud.feed .radio, .coop-split .side-hud.feed .side-toast, .coop-split .side-hud.feed .ch-panel { max-width: 280px; }
+.coop-split .side-hud.feed .radio-text, .coop-split .side-hud.feed .toast-text { font-size: calc(16px * var(--a11y-text, 1)); }
+.coop-split .dlg-portrait { width: 56px; height: 56px; }
+.coop-split .dlg-text { font-size: calc(17px * var(--a11y-text, 1)); }
+/* [verify] Accessibility for everything added after the first a11y pass: one place, keyed on the
+   body classes applyAccessibility() sets (src/ui/accessibility.js). `body.` lifts these above the
+   styles modules inject later into <head> (wanted readout, radio dial, Bruce screens, travel
+   panel). Elements removed on animationend (comic sound words) get a calm fade, never `none`.
+   tests/unit/a11yCssCoverage.test.js fails if a new CSS animation is not covered here. */
+@keyframes a11yFadeIn { from { opacity: 0; } }
+@keyframes a11ySfxCalm { 0% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--r)); } 15%, 75% { opacity: 1; transform: translate(-50%, -50%) rotate(var(--r)); } 100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--r)); } }
+@keyframes a11yChCountCalm { 0% { opacity: 0; transform: translate(-50%, -50%) rotate(-4deg); } 15%, 80% { opacity: 1; transform: translate(-50%, -50%) rotate(-4deg); } 100% { opacity: 0; transform: translate(-50%, -50%) rotate(-4deg); } }
+body.a11y-reduced-motion .sfx { animation-name: a11ySfxCalm; animation-timing-function: linear; }
+body.a11y-reduced-motion .ch-count.pop { animation-name: a11yChCountCalm; animation-timing-function: linear; }
+body.a11y-reduced-motion .panel.in, body.a11y-reduced-motion .credits-menu.final, body.a11y-reduced-motion .bw-ticker div { animation-name: a11yFadeIn; animation-timing-function: linear; }
+body.a11y-reduced-motion .hud-combo.pop .n, body.a11y-reduced-motion .chain-ico.lit, body.a11y-reduced-motion .gh-panel.pop, body.a11y-reduced-motion .gh-swarm.lit,
+body.a11y-reduced-motion .st-aware[data-c="red"] svg, body.a11y-reduced-motion .waypoint.pulse svg, body.a11y-reduced-motion .autosave-mark svg,
+body.a11y-reduced-motion .wanted-readout.pulse svg, body.a11y-reduced-motion .travel-panel .tp-strip { animation: none !important; }
+body.a11y-reduced-motion .wt-card.buyable { animation: none; box-shadow: 3px 3px 0 var(--ink), 0 0 0 4px var(--detective); }
+body.a11y-reduced-motion .hud-speed, body.a11y-reduced-motion .hud-speed.on { display: none; }
+body.a11y-reduced-motion .hud-arrive.promote { transform: none !important; }
+body.a11y-reduced-motion .radio, body.a11y-reduced-motion .side-toast { transition: opacity 0.2s linear; }
+body.a11y-reduced-motion .wanted-readout, body.a11y-reduced-motion .wanted-readout.show { transform: rotate(-2deg); transition: opacity 0.2s linear; }
+body.a11y-reduced-motion .radio-dial, body.a11y-reduced-motion .radio-dial.show { transform: none; transition: opacity 0.2s linear; }
+/* Flash reduction: no colour flash on the double-life meters, a softer siren edge. */
+body.a11y-flash-reduce .bw-meters .flash { animation: none; outline: 2px solid #f2d24b; }
+body.a11y-flash-reduce .wanted-edge { box-shadow: inset 0 0 60px 10px rgba(255, 40, 60, 0.35); }
+body.a11y-flash-reduce .wanted-edge.blue { box-shadow: inset 0 0 60px 10px rgba(255, 40, 60, 0.35); }
+/* Text size for the HUD text the first pass left fixed (sound words stay art-sized). */
+body .hud-arrive .arrive-k { font-size: calc(15px * var(--a11y-text, 1)); }
+body kbd { font-size: calc(18px * var(--a11y-text, 1)); }
+body .ch-name { font-size: calc(22px * var(--a11y-text, 1)); }
+body .ch-sub { font-size: calc(18px * var(--a11y-text, 1)); }
+body .radio-title, body .toast-title { font-size: calc(20px * var(--a11y-text, 1)); }
+body .radio-text, body .toast-text { font-size: calc(21px * var(--a11y-text, 1)); }
+body .ch-hint { font-size: calc(22px * var(--a11y-text, 1)); }
+body .boss-name { font-size: calc(30px * var(--a11y-text, 1)); }
+body .gh-name { font-size: calc(16px * var(--a11y-text, 1)); }
+body .photo-panel .ph-sec { font-size: calc(13px * var(--a11y-text, 1)); }
+body .photo-panel .ph-adds .mbtn { font-size: calc(15px * var(--a11y-text, 1)); }
+body .photo-panel .ph-help summary { font-size: calc(16px * var(--a11y-text, 1)); }
+
+/* [light] Brightness calibration tile (src/ui/brightnessControl.js): two bats on black, tinted by
+   the same curve the game's final pass uses. */
+.bright-calib { display: flex; align-items: center; gap: 14px; padding: 6px 0 8px; border-bottom: 2px dashed rgba(11, 11, 18, 0.2); }
+.bright-calib .note { margin: 0; flex: 1; }
+.bright-tile { display: flex; gap: 10px; padding: 12px 14px; background: #000; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); flex: none; }
+.bright-tile svg { width: 66px; height: 43px; display: block; }

@@ -22,4 +22,31 @@ export default {
 
   // Shown on the closing comic page, "From Commissioner Gordon", once the Progress page reaches 100%.
   completionMessage: "Every trophy, every medal, every street crime in Gotham. You did all of it. Gordon would never say it over the radio, so he wrote it down instead: thank you.",
+
+  // [story2] The whole campaign's ending (src/story/endgame.js): the roll after Night Nine.
+  campaignTitle: 'The Long Night Is Over',
+  creditsSeconds: 46,
+  // One line per ending (src/story/lifeSteps.js endingFor): who is still standing with Bruce.
+  endingMessages: {
+    family: 'Nine nights. Every rogue in a cell, and every chair at the Manor table taken. Somebody even made him eat.',
+    partners: 'Nine nights. The city is safe, the signal is on for no reason at all, and the man on the roof is not alone up there.',
+    exposed: 'Nine nights. One detective worked it out, and decided Gotham needed him more than she needed the truth. For now.',
+    alone: 'Nine nights. The city is safe. The house is quiet. The signal is on, and he goes, because he always will.',
+  },
+  // The free-roam objective after the ending (the city state follows it).
+  endingFreeRoam: {
+    family: 'Gotham is quiet and the Manor is full. Free roam: replay any night from the Batcomputer.',
+    partners: 'The signal is lit for no reason. Gordon is waiting on the roof. Free roam: replay any night from the Batcomputer.',
+    exposed: 'Detective Ostrow left her card on the Batcomputer. Free roam: replay any night from the Batcomputer.',
+    alone: 'The cave is very quiet. The city still needs you. Free roam: replay any night from the Batcomputer.',
+  },
+  hundredHook: 'Every optional objective, every night. On the Batcomputer, a new file has appeared. It is a crossword. Seven across is "BAT".',
+  ngPlusText: 'New Game Plus is ready: start again from the title screen with everything you have earned.',
+  afterCredits: 'In a cell on Arkham Island, somebody is laughing. In a cell on Blackgate, somebody is writing a very long letter to his lawyers.',
+  campaignCredits: [
+    { title: 'The campaign', lines: ['Nine nights in five acts: the Long Night, the Gilded City, the Underside, the Cold Front and Arkham.'] },
+    { title: 'The rogues', lines: ['The Joker and Harley, the Penguin, the Riddler, the Scarecrow, Mr. Freeze, Poison Ivy, Firefly, Black Mask.', 'Each one a different test: gadgets, detective work, stealth, the environment, holding back, the Batmobile, mastery, and a partner.'] },
+    { title: 'The double life', lines: ['Bruce Wayne kept or missed galas, a board vote, a clinic, a ribbon, a birthday and a date. The city noticed which.'] },
+    { title: 'With thanks', lines: ['Alfred, for the soup. Gordon, for the roof. Oracle, for the voice in the ear. Dick, for showing up.'] },
+  ],
 };

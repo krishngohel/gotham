@@ -1,0 +1,38 @@
+
+Running 3 tests using 1 worker
+
+  ok 1 tests\e2e\gadgets.spec.js:20:1 › the gadget wheel opens on Tab, 3 picks gel, and no chain fires (4.9s)
+  ok 2 tests\e2e\gadgets.spec.js:39:1 › explosive gel opens the Monarch booth and the trophy inside (5.7s)
+  x  3 tests\e2e\gadgets.spec.js:67:1 › a WayneTech purchase shows on the page and survives a reload (7.6s)
+
+
+  1) tests\e2e\gadgets.spec.js:67:1 › a WayneTech purchase shows on the page and survives a reload ─
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.hud-card.show')
+    Expected substring: "LEVEL 2"
+    Received string:    "WAYNETECH DELIVERY!Lucius sent new toys: Explosive Gel and Batclaw. Hold Tab for the gadget wheel."
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('.hud-card.show') with timeout 5000ms
+      - waiting for locator('.hud-card.show')
+        6 × locator resolved to <div class="hud-card show">…</div>
+          - unexpected value "WAYNETECH DELIVERY!Lucius sent new toys: Explosive Gel and Batclaw. Hold Tab for the gadget wheel."
+
+
+      69 |   await boot(page, 'at=toNeon&god=1&new=1');
+      70 |   await page.evaluate(() => window.__game.wayne.award(1000, 'test'));
+    > 71 |   await expect(page.locator('.hud-card.show')).toContainText('LEVEL 2');
+         |                                                ^
+      72 |   await page.keyboard.press('Escape');
+      73 |   await page.locator('.pause-menu .mbtn', { hasText: 'WayneTech' }).click();
+      74 |   await expect(page.locator('.wt-menu')).toBeVisible();
+        at ~\Documents\Projects\gotham\tests\e2e\gadgets.spec.js:71:48
+
+    Error Context: test-results\gadgets-a-WayneTech-purcha-ff364--page-and-survives-a-reload\error-context.md
+
+  1 failed
+    tests\e2e\gadgets.spec.js:67:1 › a WayneTech purchase shows on the page and survives a reload ──
+  2 passed (19.0s)

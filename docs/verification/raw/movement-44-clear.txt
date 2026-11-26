@@ -1,0 +1,11 @@
+
+Running 3 tests using 1 worker
+
+grapple chain: 493 m, 4 lines, 4 perfect boosts, 0 street touchdowns
+  ok 1 tests\e2e\movement.spec.js:44:1 › grapple-boost chaining crosses the Loop without touching the street (58.6s)
+grapple chain: 492 m, 4 lines, 4 perfect boosts, 0 street touchdowns
+  ok 2 tests\e2e\movement.spec.js:44:1 › grapple-boost chaining crosses the Loop without touching the street (58.0s)
+grapple chain: 493 m, 4 lines, 4 perfect boosts, 0 street touchdowns
+  ok 3 tests\e2e\movement.spec.js:44:1 › grapple-boost chaining crosses the Loop without touching the street (58.0s)
+
+  3 passed (3.0m)

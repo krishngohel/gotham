@@ -2,9 +2,18 @@
 // six angles each, on a clear street, with the HUD and Batman hidden, into <outDir>/<model>-<view>.png
 // plus one contact sheet per model (<model>.png, if Python with Pillow is around to tile them).
 // usage: node scripts/model-shots.mjs <url> <outDir> [model ...]   (muted)
+//
+// Characters: node scripts/model-shots.mjs --roster <url> <outDir> [id|group ...] [--q low]
+// photographs every entry of the character catalog (src/heroes/models/catalog.js) through
+// tools/roster.html under the game's toon + ink pipeline: front, three-quarter, side and back
+// close up on the idle, a strike, a walk seen from the follow camera at 8 m and a goon's-eye
+// 20 m view at night, then 3/4, back, walk and face again under the noon light, tiled into one contact sheet per character (<id>.png, via sharp) plus stats.json
+// (draw calls, triangles and bones per character).
 import { chromium } from 'playwright-core';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+
+if (process.argv[2] === '--roster') { await rosterShots(process.argv.slice(3)); process.exit(0); }
 
 const [url, out, ...only] = process.argv.slice(2);
 mkdirSync(out, { recursive: true });
@@ -22,6 +31,11 @@ const MODELS = {
   jokerVan: { span: 0.9, build: async () => (await import('/src/vehicles/vehicleModels.js')).createJokerVan().group },
   droneTank: { span: 0.8, build: async () => (await import('/src/vehicles/vehicleModels.js')).createDroneTank().group },
   streetCar: { span: 0.8, build: async () => (await import('/src/vehicles/vehicleModels.js')).createStreetCar(0x2f3f5a, 'sedan').group },
+  // [polish2] the hero bikes and the deco sedan (fenders)
+  wingbike: { span: 0.42, build: async () => (await import('/src/vehicles/models/heroBikes.js')).createWingBike().group },
+  batcycle: { span: 0.46, build: async () => (await import('/src/vehicles/models/heroBikes.js')).createBatcycle().group },
+  decoSedan: { span: 0.8, build: async () => (await import('/src/vehicles/vehicleModels.js')).createStreetVehicle('sedan_deco', { color: 0x6a1f2a }).group },
+  taxi: { span: 0.8, build: async () => (await import('/src/vehicles/vehicleModels.js')).createStreetVehicle('taxi', {}).group },
 };
 await p.evaluate(() => {
   const G = window.__game;
@@ -76,3 +90,59 @@ m.resize((1800,750)).save(sys.argv[1])`, `${out}/${name}.png`, ...files]);
   console.log(name, 'done');
 }
 await b.close();
+
+async function rosterShots(argv) {
+  const opt = (name, dflt) => { const i = argv.indexOf(name); if (i < 0) return dflt; const v = argv[i + 1]; argv.splice(i, 2); return v; };
+  const q = opt('--q', 'high');
+  const W = Number(opt('--w', 420)), H = Number(opt('--h', 560));
+  const [url, outDir, ...only] = argv;
+  mkdirSync(outDir, { recursive: true });
+  const sharp = (await import('sharp')).default;
+  const browser = await chromium.launch({ args: ['--mute-audio', '--ignore-gpu-blocklist', '--use-angle=d3d11'] });
+  const page = await browser.newPage({ viewport: { width: W, height: H } });
+  page.on('pageerror', (e) => console.log('page error:', e.message));
+  await page.goto(`${url.replace(/\/$/, '')}/tools/roster.html?ui=0&freeze=1&pr=1&q=${q}`);
+  await page.waitForFunction(() => window.__roster?.ready, null, { timeout: 120000 });
+  const catalog = await page.evaluate(() => window.__roster.catalog);
+  const pick = catalog.filter((e) => !only.length || only.includes(e.id) || only.includes(e.group));
+  // [view, clip, clip time, label]
+  const SHOTS = [
+    ['front', 'Idle_Loop', 0.4, 'front'], ['quarter', 'Idle_Loop', 0.4, '3/4'], ['side', 'Idle_Loop', 0.4, 'side'], ['back', 'Idle_Loop', 0.4, 'back'],
+    ['quarter', 'Punch_Cross', 0.35, 'strike'], ['game8m', 'Walk_Loop', 0.3, 'walk @8m'], ['far20m', 'Idle_Loop', 0.4, '@20m'], ['face', 'Idle_Loop', 0.4, 'face'],
+    // The game has days now: the same character under the noon look (src/env/look.js).
+    ['quarter', 'Idle_Loop', 0.4, '3/4 noon', 12.5], ['back', 'Idle_Loop', 0.4, 'back noon', 12.5], ['game8m', 'Walk_Loop', 0.3, 'walk @8m noon', 12.5], ['face', 'Idle_Loop', 0.4, 'face noon', 12.5],
+  ];
+  const stats = {};
+  // One character's tiles. A dev server reloads the page when a source file changes under it
+  // (another edit landing mid-run): then wait for the roster again and redo that character.
+  async function shoot(e) {
+    stats[e.id] = await page.evaluate((id) => window.__roster.show(id), e.id);
+    const tiles = [];
+    for (const [view, clip, t, label, hour = 23] of SHOTS) {
+      await page.evaluate(([view, clip, t, hour]) => { const r = window.__roster; r.setHour?.(hour); r.pose(clip, t); r.setView(view); r.render(); r.render(); }, [view, clip, t, hour]);
+      const png = await page.screenshot({ type: 'png' });
+      const tag = Buffer.from(`<svg width="${W}" height="26"><rect width="100%" height="100%" fill="#0b0b12"/><text x="8" y="18" font-family="monospace" font-size="15" fill="#efe6cf">${e.name.replace(/&/g, '&amp;')} - ${label}</text></svg>`);
+      tiles.push(await sharp(png).composite([{ input: tag, top: 0, left: 0 }]).png().toBuffer());
+    }
+    return tiles;
+  }
+  for (const e of pick) {
+    let tiles;
+    for (let attempt = 0; ; attempt++) {
+      try { tiles = await shoot(e); break; } catch (err) {
+        if (attempt >= 2) throw err;
+        console.log(`${e.id}: retrying after ${String(err.message).split('\n')[0]}`);
+        await page.waitForFunction(() => window.__roster?.ready, null, { timeout: 120000 });
+      }
+    }
+    const cols = 4, rows = Math.ceil(tiles.length / cols);
+    const sheet = sharp({ create: { width: W * cols, height: H * rows, channels: 3, background: '#0b0b12' } })
+      .composite(tiles.map((input, i) => ({ input, left: (i % cols) * W, top: Math.floor(i / cols) * H })));
+    // Sheets are for eyes, not pixels: half size JPEG keeps a full roster under a few MB.
+    await sharp(await sheet.png().toBuffer()).resize(Math.round(W * cols * 0.5)).jpeg({ quality: 80 }).toFile(`${outDir}/${e.id}.jpg`);
+    const s = stats[e.id];
+    console.log(`${e.id.padEnd(22)} calls ${String(s.calls).padStart(3)} (colour ${s.colorCalls}, normal ${s.normalCalls})  tris ${s.triangles}`);
+  }
+  writeFileSync(`${outDir}/stats.json`, JSON.stringify(stats, null, 1));
+  await browser.close();
+}

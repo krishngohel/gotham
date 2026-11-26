@@ -1,0 +1,81 @@
+frames sampled 10550 (skipped: staged 165, teleports 29)
+scenario | who            >0.25  >0.5  >1 m
+extra | hero                 0     0    0
+move | enemy                12     4    4
+move | hero                 11     0    0
+seeded | enemy             129    52   15
+seeded | hero              147    22    3
+trav | hero                 48    21    2
+TOTAL                      347    99   24
+foot slide (planted feet moving in the world): extra | hero 0.62 m / 187 f (3.3 mm/f); move | enemy 27.38 m / 1082 f (25.3 mm/f); move | hero 12.78 m / 2495 f (5.1 mm/f); seeded | enemy 49.71 m / 23690 f (2.1 mm/f); seeded | hero 24.97 m / 1059 f (23.6 mm/f); trav | hero 7.70 m / 2105 f (3.7 mm/f)
+3.65 m  x17  seeded: wave 2 | grunt | KD_Over > GetUp_Back  [hand_l hand_r foot_l foot_r Head pelvis] f371,372,373 getup/getup@2.367 getup/getup@2.413
+1.49 m  x10  seeded: wave 2 | grunt | GetUp_Back > Goon_Haymaker  [hand_l hand_r foot_l foot_r] f474,475,476 windup/strike@0 windup/strike@0.005
+1.40 m  x2   move: side roundhouse L | grunt | Air_Flail > KD_Over  [foot_l] f55,56 down/knockdown@0.583 down/knockdown@0.6
+1.32 m  x2   move: kick x7 | grunt | Jog_Fwd_Loop > Air_Flail  [foot_l] f348,349 hit/air@0.059 hit/air@0.068
+1.21 m  x10  seeded: wave 3 | ninja | KD_Launch > GetUp_KipUp  [hand_l hand_r foot_l foot_r Head] f757,758 getup/getup@0.575 getup/getup@0.6
+1.18 m  x8   seeded: wave 2 | grunt | Air_Flail > KD_FromFront  [hand_l hand_r foot_l Head pelvis foot_r] f49,62,63,64 ko/knockdown@0.35 ko/knockdown@0.461
+1.16 m  x11  seeded: wave 1 | hero | Punch_BodyHook > Cape_Swirl  [hand_l foot_r hand_r foot_l Head] f505,506,507 ground/strike@0.78 ground/strike@0.812
+1.14 m  x10  trav: fall + glide + dive + land | hero | A_TPose  [hand_l hand_r foot_l foot_r Head] f220,221 air/idle@0.667 glide/idle@0.683
+0.92 m  x7   trav: ladder | hero | Ladder_Hold > ClimbUp_1m  [hand_l hand_r foot_l foot_r] f401,402 air/external@0.02 air/external@0.04
+0.86 m  x4   seeded: wave 2 | grunt | Goon_Haymaker > React_Light_Front2  [hand_l hand_r foot_l foot_r] f487 hit/react@0
+0.85 m  x4   seeded: wave 3 | grunt | React_Light_Front2 > Air_Flail  [hand_l hand_r foot_r Head] f56 hit/air@0
+0.84 m  x4   seeded: wave 2 | grunt | React_Light_Front2 > React_Light_Front  [hand_l hand_r foot_r Head] f13 hit/react@0
+0.84 m  x4   seeded: wave 2 | grunt | React_Light_Front2 > KD_FromFront  [hand_l hand_r foot_r Head] f506 ko/knockdown@0.35
+0.80 m  x4   seeded: wave 3 | grunt | React_Light_Front2 > Stun_Dizzy  [hand_l hand_r foot_r Head] f12 stunned/react@0
+0.74 m  x3   seeded: wave 1 | hero | Finisher_ElbowUp > NinjaJump_Start  [hand_r] f267,268,269 ground/dodge@0.07 ground/dodge@0.093
+0.72 m  x2   seeded: wave 3 | grunt | Stun_Dizzy > React_Light_Front2  [hand_l hand_r] f36 hit/react@0
+0.69 m  x3   seeded: wave 2 | grunt | Idle_No_Loop > React_Light_Front2  [hand_l hand_r foot_r] f1107 hit/react@0
+0.69 m  x3   seeded: wave 1 | grunt | Idle_No_Loop > React_Light_Front2  [hand_l hand_r foot_r] f879 hit/react@0
+0.68 m  x7   seeded: wave 3 | hero | Travel_FlyKick > Sprint_Loop  [foot_l hand_l hand_r Head] f256,1111,1123,1124 ground/loco@0.026 ground/loco@0.153
+0.67 m  x9   seeded: wave 2 | grunt | React_Light_Front > Air_Flail  [hand_l hand_r foot_l foot_r Head] f31,43,44,45 hit/air@0 hit/air@0.068
+0.66 m  x2   seeded: wave 3 | ninja | Sword_Combo2H > Block_Outward  [hand_l hand_r] f305 riposte/react@0.1
+0.64 m  x9   seeded: wave 2 | hero | Cape_Swirl > Kick_Low  [hand_l hand_r] f970,971,972,973 ground/strike@0.242 ground/strike@0.263
+0.61 m  x6   trav: ladder | hero | Jog_Fwd_Loop > Ladder_Hold  [hand_l hand_r foot_r] f17,18 air/external@0.167 air/external@0.183
+0.59 m  x12  seeded: wave 1 | hero | Kick_Front > Sprint_Loop  [hand_l hand_r foot_r Head] f193,194,195,196 ground/loco@0.052 ground/loco@0.078
+0.58 m  x7   trav: turn on the spot | hero | Idle_Loop > Jog_Fwd_Loop  [hand_r foot_l foot_r hand_l] f48,49 ground/idle@0.017 ground/idle@0.033
+0.57 m  x1   seeded: wave 3 | knife | Air_Flail > KD_Over  [foot_l] f268 down/knockdown@0.664
+0.56 m  x5   seeded: wave 3 | hero | NinjaJump_Start > Cape_Swirl  [hand_r] f139,140,141,142 ground/strike@0.748 ground/strike@0.78
+0.56 m  x3   seeded: wave 3 | hero | Travel_SlideTackle > Sprint_Loop  [hand_l foot_r Head] f1501 ground/loco@0.026
+0.55 m  x7   trav: walk turn 180 | hero | Idle_Loop > Jog_Fwd_Loop  [hand_r foot_l foot_r hand_l] f46,47 ground/idle@0.017 ground/idle@0.033
+0.54 m  x3   seeded: wave 2 | medic | Medic_Revive > Goon_Haymaker  [hand_l hand_r foot_r] f371 windup/strike@0
+0.51 m  x6   seeded: wave 2 | hero | Kick_Low > Hammer_Down  [hand_l hand_r foot_r] f992,993,994,995 ground/strike@0.085 ground/strike@0.113
+0.50 m  x4   trav: turn on the spot | hero | Jog_Fwd_Loop  [hand_l hand_r foot_r] f43,44 ground/idle@0.717 ground/idle@0.733
+0.50 m  x2   move: backflip kick | hero | Jump_Start > Kick_BackFlip  [hand_l hand_r] f32 air/strike@0.632
+0.49 m  x15  seeded: wave 3 | hero | Cape_Swirl > Punch_Jab  [hand_l foot_l foot_r] f855,856,857,858 ground/strike@0.222 ground/strike@0.243
+0.48 m  x8   seeded: wave 3 | grunt | Goon_Strafe_L  [hand_l hand_r foot_l foot_r] f136,137 engage/idle@0.212 engage/idle@0.226
+0.47 m  x4   trav: walk turn 180 | hero | Jog_Fwd_Loop  [hand_l hand_r foot_r] f41,42 ground/idle@0.683 ground/idle@0.7
+0.47 m  x2   seeded: wave 1 | hero | Punch_LeadUppercut > Sprint_Loop  [hand_l foot_r] f118 ground/loco@0.026
+0.45 m  x6   seeded: wave 3 | grunt | Walk_Loop  [hand_l hand_r foot_r] f157,158 engage/idle@0.222 engage/idle@0.228
+0.45 m  x4   seeded: wave 3 | ninja | Goon_Strafe_R > React_Heavy_Front  [hand_l] f345,346,347,348 hit/react@0.057 hit/react@0.075
+0.44 m  x4   seeded: wave 3 | heavy | Grab_Slam  [foot_l foot_r] f95,96 windup/strike@0.098 windup/strike@0.101
+0.44 m  x2   move: travel far | grunt | Walk_Loop > Air_Flail  [foot_r] f61,62 hit/air@0.034 hit/air@0.042
+0.41 m  x5   seeded: wave 3 | ninja | Block_Outward > Ninja_Cartwheel  [hand_l hand_r] f306,307,308,309 evade/dodge@0.028 evade/dodge@0.057
+0.41 m  x28  seeded: wave 3 | hero | Travel_SlideTackle  [hand_r] f1494,1495,1496,1497 ground/strike@0.327 ground/strike@0.347
+0.40 m  x3   move: running uppercut | hero | Idle_Loop > Punch_RunUppercut  [hand_l] f20,21,22 ground/strike@0.685 ground/strike@0.707
+0.40 m  x6   seeded: wave 3 | heavy | Stun_Dizzy > Brute_Roar  [hand_l hand_r foot_r] f379,380 windup/action@0 windup/action@0.022
+0.38 m  x4   move: spin back kick | hero | Jog_Fwd_Loop > Kick_SpinBack  [hand_l] f20,21,22,23 ground/strike@0.463 ground/strike@0.483
+0.37 m  x4   seeded: wave 2 | hero | Punch_Hook_L > Sprint_Loop  [hand_l hand_r foot_l foot_r] f588 ground/loco@0.026
+0.36 m  x5   seeded: wave 3 | hero | Kick_Low > Sprint_Loop  [foot_r] f2351,2352,2353,2354 ground/loco@0.019 ground/loco@0.038
+0.36 m  x2   seeded: wave 1 | brute | Air_Flail > KD_Over  [foot_r] f558,559 down/knockdown@0.567 down/knockdown@0.583
+0.35 m  x7   seeded: wave 3 | hero | Kick_Round > Travel_FlyKick  [hand_l foot_r] f1297,1298,1299,1300 ground/strike@0.193 ground/strike@0.213
+0.35 m  x6   seeded: wave 3 | hero | Travel_FlyKick > Travel_SlideTackle  [foot_r hand_r] f378,379,380,1453 ground/strike@0.327 ground/strike@0.347
+0.34 m  x1   seeded: wave 3 | hero | Cape_Swirl > Punch_Uppercut  [hand_l] f156 ground/counter@0.249
+0.33 m  x1   seeded: wave 3 | grunt | Air_Flail > KD_Over  [foot_r] f89 ko/knockdown@0.58
+0.32 m  x6   seeded: wave 3 | hero | Sprint_Loop > Kick_Low  [hand_l hand_r] f2335,2336,2337,2338 ground/strike@0.285 ground/strike@0.307
+0.31 m  x2   move: hurricane | grunt | Jog_Fwd_Loop > Goon_Haymaker  [foot_r] f54,55 windup/strike@0 windup/strike@0.006
+0.30 m  x2   seeded: wave 1 | brute | Sprint_Loop > Brute_Walk  [hand_r foot_r] f330 recover/strike@0.017
+0.30 m  x2   seeded: wave 2 | hero | React_Heavy_Front > Sprint_Loop  [hand_l hand_r] f274 ground/loco@0.026
+0.30 m  x1   trav: crouch walk | hero | Hang_Idle > ClimbUp_1m  [hand_l] f5 air/idle@0.325
+0.30 m  x3   seeded: wave 2 | hero | Idle_Loop > Sprint_Loop  [hand_l hand_r foot_r] f372 ground/loco@0.026
+0.29 m  x2   seeded: wave 3 | hero | Travel_SlideTackle > Kick_SideRound  [hand_l] f391,403 ground/counter@0.299 ground/counter@0.441
+0.29 m  x1   trav: dodge roll | hero | Roll  [hand_l] f4 roll/idle@0.09
+0.29 m  x3   seeded: wave 3 | hero | Travel_FlyKick > NinjaJump_Start  [foot_l] f119,120,121 ground/dodge@0.07 ground/dodge@0.093
+0.28 m  x1   move: side roundhouse R | grunt | Air_Flail > KD_Over  [hand_l] f59 down/knockdown@0.65
+0.28 m  x2   seeded: wave 2 | hero | Elbow_Strike > NinjaJump_Start  [hand_r] f627,628 ground/dodge@0.07 ground/dodge@0.093
+0.27 m  x2   seeded: wave 1 | grunt | Walk_Loop > Jog_Fwd_Loop  [hand_l foot_l] f556,557 engage/external@0.017 engage/external@0.033
+0.27 m  x1   trav: short drop | hero | Fall_Loop > Roll  [hand_l] f40 roll/idle@0.09
+0.26 m  x1   seeded: wave 3 | knife | Jog_Fwd_Loop > Knife_Lunge  [foot_l] f134 windup/strike@0.2
+0.26 m  x1   move: kick x7 | hero | Kick_Low  [hand_r] f219 ground/strike@0.307
+0.26 m  x1   move: leaping smash | hero | Jump_Start > Smash_Leap  [hand_r] f28 air/strike@0.886
+0.26 m  x1   seeded: wave 1 | hero | Hammer_Down > Travel_FlyKick  [hand_r] f442 ground/strike@0.253
+no page errors

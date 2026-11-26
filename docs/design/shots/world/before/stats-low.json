@@ -1,0 +1,375 @@
+{
+ "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "q": "low",
+ "shots": {
+  "gcpd-roof": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 89,
+     "tris": 214615
+    },
+    {
+     "target": "rt",
+     "calls": 65,
+     "tris": 187335
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 155,
+   "tris": 401952,
+   "medianMs": 1,
+   "p95Ms": 1.4
+  },
+  "gcpd-street": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 120,
+     "tris": 243423
+    },
+    {
+     "target": "rt",
+     "calls": 79,
+     "tris": 216121
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 200,
+   "tris": 459546,
+   "medianMs": 1.6,
+   "p95Ms": 2.2
+  },
+  "neon-street": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 147,
+     "tris": 237937
+    },
+    {
+     "target": "rt",
+     "calls": 69,
+     "tris": 210537
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 217,
+   "tris": 448476,
+   "medianMs": 1.4,
+   "p95Ms": 1.8
+  },
+  "neon-roof": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 89,
+     "tris": 154099
+    },
+    {
+     "target": "rt",
+     "calls": 37,
+     "tris": 126739
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 127,
+   "tris": 280840,
+   "medianMs": 0.7,
+   "p95Ms": 1.1
+  },
+  "docks-yard": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 67,
+     "tris": 173647
+    },
+    {
+     "target": "rt",
+     "calls": 43,
+     "tris": 146369
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 111,
+   "tris": 320018,
+   "medianMs": 0.8,
+   "p95Ms": 1.1
+  },
+  "docks-roof": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 188,
+     "tris": 274589
+    },
+    {
+     "target": "rt",
+     "calls": 88,
+     "tris": 247153
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 277,
+   "tris": 521744,
+   "medianMs": 1.4,
+   "p95Ms": 2.2
+  },
+  "ace-yard": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 57,
+     "tris": 106471
+    },
+    {
+     "target": "rt",
+     "calls": 34,
+     "tris": 79329
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 92,
+   "tris": 185802,
+   "medianMs": 0.8,
+   "p95Ms": 1.1
+  },
+  "clock-plaza": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 59,
+     "tris": 130867
+    },
+    {
+     "target": "rt",
+     "calls": 38,
+     "tris": 103591
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 98,
+   "tris": 234460,
+   "medianMs": 0.9,
+   "p95Ms": 1.1
+  },
+  "clock-arena": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 199,
+     "tris": 315823
+    },
+    {
+     "target": "rt",
+     "calls": 98,
+     "tris": 288385
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 298,
+   "tris": 604210,
+   "medianMs": 1.7,
+   "p95Ms": 2.1
+  },
+  "city-street": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 66,
+     "tris": 204067
+    },
+    {
+     "target": "rt",
+     "calls": 46,
+     "tris": 176795
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 113,
+   "tris": 380864,
+   "medianMs": 0.7,
+   "p95Ms": 1.2
+  },
+  "overview-south": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 229,
+     "tris": 357893
+    },
+    {
+     "target": "rt",
+     "calls": 122,
+     "tris": 330449
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 352,
+   "tris": 688344,
+   "medianMs": 1.3,
+   "p95Ms": 2.1
+  },
+  "overview-nw": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 233,
+     "tris": 358855
+    },
+    {
+     "target": "rt",
+     "calls": 125,
+     "tris": 331409
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 359,
+   "tris": 690266,
+   "medianMs": 1.7,
+   "p95Ms": 2.4
+  },
+  "interior-funhouse": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 49,
+     "tris": 119407
+    },
+    {
+     "target": "rt",
+     "calls": 31,
+     "tris": 92275
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 81,
+   "tris": 211684,
+   "medianMs": 0.7,
+   "p95Ms": 1
+  },
+  "interior-acehall": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 53,
+     "tris": 103391
+    },
+    {
+     "target": "rt",
+     "calls": 32,
+     "tris": 76117
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 86,
+   "tris": 179510,
+   "medianMs": 0.8,
+   "p95Ms": 1
+  },
+  "north-edge-roof": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 38,
+     "tris": 95463
+    },
+    {
+     "target": "rt",
+     "calls": 21,
+     "tris": 68331
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 60,
+   "tris": 163796,
+   "medianMs": 0.8,
+   "p95Ms": 1
+  },
+  "north-edge-street": {
+   "passes": [
+    {
+     "target": "rt",
+     "calls": 34,
+     "tris": 87057
+    },
+    {
+     "target": "rt",
+     "calls": 17,
+     "tris": 59925
+    },
+    {
+     "target": "screen",
+     "calls": 1,
+     "tris": 2
+    }
+   ],
+   "calls": 52,
+   "tris": 146984,
+   "medianMs": 0.7,
+   "p95Ms": 1
+  }
+ },
+ "errors": []
+}

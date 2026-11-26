@@ -6,14 +6,16 @@ import * as THREE from 'three';
 const A = new THREE.Vector3(), B = new THREE.Vector3(), C = new THREE.Vector3();
 const T = new THREE.Vector3(), P = new THREE.Vector3(), goal = new THREE.Vector3();
 const from = new THREE.Vector3(), to = new THREE.Vector3();
-const q = new THREE.Quaternion(), wq = new THREE.Quaternion(), pq = new THREE.Quaternion();
+const q = new THREE.Quaternion(), wq = new THREE.Quaternion(), pq = new THREE.Quaternion(), full = new THREE.Quaternion();
 const ID = new THREE.Quaternion();
 
 // Rotates `bone` in world space by the rotation taking direction `a` to `b` (both unit length),
 // scaled by `weight`, and refreshes its subtree's world matrices.
 function turnBone(bone, a, b, weight) {
-  q.setFromUnitVectors(a, b);
-  if (weight < 1) q.slerpQuaternions(ID, q, weight);
+  // (Partial weights slerp from a separate copy: slerpQuaternions(ID, q, w) into q itself first
+  // overwrote q with ID and turned nothing at all, so every IK blend did nothing until weight 1
+  // and then snapped: the ladder grab's arm pops and why foot locking made the audit worse.)
+  if (weight < 1) { full.setFromUnitVectors(a, b); q.slerpQuaternions(ID, full, weight); } else q.setFromUnitVectors(a, b);
   bone.getWorldQuaternion(wq);
   bone.parent.getWorldQuaternion(pq);
   wq.premultiply(q);

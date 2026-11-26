@@ -37,6 +37,8 @@ const FACADES = {
   factory: { wall: 0x4f4a44, cols: 6, rows: 16, win: [0.7, 0.62], lit: 0.22, frame: 0x24221f, sill: 0x625c55, kit: 'factory', panes: 'grid' },
   steel: { wall: PALETTE.steel, cols: 4, rows: 16, win: [0.2, 0.1], lit: 0, frame: 0x2a2f38, sill: 0x4b586e, kit: 'steel', panes: 'none' },
 };
+// Wall colour per style: the far-LOD silhouettes (src/world/lod.js) tint their boxes with it.
+export const FACADE_WALL = Object.fromEntries(Object.entries(FACADES).map(([k, f]) => [k, f.wall]));
 export const FACADE_GRID = Object.fromEntries(Object.entries(FACADES).map(([k, f]) => [k, { cols: f.cols, rows: f.rows, win: f.win, sparse: !!f.sparse }]));
 
 const INK = 'rgba(11,11,18,';

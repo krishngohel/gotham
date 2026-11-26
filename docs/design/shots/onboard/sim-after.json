@@ -1,0 +1,1106 @@
+{
+ "summary": {
+  "minutes": 20.1,
+  "stepsReached": 46,
+  "lastStep": "funhouseFight",
+  "controlLostSeconds": 43.6,
+  "controlLostByReason": {
+   "cinematic": 2.5,
+   "comic": 41.1
+  },
+  "controlLostSegments": 6,
+  "storyTeleports": 5,
+  "cameraSnaps": 2,
+  "comicsShown": 5,
+  "hudHidden": 5,
+  "objectiveChanges": 45,
+  "unbridgedObjectiveChanges": [],
+  "revealedOnApproach": [
+   "boardBatmobile",
+   "f1",
+   "f2",
+   "f3",
+   "n1",
+   "n2",
+   "n3",
+   "boardBatmobileAce",
+   "a2",
+   "plazaFight",
+   "funhouseFight"
+  ],
+  "abilitiesInOrder": [
+   "grapple",
+   "zipline",
+   "batmobile",
+   "batmobileCall",
+   "diveBomb",
+   "dodge",
+   "throw",
+   "moveStrikes",
+   "comboFinisher",
+   "aerialAttacks",
+   "groundPound",
+   "wallRun",
+   "capeStun",
+   "silentTakedown",
+   "perch",
+   "detective",
+   "beatdown",
+   "eject",
+   "ledgeTakedown",
+   "batwing"
+  ],
+  "learned": [
+   "grapple",
+   "diveBomb",
+   "moveStrikes",
+   "comboFinisher",
+   "aerialAttacks"
+  ],
+  "botAssists": 21
+ },
+ "steps": [
+  {
+   "t": 18.75,
+   "id": "signal",
+   "type": "reach",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 21.58,
+   "id": "card",
+   "type": "cutscene",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 27.55,
+   "id": "courierIntro",
+   "type": "courier",
+   "lines": 5,
+   "talkOver": true,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 30.15,
+   "id": "toDocks",
+   "type": "reach",
+   "lines": 1,
+   "talkOver": false,
+   "title": true,
+   "revealed": 0
+  },
+  {
+   "t": 44.08,
+   "id": "boardBatmobile",
+   "type": "board",
+   "lines": 2,
+   "talkOver": true,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 48.53,
+   "id": "batmobileChase",
+   "type": "chase",
+   "lines": 1,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 66.75,
+   "id": "toRoofAfterChase",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 113.95,
+   "id": "f1",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 117.13,
+   "id": "toYard",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 122.5,
+   "id": "f2",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 145.98,
+   "id": "toShip",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 181.03,
+   "id": "f3",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0.53
+  },
+  {
+   "t": 193.88,
+   "id": "crates",
+   "type": "collect",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 195.98,
+   "id": "rewardCrates",
+   "type": "cutscene",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 201.95,
+   "id": "toNeon",
+   "type": "reach",
+   "lines": 3,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 325.12,
+   "id": "n1",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 334.28,
+   "id": "toStreet",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 340.05,
+   "id": "n2",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 368.28,
+   "id": "toMonarch",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 384.77,
+   "id": "n3",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 403.87,
+   "id": "courierRooftop",
+   "type": "courier",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 414.67,
+   "id": "monarchBalcony",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 432.82,
+   "id": "rig",
+   "type": "collect",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 436.85,
+   "id": "rewardRig",
+   "type": "cutscene",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 445.35,
+   "id": "toAce",
+   "type": "reach",
+   "lines": 3,
+   "talkOver": false,
+   "title": true,
+   "revealed": 0
+  },
+  {
+   "t": 461.6,
+   "id": "boardBatmobileAce",
+   "type": "board",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 463.93,
+   "id": "aceBattle",
+   "type": "battle",
+   "lines": 1,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 484.42,
+   "id": "a1",
+   "type": "fight",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 515.9,
+   "id": "toFactory",
+   "type": "reach",
+   "lines": 3,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 519,
+   "id": "a2",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 543.27,
+   "id": "boardBatmobileAce2",
+   "type": "board",
+   "lines": 2,
+   "talkOver": true,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 555,
+   "id": "aceVanChase",
+   "type": "chase",
+   "lines": 1,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 563.28,
+   "id": "toHarleyDoor",
+   "type": "interior",
+   "lines": 3,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 650.97,
+   "id": "harleyFight",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 730.17,
+   "id": "toVat",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 760.57,
+   "id": "a3",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0.09
+  },
+  {
+   "t": 915.5,
+   "id": "toCatwalks",
+   "type": "reach",
+   "lines": 3,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 915.52,
+   "id": "aceCatwalks",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 996.03,
+   "id": "antidote",
+   "type": "collect",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 1002.73,
+   "id": "rewardAntidote",
+   "type": "cutscene",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 1008.68,
+   "id": "courierReveal",
+   "type": "radio",
+   "lines": 5,
+   "talkOver": true,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 1014.42,
+   "id": "nightwingTagRadio",
+   "type": "ally",
+   "lines": 4,
+   "talkOver": true,
+   "title": true,
+   "revealed": 0
+  },
+  {
+   "t": 1014.43,
+   "id": "toPlaza",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 1140.23,
+   "id": "plazaFight",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 1151.77,
+   "id": "toFunhouse",
+   "type": "interior",
+   "lines": 1,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  },
+  {
+   "t": 1159.35,
+   "id": "funhouseFight",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  }
+ ],
+ "log": [
+  {
+   "t": 6.12,
+   "type": "hudHidden",
+   "step": "intro"
+  },
+  {
+   "t": 6.12,
+   "type": "comicOn",
+   "name": "intro"
+  },
+  {
+   "t": 18.75,
+   "type": "hudShown",
+   "step": "intro"
+  },
+  {
+   "t": 18.75,
+   "type": "comicOff",
+   "name": "intro"
+  },
+  {
+   "t": 18.75,
+   "type": "banner",
+   "text": "Walk to the Batsignal and see what is st"
+  },
+  {
+   "t": 22.48,
+   "type": "hudHidden",
+   "step": "card"
+  },
+  {
+   "t": 22.48,
+   "type": "comicOn",
+   "name": "card"
+  },
+  {
+   "t": 27.55,
+   "type": "hudShown",
+   "step": "card"
+  },
+  {
+   "t": 27.55,
+   "type": "comicOff",
+   "name": "card"
+  },
+  {
+   "t": 27.55,
+   "type": "teleport",
+   "step": "courierIntro"
+  },
+  {
+   "t": 27.55,
+   "type": "cameraSnap",
+   "step": "courierIntro"
+  },
+  {
+   "t": 30.15,
+   "type": "banner",
+   "text": "Glide to the Docks and land on the wareh"
+  },
+  {
+   "t": 30.15,
+   "type": "ability",
+   "id": "grapple"
+  },
+  {
+   "t": 30.15,
+   "type": "ability",
+   "id": "zipline"
+  },
+  {
+   "t": 44.08,
+   "type": "ability",
+   "id": "batmobile"
+  },
+  {
+   "t": 45,
+   "type": "banner",
+   "text": "Climb down to the dock road and get in t"
+  },
+  {
+   "t": 48.53,
+   "type": "banner",
+   "text": "Ram the Joker van 3 times before it reac"
+  },
+  {
+   "t": 66.75,
+   "type": "assist",
+   "what": "vehicle debugWin",
+   "step": "batmobileChase"
+  },
+  {
+   "t": 66.75,
+   "type": "banner",
+   "text": "Leave the car. Climb back up to the ware"
+  },
+  {
+   "t": 66.75,
+   "type": "ability",
+   "id": "batmobileCall"
+  },
+  {
+   "t": 66.83,
+   "type": "vehicleExitPlace",
+   "step": "toRoofAfterChase"
+  },
+  {
+   "t": 71.43,
+   "type": "learned",
+   "id": "grapple"
+  },
+  {
+   "t": 110.22,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toRoofAfterChase"
+  },
+  {
+   "t": 114.87,
+   "type": "banner",
+   "text": "Take down the goons on the warehouse roo"
+  },
+  {
+   "t": 117.13,
+   "type": "ability",
+   "id": "diveBomb"
+  },
+  {
+   "t": 118.05,
+   "type": "banner",
+   "text": "Glide down into the container yard. Kick"
+  },
+  {
+   "t": 122.5,
+   "type": "ability",
+   "id": "dodge"
+  },
+  {
+   "t": 122.5,
+   "type": "ability",
+   "id": "throw"
+  },
+  {
+   "t": 122.5,
+   "type": "ability",
+   "id": "moveStrikes"
+  },
+  {
+   "t": 122.65,
+   "type": "learned",
+   "id": "diveBomb"
+  },
+  {
+   "t": 123.42,
+   "type": "banner",
+   "text": "Clear the container yard. Dodge, block a"
+  },
+  {
+   "t": 128.52,
+   "type": "learned",
+   "id": "moveStrikes"
+  },
+  {
+   "t": 146.9,
+   "type": "banner",
+   "text": "Grapple onto the freighter at the end of"
+  },
+  {
+   "t": 181.02,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toShip"
+  },
+  {
+   "t": 181.03,
+   "type": "ability",
+   "id": "comboFinisher"
+  },
+  {
+   "t": 181.03,
+   "type": "ability",
+   "id": "aerialAttacks"
+  },
+  {
+   "t": 181.03,
+   "type": "ability",
+   "id": "groundPound"
+  },
+  {
+   "t": 181.95,
+   "type": "banner",
+   "text": "Clear the freighter deck. Finish them be"
+  },
+  {
+   "t": 185.55,
+   "type": "learned",
+   "id": "comboFinisher"
+  },
+  {
+   "t": 187.87,
+   "type": "learned",
+   "id": "aerialAttacks"
+  },
+  {
+   "t": 194.8,
+   "type": "banner",
+   "text": "Secure the Wayne Tech crates at the mark"
+  },
+  {
+   "t": 196.9,
+   "type": "hudHidden",
+   "step": "rewardCrates"
+  },
+  {
+   "t": 196.9,
+   "type": "comicOn",
+   "name": "crates"
+  },
+  {
+   "t": 201.95,
+   "type": "hudShown",
+   "step": "rewardCrates"
+  },
+  {
+   "t": 201.95,
+   "type": "comicOff",
+   "name": "crates"
+  },
+  {
+   "t": 201.95,
+   "type": "banner",
+   "text": "Head east to the Gazette building roof i"
+  },
+  {
+   "t": 201.95,
+   "type": "ability",
+   "id": "wallRun"
+  },
+  {
+   "t": 231.6,
+   "type": "teleport",
+   "step": "toNeon"
+  },
+  {
+   "t": 239.53,
+   "type": "teleport",
+   "step": "toNeon"
+  },
+  {
+   "t": 275.95,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toNeon"
+  },
+  {
+   "t": 306.55,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toNeon"
+  },
+  {
+   "t": 325.12,
+   "type": "ability",
+   "id": "capeStun"
+  },
+  {
+   "t": 326.02,
+   "type": "banner",
+   "text": "Knife goons on the Gazette roof. Kick or"
+  },
+  {
+   "t": 335.18,
+   "type": "banner",
+   "text": "Drop down to the Neon Row street, toward"
+  },
+  {
+   "t": 340.95,
+   "type": "banner",
+   "text": "Clear the street. Batarang the ones hang"
+  },
+  {
+   "t": 369.18,
+   "type": "banner",
+   "text": "Climb to the Monarch Theater roof."
+  },
+  {
+   "t": 385.67,
+   "type": "banner",
+   "text": "Clear the Monarch roof. Counters, the ca"
+  },
+  {
+   "t": 414.67,
+   "type": "banner",
+   "text": "Rifle goons on the balcony. Crouch, stay"
+  },
+  {
+   "t": 414.67,
+   "type": "ability",
+   "id": "silentTakedown"
+  },
+  {
+   "t": 414.67,
+   "type": "ability",
+   "id": "perch"
+  },
+  {
+   "t": 414.67,
+   "type": "ability",
+   "id": "detective"
+  },
+  {
+   "t": 433.72,
+   "type": "banner",
+   "text": "Seize the Joker's transmitter and relay "
+  },
+  {
+   "t": 437.75,
+   "type": "hudHidden",
+   "step": "rewardRig"
+  },
+  {
+   "t": 437.75,
+   "type": "comicOn",
+   "name": "rig"
+  },
+  {
+   "t": 445.35,
+   "type": "hudShown",
+   "step": "rewardRig"
+  },
+  {
+   "t": 445.35,
+   "type": "comicOff",
+   "name": "rig"
+  },
+  {
+   "t": 445.35,
+   "type": "banner",
+   "text": "Go north to the Ace Chemicals gate."
+  },
+  {
+   "t": 462.5,
+   "type": "banner",
+   "text": "Get in the Batmobile waiting at the Ace "
+  },
+  {
+   "t": 463.93,
+   "type": "banner",
+   "text": "Drive into the yard. Cannon the drone ta"
+  },
+  {
+   "t": 484.42,
+   "type": "assist",
+   "what": "vehicle debugWin",
+   "step": "aceBattle"
+  },
+  {
+   "t": 484.42,
+   "type": "vehicleExitPlace",
+   "step": "a1"
+  },
+  {
+   "t": 484.42,
+   "type": "banner",
+   "text": "A brute. Cape to stun him, then hit him "
+  },
+  {
+   "t": 484.42,
+   "type": "ability",
+   "id": "beatdown"
+  },
+  {
+   "t": 489.95,
+   "type": "assist",
+   "what": "winFight (stealth)",
+   "step": "a1"
+  },
+  {
+   "t": 509.55,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "a1"
+  },
+  {
+   "t": 516.82,
+   "type": "banner",
+   "text": "Climb to the factory roof inside Ace Che"
+  },
+  {
+   "t": 519.92,
+   "type": "banner",
+   "text": "Take out the lookouts on the factory roo"
+  },
+  {
+   "t": 543.27,
+   "type": "ability",
+   "id": "eject"
+  },
+  {
+   "t": 544.18,
+   "type": "banner",
+   "text": "Get back in the Batmobile at the Ace gat"
+  },
+  {
+   "t": 555,
+   "type": "banner",
+   "text": "Ram Harley's van 3 times before it leave"
+  },
+  {
+   "t": 563.28,
+   "type": "assist",
+   "what": "vehicle debugWin",
+   "step": "aceVanChase"
+  },
+  {
+   "t": 563.28,
+   "type": "vehicleExitPlace",
+   "step": "toHarleyDoor"
+  },
+  {
+   "t": 563.28,
+   "type": "banner",
+   "text": "Enter the chemical hall through the open"
+  },
+  {
+   "t": 600.68,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toHarleyDoor"
+  },
+  {
+   "t": 625.82,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toHarleyDoor"
+  },
+  {
+   "t": 650.95,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toHarleyDoor"
+  },
+  {
+   "t": 650.97,
+   "type": "teleport",
+   "step": "toHarleyDoor"
+  },
+  {
+   "t": 651.88,
+   "type": "banner",
+   "text": "Beat Harley and her crew in the chemical"
+  },
+  {
+   "t": 726.62,
+   "type": "assist",
+   "what": "winFight",
+   "step": "harleyFight"
+  },
+  {
+   "t": 731.08,
+   "type": "banner",
+   "text": "Go out to the deck over the vats. The an"
+  },
+  {
+   "t": 760.55,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toVat"
+  },
+  {
+   "t": 761.48,
+   "type": "banner",
+   "text": "Protect the antidote on the vat deck. Ke"
+  },
+  {
+   "t": 838.62,
+   "type": "assist",
+   "what": "winFight",
+   "step": "a3"
+  },
+  {
+   "t": 915.48,
+   "type": "assist",
+   "what": "winFight",
+   "step": "a3"
+  },
+  {
+   "t": 915.52,
+   "type": "ability",
+   "id": "ledgeTakedown"
+  },
+  {
+   "t": 916.43,
+   "type": "banner",
+   "text": "Rifle goons on the catwalks. Stay hidden"
+  },
+  {
+   "t": 996.02,
+   "type": "assist",
+   "what": "winFight",
+   "step": "aceCatwalks"
+  },
+  {
+   "t": 996.95,
+   "type": "banner",
+   "text": "Secure the antidote case on the vat deck"
+  },
+  {
+   "t": 1003.65,
+   "type": "hudHidden",
+   "step": "rewardAntidote"
+  },
+  {
+   "t": 1003.65,
+   "type": "comicOn",
+   "name": "antidote"
+  },
+  {
+   "t": 1008.68,
+   "type": "hudShown",
+   "step": "rewardAntidote"
+  },
+  {
+   "t": 1008.68,
+   "type": "comicOff",
+   "name": "antidote"
+  },
+  {
+   "t": 1008.68,
+   "type": "cameraSnap",
+   "step": "courierReveal"
+  },
+  {
+   "t": 1014.42,
+   "type": "ability",
+   "id": "batwing"
+  },
+  {
+   "t": 1014.43,
+   "type": "banner",
+   "text": "Get down to the clock plaza and back Nig"
+  },
+  {
+   "t": 1048.48,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toPlaza"
+  },
+  {
+   "t": 1075.28,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toPlaza"
+  },
+  {
+   "t": 1100.42,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toPlaza"
+  },
+  {
+   "t": 1137.02,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toPlaza"
+  },
+  {
+   "t": 1141.15,
+   "type": "banner",
+   "text": "Clear the plaza with Nightwing at your s"
+  },
+  {
+   "t": 1152.68,
+   "type": "banner",
+   "text": "Enter the funhouse door in the old cathe"
+  },
+  {
+   "t": 1159.35,
+   "type": "teleport",
+   "step": "toFunhouse"
+  },
+  {
+   "t": 1160.27,
+   "type": "banner",
+   "text": "Fight through the funhouse floor to reac"
+  }
+ ],
+ "lost": [
+  {
+   "t0": 3.566666666666667,
+   "why": "cinematic",
+   "step": "intro",
+   "secs": 2.55
+  },
+  {
+   "t0": 6.133333333333334,
+   "why": "comic",
+   "step": "intro",
+   "secs": 12.63
+  },
+  {
+   "t0": 22.5,
+   "why": "comic",
+   "step": "card",
+   "secs": 5.07
+  },
+  {
+   "t0": 196.91666666666666,
+   "why": "comic",
+   "step": "rewardCrates",
+   "secs": 5.05
+  },
+  {
+   "t0": 437.76666666666665,
+   "why": "comic",
+   "step": "rewardRig",
+   "secs": 7.6
+  },
+  {
+   "t0": 1003.6666666666666,
+   "why": "comic",
+   "step": "rewardAntidote",
+   "secs": 10.75
+  }
+ ],
+ "assists": 21,
+ "frames": 72213
+}

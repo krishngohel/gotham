@@ -96,16 +96,13 @@ function interiorMat(ctx, color) {
   return { key: 'interiorWall', color };
 }
 
-// A dedicated, always-on fill light for one room: real ambient lift (not just baked halos), but
-// distance-limited so it never reaches the exterior city. Added once, at boot, alongside the rest
-// of the city (before ink.compileAsync), so it's part of the one-time shader compile, exactly like
-// world.js's flashLight (a light that exists from boot so the scene's light count never changes
-// mid-run).
+// A fill light for one room: real ambient lift (not just baked halos), distance-limited so it
+// never reaches the exterior city. Recorded as data, not a PointLight: world.js merges each room's
+// fills into one broad spot in the shared light pool (src/world/lightPool.js), which gives it the
+// first slot while the player is in or near the room. Fourteen always-on lights used to cost every
+// lit fragment in the city a loop iteration each.
 function roomFill(ctx, x, y, z, color, intensity, distance) {
-  if (typeof THREE.PointLight !== 'function') return;
-  const light = new THREE.PointLight(color, intensity, distance, 1.4);
-  light.position.set(x, y, z);
-  ctx.scene.add(light);
+  (ctx.roomFills ??= []).push({ x, y, z, color, intensity, distance, decay: 1.4 });
 }
 
 // A straight exterior wall along one axis, minus a single rectangular gap (a door or a window):

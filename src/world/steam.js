@@ -97,5 +97,6 @@ export function createSteam(sources, { perSource = 5, fogDensity = 0.0062, look 
   mesh.frustumCulled = false;
   mesh.layers.set(LAYER_FX);
   mesh.renderOrder = 4;
-  return { mesh, update(t) { uniforms.uTime.value = t; } };
+  // [env] setWind(x, z): the weather's wind (src/env/envSystem.js); (0.6, 0.25) is the old drift.
+  return { mesh, uniforms, update(t) { uniforms.uTime.value = t; }, setWind(x, z) { uniforms.uWind.value.set(x, z); } };
 }

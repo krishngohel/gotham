@@ -26,3 +26,12 @@ export function onceEachId(events, sourceToId, emitName) {
   }
   return seen;
 }
+
+// Events carry the player they happened to as `player` (Long Night 2, workstream B), set
+// non-enumerable: every listener can read data.player, while listeners and tests that compare a
+// payload field by field (and anything that serialises one, like the net layer) see exactly the
+// payload they always did. An event with no player is a team event or a single-player one.
+export function withPlayer(data, player) {
+  if (data && player !== undefined && player !== null) Object.defineProperty(data, 'player', { value: player, enumerable: false, configurable: true, writable: true });
+  return data;
+}

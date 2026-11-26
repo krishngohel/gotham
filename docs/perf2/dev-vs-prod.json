@@ -1,0 +1,4542 @@
+{
+ "when": "2026-11-24T20:46:47.450Z",
+ "env": {
+  "Q": [
+   "high",
+   "low"
+  ],
+  "OFF": [
+   ""
+  ],
+  "rounds": 1,
+  "CPU": null
+ },
+ "summary": [
+  {
+   "label": "dev",
+   "q": "high",
+   "off": "",
+   "site": "gcpd roof",
+   "frameMs": 9,
+   "jsMs": 8.3,
+   "gpuMs": 3.79,
+   "calls": 378,
+   "tris": 464675,
+   "fps": 111
+  },
+  {
+   "label": "prod",
+   "q": "high",
+   "off": "",
+   "site": "gcpd roof",
+   "frameMs": 8.7,
+   "jsMs": 8.2,
+   "gpuMs": 3.76,
+   "calls": 378,
+   "tris": 464657,
+   "fps": 115
+  },
+  {
+   "label": "dev",
+   "q": "high",
+   "off": "",
+   "site": "neon street",
+   "frameMs": 9.3,
+   "jsMs": 8.6,
+   "gpuMs": 3.59,
+   "calls": 253,
+   "tris": 348993,
+   "fps": 108
+  },
+  {
+   "label": "prod",
+   "q": "high",
+   "off": "",
+   "site": "neon street",
+   "frameMs": 9.1,
+   "jsMs": 8.3,
+   "gpuMs": 4.45,
+   "calls": 251,
+   "tris": 361717,
+   "fps": 110
+  },
+  {
+   "label": "dev",
+   "q": "high",
+   "off": "",
+   "site": "loop el",
+   "frameMs": 10.4,
+   "jsMs": 9.5,
+   "gpuMs": 3.42,
+   "calls": 276,
+   "tris": 419428,
+   "fps": 96
+  },
+  {
+   "label": "prod",
+   "q": "high",
+   "off": "",
+   "site": "loop el",
+   "frameMs": 9.6,
+   "jsMs": 8.6,
+   "gpuMs": 3.43,
+   "calls": 271,
+   "tris": 383712,
+   "fps": 104
+  },
+  {
+   "label": "dev",
+   "q": "low",
+   "off": "",
+   "site": "gcpd roof",
+   "frameMs": 7.6,
+   "jsMs": 7.1,
+   "gpuMs": 3.21,
+   "calls": 257,
+   "tris": 299349,
+   "fps": 132
+  },
+  {
+   "label": "prod",
+   "q": "low",
+   "off": "",
+   "site": "gcpd roof",
+   "frameMs": 7.8,
+   "jsMs": 7.1,
+   "gpuMs": 2.76,
+   "calls": 250,
+   "tris": 291033,
+   "fps": 128
+  },
+  {
+   "label": "dev",
+   "q": "low",
+   "off": "",
+   "site": "neon street",
+   "frameMs": 6.4,
+   "jsMs": 5.5,
+   "gpuMs": 1.94,
+   "calls": 192,
+   "tris": 236287,
+   "fps": 156
+  },
+  {
+   "label": "prod",
+   "q": "low",
+   "off": "",
+   "site": "neon street",
+   "frameMs": 6.6,
+   "jsMs": 5.7,
+   "gpuMs": 2.07,
+   "calls": 190,
+   "tris": 234135,
+   "fps": 152
+  },
+  {
+   "label": "dev",
+   "q": "low",
+   "off": "",
+   "site": "loop el",
+   "frameMs": 9,
+   "jsMs": 8,
+   "gpuMs": 3.57,
+   "calls": 221,
+   "tris": 298228,
+   "fps": 111
+  },
+  {
+   "label": "prod",
+   "q": "low",
+   "off": "",
+   "site": "loop el",
+   "frameMs": 9.4,
+   "jsMs": 8.3,
+   "gpuMs": 3.46,
+   "calls": 223,
+   "tris": 302812,
+   "fps": 106
+  }
+ ],
+ "results": [
+  {
+   "label": "dev",
+   "q": "high",
+   "off": "",
+   "site": "gcpd roof",
+   "frameMs": 9,
+   "p95Ms": 12.6,
+   "maxMs": 27.7,
+   "jsMs": 8.3,
+   "gpuMs": 3.79,
+   "calls": 378,
+   "tris": 464675,
+   "frames": 339,
+   "prof": {
+    "frames": 339,
+    "systems": {
+     "gadgets": {
+      "med": 0,
+      "mean": 0.022,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.019,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.2,
+      "mean": 0.223,
+      "p95": 0.3
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.076,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0.1,
+      "mean": 0.055,
+      "p95": 0.1
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.02,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0.1,
+      "mean": 0.062,
+      "p95": 0.2
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.011,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "hero.cape": {
+      "med": 0.6,
+      "mean": 0.637,
+      "p95": 0.9
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.008,
+      "p95": 0.1
+     },
+     "nav": {
+      "med": 0,
+      "mean": 0.07,
+      "p95": 0.3
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.064,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.011,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 1.4,
+      "mean": 1.424,
+      "p95": 2
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.037,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.1,
+      "mean": 0.142,
+      "p95": 0.2
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.073,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.01,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "world.shadows": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "world": {
+      "med": 0.5,
+      "mean": 0.523,
+      "p95": 0.7
+     },
+     "render.matrices": {
+      "med": 1.5,
+      "mean": 1.414,
+      "p95": 2
+     },
+     "render": {
+      "med": 6.1,
+      "mean": 5.82,
+      "p95": 7.5
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 7,
+      "mean": 7,
+      "p95": 7
+     },
+     "tris.far": {
+      "med": 16092,
+      "mean": 16092,
+      "p95": 16092
+     },
+     "calls.color": {
+      "med": 370,
+      "mean": 368.956,
+      "p95": 373
+     },
+     "tris.color": {
+      "med": 448581,
+      "mean": 448134.398,
+      "p95": 455001
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls": {
+      "med": 378,
+      "mean": 376.956,
+      "p95": 381
+     },
+     "tris": {
+      "med": 464675,
+      "mean": 464228.398,
+      "p95": 471095
+     },
+     "gpuMs": {
+      "med": 3.792,
+      "mean": 4.274,
+      "p95": 11.501
+     },
+     "stepMs": {
+      "med": 8.3,
+      "mean": 8.201,
+      "p95": 10.1
+     },
+     "objects": {
+      "med": 3837,
+      "mean": 3854.139,
+      "p95": 4003
+     },
+     "autoMat": {
+      "med": 2319,
+      "mean": 2336.139,
+      "p95": 2485
+     },
+     "skinned": {
+      "med": 257,
+      "mean": 258.032,
+      "p95": 267
+     },
+     "skinnedVis": {
+      "med": 58,
+      "mean": 58,
+      "p95": 58
+     },
+     "meshesVis": {
+      "med": 711,
+      "mean": 710.569,
+      "p95": 712
+     },
+     "lights": {
+      "med": 6,
+      "mean": 6,
+      "p95": 6
+     },
+     "matrixWalk": {
+      "med": 3805,
+      "mean": 3821.932,
+      "p95": 3969
+     },
+     "programs": {
+      "med": 120,
+      "mean": 120,
+      "p95": 120
+     },
+     "geometries": {
+      "med": 2124,
+      "mean": 2124,
+      "p95": 2124
+     },
+     "textures": {
+      "med": 337,
+      "mean": 337,
+      "p95": 337
+     },
+     "dom": {
+      "med": 1,
+      "mean": 1.035,
+      "p95": 1
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 787590.224,
+      "p95": 5082286
+     }
+    },
+    "longTasks": [
+     86
+    ]
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  },
+  {
+   "label": "prod",
+   "q": "high",
+   "off": "",
+   "site": "gcpd roof",
+   "frameMs": 8.7,
+   "p95Ms": 12.7,
+   "maxMs": 28.2,
+   "jsMs": 8.2,
+   "gpuMs": 3.76,
+   "calls": 378,
+   "tris": 464657,
+   "frames": 348,
+   "prof": {
+    "frames": 348,
+    "systems": {
+     "gadgets": {
+      "med": 0,
+      "mean": 0.023,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0.1
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.019,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.2,
+      "mean": 0.188,
+      "p95": 0.3
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.07,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0.1,
+      "mean": 0.057,
+      "p95": 0.1
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.022,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0,
+      "mean": 0.052,
+      "p95": 0.1
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.012,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "hero.cape": {
+      "med": 0.6,
+      "mean": 0.618,
+      "p95": 0.9
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "nav": {
+      "med": 0,
+      "mean": 0.071,
+      "p95": 0.2
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.066,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.009,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 1.3,
+      "mean": 1.349,
+      "p95": 2
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.033,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.1,
+      "mean": 0.14,
+      "p95": 0.2
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.092,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.013,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "world.shadows": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "world": {
+      "med": 0.5,
+      "mean": 0.538,
+      "p95": 0.7
+     },
+     "render.matrices": {
+      "med": 1.3,
+      "mean": 1.232,
+      "p95": 1.8
+     },
+     "render": {
+      "med": 5.9,
+      "mean": 5.734,
+      "p95": 7.3
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 7,
+      "mean": 7,
+      "p95": 7
+     },
+     "tris.far": {
+      "med": 16092,
+      "mean": 16092,
+      "p95": 16092
+     },
+     "calls.color": {
+      "med": 370,
+      "mean": 368.46,
+      "p95": 372
+     },
+     "tris.color": {
+      "med": 448563,
+      "mean": 448064.029,
+      "p95": 455019
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls": {
+      "med": 378,
+      "mean": 376.46,
+      "p95": 380
+     },
+     "tris": {
+      "med": 464657,
+      "mean": 464158.029,
+      "p95": 471113
+     },
+     "gpuMs": {
+      "med": 3.76,
+      "mean": 3.959,
+      "p95": 8.619
+     },
+     "stepMs": {
+      "med": 8.2,
+      "mean": 8.1,
+      "p95": 9.9
+     },
+     "objects": {
+      "med": 3837,
+      "mean": 3835.807,
+      "p95": 3920
+     },
+     "autoMat": {
+      "med": 2319,
+      "mean": 2317.807,
+      "p95": 2402
+     },
+     "skinned": {
+      "med": 257,
+      "mean": 256.928,
+      "p95": 262
+     },
+     "skinnedVis": {
+      "med": 58,
+      "mean": 58,
+      "p95": 58
+     },
+     "meshesVis": {
+      "med": 711,
+      "mean": 710.095,
+      "p95": 711
+     },
+     "lights": {
+      "med": 6,
+      "mean": 6,
+      "p95": 6
+     },
+     "matrixWalk": {
+      "med": 3805,
+      "mean": 3803.822,
+      "p95": 3887
+     },
+     "programs": {
+      "med": 120,
+      "mean": 120,
+      "p95": 120
+     },
+     "geometries": {
+      "med": 2124,
+      "mean": 2124,
+      "p95": 2124
+     },
+     "textures": {
+      "med": 337,
+      "mean": 337,
+      "p95": 337
+     },
+     "dom": {
+      "med": 1,
+      "mean": 1.034,
+      "p95": 1
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 775142.011,
+      "p95": 5314052
+     }
+    },
+    "longTasks": [
+     104
+    ]
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  },
+  {
+   "label": "dev",
+   "q": "high",
+   "off": "",
+   "site": "neon street",
+   "frameMs": 9.3,
+   "p95Ms": 13.2,
+   "maxMs": 27.9,
+   "jsMs": 8.6,
+   "gpuMs": 3.59,
+   "calls": 253,
+   "tris": 348993,
+   "frames": 316,
+   "prof": {
+    "frames": 316,
+    "systems": {
+     "gadgets": {
+      "med": 0,
+      "mean": 0.025,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.008,
+      "p95": 0.1
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0.1
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.027,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.3,
+      "mean": 0.261,
+      "p95": 0.4
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0.1
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0.1
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.081,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0.1,
+      "mean": 0.07,
+      "p95": 0.2
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.025,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0.1,
+      "mean": 0.064,
+      "p95": 0.1
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.013,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "hero.cape": {
+      "med": 1,
+      "mean": 0.905,
+      "p95": 1.3
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.009,
+      "p95": 0.1
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "nav": {
+      "med": 0.1,
+      "mean": 0.097,
+      "p95": 0.3
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.092,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.01,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 1.8,
+      "mean": 1.873,
+      "p95": 2.7
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.046,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.2,
+      "mean": 0.191,
+      "p95": 0.3
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.081,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.008,
+      "p95": 0.1
+     },
+     "world.shadows": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "world": {
+      "med": 0.6,
+      "mean": 0.634,
+      "p95": 0.8
+     },
+     "render.matrices": {
+      "med": 1.6,
+      "mean": 1.609,
+      "p95": 2.3
+     },
+     "render": {
+      "med": 5.9,
+      "mean": 5.891,
+      "p95": 7.7
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 7,
+      "mean": 7,
+      "p95": 7
+     },
+     "tris.far": {
+      "med": 16092,
+      "mean": 16092,
+      "p95": 16092
+     },
+     "calls.color": {
+      "med": 245,
+      "mean": 244.81,
+      "p95": 246
+     },
+     "tris.color": {
+      "med": 332899,
+      "mean": 332711.424,
+      "p95": 334007
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls": {
+      "med": 253,
+      "mean": 252.81,
+      "p95": 254
+     },
+     "tris": {
+      "med": 348993,
+      "mean": 348805.424,
+      "p95": 350101
+     },
+     "gpuMs": {
+      "med": 3.587,
+      "mean": 10.154,
+      "p95": 9.485
+     },
+     "stepMs": {
+      "med": 8.6,
+      "mean": 8.621,
+      "p95": 11.3
+     },
+     "objects": {
+      "med": 4169,
+      "mean": 4158.494,
+      "p95": 4252
+     },
+     "autoMat": {
+      "med": 2651,
+      "mean": 2640.494,
+      "p95": 2734
+     },
+     "skinned": {
+      "med": 277,
+      "mean": 276.367,
+      "p95": 282
+     },
+     "skinnedVis": {
+      "med": 55,
+      "mean": 55,
+      "p95": 55
+     },
+     "meshesVis": {
+      "med": 627,
+      "mean": 627.041,
+      "p95": 628
+     },
+     "lights": {
+      "med": 6,
+      "mean": 6,
+      "p95": 6
+     },
+     "matrixWalk": {
+      "med": 4133,
+      "mean": 4122.62,
+      "p95": 4215
+     },
+     "programs": {
+      "med": 120,
+      "mean": 120,
+      "p95": 120
+     },
+     "geometries": {
+      "med": 2124,
+      "mean": 2124,
+      "p95": 2124
+     },
+     "textures": {
+      "med": 337,
+      "mean": 337,
+      "p95": 337
+     },
+     "dom": {
+      "med": 1,
+      "mean": 1.13,
+      "p95": 2
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 750292.826,
+      "p95": 4932900
+     }
+    },
+    "longTasks": []
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  },
+  {
+   "label": "prod",
+   "q": "high",
+   "off": "",
+   "site": "neon street",
+   "frameMs": 9.1,
+   "p95Ms": 12.5,
+   "maxMs": 29,
+   "jsMs": 8.3,
+   "gpuMs": 4.45,
+   "calls": 251,
+   "tris": 361717,
+   "frames": 322,
+   "prof": {
+    "frames": 322,
+    "systems": {
+     "gadgets": {
+      "med": 0,
+      "mean": 0.029,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.026,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.2,
+      "mean": 0.226,
+      "p95": 0.3
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.081,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0.1,
+      "mean": 0.086,
+      "p95": 0.2
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.022,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0.1,
+      "mean": 0.056,
+      "p95": 0.2
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.011,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "hero.cape": {
+      "med": 1,
+      "mean": 0.892,
+      "p95": 1.3
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.008,
+      "p95": 0.1
+     },
+     "nav": {
+      "med": 0,
+      "mean": 0.084,
+      "p95": 0.3
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.08,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.01,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 1.8,
+      "mean": 1.801,
+      "p95": 2.6
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.037,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.2,
+      "mean": 0.178,
+      "p95": 0.3
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.1,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.01,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.008,
+      "p95": 0.1
+     },
+     "world.shadows": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "world": {
+      "med": 0.6,
+      "mean": 0.636,
+      "p95": 0.9
+     },
+     "render.matrices": {
+      "med": 1.3,
+      "mean": 1.372,
+      "p95": 2
+     },
+     "render": {
+      "med": 5.6,
+      "mean": 5.82,
+      "p95": 7.7
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 7,
+      "mean": 7,
+      "p95": 7
+     },
+     "tris.far": {
+      "med": 16092,
+      "mean": 16092,
+      "p95": 16092
+     },
+     "calls.color": {
+      "med": 243,
+      "mean": 242.32,
+      "p95": 244
+     },
+     "tris.color": {
+      "med": 345623,
+      "mean": 345910.087,
+      "p95": 347873
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls": {
+      "med": 251,
+      "mean": 250.32,
+      "p95": 252
+     },
+     "tris": {
+      "med": 361717,
+      "mean": 362004.087,
+      "p95": 363967
+     },
+     "gpuMs": {
+      "med": 4.45,
+      "mean": 9.183,
+      "p95": 49.342
+     },
+     "stepMs": {
+      "med": 8.3,
+      "mean": 8.485,
+      "p95": 11
+     },
+     "objects": {
+      "med": 4086,
+      "mean": 4074.658,
+      "p95": 4169
+     },
+     "autoMat": {
+      "med": 2568,
+      "mean": 2556.658,
+      "p95": 2651
+     },
+     "skinned": {
+      "med": 272,
+      "mean": 271.317,
+      "p95": 277
+     },
+     "skinnedVis": {
+      "med": 57,
+      "mean": 57,
+      "p95": 57
+     },
+     "meshesVis": {
+      "med": 624,
+      "mean": 624.292,
+      "p95": 625
+     },
+     "lights": {
+      "med": 6,
+      "mean": 5.814,
+      "p95": 6
+     },
+     "matrixWalk": {
+      "med": 4052,
+      "mean": 4040.795,
+      "p95": 4134
+     },
+     "programs": {
+      "med": 122,
+      "mean": 122,
+      "p95": 122
+     },
+     "geometries": {
+      "med": 2125,
+      "mean": 2125,
+      "p95": 2125
+     },
+     "textures": {
+      "med": 339,
+      "mean": 339,
+      "p95": 339
+     },
+     "dom": {
+      "med": 1,
+      "mean": 1.047,
+      "p95": 1
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 726067.214,
+      "p95": 4820028
+     }
+    },
+    "longTasks": []
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  },
+  {
+   "label": "dev",
+   "q": "high",
+   "off": "",
+   "site": "loop el",
+   "frameMs": 10.4,
+   "p95Ms": 14.2,
+   "maxMs": 30.8,
+   "jsMs": 9.5,
+   "gpuMs": 3.42,
+   "calls": 276,
+   "tris": 419428,
+   "frames": 281,
+   "prof": {
+    "frames": 281,
+    "systems": {
+     "gadgets": {
+      "med": 0,
+      "mean": 0.027,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.034,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.3,
+      "mean": 0.277,
+      "p95": 0.4
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.093,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0.1,
+      "mean": 0.117,
+      "p95": 0.2
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.014,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0.1,
+      "mean": 0.072,
+      "p95": 0.2
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.021,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "hero.cape": {
+      "med": 1.1,
+      "mean": 1.081,
+      "p95": 1.3
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.008,
+      "p95": 0.1
+     },
+     "nav": {
+      "med": 0.1,
+      "mean": 0.105,
+      "p95": 0.3
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.108,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.012,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 2.2,
+      "mean": 2.176,
+      "p95": 3
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.049,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.2,
+      "mean": 0.151,
+      "p95": 0.3
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.077,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.013,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "world.shadows": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "world": {
+      "med": 0.6,
+      "mean": 0.601,
+      "p95": 0.8
+     },
+     "render.matrices": {
+      "med": 1.6,
+      "mean": 1.717,
+      "p95": 2.5
+     },
+     "render": {
+      "med": 6.4,
+      "mean": 6.43,
+      "p95": 8.2
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 5,
+      "mean": 5,
+      "p95": 5
+     },
+     "tris.far": {
+      "med": 15952,
+      "mean": 15952,
+      "p95": 15952
+     },
+     "calls.color": {
+      "med": 270,
+      "mean": 270.178,
+      "p95": 278
+     },
+     "tris.color": {
+      "med": 403474,
+      "mean": 405323.537,
+      "p95": 414138
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls": {
+      "med": 276,
+      "mean": 276.178,
+      "p95": 284
+     },
+     "tris": {
+      "med": 419428,
+      "mean": 421277.537,
+      "p95": 430092
+     },
+     "gpuMs": {
+      "med": 3.419,
+      "mean": 4.117,
+      "p95": 8.458
+     },
+     "stepMs": {
+      "med": 9.5,
+      "mean": 9.47,
+      "p95": 11.7
+     },
+     "objects": {
+      "med": 4335,
+      "mean": 4355.381,
+      "p95": 4418
+     },
+     "autoMat": {
+      "med": 2817,
+      "mean": 2837.381,
+      "p95": 2900
+     },
+     "skinned": {
+      "med": 287,
+      "mean": 288.228,
+      "p95": 292
+     },
+     "skinnedVis": {
+      "med": 120,
+      "mean": 120.117,
+      "p95": 123
+     },
+     "meshesVis": {
+      "med": 794,
+      "mean": 795.174,
+      "p95": 799
+     },
+     "lights": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "matrixWalk": {
+      "med": 4316,
+      "mean": 4336.174,
+      "p95": 4398
+     },
+     "programs": {
+      "med": 123,
+      "mean": 123,
+      "p95": 123
+     },
+     "geometries": {
+      "med": 2126,
+      "mean": 2126,
+      "p95": 2126
+     },
+     "textures": {
+      "med": 339,
+      "mean": 339,
+      "p95": 339
+     },
+     "dom": {
+      "med": 2,
+      "mean": 2.043,
+      "p95": 2
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 779211.769,
+      "p95": 4791340
+     }
+    },
+    "longTasks": []
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  },
+  {
+   "label": "prod",
+   "q": "high",
+   "off": "",
+   "site": "loop el",
+   "frameMs": 9.6,
+   "p95Ms": 13,
+   "maxMs": 26.5,
+   "jsMs": 8.6,
+   "gpuMs": 3.43,
+   "calls": 271,
+   "tris": 383712,
+   "frames": 301,
+   "prof": {
+    "frames": 301,
+    "systems": {
+     "gadgets": {
+      "med": 0,
+      "mean": 0.022,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0.1
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.03,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.2,
+      "mean": 0.25,
+      "p95": 0.4
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.078,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0.1,
+      "mean": 0.064,
+      "p95": 0.1
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.014,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0.1,
+      "mean": 0.059,
+      "p95": 0.1
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.02,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "hero.cape": {
+      "med": 1.1,
+      "mean": 1.066,
+      "p95": 1.3
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "nav": {
+      "med": 0.1,
+      "mean": 0.101,
+      "p95": 0.3
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.107,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.011,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 2,
+      "mean": 2.022,
+      "p95": 2.8
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.044,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.1,
+      "mean": 0.132,
+      "p95": 0.2
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.11,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.012,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.shadows": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0.1
+     },
+     "world": {
+      "med": 0.6,
+      "mean": 0.598,
+      "p95": 0.8
+     },
+     "render.matrices": {
+      "med": 1.4,
+      "mean": 1.444,
+      "p95": 2.1
+     },
+     "render": {
+      "med": 5.7,
+      "mean": 5.892,
+      "p95": 7.6
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 5,
+      "mean": 5,
+      "p95": 5
+     },
+     "tris.far": {
+      "med": 15952,
+      "mean": 15952,
+      "p95": 15952
+     },
+     "calls.color": {
+      "med": 265,
+      "mean": 266.229,
+      "p95": 274
+     },
+     "tris.color": {
+      "med": 367758,
+      "mean": 368074.877,
+      "p95": 378618
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls": {
+      "med": 271,
+      "mean": 272.229,
+      "p95": 280
+     },
+     "tris": {
+      "med": 383712,
+      "mean": 384028.877,
+      "p95": 394572
+     },
+     "gpuMs": {
+      "med": 3.43,
+      "mean": 3.726,
+      "p95": 7.908
+     },
+     "stepMs": {
+      "med": 8.6,
+      "mean": 8.747,
+      "p95": 11
+     },
+     "objects": {
+      "med": 4335,
+      "mean": 4313.216,
+      "p95": 4418
+     },
+     "autoMat": {
+      "med": 2817,
+      "mean": 2795.216,
+      "p95": 2900
+     },
+     "skinned": {
+      "med": 287,
+      "mean": 285.688,
+      "p95": 292
+     },
+     "skinnedVis": {
+      "med": 118,
+      "mean": 117.89,
+      "p95": 121
+     },
+     "meshesVis": {
+      "med": 793,
+      "mean": 792.372,
+      "p95": 794
+     },
+     "lights": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "matrixWalk": {
+      "med": 4315,
+      "mean": 4293.442,
+      "p95": 4396
+     },
+     "programs": {
+      "med": 122,
+      "mean": 122,
+      "p95": 122
+     },
+     "geometries": {
+      "med": 2125,
+      "mean": 2125,
+      "p95": 2125
+     },
+     "textures": {
+      "med": 339,
+      "mean": 339,
+      "p95": 339
+     },
+     "dom": {
+      "med": 2,
+      "mean": 2.04,
+      "p95": 2
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 751900.056,
+      "p95": 4777747
+     }
+    },
+    "longTasks": []
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  },
+  {
+   "label": "dev",
+   "q": "low",
+   "off": "",
+   "site": "gcpd roof",
+   "frameMs": 7.6,
+   "p95Ms": 10.6,
+   "maxMs": 24.5,
+   "jsMs": 7.1,
+   "gpuMs": 3.21,
+   "calls": 257,
+   "tris": 299349,
+   "frames": 395,
+   "prof": {
+    "frames": 395,
+    "systems": {
+     "render.matrices": {
+      "med": 1.5,
+      "mean": 1.421,
+      "p95": 2
+     },
+     "render": {
+      "med": 5.1,
+      "mean": 4.832,
+      "p95": 6.1
+     },
+     "gadgets": {
+      "med": 0,
+      "mean": 0.022,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.028,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.2,
+      "mean": 0.201,
+      "p95": 0.3
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.077,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0,
+      "mean": 0.037,
+      "p95": 0.1
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.022,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0.1,
+      "mean": 0.062,
+      "p95": 0.1
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.014,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "hero.cape": {
+      "med": 0.5,
+      "mean": 0.562,
+      "p95": 0.9
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "nav": {
+      "med": 0,
+      "mean": 0.059,
+      "p95": 0.3
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.074,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.012,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 1.3,
+      "mean": 1.326,
+      "p95": 1.8
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.033,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.1,
+      "mean": 0.112,
+      "p95": 0.2
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.087,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.009,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "world": {
+      "med": 0.5,
+      "mean": 0.532,
+      "p95": 0.7
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 7,
+      "mean": 7,
+      "p95": 7
+     },
+     "tris.far": {
+      "med": 16092,
+      "mean": 16092,
+      "p95": 16092
+     },
+     "calls.color": {
+      "med": 249,
+      "mean": 248.797,
+      "p95": 250
+     },
+     "tris.color": {
+      "med": 283255,
+      "mean": 282566.21,
+      "p95": 283299
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls.xray": {
+      "med": 31,
+      "mean": 31,
+      "p95": 31
+     },
+     "tris.xray": {
+      "med": 55484,
+      "mean": 55484,
+      "p95": 55484
+     },
+     "calls": {
+      "med": 257,
+      "mean": 256.797,
+      "p95": 258
+     },
+     "tris": {
+      "med": 299349,
+      "mean": 298660.21,
+      "p95": 299393
+     },
+     "gpuMs": {
+      "med": 3.211,
+      "mean": 3.274,
+      "p95": 6.936
+     },
+     "stepMs": {
+      "med": 7.1,
+      "mean": 6.906,
+      "p95": 8.7
+     },
+     "objects": {
+      "med": 3766,
+      "mean": 3767.471,
+      "p95": 3849
+     },
+     "autoMat": {
+      "med": 2269,
+      "mean": 2270.471,
+      "p95": 2352
+     },
+     "skinned": {
+      "med": 257,
+      "mean": 257.089,
+      "p95": 262
+     },
+     "skinnedVis": {
+      "med": 55,
+      "mean": 55,
+      "p95": 55
+     },
+     "meshesVis": {
+      "med": 428,
+      "mean": 427.063,
+      "p95": 430
+     },
+     "lights": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "matrixWalk": {
+      "med": 3734,
+      "mean": 3735.453,
+      "p95": 3816
+     },
+     "programs": {
+      "med": 112,
+      "mean": 112,
+      "p95": 112
+     },
+     "geometries": {
+      "med": 2061,
+      "mean": 2061,
+      "p95": 2061
+     },
+     "textures": {
+      "med": 335,
+      "mean": 335,
+      "p95": 335
+     },
+     "dom": {
+      "med": 1,
+      "mean": 1.03,
+      "p95": 1
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 650362.57,
+      "p95": 4804939
+     }
+    },
+    "longTasks": []
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  },
+  {
+   "label": "prod",
+   "q": "low",
+   "off": "",
+   "site": "gcpd roof",
+   "frameMs": 7.8,
+   "p95Ms": 10.5,
+   "maxMs": 17.1,
+   "jsMs": 7.1,
+   "gpuMs": 2.76,
+   "calls": 250,
+   "tris": 291033,
+   "frames": 386,
+   "prof": {
+    "frames": 386,
+    "systems": {
+     "render.matrices": {
+      "med": 1.5,
+      "mean": 1.436,
+      "p95": 2
+     },
+     "render": {
+      "med": 5,
+      "mean": 4.804,
+      "p95": 6
+     },
+     "gadgets": {
+      "med": 0,
+      "mean": 0.023,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.022,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.2,
+      "mean": 0.225,
+      "p95": 0.3
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.081,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0,
+      "mean": 0.044,
+      "p95": 0.1
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.018,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0.1,
+      "mean": 0.064,
+      "p95": 0.1
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.014,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "hero.cape": {
+      "med": 0.5,
+      "mean": 0.594,
+      "p95": 0.9
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "nav": {
+      "med": 0,
+      "mean": 0.057,
+      "p95": 0.2
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.083,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.008,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 1.3,
+      "mean": 1.377,
+      "p95": 1.9
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.034,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.1,
+      "mean": 0.105,
+      "p95": 0.2
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.08,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.01,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "world": {
+      "med": 0.5,
+      "mean": 0.524,
+      "p95": 0.7
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 7,
+      "mean": 7,
+      "p95": 7
+     },
+     "tris.far": {
+      "med": 16092,
+      "mean": 16092,
+      "p95": 16092
+     },
+     "calls.color": {
+      "med": 242,
+      "mean": 242.637,
+      "p95": 248
+     },
+     "tris.color": {
+      "med": 274939,
+      "mean": 276904.44,
+      "p95": 281547
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls.xray": {
+      "med": 31,
+      "mean": 31,
+      "p95": 31
+     },
+     "tris.xray": {
+      "med": 55484,
+      "mean": 55484,
+      "p95": 55484
+     },
+     "calls": {
+      "med": 250,
+      "mean": 250.637,
+      "p95": 256
+     },
+     "tris": {
+      "med": 291033,
+      "mean": 292998.44,
+      "p95": 297641
+     },
+     "gpuMs": {
+      "med": 2.763,
+      "mean": 2.997,
+      "p95": 6.804
+     },
+     "stepMs": {
+      "med": 7.2,
+      "mean": 6.928,
+      "p95": 8.7
+     },
+     "objects": {
+      "med": 3849,
+      "mean": 3891.145,
+      "p95": 4015
+     },
+     "autoMat": {
+      "med": 2352,
+      "mean": 2394.145,
+      "p95": 2518
+     },
+     "skinned": {
+      "med": 262,
+      "mean": 264.539,
+      "p95": 272
+     },
+     "skinnedVis": {
+      "med": 55,
+      "mean": 55,
+      "p95": 55
+     },
+     "meshesVis": {
+      "med": 425,
+      "mean": 425.653,
+      "p95": 428
+     },
+     "lights": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "matrixWalk": {
+      "med": 3816,
+      "mean": 3857.637,
+      "p95": 3980
+     },
+     "programs": {
+      "med": 112,
+      "mean": 112,
+      "p95": 112
+     },
+     "geometries": {
+      "med": 2067,
+      "mean": 2067,
+      "p95": 2067
+     },
+     "textures": {
+      "med": 338,
+      "mean": 338,
+      "p95": 338
+     },
+     "dom": {
+      "med": 1,
+      "mean": 1.438,
+      "p95": 2
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 604211.427,
+      "p95": 4126888
+     }
+    },
+    "longTasks": []
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  },
+  {
+   "label": "dev",
+   "q": "low",
+   "off": "",
+   "site": "neon street",
+   "frameMs": 6.4,
+   "p95Ms": 11.4,
+   "maxMs": 46.6,
+   "jsMs": 5.5,
+   "gpuMs": 1.94,
+   "calls": 192,
+   "tris": 236287,
+   "frames": 440,
+   "prof": {
+    "frames": 440,
+    "systems": {
+     "render.matrices": {
+      "med": 1.2,
+      "mean": 1.361,
+      "p95": 2
+     },
+     "render": {
+      "med": 3.6,
+      "mean": 3.833,
+      "p95": 5.3
+     },
+     "gadgets": {
+      "med": 0,
+      "mean": 0.026,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.023,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.2,
+      "mean": 0.181,
+      "p95": 0.3
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.072,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0,
+      "mean": 0.049,
+      "p95": 0.1
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.01,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0,
+      "mean": 0.052,
+      "p95": 0.1
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.011,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "hero.cape": {
+      "med": 0.5,
+      "mean": 0.497,
+      "p95": 0.9
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0.1
+     },
+     "nav": {
+      "med": 0,
+      "mean": 0.059,
+      "p95": 0.2
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.078,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.011,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 1.1,
+      "mean": 1.21,
+      "p95": 1.8
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.033,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.1,
+      "mean": 0.096,
+      "p95": 0.2
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.086,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.008,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world": {
+      "med": 0.5,
+      "mean": 0.47,
+      "p95": 0.7
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 7,
+      "mean": 7,
+      "p95": 7
+     },
+     "tris.far": {
+      "med": 16092,
+      "mean": 16092,
+      "p95": 16092
+     },
+     "calls.color": {
+      "med": 184,
+      "mean": 184.45,
+      "p95": 187
+     },
+     "tris.color": {
+      "med": 220193,
+      "mean": 220061.936,
+      "p95": 221753
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls.xray": {
+      "med": 31,
+      "mean": 31,
+      "p95": 31
+     },
+     "tris.xray": {
+      "med": 55484,
+      "mean": 55484,
+      "p95": 55484
+     },
+     "calls": {
+      "med": 192,
+      "mean": 192.45,
+      "p95": 195
+     },
+     "tris": {
+      "med": 236287,
+      "mean": 236155.936,
+      "p95": 237847
+     },
+     "gpuMs": {
+      "med": 1.935,
+      "mean": 2.354,
+      "p95": 5.16
+     },
+     "stepMs": {
+      "med": 5.5,
+      "mean": 5.713,
+      "p95": 7.6
+     },
+     "objects": {
+      "med": 4264,
+      "mean": 4271.545,
+      "p95": 4430
+     },
+     "autoMat": {
+      "med": 2767,
+      "mean": 2774.545,
+      "p95": 2933
+     },
+     "skinned": {
+      "med": 287,
+      "mean": 287.455,
+      "p95": 297
+     },
+     "skinnedVis": {
+      "med": 56,
+      "mean": 56,
+      "p95": 56
+     },
+     "meshesVis": {
+      "med": 454,
+      "mean": 454.373,
+      "p95": 457
+     },
+     "lights": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "matrixWalk": {
+      "med": 4227,
+      "mean": 4234.455,
+      "p95": 4391
+     },
+     "programs": {
+      "med": 112,
+      "mean": 112,
+      "p95": 112
+     },
+     "geometries": {
+      "med": 2062,
+      "mean": 2062,
+      "p95": 2062
+     },
+     "textures": {
+      "med": 335,
+      "mean": 335,
+      "p95": 335
+     },
+     "dom": {
+      "med": 2,
+      "mean": 2.034,
+      "p95": 2
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 630475.116,
+      "p95": 4946020
+     }
+    },
+    "longTasks": []
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  },
+  {
+   "label": "prod",
+   "q": "low",
+   "off": "",
+   "site": "neon street",
+   "frameMs": 6.6,
+   "p95Ms": 11.9,
+   "maxMs": 62.8,
+   "jsMs": 5.7,
+   "gpuMs": 2.07,
+   "calls": 190,
+   "tris": 234135,
+   "frames": 426,
+   "prof": {
+    "frames": 426,
+    "systems": {
+     "render.matrices": {
+      "med": 1.4,
+      "mean": 1.366,
+      "p95": 2
+     },
+     "render": {
+      "med": 4,
+      "mean": 3.976,
+      "p95": 5.4
+     },
+     "gadgets": {
+      "med": 0,
+      "mean": 0.017,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.018,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.2,
+      "mean": 0.214,
+      "p95": 0.3
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.067,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0,
+      "mean": 0.054,
+      "p95": 0.1
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.011,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0,
+      "mean": 0.052,
+      "p95": 0.1
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.012,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "hero.cape": {
+      "med": 0.4,
+      "mean": 0.541,
+      "p95": 0.8
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "nav": {
+      "med": 0,
+      "mean": 0.052,
+      "p95": 0.2
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.073,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.01,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 1.2,
+      "mean": 1.253,
+      "p95": 1.8
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.038,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.1,
+      "mean": 0.087,
+      "p95": 0.2
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.077,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.007,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "world": {
+      "med": 0.5,
+      "mean": 0.469,
+      "p95": 0.7
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 7,
+      "mean": 7,
+      "p95": 7
+     },
+     "tris.far": {
+      "med": 16092,
+      "mean": 16092,
+      "p95": 16092
+     },
+     "calls.color": {
+      "med": 182,
+      "mean": 181.545,
+      "p95": 182
+     },
+     "tris.color": {
+      "med": 218041,
+      "mean": 217578.202,
+      "p95": 218041
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls.xray": {
+      "med": 31,
+      "mean": 31,
+      "p95": 31
+     },
+     "tris.xray": {
+      "med": 55484,
+      "mean": 55484,
+      "p95": 55484
+     },
+     "calls": {
+      "med": 190,
+      "mean": 189.545,
+      "p95": 190
+     },
+     "tris": {
+      "med": 234135,
+      "mean": 233672.202,
+      "p95": 234135
+     },
+     "gpuMs": {
+      "med": 2.075,
+      "mean": 2.341,
+      "p95": 5.291
+     },
+     "stepMs": {
+      "med": 5.7,
+      "mean": 5.906,
+      "p95": 7.8
+     },
+     "objects": {
+      "med": 4430,
+      "mean": 4409.932,
+      "p95": 4596
+     },
+     "autoMat": {
+      "med": 2933,
+      "mean": 2912.932,
+      "p95": 3099
+     },
+     "skinned": {
+      "med": 297,
+      "mean": 295.791,
+      "p95": 307
+     },
+     "skinnedVis": {
+      "med": 61,
+      "mean": 61,
+      "p95": 61
+     },
+     "meshesVis": {
+      "med": 453,
+      "mean": 453,
+      "p95": 453
+     },
+     "lights": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "matrixWalk": {
+      "med": 4393,
+      "mean": 4373.174,
+      "p95": 4557
+     },
+     "programs": {
+      "med": 112,
+      "mean": 112,
+      "p95": 112
+     },
+     "geometries": {
+      "med": 2067,
+      "mean": 2067,
+      "p95": 2067
+     },
+     "textures": {
+      "med": 338,
+      "mean": 338,
+      "p95": 338
+     },
+     "dom": {
+      "med": 2,
+      "mean": 2.031,
+      "p95": 2
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 616913.326,
+      "p95": 4666781
+     }
+    },
+    "longTasks": [
+     50
+    ]
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  },
+  {
+   "label": "dev",
+   "q": "low",
+   "off": "",
+   "site": "loop el",
+   "frameMs": 9,
+   "p95Ms": 12.7,
+   "maxMs": 26.7,
+   "jsMs": 8,
+   "gpuMs": 3.57,
+   "calls": 221,
+   "tris": 298228,
+   "frames": 327,
+   "prof": {
+    "frames": 327,
+    "systems": {
+     "render.matrices": {
+      "med": 1.9,
+      "mean": 1.787,
+      "p95": 2.6
+     },
+     "render": {
+      "med": 5.4,
+      "mean": 5.222,
+      "p95": 6.9
+     },
+     "gadgets": {
+      "med": 0,
+      "mean": 0.022,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.008,
+      "p95": 0.1
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.027,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.2,
+      "mean": 0.229,
+      "p95": 0.3
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.085,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0.1,
+      "mean": 0.068,
+      "p95": 0.2
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.012,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0.1,
+      "mean": 0.061,
+      "p95": 0.1
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.005,
+      "p95": 0
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.02,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "hero.cape": {
+      "med": 1,
+      "mean": 1.015,
+      "p95": 1.4
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.009,
+      "p95": 0.1
+     },
+     "nav": {
+      "med": 0.1,
+      "mean": 0.086,
+      "p95": 0.3
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.103,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.009,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 1.9,
+      "mean": 1.935,
+      "p95": 2.9
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.042,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.1,
+      "mean": 0.12,
+      "p95": 0.2
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.096,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.01,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world": {
+      "med": 0.6,
+      "mean": 0.621,
+      "p95": 0.8
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 5,
+      "mean": 5,
+      "p95": 5
+     },
+     "tris.far": {
+      "med": 15952,
+      "mean": 15952,
+      "p95": 15952
+     },
+     "calls.color": {
+      "med": 215,
+      "mean": 213.991,
+      "p95": 218
+     },
+     "tris.color": {
+      "med": 282274,
+      "mean": 280849.547,
+      "p95": 286250
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls.xray": {
+      "med": 31,
+      "mean": 31,
+      "p95": 31
+     },
+     "tris.xray": {
+      "med": 55484,
+      "mean": 55484,
+      "p95": 55484
+     },
+     "calls": {
+      "med": 221,
+      "mean": 219.991,
+      "p95": 224
+     },
+     "tris": {
+      "med": 298228,
+      "mean": 296803.547,
+      "p95": 302204
+     },
+     "gpuMs": {
+      "med": 3.571,
+      "mean": 3.803,
+      "p95": 7.456
+     },
+     "stepMs": {
+      "med": 8,
+      "mean": 8.033,
+      "p95": 10.6
+     },
+     "objects": {
+      "med": 4679,
+      "mean": 4650.318,
+      "p95": 4762
+     },
+     "autoMat": {
+      "med": 3182,
+      "mean": 3153.318,
+      "p95": 3265
+     },
+     "skinned": {
+      "med": 312,
+      "mean": 310.272,
+      "p95": 317
+     },
+     "skinnedVis": {
+      "med": 85,
+      "mean": 85,
+      "p95": 85
+     },
+     "meshesVis": {
+      "med": 471,
+      "mean": 471,
+      "p95": 471
+     },
+     "lights": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "matrixWalk": {
+      "med": 4645,
+      "mean": 4616.664,
+      "p95": 4727
+     },
+     "programs": {
+      "med": 112,
+      "mean": 112,
+      "p95": 112
+     },
+     "geometries": {
+      "med": 2064,
+      "mean": 2064,
+      "p95": 2064
+     },
+     "textures": {
+      "med": 336,
+      "mean": 336,
+      "p95": 336
+     },
+     "dom": {
+      "med": 2,
+      "mean": 2.046,
+      "p95": 2
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 674995.205,
+      "p95": 4631424
+     }
+    },
+    "longTasks": []
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  },
+  {
+   "label": "prod",
+   "q": "low",
+   "off": "",
+   "site": "loop el",
+   "frameMs": 9.4,
+   "p95Ms": 13.1,
+   "maxMs": 27.8,
+   "jsMs": 8.3,
+   "gpuMs": 3.46,
+   "calls": 223,
+   "tris": 302812,
+   "frames": 313,
+   "prof": {
+    "frames": 313,
+    "systems": {
+     "render.matrices": {
+      "med": 1.9,
+      "mean": 1.859,
+      "p95": 2.5
+     },
+     "render": {
+      "med": 5.6,
+      "mean": 5.454,
+      "p95": 7.1
+     },
+     "gadgets": {
+      "med": 0,
+      "mean": 0.023,
+      "p95": 0.1
+     },
+     "coop.pre": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "interiors": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "stealth": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "nightwing": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "combat": {
+      "med": 0,
+      "mean": 0.026,
+      "p95": 0.1
+     },
+     "hero": {
+      "med": 0.3,
+      "mean": 0.266,
+      "p95": 0.4
+     },
+     "coop.post": {
+      "med": 0,
+      "mean": 0.004,
+      "p95": 0
+     },
+     "batwing": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "vehicles": {
+      "med": 0.1,
+      "mean": 0.088,
+      "p95": 0.2
+     },
+     "civilians": {
+      "med": 0,
+      "mean": 0.048,
+      "p95": 0.1
+     },
+     "bruce": {
+      "med": 0,
+      "mean": 0.016,
+      "p95": 0.1
+     },
+     "side": {
+      "med": 0.1,
+      "mean": 0.058,
+      "p95": 0.1
+     },
+     "stealthFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "gfx": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "swarmFx": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "wayne": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "breakables": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "follow": {
+      "med": 0,
+      "mean": 0.019,
+      "p95": 0.1
+     },
+     "cinematic": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "chainFx": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "comicFx": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "hero.cape": {
+      "med": 1.1,
+      "mean": 1.054,
+      "p95": 1.5
+     },
+     "boss": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "bosses": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "hud": {
+      "med": 0,
+      "mean": 0.008,
+      "p95": 0.1
+     },
+     "coop": {
+      "med": 0,
+      "mean": 0.006,
+      "p95": 0.1
+     },
+     "nav": {
+      "med": 0.1,
+      "mean": 0.086,
+      "p95": 0.4
+     },
+     "finale": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "roof": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "flow": {
+      "med": 0.1,
+      "mean": 0.113,
+      "p95": 0.2
+     },
+     "audio": {
+      "med": 0,
+      "mean": 0.009,
+      "p95": 0.1
+     },
+     "game": {
+      "med": 2,
+      "mean": 1.999,
+      "p95": 3
+     },
+     "world.env": {
+      "med": 0,
+      "mean": 0.047,
+      "p95": 0.1
+     },
+     "world.traffic": {
+      "med": 0.1,
+      "mean": 0.135,
+      "p95": 0.2
+     },
+     "world.chunks": {
+      "med": 0.1,
+      "mean": 0.092,
+      "p95": 0.2
+     },
+     "world.halos": {
+      "med": 0,
+      "mean": 0.011,
+      "p95": 0.1
+     },
+     "world.sky": {
+      "med": 0,
+      "mean": 0.002,
+      "p95": 0
+     },
+     "world.rain": {
+      "med": 0,
+      "mean": 0.001,
+      "p95": 0
+     },
+     "world.signal": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "world.lights": {
+      "med": 0,
+      "mean": 0.003,
+      "p95": 0
+     },
+     "world": {
+      "med": 0.6,
+      "mean": 0.639,
+      "p95": 0.9
+     }
+    },
+    "counts": {
+     "calls.far": {
+      "med": 5,
+      "mean": 5,
+      "p95": 5
+     },
+     "tris.far": {
+      "med": 15952,
+      "mean": 15952,
+      "p95": 15952
+     },
+     "calls.color": {
+      "med": 217,
+      "mean": 216.671,
+      "p95": 218
+     },
+     "tris.color": {
+      "med": 286858,
+      "mean": 285487.01,
+      "p95": 286894
+     },
+     "calls.ink": {
+      "med": 1,
+      "mean": 1,
+      "p95": 1
+     },
+     "tris.ink": {
+      "med": 2,
+      "mean": 2,
+      "p95": 2
+     },
+     "calls.xray": {
+      "med": 31,
+      "mean": 31,
+      "p95": 31
+     },
+     "tris.xray": {
+      "med": 55484,
+      "mean": 55484,
+      "p95": 55484
+     },
+     "calls": {
+      "med": 223,
+      "mean": 222.671,
+      "p95": 224
+     },
+     "tris": {
+      "med": 302812,
+      "mean": 301441.01,
+      "p95": 302848
+     },
+     "gpuMs": {
+      "med": 3.459,
+      "mean": 5.293,
+      "p95": 9.226
+     },
+     "stepMs": {
+      "med": 8.4,
+      "mean": 8.35,
+      "p95": 11.1
+     },
+     "objects": {
+      "med": 4762,
+      "mean": 4778.706,
+      "p95": 4845
+     },
+     "autoMat": {
+      "med": 3265,
+      "mean": 3281.706,
+      "p95": 3348
+     },
+     "skinned": {
+      "med": 317,
+      "mean": 318.006,
+      "p95": 322
+     },
+     "skinnedVis": {
+      "med": 85,
+      "mean": 85,
+      "p95": 85
+     },
+     "meshesVis": {
+      "med": 471,
+      "mean": 471,
+      "p95": 471
+     },
+     "lights": {
+      "med": 0,
+      "mean": 0,
+      "p95": 0
+     },
+     "matrixWalk": {
+      "med": 4727,
+      "mean": 4743.505,
+      "p95": 4809
+     },
+     "programs": {
+      "med": 112,
+      "mean": 112,
+      "p95": 112
+     },
+     "geometries": {
+      "med": 2067,
+      "mean": 2067,
+      "p95": 2067
+     },
+     "textures": {
+      "med": 338,
+      "mean": 338,
+      "p95": 338
+     },
+     "dom": {
+      "med": 2,
+      "mean": 2.054,
+      "p95": 2
+     },
+     "heapUp": {
+      "med": 0,
+      "mean": 733000.789,
+      "p95": 4785649
+     }
+    },
+    "longTasks": []
+   },
+   "px": [
+    1920,
+    1080
+   ],
+   "errors": 0
+  }
+ ]
+}

@@ -1,0 +1,182 @@
+{
+ "batmobile": {
+  "id": "batmobile",
+  "draws": 6,
+  "tris": 6201
+ },
+ "batmobile_classic": {
+  "id": "batmobile_classic",
+  "draws": 6,
+  "tris": 6225
+ },
+ "batcycle": {
+  "id": "batcycle",
+  "draws": 4,
+  "tris": 2034
+ },
+ "wingbike": {
+  "id": "wingbike",
+  "draws": 4,
+  "tris": 1860
+ },
+ "batwing": {
+  "id": "batwing",
+  "draws": 10,
+  "tris": 1832
+ },
+ "sedan": {
+  "id": "sedan",
+  "draws": 4,
+  "tris": 2960
+ },
+ "sedan_deco": {
+  "id": "sedan_deco",
+  "draws": 4,
+  "tris": 3796
+ },
+ "sedan_compact": {
+  "id": "sedan_compact",
+  "draws": 4,
+  "tris": 2948
+ },
+ "coupe": {
+  "id": "coupe",
+  "draws": 4,
+  "tris": 2812
+ },
+ "hatchback": {
+  "id": "hatchback",
+  "draws": 4,
+  "tris": 2920
+ },
+ "wagon": {
+  "id": "wagon",
+  "draws": 4,
+  "tris": 3008
+ },
+ "suv": {
+  "id": "suv",
+  "draws": 4,
+  "tris": 2996
+ },
+ "pickup": {
+  "id": "pickup",
+  "draws": 4,
+  "tris": 2884
+ },
+ "van_delivery": {
+  "id": "van_delivery",
+  "draws": 4,
+  "tris": 2916
+ },
+ "box_truck": {
+  "id": "box_truck",
+  "draws": 4,
+  "tris": 3176
+ },
+ "taxi": {
+  "id": "taxi",
+  "draws": 4,
+  "tris": 3992
+ },
+ "bus": {
+  "id": "bus",
+  "draws": 4,
+  "tris": 3104
+ },
+ "police": {
+  "id": "police",
+  "draws": 4,
+  "tris": 3476
+ },
+ "police_van": {
+  "id": "police_van",
+  "draws": 4,
+  "tris": 3624
+ },
+ "ambulance": {
+  "id": "ambulance",
+  "draws": 4,
+  "tris": 3464
+ },
+ "fire_engine": {
+  "id": "fire_engine",
+  "draws": 4,
+  "tris": 3800
+ },
+ "garbage_truck": {
+  "id": "garbage_truck",
+  "draws": 4,
+  "tris": 3232
+ },
+ "limousine": {
+  "id": "limousine",
+  "draws": 4,
+  "tris": 3212
+ },
+ "motorcycle": {
+  "id": "motorcycle",
+  "draws": 3,
+  "tris": 1700
+ },
+ "gang_van": {
+  "id": "gang_van",
+  "draws": 4,
+  "tris": 3040
+ },
+ "armored_truck": {
+  "id": "armored_truck",
+  "draws": 4,
+  "tris": 3252
+ },
+ "el_cab": {
+  "id": "el_cab",
+  "draws": 4,
+  "tris": 4436
+ },
+ "el_mid": {
+  "id": "el_mid",
+  "draws": 3,
+  "tris": 4280
+ },
+ "el_train": {
+  "id": "el_train",
+  "draws": 14,
+  "tris": 17432
+ },
+ "tour_boat": {
+  "id": "tour_boat",
+  "draws": 4,
+  "tris": 1336
+ },
+ "police_launch": {
+  "id": "police_launch",
+  "draws": 4,
+  "tris": 768
+ },
+ "tug": {
+  "id": "tug",
+  "draws": 3,
+  "tris": 1596
+ },
+ "speedboat": {
+  "id": "speedboat",
+  "draws": 4,
+  "tris": 400
+ },
+ "heli_gcpd": {
+  "id": "heli_gcpd",
+  "draws": 4,
+  "tris": 968
+ },
+ "heli_news": {
+  "id": "heli_news",
+  "draws": 4,
+  "tris": 1048
+ },
+ "blimp": {
+  "id": "blimp",
+  "draws": 3,
+  "tris": 2264
+ }
+}

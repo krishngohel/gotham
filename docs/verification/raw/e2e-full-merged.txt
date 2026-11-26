@@ -1,0 +1,513 @@
+
+Running 129 tests using 1 worker
+
+  ok   1 tests\e2e\accessibility.spec.js:14:1 › a spoken line shows as a subtitle with its speaker (10.6s)
+  ok   2 tests\e2e\accessibility.spec.js:35:1 › counter, unblockable and ranged tells have different shapes (9.9s)
+  ok   3 tests\e2e\accessibility.spec.js:70:1 › the Accessibility tab saves its options across a reload (17.2s)
+  ok   4 tests\e2e\bruce.spec.js:34:1 › Bristol -> the Manor -> the clock passage -> every cave station -> suit up -> out through the waterfall (57.0s)
+  ok   5 tests\e2e\bruce.spec.js:156:1 › the gala: the signal mid-toast, played to stay and to slip away; the meters and the next night carry it (16.4s)
+  ok   6 tests\e2e\bruce.spec.js:191:1 › a Bruce day: breakfast with a split lip and the reporter at the table, the 9 a.m. vote, the night starts in the cave (13.2s)
+  ok   7 tests\e2e\bruce.spec.js:229:1 › co-op: two players go through the cave together; the partner is the ward in a Bruce scene (13.3s)
+  ok   8 tests\e2e\campaign.spec.js:15:1 › a save in the middle of Night Two resumes on its step, in that night (16.3s)
+  ok   9 tests\e2e\campaign.spec.js:43:1 › Night One's credits lead into Night Two, with free roam kept (34.3s)
+  ok  10 tests\e2e\campaign.spec.js:57:1 › Night Two plays start to finish with a scripted player and a co-op bot (44.4s)
+  ok  11 tests\e2e\campaign.spec.js:109:1 › Night Eight: the scripted player fights Black Mask for real and makes progress (27.6s)
+  ok  12 tests\e2e\cityNorth.spec.js:56:1 › on foot from the old city to Wayne Manor, the village and the cemetery; and out to Blackgate (29.2s)
+  ok  13 tests\e2e\cityNorth.spec.js:77:1 › drive the Batmobile from the Loop up into Bristol; walk the Blackgate causeway (21.6s)
+  ok  14 tests\e2e\cityNorth.spec.js:129:1 › a glide off the overlook west over the woods finds grapple points ahead (13.4s)
+  ok  15 tests\e2e\cityNorth.spec.js:166:1 › traffic: the fleet drives the streets, stops for a hero in the road, honks, and reports pass-bys (27.8s)
+normal / answers {"left":0,"down":false,"hp":56.066799999999986,"hurt":4,"counters":13,"dodges":3,"capes":19}
+  ok  16 tests\e2e\combatRoles.spec.js:103:1 › normal: the right answers win a mixed-role fight (42.0s)
+hard / masher {"left":6,"down":true,"hp":0}
+  ok  17 tests\e2e\combatRoles.spec.js:115:1 › hard: button-mashing loses the same fight (15.6s)
+  ok  18 tests\e2e\content.spec.js:13:1 › a glide challenge counts down, runs and can be quit from the pause menu (9.9s)
+  ok  19 tests\e2e\content.spec.js:28:1 › a street crime spawns, is won and counted (8.7s)
+  ok  20 tests\e2e\content.spec.js:41:1 › an engaged crime you walk far away from for 10 s is dropped, not held forever (17.8s)
+  ok  21 tests\e2e\content.spec.js:60:1 › photo mode opens with O, cycles filters and saves a PNG (8.8s)
+  ok  22 tests\e2e\content.spec.js:78:1 › the progress page shows the percentage, every part and the map (7.6s)
+  ok  23 tests\e2e\coop.spec.js:16:1 › two heroes fight the same goons: both deal and take hits, aggro is shared, a downed hero is revived (14.3s)
+  ok  24 tests\e2e\coopSplit.spec.js:38:1 › lobby: two players join, pick heroes and start the story in split screen (10.1s)
+  ok  25 tests\e2e\coopSplit.spec.js:75:1 › drop in mid-fight, a lost controller pauses and is reassigned, drop out (10.6s)
+  ok  26 tests\e2e\coopSplit.spec.js:114:1 › two players: grapple, gadgets, detective and stealth are each player's own; hold to revive (10.2s)
+  x   27 tests\e2e\coopSplit.spec.js:153:1 › two-player story slice: brawl, Batmobile chase with a passenger, Harley, the boss to the end (43.6s)
+  ok  28 tests\e2e\east.spec.js:33:1 › walk from the old city east across Robinson Avenue into the park, then along the pier (34.9s)
+  ok  29 tests\e2e\east.spec.js:51:1 › walk the Arkham causeway up onto the island (42.4s)
+  ok  30 tests\e2e\east.spec.js:64:1 › drive the Batmobile down Lakeshore Drive and over the river-mouth viaduct (25.5s)
+  ok  31 tests\e2e\east.spec.js:93:1 › glide off the Conservatory dome over the park; the lake rescues a fall (15.8s)
+  ok  32 tests\e2e\env.spec.js:30:1 › time skip from night to day changes the lighting and the crowd (17.8s)
+  ok  33 tests\e2e\env.spec.js:52:3 › weather transitions run on potato and respect the tier (17.5s)
+  ok  34 tests\e2e\env.spec.js:52:3 › weather transitions run on ultra and respect the tier (20.1s)
+  ok  35 tests\e2e\env.spec.js:68:1 › pedestrians cross on the walk signal and flee a fight (35.2s)
+  ok  36 tests\e2e\env.spec.js:108:1 › two players far apart: both surroundings are populated (16.1s)
+  ok  37 tests\e2e\gadgets.spec.js:20:1 › the gadget wheel opens on Tab, 3 picks gel, and no chain fires (8.7s)
+  ok  38 tests\e2e\gadgets.spec.js:39:1 › explosive gel opens the Monarch booth and the trophy inside (10.9s)
+  ok  39 tests\e2e\gadgets.spec.js:67:1 › a WayneTech purchase shows on the page and survives a reload (26.8s)
+  ok  40 tests\e2e\gadgets2.spec.js:43:1 › ?gadgets=all unlocks all eighteen; the wheel turns to page 2 and the loadout station opens (9.1s)
+  ok  41 tests\e2e\gadgets2.spec.js:69:1 › disruptor, sonic, bolas and glue act on goons (11.9s)
+  ok  42 tests\e2e\gadgets2.spec.js:103:1 › tracker, decoy, EMP and drone (11.9s)
+  ok  43 tests\e2e\gadgets2.spec.js:140:1 › hack (QTE assist auto) and shock gloves (12.9s)
+  ok  44 tests\e2e\loop.spec.js:56:1 › on foot from the old city to Wayne Tower, the Exchange and up Gotham Mile (18.6s)
+  ok  45 tests\e2e\loop.spec.js:72:1 › drive the Batmobile up the canyon to the Exchange and along under the El (15.0s)
+  ok  46 tests\e2e\loop.spec.js:98:1 › a glide across the Loop from the Herald finds grapple points ahead (13.4s)
+  ok  47 tests\e2e\loop.spec.js:135:1 › El trains run, stop at stations and carry a hero on the roof (21.8s)
+  ok  48 tests\e2e\map.spec.js:46:1 › a waypoint set on the city map shows on the minimap and as a ribbon on the road; leaving the route reroutes (14.3s)
+  ok  49 tests\e2e\map.spec.js:90:1 › a raised bridge on the route makes the GPS go round (10.1s)
+  ok  50 tests\e2e\map.spec.js:106:1 › fast travel between two El stations (12.4s)
+  ok  51 tests\e2e\map.spec.js:131:1 › split screen: each player has a minimap and a route to their own waypoint (10.3s)
+  ok  52 tests\e2e\map.spec.js:157:1 › tracked marks from mapMark events, and the minimap in an interior (8.9s)
+  ok  53 tests\e2e\movement.spec.js:22:1 › wingsuit: a dive builds speed and pulling up climbs back (12.9s)
+grapple chain: 492 m, 2 lines, 2 perfect boosts, 0 street touchdowns
+  x   54 tests\e2e\movement.spec.js:44:1 › grapple-boost chaining crosses the Loop without touching the street (49.1s)
+  x   55 tests\e2e\movement.spec.js:92:1 › drives core -> Lower Gotham upper deck, ramp, lower deck -> Lakeshore Drive -> Arkham causeway -> Blackgate causeway (2.9m)
+  ok  56 tests\e2e\movement.spec.js:113:1 › battle mode: strafes sideways and the turret takes out drones (17.6s)
+  ok  57 tests\e2e\movement.spec.js:151:1 › eject at speed launches into a glide; remote call drives the car to her (18.0s)
+  ok  58 tests\e2e\movement.spec.js:184:1 › two players: driver and gunner stop a getaway car (10.8s)
+  ok  59 tests\e2e\movement.spec.js:224:1 › the Batwing drops her over a far district into a glide (fast-travel hook) (17.4s)
+  ok  60 tests\e2e\movement.spec.js:244:1 › on foot on the lower deck and the river walk nothing pulls her back (fall rescue, bounds) (12.6s)
+bandwidth in a brawl: host->guest 40.7 kbit/s, guest->host 17.2 kbit/s (payload, before UDP/DTLS/SCTP overhead)
+  ok  61 tests\e2e\netCoop.spec.js:12:1 › online brawl: the guest fights the host's goons, hits and KOs replicate, the story step is shared, bandwidth in budget (20.8s)
+  ok  62 tests\e2e\netCoop.spec.js:59:1 › disconnect and reconnect: the guest drops, comes back to the same slot and the worlds agree again (20.9s)
+  ok  63 tests\e2e\netCoop.spec.js:82:1 › story beats: a predator room, the Batmobile chase and the boss all advance on both machines (29.8s)
+selected candidate pair: {"local":"host","remote":"host","rtt":0.001}
+  ok  64 tests\e2e\netCoop.spec.js:130:1 › real WebRTC: the test relays the offer and answer; both channels open and a fight replicates (21.2s)
+guest at the wheel: top speed 26.0 m/s, moved 81.5 m; bandwidth in the chase host->guest 25.1 kbit/s, guest->host 14.9 kbit/s (traffic: 48)
+  ok  65 tests\e2e\netCoop2.spec.js:24:1 › the guest drives the Batmobile in the chase (host-simulated from its stick) (17.1s)
+gunner shots on the host: 6
+  ok  66 tests\e2e\netCoop2.spec.js:68:1 › the guest mans the gunner seat in the drone battle (15.4s)
+  ok  67 tests\e2e\netCoop2.spec.js:91:1 › a dual takedown and a team move between host and guest (20.2s)
+bandwidth, the Penguin with adds (10 on the fight list): host->guest 62.9 kbit/s
+  ok  68 tests\e2e\netCoop2.spec.js:139:1 › a campaign boss (the Penguin) fought by both players (20.4s)
+clock/weather on both: {"h":{"v":28,"hr":23,"w":"snow"},"g":{"v":28,"hr":23,"w":"snow"}}
+after the day: {"hn":"n2","h":"n2Start"}
+  ok  69 tests\e2e\netCoop2.spec.js:175:1 › the night changes with a Bruce day between: the guest follows (night, step); time skip, weather and lightning on both (12.1s)
+  ok  70 tests\e2e\netCoop2.spec.js:213:1 › fast travel together, both ways (14.6s)
+  ok  71 tests\e2e\netCoop2.spec.js:240:1 › the guest sees the predator room's awareness rings, the AI Nightwing and a street crime's UI (12.8s)
+guest crime panel: Robbery on Neon RowTake down the crew. The getaway driver is waitingDRIVER 1%
+  ok  72 tests\e2e\netCoop2.spec.js:262:1 › a street crime (crime system v2): its events, the police-radio call and the crime panel reach the guest (12.1s)
+  ok  73 tests\e2e\onboard.spec.js:26:1 › a fresh save cannot chain, special or grapple until the story gives each (8.9s)
+  ok  74 tests\e2e\onboard.spec.js:49:1 › the same squad with ?abilities=all: the chain fires (8.6s)
+  ok  75 tests\e2e\onboard.spec.js:59:1 › the grapple: no marker or line before the Docks beat, a real grapple after it (9.3s)
+  ok  76 tests\e2e\onboard.spec.js:72:1 › ?at= grants what the story would have by that step (16.0s)
+  ok  77 tests\e2e\onboard.spec.js:83:1 › a teaching beat completes when she performs the move (twice takes the card down) (9.2s)
+  ok  78 tests\e2e\onboard.spec.js:102:1 › the next goal eases in with distance as she approaches, then hands off a beat after reaching it (12.0s)
+  ok  79 tests\e2e\onboard.spec.js:123:1 › one centre card at a time (14.2s)
+  x   80 tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down (23.3s)
+  x   81 tests\e2e\openworld.spec.js:47:3 › defuse: the bomb's dial takes three strikes in the window (26.4s)
+  x   82 tests\e2e\openworld.spec.js:66:3 › rooftop chase: the free-runner hops the roofs until a hero catches him (26.0s)
+  x   83 tests\e2e\openworld.spec.js:88:3 › vehicle getaway: the car is stopped before it reaches the exit (26.0s)
+  x   84 tests\e2e\openworld.spec.js:107:3 › gang war: take one crew down, leave the other be, and the street is theirs (26.2s)
+  x   85 tests\e2e\openworld.spec.js:135:3 › El hijack: board the running train, then clear its roof (26.6s)
+  x   86 tests\e2e\openworld.spec.js:152:3 › stealth encounters: the counting house and the Herald nests, cleared and recorded (11.3s)
+  ok  87 tests\e2e\openworld.spec.js:165:3 › side chain: Heads or Tails, all four missions and the two-faced DA (22.7s)
+  x   88 tests\e2e\openworld.spec.js:184:3 › detective case: The Bell That Rang Twice, scanned, reconstructed on the board, triangulated (47.7s)
+  x   89 tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down (with a bot partner) (26.6s)
+  x   90 tests\e2e\openworld.spec.js:47:3 › defuse: the bomb's dial takes three strikes in the window (with a bot partner) (27.7s)
+  x   91 tests\e2e\openworld.spec.js:66:3 › rooftop chase: the free-runner hops the roofs until a hero catches him (with a bot partner) (26.4s)
+  x   92 tests\e2e\openworld.spec.js:88:3 › vehicle getaway: the car is stopped before it reaches the exit (with a bot partner) (27.1s)
+  x   93 tests\e2e\openworld.spec.js:107:3 › gang war: take one crew down, leave the other be, and the street is theirs (with a bot partner) (26.9s)
+  x   94 tests\e2e\openworld.spec.js:135:3 › El hijack: board the running train, then clear its roof (with a bot partner) (27.0s)
+  x   95 tests\e2e\openworld.spec.js:152:3 › stealth encounters: the counting house and the Herald nests, cleared and recorded (with a bot partner) (11.7s)
+  ok  96 tests\e2e\openworld.spec.js:165:3 › side chain: Heads or Tails, all four missions and the two-faced DA (with a bot partner) (22.6s)
+  x   97 tests\e2e\openworld.spec.js:184:3 › detective case: The Bell That Rang Twice, scanned, reconstructed on the board, triangulated (with a bot partner) (47.7s)
+  x   98 tests\e2e\openworld.spec.js:218:1 › soak: 20 simulated minutes of the director with no input stays bounded and clean (11.4s)
+photo export 3840x2160 (tier cap 3840), 9188858 bytes
+  ok  99 tests\e2e\photo.spec.js:26:1 › photo mode: camera, filter, bubble, 4K-capped PNG export, gallery, back to play (14.8s)
+  ok 100 tests\e2e\photo.spec.js:123:1 › split screen: player 2 opens photo mode on its own view while the world keeps running (9.4s)
+  ok 101 tests\e2e\progression.spec.js:23:1 › skill tree: buy nodes on the page, see their effects, respec at the bench (8.9s)
+  x  102 tests\e2e\progression.spec.js:56:1 › save slots: copy, delete with confirmation, export and import round trip (15.2s)
+  ok 103 tests\e2e\progression.spec.js:102:1 › new game: the difficulty row sets the run difficulty (Knightmare surfaced) (15.1s)
+  ok 104 tests\e2e\render.spec.js:15:1 › two views render side by side, both non-blank and different (8.1s)
+  ok 105 tests\e2e\render.spec.js:52:1 › a software renderer gets the hardware-acceleration dialog (8.4s)
+  ok 106 tests\e2e\smoke.spec.js:13:1 › title screen renders with no errors (7.4s)
+  ok 107 tests\e2e\smoke.spec.js:23:1 › new game: suit select, intro comic, then play (14.0s)
+  ok 108 tests\e2e\smoke.spec.js:40:1 › a fight can be won and advances the story (7.9s)
+  ok 109 tests\e2e\smoke.spec.js:52:1 › boss fight begins after its comic (8.0s)
+  ok 110 tests\e2e\stealth.spec.js:23:1 › a predator room patrols, and a silent takedown from behind lands (15.2s)
+  ok 111 tests\e2e\stealth.spec.js:46:1 › clearing a predator room moves the story on (8.7s)
+  ok 112 tests\e2e\stealth.spec.js:55:1 › a save under the new (v2) key resumes on its saved step id (15.2s)
+  ok 113 tests\e2e\vanChase.spec.js:11:1 › a free-roam Joker van chase spawns, is won by real driving, and is counted (31.9s)
+  ok 114 tests\e2e\vanChase.spec.js:103:1 › ignoring a free-roam van chase lets it drive off and despawn, uncounted (7.6s)
+  ok 115 tests\e2e\wanted.spec.js:44:1 › Loop: provoked from Noticed to Coordinated, chased by cruisers, a roadblock, lost on the rooftops (55.2s)
+  ok 116 tests\e2e\wanted.spec.js:95:1 › the helicopter's searchlight finds him in the open at night, not under the lower deck (16.9s)
+  ok 117 tests\e2e\wanted.spec.js:115:1 › caught: a struggle chance, then a holding cell to break out of, then the chase resumes (16.0s)
+  ok 118 tests\e2e\wanted.spec.js:147:1 › Bruce gets pulled over for speeding and takes the ticket (24.2s)
+  ok 119 tests\e2e\wanted.spec.js:170:1 › two players: one hidden indoors and one seen is still wanted; the off setting holds the city back (19.7s)
+[wanted soak] {"gameT":900.199999999729,"maxV":5,"maxO":8,"maxRB":0,"caps":{"vehicles":5,"cruisers":5,"vans":2,"officers":8,"heli":true,"heliCone":true,"boats":1,"roadblocks":2,"props":18,"debris":20},"early":0.025000005960464478,"late":0.25,"n":4501}
+  ok 120 tests\e2e\wanted.spec.js:214:1 › soak: 15 game-minutes at levels 4-5 with time accelerated: bounded units, no errors, flat cost (58.9s)
+  ok 121 tests\e2e\wardrobe.spec.js:13:1 › the suit vault picks a suit and it persists across a reload (15.0s)
+  ok 122 tests\e2e\wardrobe.spec.js:57:1 › a campaign reward unlocks a suit with a toast, once (13.6s)
+  ok 123 tests\e2e\westCity.spec.js:29:1 › walk from the old city over the -150 South Branch bascule into Chinatown (25.9s)
+  ok 124 tests\e2e\westCity.spec.js:57:1 › drive the Batmobile west over the -30 bascule to the Yards gate street (15.4s)
+  ok 125 tests\e2e\westCity.spec.js:86:1 › glide off Wolf Point across the Narrows: grapple points under the whole flight (12.4s)
+  ok 126 tests\e2e\westCity.spec.js:113:1 › a raised North Branch bascule closes its road and the route goes round (9.0s)
+  ok 127 tests\e2e\world.spec.js:30:1 › walk from the old city over a bascule bridge to the Loop (23.8s)
+  ok 128 tests\e2e\world.spec.js:50:1 › glide from the clock tower across the river (14.0s)
+  ok 129 tests\e2e\world.spec.js:67:1 › drive the Batmobile north over a bridge onto Lower Gotham's upper deck; a raised bridge closes the road (13.6s)
+
+
+  1) tests\e2e\coopSplit.spec.js:153:1 › two-player story slice: brawl, Batmobile chase with a passenger, Harley, the boss to the end 
+
+    TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.
+
+      177 |   await page.waitForTimeout(1500);
+      178 |   await shot(page, '06-chase-passenger');
+    > 179 |   await page.waitForFunction(() => window.__game.vehicles.debugWin(), null, { timeout: 30000, polling: 400 });
+          |              ^
+      180 |   await page.waitForFunction(() => window.__game.flow.objectives.step?.type !== 'chase', null, { timeout: 20000 });
+      181 |   // Harley.
+      182 |   await page.evaluate(() => window.__game.jump('harleyFight'));
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\coopSplit.spec.js:179:14
+
+    Error Context: test-results\coopSplit-two-player-story-b4f2e--Harley-the-boss-to-the-end\error-context.md
+
+  2) tests\e2e\movement.spec.js:44:1 › grapple-boost chaining crosses the Loop without touching the street 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 3
+    Received:   2
+
+      84 |   console.log(`grapple chain: ${(end.x - start.x).toFixed(0)} m, ${links} lines, ${perfect} perfect boosts, ${street} street touchdowns`);
+      85 |   expect(end.x).toBeGreaterThan(200);
+    > 86 |   expect(links).toBeGreaterThan(3);
+         |                 ^
+      87 |   expect(perfect).toBeGreaterThan(1);
+      88 |   expect(street).toBe(0);
+      89 |   expect(errors).toEqual([]);
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\movement.spec.js:86:17
+
+    Error Context: test-results\movement-grapple-boost-cha-149eb-without-touching-the-street\error-context.md
+
+  3) tests\e2e\movement.spec.js:92:1 › drives core -> Lower Gotham upper deck, ramp, lower deck -> Lakeshore Drive -> Arkham causeway -> Blackgate causeway 
+
+    Error: arkham-causeway: on the right deck
+
+    expect(received).toBeLessThan(expected)
+
+    Expected: < 1.5
+    Received:   1.5
+
+      100 |     expect(r.ok, `${leg.id} reached`).toBe(true);
+      101 |     expect(r.below, `${leg.id}: never under the road`).toBeLessThan(2);
+    > 102 |     expect(Math.abs(at[1] - leg.y), `${leg.id}: on the right deck`).toBeLessThan(1.5);
+          |                                                                     ^
+      103 |     if (leg.y < -3) {
+      104 |       // Under the upper deck: the chase camera stays below its slab (it used to sit inside it).
+      105 |       const camY = await page.evaluate(() => window.__game.camera.position.y);
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\movement.spec.js:102:69
+
+    Error Context: test-results\movement-drives-core---Low-65f02-useway---Blackgate-causeway\error-context.md
+
+  4) tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      35 |     const errors = await boot(page, p2);
+      36 |     const id = await crimeAt(page, 'hostageStore', 'mileDiamondRow0', []);
+    > 37 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.squadUp, id, { timeout: 15000 });
+         |                ^
+      38 |     await expect(page.locator('.ow-panel .ow-job.show').first()).toContainText('hostages');
+      39 |     const before = await page.evaluate(() => window.__game.progress.openworld.saved);
+      40 |     await page.waitForFunction(() => { window.__game.winFight(); return window.__game.progress.crimes.stopped >= 1; }, null, { timeout: 20000, polling: 400 });
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:37:16
+
+    Error Context: test-results\openworld-protect-hostages-8bf99-ved-when-the-crew-goes-down\error-context.md
+
+  5) tests\e2e\openworld.spec.js:47:3 › defuse: the bomb's dial takes three strikes in the window ──
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      48 |     const errors = await boot(page, p2);
+      49 |     const id = await crimeAt(page, 'bomb', 'loopMarqueeRow', []);
+    > 50 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.materialized, id, { timeout: 15000 });
+         |                ^
+      51 |     // Walk up to each bomb and strike only when the cursor is in the window (the skill interaction).
+      52 |     await page.waitForFunction((id) => {
+      53 |       const G = window.__game, c = G.side.openworld.crimes.live.find((x) => x.id === id);
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:50:16
+
+    Error Context: test-results\openworld-defuse-the-bomb--cef3f-three-strikes-in-the-window\error-context.md
+
+  6) tests\e2e\openworld.spec.js:66:3 › rooftop chase: the free-runner hops the roofs until a hero catches him 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      67 |     const errors = await boot(page, p2);
+      68 |     const id = await crimeAt(page, 'rooftopChase', 'parkRowMugging', []);
+    > 69 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.materialized, id, { timeout: 15000 });
+         |                ^
+      70 |     const start = await crime(page, id);
+      71 |     await page.waitForTimeout(2500);
+      72 |     const moved = await page.evaluate((id) => { const c = window.__game.side.openworld.crimes.live.find((x) => x.id === id); const r = c.obj.leaves[0].runners[0]; return { s: r.s, y: r.y }; }, id);
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:69:16
+
+    Error Context: test-results\openworld-rooftop-chase-th-e4da7-fs-until-a-hero-catches-him\error-context.md
+
+  7) tests\e2e\openworld.spec.js:88:3 › vehicle getaway: the car is stopped before it reaches the exit 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      89 |     const errors = await boot(page, p2);
+      90 |     const id = await crimeAt(page, 'vehicleGetaway', 'loopCanyon', []);
+    > 91 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.materialized, id, { timeout: 15000 });
+         |                ^
+      92 |     // Either the vehicle chase took it (ram it: the adapter mirrors sideChaseDone) or the kinematic
+      93 |     // car is running its route (stand alongside it to pull the driver out).
+      94 |     await page.waitForFunction((id) => {
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:91:16
+
+    Error Context: test-results\openworld-vehicle-getaway--d02c2--before-it-reaches-the-exit\error-context.md
+
+  8) tests\e2e\openworld.spec.js:107:3 › gang war: take one crew down, leave the other be, and the street is theirs 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      108 |     const errors = await boot(page, p2);
+      109 |     const id = await crimeAt(page, 'gangWar', 'parkRowUnderViaduct', []);
+    > 110 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.squadUp, id, { timeout: 15000 });
+          |                ^
+      111 |     await page.waitForFunction(() => window.__game.enemies.some((e) => e.aware), null, { timeout: 10000 });
+      112 |     const gangs = await page.evaluate((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id).plan.gangs, id);
+      113 |     // Knock out only the first crew.
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:110:16
+
+    Error Context: test-results\openworld-gang-war-take-on-46124-be-and-the-street-is-theirs\error-context.md
+
+  9) tests\e2e\openworld.spec.js:135:3 › El hijack: board the running train, then clear its roof ───
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      136 |     const errors = await boot(page, p2);
+      137 |     const id = await crimeAt(page, 'elHijack', 'loopElPlatform', []);
+    > 138 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.materialized, id, { timeout: 15000 });
+          |                ^
+      139 |     // Ride along: stand on the hijacked train (its live record from the El).
+      140 |     await page.waitForFunction((id) => {
+      141 |       const G = window.__game, O = G.side.openworld, c = O.crimes.live.find((x) => x.id === id);
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:138:16
+
+    Error Context: test-results\openworld-El-hijack-board--2fbce-g-train-then-clear-its-roof\error-context.md
+
+  10) tests\e2e\openworld.spec.js:152:3 › stealth encounters: the counting house and the Herald nests, cleared and recorded 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      153 |     const errors = await boot(page, p2);
+      154 |     for (const id of ['countingHouse', 'heraldNests']) {
+    > 155 |       expect(await page.evaluate((id) => window.__game.side.openworld.stealthEnc.start(id), id)).toBe(true);
+          |                                                                                                  ^
+      156 |       await page.waitForFunction(() => window.__game.stealth.active, null, { timeout: 10000 });
+      157 |       expect(await page.evaluate(() => window.__game.enemies.length)).toBeGreaterThanOrEqual(4);
+      158 |       await page.evaluate(() => window.__game.side.openworld.stealthEnc.debugWin());
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:155:98
+
+    Error Context: test-results\openworld-stealth-encounte-8a9dd--nests-cleared-and-recorded\error-context.md
+
+  11) tests\e2e\openworld.spec.js:184:3 › detective case: The Bell That Rang Twice, scanned, reconstructed on the board, triangulated 
+
+    TimeoutError: page.waitForFunction: Timeout 40000ms exceeded.
+
+      187 |     await page.evaluate(() => { const o = window.__game.side.openworld; o.cases.start('caseBellTwice'); o.ow.teleport(o.cases.scenePos('caseBellTwice')); window.__game.state.detectiveOn = true; });
+      188 |     // Scan every piece of evidence in detective vision.
+    > 189 |     await page.waitForFunction(() => {
+          |                ^
+      190 |       const o = window.__game.side.openworld, a = o.cases.active;
+      191 |       if (a.stage !== 'scene') return true;
+      192 |       const e = a.run.evidence.find((x) => !x.found);
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:189:16
+
+    Error Context: test-results\openworld-detective-case-T-7028d-d-on-the-board-triangulated\error-context.md
+
+  12) tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down (with a bot partner) 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      35 |     const errors = await boot(page, p2);
+      36 |     const id = await crimeAt(page, 'hostageStore', 'mileDiamondRow0', []);
+    > 37 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.squadUp, id, { timeout: 15000 });
+         |                ^
+      38 |     await expect(page.locator('.ow-panel .ow-job.show').first()).toContainText('hostages');
+      39 |     const before = await page.evaluate(() => window.__game.progress.openworld.saved);
+      40 |     await page.waitForFunction(() => { window.__game.winFight(); return window.__game.progress.crimes.stopped >= 1; }, null, { timeout: 20000, polling: 400 });
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:37:16
+
+    Error Context: test-results\openworld-protect-hostages-372a1-es-down-with-a-bot-partner-\error-context.md
+
+  13) tests\e2e\openworld.spec.js:47:3 › defuse: the bomb's dial takes three strikes in the window (with a bot partner) 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      48 |     const errors = await boot(page, p2);
+      49 |     const id = await crimeAt(page, 'bomb', 'loopMarqueeRow', []);
+    > 50 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.materialized, id, { timeout: 15000 });
+         |                ^
+      51 |     // Walk up to each bomb and strike only when the cursor is in the window (the skill interaction).
+      52 |     await page.waitForFunction((id) => {
+      53 |       const G = window.__game, c = G.side.openworld.crimes.live.find((x) => x.id === id);
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:50:16
+
+    Error Context: test-results\openworld-defuse-the-bomb--dbb74--window-with-a-bot-partner-\error-context.md
+
+  14) tests\e2e\openworld.spec.js:66:3 › rooftop chase: the free-runner hops the roofs until a hero catches him (with a bot partner) 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      67 |     const errors = await boot(page, p2);
+      68 |     const id = await crimeAt(page, 'rooftopChase', 'parkRowMugging', []);
+    > 69 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.materialized, id, { timeout: 15000 });
+         |                ^
+      70 |     const start = await crime(page, id);
+      71 |     await page.waitForTimeout(2500);
+      72 |     const moved = await page.evaluate((id) => { const c = window.__game.side.openworld.crimes.live.find((x) => x.id === id); const r = c.obj.leaves[0].runners[0]; return { s: r.s, y: r.y }; }, id);
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:69:16
+
+    Error Context: test-results\openworld-rooftop-chase-th-7083d-hes-him-with-a-bot-partner-\error-context.md
+
+  15) tests\e2e\openworld.spec.js:88:3 › vehicle getaway: the car is stopped before it reaches the exit (with a bot partner) 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      89 |     const errors = await boot(page, p2);
+      90 |     const id = await crimeAt(page, 'vehicleGetaway', 'loopCanyon', []);
+    > 91 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.materialized, id, { timeout: 15000 });
+         |                ^
+      92 |     // Either the vehicle chase took it (ram it: the adapter mirrors sideChaseDone) or the kinematic
+      93 |     // car is running its route (stand alongside it to pull the driver out).
+      94 |     await page.waitForFunction((id) => {
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:91:16
+
+    Error Context: test-results\openworld-vehicle-getaway--b94f9-he-exit-with-a-bot-partner-\error-context.md
+
+  16) tests\e2e\openworld.spec.js:107:3 › gang war: take one crew down, leave the other be, and the street is theirs (with a bot partner) 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      108 |     const errors = await boot(page, p2);
+      109 |     const id = await crimeAt(page, 'gangWar', 'parkRowUnderViaduct', []);
+    > 110 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.squadUp, id, { timeout: 15000 });
+          |                ^
+      111 |     await page.waitForFunction(() => window.__game.enemies.some((e) => e.aware), null, { timeout: 10000 });
+      112 |     const gangs = await page.evaluate((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id).plan.gangs, id);
+      113 |     // Knock out only the first crew.
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:110:16
+
+    Error Context: test-results\openworld-gang-war-take-on-fdc6b--theirs-with-a-bot-partner-\error-context.md
+
+  17) tests\e2e\openworld.spec.js:135:3 › El hijack: board the running train, then clear its roof (with a bot partner) 
+
+    TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.
+
+      136 |     const errors = await boot(page, p2);
+      137 |     const id = await crimeAt(page, 'elHijack', 'loopElPlatform', []);
+    > 138 |     await page.waitForFunction((id) => window.__game.side.openworld.crimes.live.find((x) => x.id === id)?.materialized, id, { timeout: 15000 });
+          |                ^
+      139 |     // Ride along: stand on the hijacked train (its live record from the El).
+      140 |     await page.waitForFunction((id) => {
+      141 |       const G = window.__game, O = G.side.openworld, c = O.crimes.live.find((x) => x.id === id);
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:138:16
+
+    Error Context: test-results\openworld-El-hijack-board--49b0c-ts-roof-with-a-bot-partner-\error-context.md
+
+  18) tests\e2e\openworld.spec.js:152:3 › stealth encounters: the counting house and the Herald nests, cleared and recorded (with a bot partner) 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      153 |     const errors = await boot(page, p2);
+      154 |     for (const id of ['countingHouse', 'heraldNests']) {
+    > 155 |       expect(await page.evaluate((id) => window.__game.side.openworld.stealthEnc.start(id), id)).toBe(true);
+          |                                                                                                  ^
+      156 |       await page.waitForFunction(() => window.__game.stealth.active, null, { timeout: 10000 });
+      157 |       expect(await page.evaluate(() => window.__game.enemies.length)).toBeGreaterThanOrEqual(4);
+      158 |       await page.evaluate(() => window.__game.side.openworld.stealthEnc.debugWin());
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:155:98
+
+    Error Context: test-results\openworld-stealth-encounte-9897a-ecorded-with-a-bot-partner-\error-context.md
+
+  19) tests\e2e\openworld.spec.js:184:3 › detective case: The Bell That Rang Twice, scanned, reconstructed on the board, triangulated (with a bot partner) 
+
+    TimeoutError: page.waitForFunction: Timeout 40000ms exceeded.
+
+      187 |     await page.evaluate(() => { const o = window.__game.side.openworld; o.cases.start('caseBellTwice'); o.ow.teleport(o.cases.scenePos('caseBellTwice')); window.__game.state.detectiveOn = true; });
+      188 |     // Scan every piece of evidence in detective vision.
+    > 189 |     await page.waitForFunction(() => {
+          |                ^
+      190 |       const o = window.__game.side.openworld, a = o.cases.active;
+      191 |       if (a.stage !== 'scene') return true;
+      192 |       const e = a.run.evidence.find((x) => !x.found);
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:189:16
+
+    Error Context: test-results\openworld-detective-case-T-da349-gulated-with-a-bot-partner-\error-context.md
+
+  20) tests\e2e\openworld.spec.js:218:1 › soak: 20 simulated minutes of the director with no input stays bounded and clean 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 10
+    Received:   0
+
+      226 |   });
+      227 |   expect(r.errors).toBe(0);
+    > 228 |   expect(r.spawned).toBeGreaterThan(10);
+          |                     ^
+      229 |   expect(r.maxLive).toBeLessThanOrEqual(r.cap);
+      230 |   expect(r.enemies).toBeLessThan(40);
+      231 |   expect(r.props.visible).toBeLessThanOrEqual(20);
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\openworld.spec.js:228:21
+
+    Error Context: test-results\openworld-soak-20-simulate-44ecf-put-stays-bounded-and-clean\error-context.md
+
+  21) tests\e2e\progression.spec.js:56:1 › save slots: copy, delete with confirmation, export and import round trip 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.title-slot')
+    Expected substring: "Slot 1"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" locator('.title-slot') with timeout 5000ms
+      - waiting for locator('.title-slot')
+
+
+      63 |   });
+      64 |   await title(page);
+    > 65 |   await expect(page.locator('.title-slot')).toContainText('Slot 1');
+         |                                             ^
+      66 |   await page.locator('.mbtn.slots').click();
+      67 |   const s1 = page.locator('.slot-card[data-slot="1"]');
+      68 |   await expect(s1).toContainText('Level 3');
+        at ~\Documents\Projects\gotham-ln2-verify-run\tests\e2e\progression.spec.js:65:45
+
+    Error Context: test-results\progression-save-slots-cop-dadfd-xport-and-import-round-trip\error-context.md
+
+  21 failed
+    tests\e2e\coopSplit.spec.js:153:1 › two-player story slice: brawl, Batmobile chase with a passenger, Harley, the boss to the end 
+    tests\e2e\movement.spec.js:44:1 › grapple-boost chaining crosses the Loop without touching the street 
+    tests\e2e\movement.spec.js:92:1 › drives core -> Lower Gotham upper deck, ramp, lower deck -> Lakeshore Drive -> Arkham causeway -> Blackgate causeway 
+    tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down 
+    tests\e2e\openworld.spec.js:47:3 › defuse: the bomb's dial takes three strikes in the window ───
+    tests\e2e\openworld.spec.js:66:3 › rooftop chase: the free-runner hops the roofs until a hero catches him 
+    tests\e2e\openworld.spec.js:88:3 › vehicle getaway: the car is stopped before it reaches the exit 
+    tests\e2e\openworld.spec.js:107:3 › gang war: take one crew down, leave the other be, and the street is theirs 
+    tests\e2e\openworld.spec.js:135:3 › El hijack: board the running train, then clear its roof ────
+    tests\e2e\openworld.spec.js:152:3 › stealth encounters: the counting house and the Herald nests, cleared and recorded 
+    tests\e2e\openworld.spec.js:184:3 › detective case: The Bell That Rang Twice, scanned, reconstructed on the board, triangulated 
+    tests\e2e\openworld.spec.js:34:3 › protect: hostages in a store are saved when the crew goes down (with a bot partner) 
+    tests\e2e\openworld.spec.js:47:3 › defuse: the bomb's dial takes three strikes in the window (with a bot partner) 
+    tests\e2e\openworld.spec.js:66:3 › rooftop chase: the free-runner hops the roofs until a hero catches him (with a bot partner) 
+    tests\e2e\openworld.spec.js:88:3 › vehicle getaway: the car is stopped before it reaches the exit (with a bot partner) 
+    tests\e2e\openworld.spec.js:107:3 › gang war: take one crew down, leave the other be, and the street is theirs (with a bot partner) 
+    tests\e2e\openworld.spec.js:135:3 › El hijack: board the running train, then clear its roof (with a bot partner) 
+    tests\e2e\openworld.spec.js:152:3 › stealth encounters: the counting house and the Herald nests, cleared and recorded (with a bot partner) 
+    tests\e2e\openworld.spec.js:184:3 › detective case: The Bell That Rang Twice, scanned, reconstructed on the board, triangulated (with a bot partner) 
+    tests\e2e\openworld.spec.js:218:1 › soak: 20 simulated minutes of the director with no input stays bounded and clean 
+    tests\e2e\progression.spec.js:56:1 › save slots: copy, delete with confirmation, export and import round trip 
+  108 passed (44.1m)
+exit 1

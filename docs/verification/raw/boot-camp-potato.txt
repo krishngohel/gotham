@@ -1,0 +1,11 @@
+{
+ "url": "http://localhost:5860/?new=1&god=1&abilities=story&net=broadcast&q=potato",
+ "ready": true,
+ "errors": [],
+ "result": {
+  "ready": true,
+  "frame": 153,
+  "tier": "r",
+  "err": true
+ }
+}

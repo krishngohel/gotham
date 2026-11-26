@@ -1,0 +1,81 @@
+{
+ "views": [
+  null,
+  null
+ ],
+ "huds": [
+  [
+   0,
+   798
+  ],
+  [
+   802,
+   798
+  ]
+ ],
+ "directorCard": [
+  false,
+  false
+ ],
+ "wanted": {
+  "readouts": 2,
+  "visible": [
+   true,
+   true
+  ]
+ },
+ "minimaps": 2,
+ "bossBar": [
+  true,
+  true
+ ],
+ "photo": {
+  "active": true,
+  "player": true,
+  "freezesWorld": false,
+  "paused": false,
+  "worldRuns": true,
+  "closed": true,
+  "p0control": null,
+  "p1control": null
+ },
+ "stations": [
+  {
+   "id": "skillTree",
+   "pausedOpen": true,
+   "closedCb": true,
+   "pausedAfter": false,
+   "runsAfter": true,
+   "leftovers": 0
+  },
+  {
+   "id": "gadgets",
+   "pausedOpen": false,
+   "closedCb": true,
+   "pausedAfter": false,
+   "runsAfter": true,
+   "leftovers": 0
+  },
+  {
+   "id": "suits",
+   "pausedOpen": false,
+   "closedCb": true,
+   "pausedAfter": false,
+   "runsAfter": true,
+   "leftovers": 0
+  },
+  {
+   "id": "cityMap",
+   "pausedOpen": true,
+   "closedCb": true,
+   "pausedAfter": false,
+   "runsAfter": true,
+   "leftovers": 0
+  }
+ ],
+ "pause": {
+  "opened": true,
+  "closed": true
+ },
+ "errors": []
+}

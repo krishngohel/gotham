@@ -26,7 +26,13 @@ export const ACTIONS = [
   { id: 'detective', label: 'Detective vision', group: 'Other' },
   { id: 'help', label: 'Controls help', group: 'Other' },
   { id: 'photo', label: 'Photo mode', group: 'Other' },
+  // Co-op (workstream D1): hold for the comms wheel (mark a goon, a spot, call for help, quick chat).
+  { id: 'ping', label: 'Co-op comms wheel (hold)', group: 'Other' },
   { id: 'pause', label: 'Pause and settings', group: 'Other' },
+  // [map] Workstream L2: the full-screen city map, and a waypoint where you look (press again on
+  // it to clear it). On a pad, the map is in the pause menu and "Go here" on the comms wheel marks.
+  { id: 'map', label: 'City map', group: 'Other' },
+  { id: 'waypoint', label: 'Set or clear a waypoint where you look', group: 'Other' },
 ];
 
 export const DEFAULT_BINDINGS = {
@@ -56,7 +62,10 @@ export const DEFAULT_BINDINGS = {
   detective: ['KeyV'],
   help: ['KeyH'],
   photo: ['KeyO'],
+  ping: ['KeyB'],
   pause: ['Escape', 'KeyP'],
+  map: ['KeyM'], // [map]
+  waypoint: ['KeyN'], // [map]
 };
 
 const NAMED = {

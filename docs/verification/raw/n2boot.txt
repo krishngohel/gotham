@@ -1,0 +1,14 @@
+{
+ "url": "http://localhost:5860/?night=n2&god=1&new=1",
+ "ready": true,
+ "errors": [],
+ "result": {
+  "mode": "cutscene",
+  "step": "n2Recap",
+  "type": "cutscene",
+  "comic": true,
+  "title": false,
+  "frame": 512,
+  "crimesFn": "function"
+ }
+}

@@ -1,0 +1,74 @@
+{
+ "q": "low",
+ "base": "http://localhost:5850/",
+ "rounds": [
+  {
+   "longTasks": [],
+   "jsHitches": 3,
+   "jsMax": 43.5,
+   "seconds": 100.6,
+   "frames": 16520,
+   "medMs": 6,
+   "p95Ms": 8.1,
+   "maxMs": 43.3,
+   "hitches": [
+    {
+     "ms": 33.1,
+     "x": 0,
+     "z": -17,
+     "mode": "drive",
+     "district": "gcpd",
+     "js": 13.4,
+     "programs": 116,
+     "textures": 336,
+     "geometries": 2086
+    },
+    {
+     "ms": 37.7,
+     "x": 0,
+     "z": -52,
+     "mode": "drive",
+     "district": "city",
+     "js": 5.6,
+     "programs": 116,
+     "textures": 336,
+     "geometries": 2086
+    },
+    {
+     "ms": 38.2,
+     "x": 0,
+     "z": -79,
+     "mode": "drive",
+     "district": "city",
+     "js": 5.1,
+     "programs": 116,
+     "textures": 337,
+     "geometries": 2088
+    },
+    {
+     "ms": 43.3,
+     "x": -153,
+     "z": -482,
+     "mode": "glide",
+     "district": "loop",
+     "js": 6.6,
+     "programs": 116,
+     "textures": 361,
+     "geometries": 2111
+    }
+   ]
+  },
+  {
+   "longTasks": [],
+   "jsHitches": 0,
+   "jsMax": 22,
+   "seconds": 100.6,
+   "frames": 15281,
+   "medMs": 6.5,
+   "p95Ms": 8.4,
+   "maxMs": 22.4,
+   "hitches": []
+  }
+ ],
+ "errors": []
+}

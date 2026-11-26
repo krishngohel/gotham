@@ -65,6 +65,17 @@ const ENTRIES = [
   ['gadgetClaw', (k) => `Batclaw: ${k('batarang')} yanks the goon you aim at right to you for a free punch. It rips brute armor off and tears down vent covers and weak railings.`],
   ['gadgetFreeze', (k) => `Freeze blast: ${k('batarang')} traps a goon in ice. One hit shatters it and knocks them out.`],
   ['gadgetFlashbang', (k) => `Flashbang: ${k('batarang')} throws a stun grenade. Goons nearby are blinded and stagger for a few seconds.`],
+  // [prog] gadgets (wave 3): one tutorial prompt per new gadget (src/gadgets/gadgetDefs.js NEW_GADGETS).
+  ['gadgetDisruptor', (k) => `Disruptor: aim at an armed goon and press ${k('batarang')}. His gun can't fire and a stun baton goes dead for ten seconds. No line of sight needed.`],
+  ['gadgetSonic', (k) => `Sonic batarang: ${k('batarang')} throws it where you aim. Goons nearby turn to the noise and lose you. With Sonic Stun, press ${k('batarang')} again to stun them.`],
+  ['gadgetHack', (k) => `Hacking device: aim at a goon within twelve meters and press ${k('batarang')}. Press ${k('batarang')} again each time the needle is in the green. His squad chases fake orders.`],
+  ['gadgetShock', (k) => `Shock gloves: ${k('batarang')} charges them. Once they crackle, punch ${k('punch')} straight through shields, batons and heavy armor.`],
+  ['gadgetGlue', (k) => `Glue grenade: ${k('batarang')} lobs foam where you aim. Goons inside are stuck fast, and one hit knocks a stuck goon out. Heavies only stagger.`],
+  ['gadgetTracker', (k) => `Tracker dart: ${k('batarang')} tags the goon or car you aim at. The map follows it.`],
+  ['gadgetDrone', (k) => `Scout drone: ${k('batarang')} launches it. Fly it with the move keys to mark every goon it sees, and press ${k('batarang')} to bring it home.`],
+  ['gadgetBolas', (k) => `Bolas: ${k('batarang')} wraps a goon's legs and drops him on the spot. Ninjas and runners can't dodge it.`],
+  ['gadgetEmp', (k) => `EMP mine: ${k('batarang')} drops it at your feet. When a goon steps close it fries every gun and baton nearby.`],
+  ['gadgetDecoy', (k) => `Decoy hologram: ${k('batarang')} projects a Batman ahead of you. Goons nearby shout at it and shoot at it instead of you.`],
   ['crouch', (k) => `Press ${k('crouch')} to crouch. You move slower, your footsteps go quiet, and goons have to be much closer to spot you. Stay out of the lamplight.`],
   ['silent', (k) => `Sneak up behind a goon who hasn't seen you and press ${k('punch')} for a silent takedown. It takes two seconds, and anyone within three meters hears it.`],
   ['perch', (k) => `Grapple ${k('grapple')} to a gargoyle to watch from above. Goons never look up unless they are hunting you.`],
@@ -80,6 +91,12 @@ const ENTRIES = [
   ['swarm', (k) => `Bat Swarm is ready. When your combo lights the bat icon, press ${k('chain4')} to call the bats down on up to six goons.`],
   ['wayneTech', (k) => `Level up! Press ${k('pause')} and open WayneTech to spend your upgrade point.`],
   ['vehicle', (k) => `The Batmobile is waiting. Walk up and press ${k('vehicle')} to get in.`],
+  // [onboard] Cards for abilities the story hands over (src/abilities/abilityDefs.js).
+  ['reGrapple', (k) => `Gliding or falling? Press ${k('grapple')} at the next ledge to grapple again and keep your speed.`],
+  ['grapplePull', (k) => `Aim at a goon or a loose crate and press ${k('grapple')} to yank it to you.`],
+  ['callCar', (k) => `Away from the car? Press ${k('vehicle')} anywhere near a street and the Batmobile drives itself to you.`],
+  ['eject', (k) => `Driving fast? Press ${k('vehicle')} to eject straight up out of the car, then hold ${k('jump')} to glide.`],
+  ['battleMode', (k) => `Hold ${k('block')} while driving to switch the Batmobile to battle mode: strafe, dodge with ${k('jump')}, fire with ${k('punch')}.`],
 ];
 
 export const PROMPT_IDS = ENTRIES.map(([id]) => id);
@@ -143,7 +160,7 @@ export const QUIET_CONTROLS = new Set(['silent', 'perchDrop', 'chain', 'swarm', 
 export function createPromptQueue(hud, getBindings, isEnabled, isBusy = () => false, getEquipped = () => null, relevance = () => true, quiet = () => false) {
   const queue = []; // { id, gen, own }
   const seen = new Set();
-  let current = null, currentOwn = false;
+  let current = null, currentOwn = false, retiring = false;
   const ready = (q) => relevance(q.id) === true && !quiet(q.own);
   let t = 0, gen = 0;
   const has = (id) => queue.some((q) => q.id === id);
@@ -165,6 +182,14 @@ export function createPromptQueue(hud, getBindings, isEnabled, isBusy = () => fa
     },
     // She did the thing a card teaches: a queued card is skipped, one on screen stays to be read.
     learned(id) { if (current !== id) this.done(id); },
+    // [polish] She has shown she knows it (boosted the car the driving card teaches): the card on
+    // screen comes down once it has been up `minUp` seconds; a queued one is skipped.
+    retire(id, minUp = 2.5) {
+      if (current !== id) { this.done(id); return; }
+      seen.add(id);
+      retiring = true;
+      t = Math.min(t, Math.max(0, minUp - (6.5 - t)));
+    },
     // Marks a prompt as done early (the player already did the thing).
     done(id) {
       seen.add(id);
@@ -191,7 +216,8 @@ export function createPromptQueue(hud, getBindings, isEnabled, isBusy = () => fa
       if (isBusy(candidate)) { if (current) { queue.unshift({ id: current, gen, own: currentOwn }); hide(); } return; }
       t -= dt;
       if (current && t > 0) return;
-      if (current) { seen.add(current); current = null; }
+      if (current) { seen.add(current); current = null; if (retiring) hud.hideHint(); }
+      retiring = false;
       const i = queue.findIndex(ready);
       if (i < 0) return;
       const picked = queue.splice(i, 1)[0];

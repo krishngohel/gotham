@@ -1,0 +1,80 @@
+{
+ "made": "5fe2c7f ?at=credits",
+ "progress": {
+  "step": 61,
+  "trophies": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "suit": "f",
+  "goldUnlocked": false,
+  "seenIntro": false,
+  "finished": true,
+  "challenges": {
+   "signalToSea": {
+    "best": 30,
+    "medal": "gold"
+   },
+   "neonSlalom": {
+    "best": 31,
+    "medal": "silver"
+   },
+   "bellTowerDive": {
+    "best": 32,
+    "medal": "bronze"
+   }
+  },
+  "stats": {
+   "playTime": 5406.0666,
+   "kos": 240,
+   "longestCombo": 23,
+   "topGlideSpeed": 0,
+   "distanceGlided": 0,
+   "photos": 0
+  },
+  "crimes": {
+   "stopped": 0
+  },
+  "moves": [],
+  "districts": [
+   "gcpd"
+  ],
+  "milestone": 25,
+  "unlocks": [],
+  "gadgets": {
+   "equipped": "batarang",
+   "unlocked": [
+    "remote",
+    "gel",
+    "smoke",
+    "launcher",
+    "claw",
+    "freeze"
+   ],
+   "broken": [],
+   "caches": [],
+   "wheelUsed": false
+  },
+  "wayne": {
+   "xp": 4000,
+   "owned": [
+    "plating1",
+    "reflexes",
+    "kevlar",
+    "flow"
+   ],
+   "medals": {}
+  },
+  "vanChases": {
+   "stopped": 0
+  },
+  "stepId": "credits"
+ },
+ "settings": null
+}

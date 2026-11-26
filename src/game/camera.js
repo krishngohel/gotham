@@ -23,7 +23,15 @@ const MODES = {
   // The Batwing (Part V2): well back and well above so the whole delta-wing planform reads
   // (about a quarter to a third of the screen width in level flight), not a close-in tail shot.
   fly: { dist: 26, height: 9, side: 0, fov: 6 },
+  // [move] Workstream L3: the wingsuit (a little further back, a big speed FOV), the driving
+  // camera choices (close chase, roof/hood) and the Batmobile's battle mode (over the turret).
+  wingsuit: { dist: 8, height: 1.4, side: 0, fov: 12 },
+  driveClose: { dist: 7.5, height: 1.9, side: 0, fov: 4 },
+  driveHood: { dist: 0.3, height: 2.15, side: 0, fov: 8 },
+  battle: { dist: 10, height: 3.4, side: 1.4, fov: 0 },
 };
+// [move] Vehicle modes the chase camera swings behind (battle mode aims with the mouse instead).
+const CHASE_MODES = new Set(['drive', 'driveClose', 'driveHood', 'fly']);
 
 // Perch drop framing: the camera holds still off to the side of the drop, DROP_SIDE out from the
 // line between the perch and the goon and DROP_UP above the perch, and turns to watch Batman
@@ -53,6 +61,7 @@ export function createFollowCamera(camera, collision) {
   const desired = new THREE.Vector3();
   const lookAt = new THREE.Vector3();
   const dir = new THREE.Vector3();
+  const UP = new THREE.Vector3(0, 1, 0), ceilOut = { t: 0, box: null, normal: { x: 0, y: 0, z: 0 } }; // [move]
   let first = true;
   const action = { active: false, t: 0, dur: 1, focus: new THREE.Vector3(), pos: new THREE.Vector3(), roll: 0 };
   const blendPos = new THREE.Vector3(), blendLook = new THREE.Vector3(), toAction = new THREE.Vector3();
@@ -64,17 +73,22 @@ export function createFollowCamera(camera, collision) {
     state: s,
     // True while an action-shot camera swing (from a critical hit) is running.
     get actionActive() { return action.active; },
-    configure({ fov, sensitivity, invertY, cameraShake, actionCam = true }) {
+    configure({ fov, sensitivity, invertY, cameraShake, actionCam = true, access = null }) {
       s.baseFov = fov; s.sensitivity = sensitivity; s.invertY = invertY; s.shakeEnabled = cameraShake; s.actionEnabled = actionCam;
+      // [prog] a11y: shake strength (settings.access.shake) and reduced motion (no FOV punch, no
+      // tilted zoom on the action shot).
+      s.shakeScale = Number.isFinite(access?.shake) ? Math.min(1, Math.max(0, access.shake)) : 1;
+      s.calm = !!access?.reducedMotion;
+      s.reduceMotion = s.calm; // [move] the wingsuit/driving speed FOV halves with it
     },
-    addShake(amount) { if (s.shakeEnabled) s.shake = Math.max(s.shake, amount); },
+    addShake(amount) { if (s.shakeEnabled && s.shakeScale !== 0) s.shake = Math.max(s.shake, amount * (s.shakeScale ?? 1)); },
     // Batwing bank (radians); harmless when not flying, since update() zeroes the target itself.
     setBank(radians) { s.bankTarget = radians; },
     // A vehicle's heading, set every frame while driving or flying: the camera swings in behind it
     // (see update). Consumed by the next update, so it lapses by itself once she gets out.
     setHeading(yaw, speed = 0) { s.heading = yaw; s.headingSpeed = speed; s.headingSet = true; },
     // A hit lands: a short FOV punch-in (narrower) that decays over about a tenth of a second.
-    hitKick(amount = 3) { if (s.shakeEnabled) s.hitKick = Math.min(s.hitKick, -amount); },
+    hitKick(amount = 3) { if (s.shakeEnabled && !s.calm) s.hitKick = Math.min(s.hitKick, -amount * (s.shakeScale ?? 1)); },
     forward(out = new THREE.Vector3()) { return out.set(Math.sin(s.yaw), 0, Math.cos(s.yaw)); },
     right(out = new THREE.Vector3()) { return out.set(-Math.cos(s.yaw), 0, Math.sin(s.yaw)); },
     lookDir(out = new THREE.Vector3()) { return camera.getWorldDirection(out); },
@@ -116,7 +130,7 @@ export function createFollowCamera(camera, collision) {
       // Only the Batwing drives a bank; any other mode relaxes it back to level on its own.
       if (mode !== 'fly') s.bankTarget = 0;
       s.bank += (s.bankTarget - s.bank) * Math.min(1, dt * 5);
-      const vehicle = s.headingSet && (mode === 'drive' || mode === 'fly');
+      const vehicle = s.headingSet && CHASE_MODES.has(mode); // [move] was drive | fly
       s.headingSet = false;
       const looking = look.dx !== 0 || look.dy !== 0;
       s.lookIdle = looking ? 0 : (s.lookIdle ?? 0) + dt;
@@ -147,7 +161,12 @@ export function createFollowCamera(camera, collision) {
       s.dist += (m.dist - s.dist) * k;
       s.height += (m.height - s.height) * k;
       s.side += (m.side - s.side) * k;
-      const speedKick = mode === 'glide' ? Math.min(10, speed * 0.3) : mode === 'fly' ? Math.min(9, speed * 0.09) : mode === 'drive' ? Math.min(8, speed * 0.12) : 0;
+      let speedKick = mode === 'glide' ? Math.min(10, speed * 0.3) : mode === 'fly' ? Math.min(9, speed * 0.09) : mode === 'drive' ? Math.min(8, speed * 0.12) : 0;
+      // [move] The wingsuit's speed tunnel and the other driving cameras; halved with camera
+      // shake off or reduced motion on (accessibility).
+      if (mode === 'wingsuit') speedKick = Math.min(22, Math.max(0, speed - 12) * 0.5);
+      else if (mode === 'driveClose' || mode === 'driveHood') speedKick = Math.min(12, speed * 0.2);
+      if (!s.shakeEnabled || s.reduceMotion) speedKick *= 0.5;
       s.fovKick += (m.fov + speedKick - s.fovKick) * k;
       s.hitKick *= Math.exp(-dt * 14);
 
@@ -173,6 +192,13 @@ export function createFollowCamera(camera, collision) {
         const sideHit = collision.raycast(s.pivot, dir, sideLen + 0.25);
         if (sideHit) lookAt.copy(s.pivot).addScaledVector(dir, Math.max(0, sideHit.t - 0.3));
       }
+      // [move] A deck or a ceiling overhead (Lower Gotham's lower deck, the river walk, an arcade):
+      // the camera stays under it, keeping its distance, instead of rising into the slab and being
+      // pulled in to the hero (the driving camera ended up inside the car there).
+      if (desired.y > lookAt.y + 0.3) {
+        const ceil = collision.raycast(lookAt, UP, desired.y - lookAt.y + 0.8, ceilOut);
+        if (ceil) desired.y = Math.max(lookAt.y, lookAt.y + ceil.t - 0.6);
+      }
       // Pull in if a wall is between the pivot and the camera.
       dir.subVectors(desired, lookAt);
       const len = dir.length();
@@ -180,7 +206,16 @@ export function createFollowCamera(camera, collision) {
       const hit = collision.raycast(lookAt, dir, len + 0.3);
       const d = hit ? Math.max(0.6, hit.t - 0.35) : len;
       camera.position.copy(lookAt).addScaledVector(dir, d);
-      if (camera.position.y < 0.4) camera.position.y = 0.4;
+      // [move] Above the floor under the camera, not above y 0.4: on Lower Gotham's lower deck, the
+      // river walk or a dip in the Bristol hills the old fixed floor lifted the camera up into the
+      // deck overhead (the driving camera on the lower deck showed the road from inside the car).
+      // [polish] Only floors at the feet's level or below count (feet + a step): a parked car, a
+      // parapet, a prop or a slightly higher roof next door under the camera lifted it by up to a
+      // metre (sampled from lookAt height); those are obstacles, and the pull-in ray above keeps
+      // the camera out of them.
+      const camFloor = collision.groundBelow ? collision.groundBelow(camera.position.x, focus.y + 0.45, camera.position.z, 0.1) : -Infinity;
+      const minY = (camFloor > -Infinity ? camFloor : 0) + 0.4;
+      if (camera.position.y < minY) camera.position.y = minY;
       if (s.shake > 0) {
         s.shake = Math.max(0, s.shake - dt);
         const a = s.shake * 0.3;
@@ -241,8 +276,9 @@ export function createFollowCamera(camera, collision) {
           camera.position.lerp(blendPos, e);
           blendLook.copy(lookAt).lerp(action.focus, e);
           camera.lookAt(blendLook);
-          camera.rotateZ(action.roll * e);
-          const fov = s.baseFov + s.fovKick + s.hitKick - 12 * e;
+          const zoom = s.calm ? 0 : e; // [prog] a11y reduced motion: no tilt, no zoom
+          camera.rotateZ(action.roll * zoom);
+          const fov = s.baseFov + s.fovKick + s.hitKick - 12 * zoom;
           if (Math.abs(camera.fov - fov) > 0.05) { camera.fov = fov; camera.updateProjectionMatrix(); }
           return;
         }

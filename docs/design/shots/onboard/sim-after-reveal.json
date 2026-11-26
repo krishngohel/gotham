@@ -1,0 +1,563 @@
+{
+ "summary": {
+  "minutes": 6.1,
+  "stepsReached": 20,
+  "lastStep": "n3",
+  "controlLostSeconds": 25.8,
+  "controlLostByReason": {
+   "cinematic": 3,
+   "comic": 22.8
+  },
+  "controlLostSegments": 4,
+  "storyTeleports": 1,
+  "cameraSnaps": 1,
+  "comicsShown": 3,
+  "hudHidden": 3,
+  "objectiveChanges": 19,
+  "unbridgedObjectiveChanges": [],
+  "revealedOnApproach": [
+   "toDocks",
+   "toRoofAfterChase",
+   "f1",
+   "toYard",
+   "f2",
+   "toShip",
+   "toStreet",
+   "toMonarch"
+  ],
+  "abilitiesInOrder": [
+   "grapple",
+   "zipline",
+   "batmobile",
+   "batmobileCall",
+   "diveBomb",
+   "dodge",
+   "throw",
+   "moveStrikes",
+   "comboFinisher",
+   "aerialAttacks",
+   "groundPound",
+   "wallRun",
+   "capeStun"
+  ],
+  "learned": [
+   "grapple",
+   "diveBomb",
+   "moveStrikes",
+   "comboFinisher",
+   "aerialAttacks"
+  ],
+  "botAssists": 5
+ },
+ "steps": [
+  {
+   "t": 22.47,
+   "id": "signal",
+   "type": "reach",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0
+  },
+  {
+   "t": 25.3,
+   "id": "card",
+   "type": "cutscene",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0
+  },
+  {
+   "t": 31.27,
+   "id": "courierIntro",
+   "type": "courier",
+   "lines": 5,
+   "talkOver": true,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0
+  },
+  {
+   "t": 33.9,
+   "id": "toDocks",
+   "type": "reach",
+   "lines": 1,
+   "talkOver": false,
+   "title": true,
+   "revealed": 0,
+   "revealedNext": 1
+  },
+  {
+   "t": 47.8,
+   "id": "boardBatmobile",
+   "type": "board",
+   "lines": 2,
+   "talkOver": true,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0.31
+  },
+  {
+   "t": 52.25,
+   "id": "batmobileChase",
+   "type": "chase",
+   "lines": 1,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0
+  },
+  {
+   "t": 70.47,
+   "id": "toRoofAfterChase",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 1
+  },
+  {
+   "t": 117.73,
+   "id": "f1",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 1
+  },
+  {
+   "t": 121.45,
+   "id": "toYard",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 1
+  },
+  {
+   "t": 126.8,
+   "id": "f2",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 1
+  },
+  {
+   "t": 137.02,
+   "id": "toShip",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0.84
+  },
+  {
+   "t": 173.42,
+   "id": "f3",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0
+  },
+  {
+   "t": 200.18,
+   "id": "crates",
+   "type": "collect",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0
+  },
+  {
+   "t": 202.15,
+   "id": "rewardCrates",
+   "type": "cutscene",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0
+  },
+  {
+   "t": 208.13,
+   "id": "toNeon",
+   "type": "reach",
+   "lines": 3,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0
+  },
+  {
+   "t": 290.02,
+   "id": "n1",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0
+  },
+  {
+   "t": 298.73,
+   "id": "toStreet",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 1
+  },
+  {
+   "t": 307.52,
+   "id": "n2",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 0
+  },
+  {
+   "t": 345.52,
+   "id": "toMonarch",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0,
+   "revealedNext": 1
+  },
+  {
+   "t": 360.62,
+   "id": "n3",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 0
+  }
+ ],
+ "log": [
+  {
+   "t": 9.83,
+   "type": "hudHidden",
+   "step": "intro"
+  },
+  {
+   "t": 9.83,
+   "type": "comicOn",
+   "name": "intro"
+  },
+  {
+   "t": 22.47,
+   "type": "hudShown",
+   "step": "intro"
+  },
+  {
+   "t": 22.47,
+   "type": "comicOff",
+   "name": "intro"
+  },
+  {
+   "t": 22.47,
+   "type": "banner",
+   "text": "Walk to the Batsignal and see what is st"
+  },
+  {
+   "t": 26.2,
+   "type": "hudHidden",
+   "step": "card"
+  },
+  {
+   "t": 26.2,
+   "type": "comicOn",
+   "name": "card"
+  },
+  {
+   "t": 31.27,
+   "type": "hudShown",
+   "step": "card"
+  },
+  {
+   "t": 31.27,
+   "type": "comicOff",
+   "name": "card"
+  },
+  {
+   "t": 31.27,
+   "type": "teleport",
+   "step": "courierIntro"
+  },
+  {
+   "t": 31.27,
+   "type": "cameraSnap",
+   "step": "courierIntro"
+  },
+  {
+   "t": 33.9,
+   "type": "banner",
+   "text": "Glide to the Docks and land on the wareh"
+  },
+  {
+   "t": 33.9,
+   "type": "ability",
+   "id": "grapple"
+  },
+  {
+   "t": 33.9,
+   "type": "ability",
+   "id": "zipline"
+  },
+  {
+   "t": 47.8,
+   "type": "ability",
+   "id": "batmobile"
+  },
+  {
+   "t": 48.72,
+   "type": "banner",
+   "text": "Climb down to the dock road and get in t"
+  },
+  {
+   "t": 52.25,
+   "type": "banner",
+   "text": "Ram the Joker van 3 times before it reac"
+  },
+  {
+   "t": 70.47,
+   "type": "assist",
+   "what": "vehicle debugWin",
+   "step": "batmobileChase"
+  },
+  {
+   "t": 70.47,
+   "type": "banner",
+   "text": "Leave the car. Climb back up to the ware"
+  },
+  {
+   "t": 70.47,
+   "type": "ability",
+   "id": "batmobileCall"
+  },
+  {
+   "t": 70.55,
+   "type": "vehicleExitPlace",
+   "step": "toRoofAfterChase"
+  },
+  {
+   "t": 75.22,
+   "type": "learned",
+   "id": "grapple"
+  },
+  {
+   "t": 114,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toRoofAfterChase"
+  },
+  {
+   "t": 118.65,
+   "type": "banner",
+   "text": "Take down the goons on the warehouse roo"
+  },
+  {
+   "t": 121.45,
+   "type": "ability",
+   "id": "diveBomb"
+  },
+  {
+   "t": 122.37,
+   "type": "banner",
+   "text": "Glide down into the container yard. Kick"
+  },
+  {
+   "t": 126.8,
+   "type": "ability",
+   "id": "dodge"
+  },
+  {
+   "t": 126.8,
+   "type": "ability",
+   "id": "throw"
+  },
+  {
+   "t": 126.8,
+   "type": "ability",
+   "id": "moveStrikes"
+  },
+  {
+   "t": 126.97,
+   "type": "learned",
+   "id": "diveBomb"
+  },
+  {
+   "t": 127.72,
+   "type": "banner",
+   "text": "Clear the container yard. Dodge, block a"
+  },
+  {
+   "t": 130.5,
+   "type": "learned",
+   "id": "moveStrikes"
+  },
+  {
+   "t": 137.93,
+   "type": "banner",
+   "text": "Grapple onto the freighter at the end of"
+  },
+  {
+   "t": 173.4,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toShip"
+  },
+  {
+   "t": 173.42,
+   "type": "ability",
+   "id": "comboFinisher"
+  },
+  {
+   "t": 173.42,
+   "type": "ability",
+   "id": "aerialAttacks"
+  },
+  {
+   "t": 173.42,
+   "type": "ability",
+   "id": "groundPound"
+  },
+  {
+   "t": 174.33,
+   "type": "banner",
+   "text": "Clear the freighter deck. Finish them be"
+  },
+  {
+   "t": 177.38,
+   "type": "learned",
+   "id": "comboFinisher"
+  },
+  {
+   "t": 179.5,
+   "type": "learned",
+   "id": "aerialAttacks"
+  },
+  {
+   "t": 201.1,
+   "type": "banner",
+   "text": "Secure the Wayne Tech crates at the mark"
+  },
+  {
+   "t": 203.07,
+   "type": "hudHidden",
+   "step": "rewardCrates"
+  },
+  {
+   "t": 203.07,
+   "type": "comicOn",
+   "name": "crates"
+  },
+  {
+   "t": 208.13,
+   "type": "hudShown",
+   "step": "rewardCrates"
+  },
+  {
+   "t": 208.13,
+   "type": "comicOff",
+   "name": "crates"
+  },
+  {
+   "t": 208.13,
+   "type": "banner",
+   "text": "Head east to the Gazette building roof i"
+  },
+  {
+   "t": 208.13,
+   "type": "ability",
+   "id": "wallRun"
+  },
+  {
+   "t": 264.87,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toNeon"
+  },
+  {
+   "t": 290,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toNeon"
+  },
+  {
+   "t": 290.02,
+   "type": "ability",
+   "id": "capeStun"
+  },
+  {
+   "t": 290.92,
+   "type": "banner",
+   "text": "Knife goons on the Gazette roof. Kick or"
+  },
+  {
+   "t": 299.63,
+   "type": "banner",
+   "text": "Drop down to the Neon Row street, toward"
+  },
+  {
+   "t": 308.42,
+   "type": "banner",
+   "text": "Clear the street. Batarang the ones hang"
+  },
+  {
+   "t": 346.42,
+   "type": "banner",
+   "text": "Climb to the Monarch Theater roof."
+  },
+  {
+   "t": 361.52,
+   "type": "banner",
+   "text": "Clear the Monarch roof. Counters, the ca"
+  }
+ ],
+ "lost": [
+  {
+   "t0": 6.816666666666666,
+   "why": "cinematic",
+   "step": "intro",
+   "secs": 3.02
+  },
+  {
+   "t0": 9.85,
+   "why": "comic",
+   "step": "intro",
+   "secs": 12.63
+  },
+  {
+   "t0": 26.216666666666665,
+   "why": "comic",
+   "step": "card",
+   "secs": 5.07
+  },
+  {
+   "t0": 203.08333333333334,
+   "why": "comic",
+   "step": "rewardCrates",
+   "secs": 5.07
+  }
+ ],
+ "assists": 5,
+ "frames": 22008
+}

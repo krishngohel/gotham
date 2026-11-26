@@ -1,0 +1,32 @@
+A=head http://localhost:5851/
+B=fix http://localhost:5850/
+4 rounds, 2500 ms per site, alternating one page at a time
+r0 AB low:low      gcpd roof     head   5.91 ms (js 5.15) fix   3.20 ms (js 2.75)  frame x0.54 js x0.54  calls 255/254
+r0 AB low:low      docks         head   4.81 ms (js 4.03) fix   2.51 ms (js 2.11)  frame x0.52 js x0.52  calls 128/131
+r0 AB low:low      neon street   head   6.39 ms (js 5.56) fix   2.65 ms (js 2.30)  frame x0.41 js x0.41  calls 196/200
+r0 AB low:low      ace chemicals head   3.84 ms (js 3.32) fix   2.33 ms (js 2.11)  frame x0.61 js x0.64  calls 186/185
+r0 AB low:low      clock plaza   head   2.08 ms (js 1.89) fix   2.31 ms (js 2.08)  frame x1.11 js x1.10  calls 201/202
+r1 BA low:low      gcpd roof     head   2.73 ms (js 2.35) fix   2.94 ms (js 2.51)  frame x1.08 js x1.07  calls 255/253
+r1 BA low:low      docks         head   2.39 ms (js 2.01) fix   2.59 ms (js 2.16)  frame x1.08 js x1.07  calls 128/128
+r1 BA low:low      neon street   head   2.41 ms (js 2.10) fix   2.42 ms (js 2.09)  frame x1.00 js x0.99  calls 201/200
+r1 BA low:low      ace chemicals head   2.16 ms (js 1.95) fix   2.32 ms (js 2.09)  frame x1.07 js x1.07  calls 186/186
+r1 BA low:low      clock plaza   head   2.19 ms (js 1.98) fix   2.42 ms (js 2.18)  frame x1.11 js x1.10  calls 202/200
+r2 AB low:low      gcpd roof     head   2.77 ms (js 2.40) fix   3.15 ms (js 2.71)  frame x1.14 js x1.13  calls 254/253
+r2 AB low:low      docks         head   2.59 ms (js 2.18) fix   2.65 ms (js 2.21)  frame x1.02 js x1.01  calls 132/131
+r2 AB low:low      neon street   head   3.17 ms (js 2.76) fix   2.95 ms (js 2.54)  frame x0.93 js x0.92  calls 201/201
+r2 AB low:low      ace chemicals head   3.04 ms (js 2.75) fix   2.79 ms (js 2.53)  frame x0.92 js x0.92  calls 185/186
+r2 AB low:low      clock plaza   head   3.13 ms (js 2.83) fix   2.45 ms (js 2.21)  frame x0.78 js x0.78  calls 200/202
+r3 BA low:low      gcpd roof     head   3.18 ms (js 2.76) fix   3.39 ms (js 2.92)  frame x1.07 js x1.06  calls 256/254
+r3 BA low:low      docks         head   2.08 ms (js 1.75) fix   2.55 ms (js 2.14)  frame x1.23 js x1.22  calls 125/134
+r3 BA low:low      neon street   head   2.36 ms (js 2.08) fix   2.40 ms (js 2.08)  frame x1.01 js x1.00  calls 197/200
+r3 BA low:low      ace chemicals head   2.00 ms (js 1.82) fix   2.41 ms (js 2.17)  frame x1.21 js x1.19  calls 186/185
+r3 BA low:low      clock plaza   head   1.99 ms (js 1.80) fix   2.59 ms (js 2.33)  frame x1.30 js x1.29  calls 201/200
+
+per site, fix/head (ratio < 1: fix faster), median over 4 rounds [min..max]:
+  low:low      gcpd roof     frame x1.07 [0.54..1.14]  js x1.06 [0.54..1.13]  fps 336 -> 315  calls 255 -> 253.5
+  low:low      docks         frame x1.05 [0.52..1.23]  js x1.04 [0.52..1.22]  fps 402 -> 389  calls 128 -> 131
+  low:low      neon street   frame x0.97 [0.41..1.01]  js x0.96 [0.41..1.00]  fps 358 -> 395  calls 199 -> 200
+  low:low      ace chemicals frame x1.00 [0.61..1.21]  js x1.00 [0.64..1.19]  fps 385 -> 422  calls 186 -> 185.5
+  low:low      clock plaza   frame x1.11 [0.78..1.30]  js x1.10 [0.78..1.29]  fps 469 -> 411  calls 201 -> 201
+  low:low      ALL           frame x1.05  js x1.04
+(307 s)

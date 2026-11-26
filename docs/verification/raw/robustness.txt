@@ -1,0 +1,12 @@
+{"name":"nostorage","ms":17103,"errors":[],"title":true,"frameAfterStart":458,"inRun":true}
+{"name":"corrupt","ms":17468,"errors":[],"inRun":true,"step":"intro"}
+{"name":"contextloss","ms":20029,"errors":[],"lost":"lost","before":122,"after":545,"advancing":true,"messageWhileLost":[]}
+{"name":"hidden","ms":74693,"errors":[],"resumed":true,"paused":false,"heroY":42}
+{"name":"noaudio","ms":15815,"errors":[],"audioState":null,"frame":348}
+{"name":"res720","ms":12276,"errors":[],"scrollW":1280,"innerW":1280,"scrollH":720,"innerH":720,"canvas":[1280,720]}
+{"name":"res1080","ms":11379,"errors":[],"scrollW":1920,"innerW":1920,"scrollH":1080,"innerH":1080,"canvas":[1920,1080]}
+{"name":"ultrawide","ms":12454,"errors":[],"scrollW":2560,"innerW":2560,"scrollH":1080,"innerH":1080,"canvas":[2560,1080]}
+{"name":"res43","ms":18231,"errors":[],"scrollW":1024,"innerW":1024,"scrollH":768,"innerH":768,"canvas":[1024,768]}
+{"name":"touch","ms":12370,"errors":[],"mobileNote":"This one needs a computer with a keyboard and mouse. Open the link on a laptop.","errorNote":null,"ready":false}
+
+SUMMARY nostorage:ok corrupt:ok contextloss:ok hidden:ok noaudio:ok res720:ok res1080:ok ultrawide:ok res43:ok touch:ok

@@ -23,9 +23,10 @@ function buildLetterbox(root) {
   };
   const top = mk('top'), bottom = mk('bottom');
   const sub = document.createElement('div');
+  // [verify] a11y: font sizes here scale with --a11y-text (settings.access.textSize).
   sub.style.cssText = [
     'position:fixed', 'left:6%', 'right:6%', 'bottom:2.4%', 'text-align:center',
-    'font:26px "Patrick Hand SC",cursive', 'color:#efe6cf', 'text-shadow:0 2px 0 #000',
+    'font:calc(26px * var(--a11y-text, 1)) "Patrick Hand SC",cursive', 'color:#efe6cf', 'text-shadow:0 2px 0 #000',
     'z-index:8', 'opacity:0', 'transition:opacity 0.3s', 'pointer-events:none',
   ].join(';');
   bottom.appendChild(sub);

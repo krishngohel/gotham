@@ -1,0 +1,102 @@
+{
+ "q": "low",
+ "base": "http://localhost:5201/",
+ "rounds": [
+  {
+   "longTasks": [
+    102,
+    51
+   ],
+   "jsHitches": 1,
+   "jsMax": 51,
+   "seconds": 64,
+   "frames": 11150,
+   "medMs": 5.6,
+   "p95Ms": 8.1,
+   "maxMs": 93.7,
+   "hitches": [
+    {
+     "ms": 25.9,
+     "x": -135,
+     "z": -108,
+     "mode": "glide",
+     "district": null,
+     "js": 11.4,
+     "programs": 89,
+     "textures": 254,
+     "geometries": 765
+    },
+    {
+     "ms": 93.7,
+     "x": -137,
+     "z": -107,
+     "mode": "glide",
+     "district": null,
+     "js": 24.8,
+     "programs": 89,
+     "textures": 254,
+     "geometries": 765
+    },
+    {
+     "ms": 34.3,
+     "x": -138,
+     "z": -107,
+     "mode": "glide",
+     "district": null,
+     "js": 15.9,
+     "programs": 89,
+     "textures": 254,
+     "geometries": 765
+    },
+    {
+     "ms": 34.4,
+     "x": -139,
+     "z": -106,
+     "mode": "glide",
+     "district": null,
+     "js": 51,
+     "programs": 89,
+     "textures": 254,
+     "geometries": 765
+    },
+    {
+     "ms": 59.8,
+     "x": -140,
+     "z": -105,
+     "mode": "glide",
+     "district": null,
+     "js": 13.3,
+     "programs": 89,
+     "textures": 254,
+     "geometries": 765
+    }
+   ]
+  },
+  {
+   "longTasks": [
+    51
+   ],
+   "jsHitches": 1,
+   "jsMax": 49.6,
+   "seconds": 64,
+   "frames": 10812,
+   "medMs": 5.9,
+   "p95Ms": 7.9,
+   "maxMs": 48.6,
+   "hitches": [
+    {
+     "ms": 48.6,
+     "x": 150,
+     "z": -27,
+     "mode": "drive",
+     "district": null,
+     "js": 15.6,
+     "programs": 89,
+     "textures": 254,
+     "geometries": 765
+    }
+   ]
+  }
+ ],
+ "errors": []
+}

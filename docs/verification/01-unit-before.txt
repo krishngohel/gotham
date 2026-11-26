@@ -1,0 +1,17 @@
+
+ RUN  v5.0.2 ~/Documents/Projects/gotham-ln2-verify
+
+(node:46128) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43000) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ Test Files  216 passed (216)
+      Tests  2536 passed (2536)
+   Start at  16:56:16
+   Duration  9.74s (tests 49%, transform 36%, import 14%, worker 1%)
+
+  Transform  transforming modules took 48.98s · 36% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

@@ -8,6 +8,8 @@ import * as THREE from 'three';
 import { toonMaterial } from '../render/toon.js';
 import { LAYER_FX } from '../render/layers.js';
 import { PALETTE } from '../config/palette.js';
+import { createGadgetFx2 } from './gadgetFx2.js';
+import { gadgetConfig } from './config.js';
 
 export const GFX_LIMITS = { gel: 3, puffs: 14, ice: 6, iceShots: 2, sparks: 900, trail: 32, debris: 40 };
 // Hot white and pale blue flecks for the flashbang burst, with a little signal yellow.
@@ -513,14 +515,22 @@ export function createGadgetFx(scene) {
     stop() { trailLine.visible = false; },
   };
 
+  // [prog] The wave 3 gadgets' visuals (gadgetFx2.js), built the first time one is used: a run that
+  // never touches a new gadget never builds them.
+  let extra = null;
   return {
     gel, smoke, ice, sparks, lines, trail, debris,
+    get extra() {
+      if (!extra) extra = createGadgetFx2(scene, gadgetConfig.quality ?? null);
+      return extra;
+    },
     update(dt) {
       for (const b of gels) if (b.live) { b.t += dt; const k = 1 + Math.sin(b.t * 6) * 0.06; b.mesh.scale.set(k, 1, k); }
       updateSmoke(dt);
       updateIce(dt);
       updateSparks(dt);
       updateDebris(dt);
+      extra?.update(dt);
     },
   };
 }

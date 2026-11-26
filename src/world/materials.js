@@ -2,12 +2,14 @@ import * as THREE from 'three';
 import { PALETTE } from '../config/palette.js';
 import { toonMaterial } from '../render/toon.js';
 import { LAYER_FX } from '../render/layers.js';
+import { createRng } from '../core/rng.js';
 import { facadeTextures, storefrontTextures, noiseTexture, yardTexture, woodTexture, asphaltTexture, roofTexture, sidewalkTexture, puddleTexture } from './textures.js';
 
 export const FACADE_STYLES = ['brick', 'stone', 'deco', 'concrete', 'warehouse', 'factory', 'steel'];
 // Meters covered by one texture repeat horizontally, per style (matches the window grid).
 export const FACADE_METERS = { brick: 28, stone: 24, deco: 30, concrete: 32, warehouse: 40, factory: 30, steel: 24 };
 export const FLOOR_METERS = 54.4;
+export const DETAIL_MATERIALS = ['asphalt', 'sidewalk', 'yard', 'concrete', 'glow', 'lane', 'pool', 'puddle', 'cone', 'chem'];
 
 function poolTexture() {
   const c = document.createElement('canvas');
@@ -45,11 +47,11 @@ export function createCityMaterials(rng) {
   m.glow = new THREE.MeshBasicMaterial({ vertexColors: true });
   m.glow.userData.noShadow = true;
   m.lane = new THREE.MeshBasicMaterial({ color: PALETTE.laneMark, polygonOffset: true, polygonOffsetFactor: -2 });
-  m.lane.userData = { noShadow: true, layer: LAYER_FX, global: true };
+  m.lane.userData = { noShadow: true, layer: LAYER_FX };
   m.pool = new THREE.MeshBasicMaterial({ map: poolTexture(), vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, polygonOffset: true, polygonOffsetFactor: -3 });
-  m.pool.userData = { noShadow: true, layer: LAYER_FX, global: true };
+  m.pool.userData = { noShadow: true, layer: LAYER_FX };
   m.puddle = new THREE.MeshBasicMaterial({ map: puddleTexture(rng), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
-  m.puddle.userData = { noShadow: true, layer: LAYER_FX, global: true };
+  m.puddle.userData = { noShadow: true, layer: LAYER_FX };
   // Lamp light shafts: additive, strongest at the lamp and along the silhouette of the cone.
   m.cone = new THREE.ShaderMaterial({
     uniforms: { uColor: { value: new THREE.Color(PALETTE.sodium) }, uFogDensity: { value: 0.0062 } },
@@ -61,11 +63,24 @@ export function createCityMaterials(rng) {
       void main() { float a = pow(vE, 2.0) * (0.25 + 0.75 * vA * vA) * 0.3 * vF; gl_FragColor = vec4(uColor * a, a); }`,
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   });
-  m.cone.userData = { noShadow: true, layer: LAYER_FX, global: true };
+  m.cone.userData = { noShadow: true, layer: LAYER_FX };
   m.chem = new THREE.MeshBasicMaterial({ color: PALETTE.chem });
   m.chem.userData.noShadow = true;
-  // Light materials go city-wide in one mesh each: the draw calls cost more than the few vertices
-  // that frustum culling would save. The heavy prop materials (painted, steel) stay chunked.
-  for (const [key, mat] of Object.entries(m)) if (key !== 'painted' && key !== 'steel') mat.userData.global = true;
+  // Cheap overlays (ground, paint, light pools, glow) group in big chunks and cull on their own box
+  // at the draw distance; everything else is a near material, swapped for the far-LOD silhouette
+  // past quality.lodDistance (src/world/buckets.js, src/world/chunks.js).
+  for (const key of DETAIL_MATERIALS) m[key].userData.detail = true;
+  // Flat-colour materials ride in the vertex-coloured buckets (src/world/buckets.js add()).
+  for (const key of ['trim', 'steel', 'rust']) m[key].userData.foldInto = 'painted';
+  m.chem.userData.foldInto = 'glow';
+  m.painted.userData.subChunk = 64;
+  // Park lawns (Robinson Park, the Museum Campus): a cheap textured overlay like the asphalt. Its own
+  // rng, so the core's material textures (drawn from the city rng above) are unchanged.
+  m.lawn = toonMaterial({ map: noiseTexture(createRng(907), 0x24402b, 0.07, 256, 5000) });
+  m.lawn.userData.detail = true;
+  // Ground that is not flat (Bristol's hills, workstream H): vertex-coloured like 'painted' (the
+  // same shader), but a detail overlay so a hillside stays drawn out to the draw distance.
+  m.turf = toonMaterial({ vertexColors: true });
+  m.turf.userData.detail = true;
   return m;
 }

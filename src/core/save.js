@@ -1,7 +1,11 @@
 // Progress lives under one key; settings (gotham-settings-v1) and bindings are stored apart.
+import { isSuitId } from '../heroes/models/suits.js';
 const KEY = 'gotham-progress-v1';
 export const TROPHY_COUNT = 12;
-export const DISTRICT_IDS = ['gcpd', 'docks', 'neon', 'ace', 'clock'];
+// District ids come from the region list (src/world/regions/data.js): the core's five first, in
+// their old order, then each new region's. Old saves (five ids) load unchanged.
+import { DISTRICT_IDS } from '../world/regions/data.js';
+export { DISTRICT_IDS };
 export const MEDALS = ['bronze', 'silver', 'gold'];
 export const MILESTONE_STEPS = [0, 25, 50, 75, 100];
 export const STAT_KEYS = ['playTime', 'kos', 'longestCombo', 'topGlideSpeed', 'distanceGlided', 'photos'];
@@ -67,7 +71,8 @@ export function sanitizeProgress(raw = {}) {
   const out = {
     step: Number.isInteger(r.step) && r.step >= 0 ? r.step : 0,
     trophies,
-    suit: ['m', 'f', 'gold'].includes(r.suit) ? r.suit : null,
+    // Any suit in the suit table (src/heroes/models/suits.js); old saves' 'm' | 'f' | 'gold' are in it.
+    suit: isSuitId(r.suit) ? r.suit : null,
     goldUnlocked: r.goldUnlocked === true,
     seenIntro: r.seenIntro === true,
     finished: r.finished === true,

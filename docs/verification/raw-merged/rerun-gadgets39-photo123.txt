@@ -1,0 +1,11 @@
+
+Running 6 tests using 1 worker
+
+  ok 1 tests\e2e\gadgets.spec.js:39:1 › explosive gel opens the Monarch booth and the trophy inside (19.0s)
+  ok 2 tests\e2e\photo.spec.js:123:1 › split screen: player 2 opens photo mode on its own view while the world keeps running (12.8s)
+  ok 3 tests\e2e\gadgets.spec.js:39:1 › explosive gel opens the Monarch booth and the trophy inside (20.1s)
+  ok 4 tests\e2e\photo.spec.js:123:1 › split screen: player 2 opens photo mode on its own view while the world keeps running (11.9s)
+  ok 5 tests\e2e\gadgets.spec.js:39:1 › explosive gel opens the Monarch booth and the trophy inside (18.9s)
+  ok 6 tests\e2e\photo.spec.js:123:1 › split screen: player 2 opens photo mode on its own view while the world keeps running (12.9s)
+
+  6 passed (1.7m)

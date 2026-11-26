@@ -5,6 +5,10 @@
 // existing hit/critical/event pipeline so Nightwing's blows land exactly like Batman's.
 import { createNightwingCharacter } from '../actors/nightwingChar.js';
 import { footGround } from '../actors/characters.js';
+import { graphFor } from '../anim/graph.js';
+import { clipInfo } from '../anim/clips.js';
+import { createStrikeWarp } from '../anim/warp.js';
+import { MOCAP_START } from '../config/mocap.js';
 import { pickAllyTarget, canTeamTakedown, nearestThreat, fleeStep, ALLY_LEASH, withinLeash } from './nightwingLogic.js';
 
 const WALK = 'Walk_Loop', JOG = 'Jog_Fwd_Loop', IDLE = 'Idle_Loop';
@@ -114,13 +118,26 @@ export function createNightwing({ assets, scene, collision, events, combat, hero
     events.emit('teamTakedown', { target: e });
   }
 
+  // His blow lands when the clip reaches its contact frame (it used to land at a fixed 0.22 s
+  // while his clips reached contact at 0.25-0.40 s: combat-findings 12), and the clip's own step
+  // is warped onto the goon so the fist or foot arrives on him.
+  let strikeWarp = null;
+  const warpOut = { dx: 0, dz: 0, yaw: 0 };
+  const tgtView = { x: 0, z: 0, radius: 0.42, scale: 1 };
   function doStrike(kind) {
     strikeKind = kind;
     hitDone = false;
     state = 'strike';
     stateT = 0;
     const clip = kind === 'kick' ? KICK : PUNCHES[rng?.chance?.(0.5) ? 1 : 0];
-    ch.animator.play(clip, { once: true, timeScale: 1.6, fade: 0.06 });
+    const start = MOCAP_START[clip] ?? 0;
+    const info = clipInfo(clip);
+    strikeWarp = info?.reach ? createStrikeWarp(info, { startAt: start }) : null;
+    const g = graphFor(ch, { events, actor: { pos, isAlly: true }, who: 'ally' });
+    g.play(clip, { state: 'strike', timeScale: 1.4, startAt: start, fade: 0.08, blend: 'inertial', on: { contact: () => {
+      hitDone = true;
+      if (target?.alive) combat.gadgetApi.landHit(strikeKind, target, { power: 1, launch: strikeKind === 'kick' ? 2 : 0, stopTime: 0.05, assist: true, clip });
+    } } });
   }
 
   function updateAlly(dt) {
@@ -212,12 +229,17 @@ export function createNightwing({ assets, scene, collision, events, combat, hero
       }
     } else if (state === 'strike') {
       stateT += dt;
-      faceTowards(dx, dz, 8, dt);
-      if (!hitDone && stateT > 0.22) {
-        hitDone = true;
-        if (target.alive) combat.gadgetApi.landHit(strikeKind, target, { power: 1, launch: strikeKind === 'kick' ? 2 : 0, stopTime: 0.05, assist: true });
-      }
-      if (stateT > 0.5) state = 'seek';
+      const g = ch.graph;
+      const c0 = g?.time ?? 0;
+      g?.advance(dt);
+      if (g && strikeWarp && !hitDone && g.state === 'strike') {
+        tgtView.x = target.pos.x; tgtView.z = target.pos.z; tgtView.radius = target.radius ?? 0.42; tgtView.scale = target.scale ?? 1;
+        strikeWarp.step(c0, g.time, pos.x, pos.z, ch.yaw, tgtView, warpOut);
+        pos.x += warpOut.dx; pos.z += warpOut.dz;
+        ch.face(warpOut.yaw);
+      } else if (!strikeWarp) faceTowards(dx, dz, 8, dt);
+      if (!hitDone && stateT > 0.6) hitDone = true; // a clip with no contact event never hangs him
+      if ((hitDone && g?.passed('recover')) || stateT > 1.1) state = 'seek';
     }
     ch.animator.update(dt);
   }
@@ -248,6 +270,7 @@ export function createNightwing({ assets, scene, collision, events, combat, hero
     spawn,
     despawn,
     get actor() { return ch; },
+    get mode() { return mode; }, // [net2] an online guest spawns the same look (ally, courier, pose)
     courierFlee,
     update(dt) {
       if (!ch) return;

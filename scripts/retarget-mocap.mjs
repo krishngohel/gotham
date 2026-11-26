@@ -5,11 +5,16 @@
 //
 //   node scripts/retarget-mocap.mjs [--map meshy|mixamo] [--append] [--fps 30] [--keep-travel]
 //        [--out file.glb] [--data file.js]   (trial runs: point both away from the game's files)
+//        [--no-ease]     (trim but do not blend the ends into Idle_Loop: the clip keeps its own
+//                         start and end pose, for runtime blending; the packs use it)
+//        [--pack name]   (a lazy-loaded pack: --out public/assets/anims_<name>.glb and
+//                         --data src/config/mocapData.<name>.js unless given; see scripts/anim-packs.mjs)
 //        Name=C:/path/clip.glb[:limb][@contact][!noaim][~mirror][^deg][%loop][%start][%end] ...
 // %loop keeps a looping clip whole (idles, strafes): no trim, no easing, no aim. %start / %end
 // keep its first / last frames as they are, uneased (a get-up starts on the floor, a
 // knockdown ends there), instead of easing them into the idle pose.
-// :limb names the striking limb (default: whichever foot goes highest; :hands, whichever hand); its highest frame is the
+// :limb names the striking limb (default: whichever foot goes highest; :hands, whichever hand;
+// :reach, whichever foot gets farthest out from the hips, for sweeps); its highest frame is the
 // contact frame, unless @seconds (source clip time) sets it. !noaim keeps the clip's own heading
 // (evades, reactions) instead of turning it so the strike lands straight ahead. ~mirror also
 // writes Name_M, the same move with left and right swapped. --append keeps the clips already in
@@ -46,6 +51,8 @@ for (let i = 0; i < args.length; i++) {
   else if (a === '--map') opt.map = args[++i];
   else if (a === '--append') opt.append = true;
   else if (a === '--data') opt.data = args[++i];
+  else if (a === '--pack') opt.pack = args[++i];
+  else if (a === '--no-ease') opt.noEase = true;
   else if (a.includes('=')) {
     const [name, spec0] = a.split('=');
     let spec = spec0;
@@ -65,6 +72,10 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 if (!jobs.length) { console.error('no clips given (Name=file.glb)'); process.exit(1); }
+if (opt.pack) {
+  if (!args.includes('--out')) opt.out = `public/assets/anims_${opt.pack}.glb`;
+  if (!args.includes('--data')) opt.data = `src/config/mocapData.${opt.pack}.js`;
+}
 opt.out = inRepo(opt.out); opt.target = inRepo(opt.target); opt.idle = inRepo(opt.idle);
 
 function swapLR(n) { return n.replace(/_l$/, '_R_').replace(/_r$/, '_l').replace(/_R_$/, '_r'); }
@@ -265,11 +276,23 @@ async function retargetClip({ name, file, limb, contactAt, noaim, mirror, loop =
     for (const j of target.order) e += Math.abs(f.locals.get(j.name).angleTo(raw[i - 1].locals.get(j.name)));
     return e + f.hips.distanceTo(raw[i - 1].hips) * 10;
   });
+  // Some Mixamo exports open on the bind (T) pose for a frame or more. With --no-ease nothing
+  // would hide it, so skip leading frames whose mapped joints all sit within 4 deg of bind.
+  let bindLead = 0;
+  if (opt.noEase) {
+    const isBind = (i) => {
+      const w = sourceWorldRotations(rig, chans, i * dt);
+      for (const s of Object.keys(MAP)) if (rig.info.has(s) && w.get(s).angleTo(rig.info.get(s).bindRot) > THREE.MathUtils.degToRad(4)) return false;
+      return true;
+    };
+    while (bindLead < n - 2 && isBind(bindLead)) bindLead++;
+    if (bindLead) { console.log(`${name}: skipping ${bindLead} bind-pose frame(s) at the start`); for (let i = 0; i <= bindLead; i++) energy[i] = 0; }
+  }
   const peak = Math.max(...energy);
   const active = energy.map((e) => e > peak * 0.4);
   let first = active.indexOf(true), last = active.lastIndexOf(true);
   if (first < 0) { first = 0; last = n - 1; }
-  const start = keepStart ? 0 : Math.max(0, first - Math.round(0.1 * opt.fps));
+  const start = keepStart ? bindLead : Math.max(bindLead, first - Math.round(0.1 * opt.fps));
   const end = keepEnd ? n - 1 : Math.min(n - 1, last + Math.round(0.15 * opt.fps));
   const idx = [];
   for (let i = start; i <= end; i++) idx.push(i);
@@ -286,17 +309,18 @@ async function retargetClip({ name, file, limb, contactAt, noaim, mirror, loop =
   };
   // Contact: a kick's or knee's highest frame (they peak at full extension).
   // With no limb given, the foot that goes highest is the kicking one.
-  const candidates = limb === 'auto' ? ['ball_l', 'ball_r'] : limb === 'hands' ? ['hand_l', 'hand_r'] : [limb];
+  const footReach = limb === 'reach';
+  const candidates = limb === 'auto' || footReach ? ['ball_l', 'ball_r'] : limb === 'hands' ? ['hand_l', 'hand_r'] : [limb];
   let contactIdx = 0, best = -Infinity;
   const travelled = (i) => { const p = targetPositions(raw[i].locals, pelvisLocalAt(raw[i].hips, 0, true)); return p; };
   // A punch or an elbow (an arm limb) lands where it reaches farthest out from the body, at torso
   // height or above (a hand swung low is a wind-up); its highest frame is usually the guard.
-  const armStrike = candidates.every((c) => /^(hand|lowerarm|upperarm)_/.test(c));
+  const armStrike = footReach || candidates.every((c) => /^(hand|lowerarm|upperarm)_/.test(c));
   idx.forEach((i, k) => {
     const p = travelled(i);
     for (const c of candidates) {
       const q = p.get(c), pel = p.get('pelvis');
-      const score = armStrike ? (q.y >= 0.9 ? Math.hypot(q.x - pel.x, q.z - pel.z) : -Infinity) : q.y;
+      const score = footReach ? Math.hypot(q.x - pel.x, q.z - pel.z) : armStrike ? (q.y >= 0.9 ? Math.hypot(q.x - pel.x, q.z - pel.z) : -Infinity) : q.y;
       if (score > best) { best = score; contactIdx = k; limb = c; }
     }
   });
@@ -310,7 +334,7 @@ async function retargetClip({ name, file, limb, contactAt, noaim, mirror, loop =
   // Pass B: yawed so the kick lands straight ahead, then aligned so the lowest planted toe
   // sits where the idle's does (joint pivots differ between the two rigs).
   yawQ = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
-  const lead = keepStart ? 0 : Math.round(0.08 * opt.fps), tail = keepEnd ? 0 : Math.round(0.15 * opt.fps);
+  const lead = keepStart || opt.noEase ? 0 : Math.round(0.08 * opt.fps), tail = keepEnd || opt.noEase ? 0 : Math.round(0.15 * opt.fps);
   const kept = idx.map((i) => ({ locals: retargetFrame(rig, chans, i * dt, yaw, mirror).locals, hips: raw[i].hips }));
   let lowest = Infinity;
   kept.forEach((f, k) => {

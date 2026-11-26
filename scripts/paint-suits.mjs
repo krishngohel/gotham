@@ -1,11 +1,19 @@
-// Paints the comic suit textures for the hero bodies: public/assets/tex/bat_m.webp and bat_f.webp.
+// Paints the comic textures for the shared bodies into public/assets/tex/:
+//   bat_f.webp       Batwoman's suit (full colour)
+//   bat_m_mask.webp  every Batman suit: R/G encode the region (suit, dark, accent, emblem) and B
+//                    the ink, recoloured per suit in the shader (src/heroes/models/batman.js), so
+//                    one texture serves the grey suit, the gold suit and every alternate
+//   nightwing.webp   Nightwing's suit (full colour)
+//   lines_m/f.webp   white with ink anatomy, hatching and face lines: multiplied over the vertex
+//                    colours of the code-painted heroes (Robin, Batgirl, Superman ...)
+//   face_m/f.webp    white with face lines only: civilians, Alfred, Bruce Wayne
 //
 // Every texel of the body's UV layout gets the bind-pose position, normal and tangent frame of the
 // surface under it (dilated past the island edges), and the paint is a pure function of that 3D
 // point: region colours, ink contours where regions meet, hand-authored anatomy lines, the chest
 // emblem, the belt and cross-hatching away from the key light. Because nothing is drawn in UV
 // space, lines run across seams unbroken. Deterministic; run by hand like build-assets:
-//   node scripts/paint-suits.mjs [--preview <dir>] [--size 1024] [--only m|f]
+//   node scripts/paint-suits.mjs [--preview <dir>] [--size 1024] [--only f,bat_m_mask,nightwing,...]
 // --preview renders the painted bodies front/back/side to PNGs for look development.
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
@@ -17,6 +25,7 @@ import { measureBody } from '../src/actors/rig.js';
 import { classifySuitVertex, SUIT_COLORS } from '../src/actors/outfits.js';
 import { PALETTE } from '../src/config/palette.js';
 import { batOutline } from '../src/config/batShape.js';
+import { COSTUMES, COSTUME_IDS, costumeTexName } from '../src/heroes/models/costumes.js';
 
 const args = process.argv.slice(2);
 const opt = (name, dflt) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : dflt; };
@@ -208,11 +217,11 @@ const fract = (v) => v - Math.floor(v);
 
 // Anatomy strokes in body space (metres, T-pose) built from the landmarks. Points are
 // [x, y, width]; strokes start thick and taper.
-function anatomy(key, lm, bone) {
+function anatomy(key, lm, bone, opts = {}) {
   const S = [];
   const f = key === 'f';
   // Batwoman's suit is near-black, so her anatomy is drawn in a lighter highlight like the reference.
-  const add = (o) => S.push(makeStroke({ kind: f ? 'light' : 'ink', ...o }));
+  const add = (o) => S.push(makeStroke({ kind: opts.kind ?? (f ? 'light' : 'ink'), ...o }));
   const hatch = (o) => S.push(makeStroke({ kind: 'hatch', ...o }));
   const cy = lm.chestY, by = lm.beltY, ny = lm.neckY;
   const sx = lm.shoulderX, ex = lm.elbowX;
@@ -282,10 +291,41 @@ function anatomy(key, lm, bone) {
   add({ pts: [[thighX + 0.01, ky - 0.03, w], [thighX + 0.03, ky - 0.09, w * 0.8], [thighX + 0.015, ky - 0.14, t]], face: -0.15 });
   // outer thigh (side)
   add({ pts: [[-0.02, hipY - 0.06, w], [0.005, hipY - 0.2, w * 0.8], [0.0, ky + 0.09, t]], proj: 'zy', side: 1, face: 0.4 });
+  if (opts.panels) {
+    // Armour-weave panel seams (Batman only): a yoke across the collarbones, the chest plate's
+    // lower edge under the pecs, side panels from the armpit to the belt, and the deltoid caps.
+    // Drawn as straight-ish engineered lines so they read as suit construction, not muscle.
+    add({ pts: [[0.03, ny - 0.035, w], [0.11, cy + 0.075, w], [sx - 0.01, armY + 0.035, t]], face: 0.1 });
+    add({ pts: [[0.0, cy - 0.118, w], [0.09, cy - 0.128, w], [0.165, cy - 0.1, w * 0.8], [0.19, cy - 0.05, t]], face: -0.1 });
+    add({ pts: [[0.19, cy - 0.04, w], [0.175, cy - 0.16, w], [0.15, by + 0.05, t]], face: -0.45 });
+    add({ pts: [[sx + 0.02, armY + 0.06, w * 0.8], [sx + 0.07, armY + 0.02, w * 0.8], [sx + 0.085, armY - 0.05, t]], face: -0.6 });
+    // Knee pad outline.
+    add({ pts: [[thighX - 0.04, ky + 0.07, t], [thighX - 0.045, ky + 0.01, w * 0.8], [thighX, ky - 0.035, w * 0.8], [thighX + 0.045, ky + 0.01, w * 0.8], [thighX + 0.04, ky + 0.07, t]], face: 0.3 });
+  }
   return S;
 }
 
-function makePainter(key, lm, bone) {
+// Face lines for unmasked heads, drawn for a toon + ink renderer: brows, the upper lid, the
+// nose's underside and one side of the bridge, the mouth, the shadow under the lower lip and the
+// jaw. All thin: at gameplay distance only the brows and mouth survive, which is the point.
+function faceLines(key, lm, region = 'skin') {
+  const f = key === 'f';
+  const e = lm.eyeY, sp = lm.eyeSpread;
+  const S = [];
+  const add = (o) => S.push(makeStroke({ face: 0.35, region, ...o }));
+  const b = f ? 0.0032 : 0.0042;
+  add({ pts: [[sp - 0.022, e + 0.017, b * 0.8], [sp - 0.004, e + 0.024, b], [sp + 0.017, e + 0.021, b * 0.6]] });
+  add({ pts: [[sp - 0.015, e + 0.006, 0.0016], [sp, e + 0.011, 0.0024], [sp + 0.016, e + 0.006, 0.0014]] });
+  add({ pts: [[0.004, e - 0.048, 0.0026], [0.011, e - 0.045, 0.0022], [0.015, e - 0.04, 0.0012]] });
+  add({ pts: [[0.009, e - 0.012, 0.0012], [0.012, e - 0.03, 0.0018], [0.013, e - 0.04, 0.001]], mirror: false });
+  const my = e - (f ? 0.072 : 0.078);
+  add({ pts: [[-0.02, my + 0.002, 0.0012], [-0.008, my, 0.0026], [0.008, my, 0.0026], [0.02, my + 0.002, 0.0012]], mirror: false });
+  add({ pts: [[-0.008, my - 0.014, 0.0012], [0, my - 0.016, 0.0022], [0.008, my - 0.014, 0.0012]], mirror: false });
+  add({ pts: [[0.058, e - 0.03, 0.0012], [0.052, e - 0.075, 0.0022], [0.03, e - 0.105, 0.0012]], face: 0.0 });
+  return S;
+}
+
+function makePainter(key, lm, bone, opts = {}) {
   const colors = SUIT_COLORS[key];
   const f = key === 'f';
   const C = {
@@ -296,10 +336,16 @@ function makePainter(key, lm, bone) {
     glove: rgb(colors.glove), boot: rgb(colors.boot), emblem: rgb(colors.emblem), ink: rgb(PALETTE.ink),
   };
   const fwd = lm.fwd;
-  const strokes = anatomy(key, lm, bone);
+  const mask = !!opts.mask;
+  const strokes = anatomy(key, lm, bone, { panels: mask });
   // The face stays flat skin: one short, thin mouth line is the only mark on it.
   const mouthY = lm.eyeY - (f ? 0.072 : 0.078);
   strokes.push(makeStroke({ pts: [[-0.015, mouthY + 0.0015, 0.001], [-0.006, mouthY, 0.0018], [0.006, mouthY, 0.0018], [0.015, mouthY + 0.0015, 0.001]], face: 0.4, mirror: false, region: 'skin' }));
+  if (mask) {
+    // A cleft-chin tick and the under-lip shadow: the jaw is all of Batman's face that shows.
+    strokes.push(makeStroke({ pts: [[-0.007, mouthY - 0.016, 0.001], [0, mouthY - 0.018, 0.002], [0.007, mouthY - 0.016, 0.001]], face: 0.4, mirror: false, region: 'skin' }));
+    strokes.push(makeStroke({ pts: [[0, mouthY - 0.034, 0.0012], [0, mouthY - 0.042, 0.002]], face: 0.4, mirror: false, region: 'skin' }));
+  }
 
   // Emblem: the batOutline polygon at the size and place of the old flat mesh (a touch larger,
   // since paint follows the curve of the chest).
@@ -355,9 +401,13 @@ function makePainter(key, lm, bone) {
     return base;
   }
 
-  const baseColor = { suit: C.suit, cowl: C.cowl, skin: C.skin, belt: C.belt, glove: C.glove, boot: C.boot, emblem: C.emblem, buckle: shade(C.belt, 1.08), pouch: shade(C.belt, 0.92) };
-  // Regions whose meeting gets an ink contour.
-  const inkEdge = (a, b) => a !== b && !(a === 'emblem' && !f) && !((a === 'buckle' || a === 'pouch') && (b === 'buckle' || b === 'pouch'));
+  let baseColor = { suit: C.suit, cowl: C.cowl, skin: C.skin, belt: C.belt, glove: C.glove, boot: C.boot, emblem: C.emblem, buckle: shade(C.belt, 1.08), pouch: shade(C.belt, 0.92) };
+  // Mask mode: R/G are the region code (suit 10, dark 00, accent 01, emblem 11), B the ink.
+  const CODE = { suit: [255, 0, 0], skin: [255, 0, 0], cowl: [0, 0, 0], glove: [0, 0, 0], boot: [0, 0, 0], belt: [0, 255, 0], buckle: [0, 255, 0], pouch: [0, 255, 0], emblem: [255, 255, 0] };
+  if (mask) baseColor = CODE;
+  const inkOf = (region) => (mask ? [CODE[region]?.[0] ?? 255, CODE[region]?.[1] ?? 0, 255] : C.ink);
+  // Regions whose meeting gets an ink contour. (A mask's emblem may be any colour, so it inks.)
+  const inkEdge = (a, b) => a !== b && !(a === 'emblem' && !f && !mask) && !((a === 'buckle' || a === 'pouch') && (b === 'buckle' || b === 'pouch'));
 
   const hatchDir1 = new THREE.Vector3(0.62, 0.72, 0.32 * fwd).normalize();
   const hatchDir2 = new THREE.Vector3(-0.55, 0.72, 0.42 * fwd).normalize();
@@ -378,7 +428,7 @@ function makePainter(key, lm, bone) {
       if (other !== region && inkEdge(region, other) && inkEdge(other, region)) {
         // On the near-black suit the cowl's edge is a light seam, as in the reference.
         const cowlSeam = f && (region === 'cowl' || other === 'cowl') && (region === 'suit' || other === 'suit');
-        return cowlSeam ? light : C.ink;
+        return cowlSeam ? light : inkOf(region);
       }
     }
     // Hand-drawn anatomy.
@@ -397,9 +447,9 @@ function makePainter(key, lm, bone) {
         }
         if (qx < s.box[0] || qx > s.box[1] || qy < s.box[2] || qy > s.box[3]) continue;
         if (strokeDist(qx, qy, s.line) < 0) {
-          if (s.kind === 'ink') return C.ink;
+          if (s.kind === 'ink') return inkOf(region);
           if (s.kind === 'light') return light;
-          if (onHatch(p, 0.0024)) return C.ink;
+          if (onHatch(p, 0.0024)) return inkOf(region);
         }
       }
     }
@@ -411,31 +461,202 @@ function makePainter(key, lm, bone) {
       const dark = clamp01((-0.08 - lit) / 0.4);
       if (dark > 0) {
         const w1 = 0.0022 + 0.0016 * dark;
-        if (onHatch(p, w1)) return C.ink;
+        if (onHatch(p, w1)) return inkOf(region);
         if (dark > 0.7) {
           const d2 = Math.abs(fract(p.dot(hatchDir2) / hatchPeriod) - 0.5) * hatchPeriod;
-          if (d2 < w1 * 0.4) return C.ink;
+          if (d2 < w1 * 0.4) return inkOf(region);
         }
       }
     }
+    // Boot treads (the mask's Batman wears the body's own boots): a sole band with lugs, and a
+    // cuff line below the boot top.
+    if (mask && region === 'boot' && p.y < 0.032) {
+      if (p.y > 0.026) return inkOf(region);
+      if (Math.abs(fract((p.x + p.z * 0.7) / 0.012) - 0.5) < 0.2) return inkOf(region);
+      return CODE.suit;
+    }
+    if (mask && region === 'boot' && Math.abs(p.y - (lm.kneeY - 0.11)) < 0.004) return inkOf(region);
     return col;
+  };
+}
+
+// Generic stroke painter: region(p, n) names the surface, strokes draw on their own region.
+function strokeHit(s, p, n, nz, hipZ, fwd) {
+  let qx, qy;
+  if (s.proj === 'xy') {
+    if (s.face >= 0 ? nz < s.face : nz > s.face) return false;
+    qx = s.mirror ? Math.abs(p.x) : p.x; qy = p.y;
+  } else {
+    if (Math.abs(n.x) < s.face) return false;
+    const sideSign = Math.sign(p.x) || 1;
+    if (s.side && Math.sign(n.x) !== sideSign * s.side) return false;
+    qx = (p.z - hipZ) * fwd; qy = p.y;
+  }
+  if (qx < s.box[0] || qx > s.box[1] || qy < s.box[2] || qy > s.box[3]) return false;
+  return strokeDist(qx, qy, s.line) < 0;
+}
+
+// Nightwing: a near-black suit with blue-grey inner lines, and an original bird in flight in the
+// signature blue whose wings sweep from the sternum over both shoulders and run down the top of
+// each arm to stripes on the index and middle fingers. Black boots with a blue cuff line, a thin
+// dark belt, the head bare (the mask, hair and collar are modelled parts).
+function makeNightwingPainter(lm, bone) {
+  const fwd = lm.fwd;
+  const C = { suit: [26, 28, 37], wing: rgb(PALETTE.detective), skin: rgb(PALETTE.skin), belt: [44, 46, 58], boot: [18, 19, 26], ink: rgb(PALETTE.ink), line: [58, 92, 148] };
+  const cy = lm.chestY, sx = lm.shoulderX, armY = bone('upperarm_l').y, ny = lm.neckY;
+  const hipZ = bone('pelvis').z;
+  const strokes = anatomy('m', lm, bone, { kind: 'light' });
+  for (const st of faceLines('m', lm)) strokes.push(st);
+  // Half of the bird (x >= 0), clockwise from the top of the centre notch; mirrored below.
+  const half = [
+    [0, cy - 0.015], [0.022, cy + 0.02], [0.07, cy + 0.06], [0.125, armY + 0.005], [sx + 0.0, armY + 0.06], [sx + 0.06, armY + 0.07],
+    [sx + 0.06, armY - 0.05], [sx - 0.02, armY - 0.06], [0.14, cy - 0.005], [0.115, cy - 0.04], [0.1, cy - 0.022], [0.075, cy - 0.065],
+    [0.058, cy - 0.048], [0.03, cy - 0.085], [0, cy - 0.125],
+  ];
+  const bird = [...half, ...half.slice(1, -1).reverse().map(([x, y]) => [-x, y])];
+  const zIdx = Math.abs(bone('index_01_l').z), zMid = Math.abs(bone('middle_01_l').z);
+  const handX = Math.abs(bone('hand_l').x), knuckleX = Math.abs(bone('middle_01_l').x);
+  const wristX = handX - 0.02;
+  const fingerZ = (z) => Math.abs(z - bone('index_01_l').z) < 0.0075 || Math.abs(z - bone('middle_01_l').z) < 0.0075;
+  const between = (z) => { const a = bone('index_01_l').z, b = bone('middle_01_l').z; return z > Math.min(a, b) - 0.008 && z < Math.max(a, b) + 0.008; };
+  void zIdx; void zMid;
+  function region(p, n) {
+    const ax = Math.abs(p.x);
+    if (p.y > ny + 0.035 && ax < 0.16) return 'skin';
+    if (p.y < lm.kneeY - 0.08) return 'boot';
+    if (ax > sx - 0.03 && p.y > lm.chestY - 0.05) {
+      // Arm: the wing stripe runs along the front-top of the arm, narrowing to the wrist, then
+      // over the back of the hand and onto the index and middle fingers.
+      if (ax > knuckleX - 0.005) return n.y > 0.15 && fingerZ(p.z) ? 'wing' : 'suit';
+      if (ax > wristX) return n.y > 0.3 && between(p.z) ? 'wing' : 'suit';
+      const t = clamp01((ax - sx) / (wristX - sx));
+      const ang = Math.atan2(n.y, n.z * fwd) * 180 / Math.PI;
+      const lo = 8 + 14 * t, hi = 82 - 16 * t;
+      if (ang > lo && ang < hi) return 'wing';
+      if (ax < sx + 0.07 && polygonDist(ax, p.y, half.concat([[0, cy - 0.125]])) < 0 && n.z * fwd > -0.3) return 'wing';
+      return 'suit';
+    }
+    if (Math.abs(p.y - lm.beltY) < 0.018 && ax < lm.hipHalfWidth + 0.05) return 'belt';
+    if (n.z * fwd > -0.3 && (p.z - lm.chestFrontZ) * fwd > -0.16 && polygonDist(p.x, p.y, bird) < 0) return 'wing';
+    return 'suit';
+  }
+  const lineCol = { suit: C.line, boot: C.line, skin: C.ink, wing: C.ink, belt: C.ink };
+  return function paint(p, n, tu, tv, edgeW) {
+    const r = region(p, n);
+    for (const [dir, sgn] of [[tu, 1], [tu, -1], [tv, 1], [tv, -1]]) {
+      const q = new THREE.Vector3(p.x + dir.x * edgeW * sgn, p.y + dir.y * edgeW * sgn, p.z + dir.z * edgeW * sgn);
+      const o = region(q, n);
+      if (o !== r) return (r === 'wing' || o === 'wing' || r === 'skin' || o === 'skin') ? C.ink : C.line;
+    }
+    const nz = n.z * fwd;
+    if (r === 'suit' || r === 'skin') {
+      for (const s of strokes) {
+        if ((s.region === 'skin') !== (r === 'skin')) continue;
+        if (strokeHit(s, p, n, nz, hipZ, fwd)) return lineCol[r];
+      }
+    }
+    if (r === 'boot' && Math.abs(p.y - (lm.kneeY - 0.12)) < 0.0035) return C.line;
+    return C[r];
+  };
+}
+
+// White with ink lines, multiplied over a code-painted character's vertex colours. anatomy: the
+// muscle lines and shadow hatching of the hero suits; face lines always.
+function makeLinesPainter(key, lm, bone, { anatomy: withAnatomy }) {
+  const fwd = lm.fwd;
+  const hipZ = bone('pelvis').z;
+  const strokes = withAnatomy ? anatomy(key, lm, bone, { kind: 'ink' }) : [];
+  for (const st of faceLines(key, lm)) strokes.push(st);
+  const W = [255, 255, 255], INK = rgb(PALETTE.ink);
+  const hatchDir = new THREE.Vector3(0.62, 0.72, 0.32 * fwd).normalize();
+  const period = 0.014;
+  return function paint(p, n) {
+    const head = p.y > lm.neckY && Math.abs(p.x) < 0.16;
+    const nz = n.z * fwd;
+    for (const s of strokes) {
+      if ((s.region === 'skin') !== head) continue;
+      if (strokeHit(s, p, n, nz, hipZ, fwd)) return INK;
+    }
+    if (withAnatomy && !head) {
+      const lit = 0.8 * n.y + 0.5 * Math.abs(n.z) + 0.3 * n.x;
+      const dark = clamp01((-0.08 - lit) / 0.4);
+      if (dark > 0 && Math.abs(fract(p.dot(hatchDir) / period) - 0.5) * period < (0.0018 + 0.0012 * dark) * 0.5) return INK;
+    }
+    return W;
+  };
+}
+
+// A roster hero's costume (src/heroes/models/costumes.js): flat regions, ink where they meet,
+// anatomy lines (ink, or a light line colour on dark suits), shadow hatching, face lines.
+function makeCostumePainter(id, lm, bone) {
+  const cos = COSTUMES[id];
+  const fwd = lm.fwd;
+  const hipZ = bone('pelvis').z;
+  const C = Object.fromEntries(Object.entries(cos.colors).map(([k, v]) => [k, rgb(v)]));
+  const INK = rgb(PALETTE.ink), LINE = cos.lines === 'light' ? rgb(cos.lineColor) : INK;
+  const B = (n) => bone(n);
+  const strokes = anatomy(cos.body, lm, bone, { kind: 'ink' });
+  for (const st of faceLines(cos.body, lm)) strokes.push(st);
+  const hatchDir = new THREE.Vector3(0.62, 0.72, 0.32 * fwd).normalize();
+  const period = 0.014;
+  const q = new THREE.Vector3();
+  return function paint(p, n, tu, tv, edgeW) {
+    const r = cos.region(p, n, lm, B);
+    for (const [dir, sgn] of [[tu, 1], [tu, -1], [tv, 1], [tv, -1]]) {
+      q.set(p.x + dir.x * edgeW * sgn, p.y + dir.y * edgeW * sgn, p.z + dir.z * edgeW * sgn);
+      if (cos.region(q, n, lm, B) !== r) return INK;
+    }
+    const head = p.y > lm.neckY && Math.abs(p.x) < 0.16 && !(Math.abs(p.x) > lm.shoulderX - 0.02 && p.y > lm.chestY - 0.12);
+    const nz = n.z * fwd;
+    for (const s of strokes) {
+      if ((s.region === 'skin') !== head) continue;
+      if (head && r !== 'skin') continue;
+      if (strokeHit(s, p, n, nz, hipZ, fwd)) return head ? INK : LINE;
+    }
+    if (!head && cos.lines === 'ink') {
+      const lit = 0.8 * n.y + 0.5 * Math.abs(n.z) + 0.3 * n.x;
+      const dark = clamp01((-0.08 - lit) / 0.4);
+      if (dark > 0 && Math.abs(fract(p.dot(hatchDir) / period) - 0.5) * period < (0.0018 + 0.0012 * dark) * 0.5) return INK;
+    }
+    return C[r] ?? INK;
   };
 }
 
 // ---------------------------------------------------------------- main
 
-async function paintBody(key) {
+const JOBS = {
+  f: { body: 'f', out: 'bat_f', bg: () => rgb(SUIT_COLORS.f.suit), painter: (b) => makePainter('f', b.lm, b.bone) },
+  // The old full-colour Batman texture; the game now recolours bat_m_mask instead.
+  m: { body: 'm', out: 'bat_m', bg: () => rgb(SUIT_COLORS.m.suit), painter: (b) => makePainter('m', b.lm, b.bone) },
+  bat_m_mask: { body: 'm', out: 'bat_m_mask', bg: () => [255, 0, 0], painter: (b) => makePainter('m', b.lm, b.bone, { mask: true }) },
+  nightwing: { body: 'm', out: 'nightwing', bg: () => [26, 28, 37], painter: (b) => makeNightwingPainter(b.lm, b.bone) },
+  lines_m: { body: 'm', out: 'lines_m', bg: () => [255, 255, 255], painter: (b) => makeLinesPainter('m', b.lm, b.bone, { anatomy: true }) },
+  lines_f: { body: 'f', out: 'lines_f', bg: () => [255, 255, 255], painter: (b) => makeLinesPainter('f', b.lm, b.bone, { anatomy: true }) },
+  face_m: { body: 'm', out: 'face_m', size: 512, bg: () => [255, 255, 255], painter: (b) => makeLinesPainter('m', b.lm, b.bone, { anatomy: false }) },
+  face_f: { body: 'f', out: 'face_f', size: 512, bg: () => [255, 255, 255], painter: (b) => makeLinesPainter('f', b.lm, b.bone, { anatomy: false }) },
+};
+for (const id of COSTUME_IDS) {
+  JOBS[costumeTexName(id)] = { body: COSTUMES[id].body, out: costumeTexName(id), bg: () => rgb(Object.values(COSTUMES[id].colors)[1]), painter: (b) => makeCostumePainter(id, b.lm, b.bone) };
+}
+const DEFAULT_JOBS = ['f', 'bat_m_mask', 'nightwing', 'lines_m', 'lines_f', 'face_m', 'face_f', ...COSTUME_IDS.map(costumeTexName)];
+
+async function paintJob(name) {
+  const job = JOBS[name];
+  if (!job) throw new Error(`unknown job ${name}`);
+  const key = job.body;
   const { body, lm, bone } = await loadBody(key);
   const t0 = Date.now();
-  const G = rasterize(body.geometry, SIZE);
-  const paint = makePainter(key, lm, bone);
-  const img = Buffer.alloc(SIZE * SIZE * 3);
+  const S = Number(opt('--size', job.size ?? SIZE));
+  const G = rasterize(body.geometry, S);
+  const paint = job.painter({ lm, bone });
+  const img = Buffer.alloc(S * S * 3);
   const p = new THREE.Vector3(), n = new THREE.Vector3(), tu = new THREE.Vector3(), tv = new THREE.Vector3(), q = new THREE.Vector3();
-  const edgeW = 0.0034;
-  const bg = rgb(SUIT_COLORS[key].suit);
+  // Region-contour probe distance scales with the texel size so small textures keep their lines.
+  const edgeW = 0.0034 * (1024 / S) ** 0.5;
+  const bg = job.bg();
   // 2x2 supersampling in the tangent plane for clean edges.
   const offs = [[-0.25, -0.25], [0.25, -0.25], [-0.25, 0.25], [0.25, 0.25]];
-  for (let i = 0; i < SIZE * SIZE; i++) {
+  for (let i = 0; i < S * S; i++) {
     if (G.filled[i] < 0) { img[i * 3] = bg[0]; img[i * 3 + 1] = bg[1]; img[i * 3 + 2] = bg[2]; continue; }
     p.fromArray(G.P, i * 3); n.fromArray(G.N, i * 3).normalize(); tu.fromArray(G.Tu, i * 3); tv.fromArray(G.Tv, i * 3);
     const du = tu.clone(), dv = tv.clone();
@@ -448,15 +669,19 @@ async function paintBody(key) {
     }
     img[i * 3] = r * 0.25; img[i * 3 + 1] = g * 0.25; img[i * 3 + 2] = b * 0.25;
   }
+  // Rigid kit parts sample uv (0.001, 0.001): keep that corner white on the multiply textures.
+  if (bg[0] === 255 && bg[1] === 255) for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) img.fill(255, (y * S + x) * 3, (y * S + x) * 3 + 3);
   await mkdir(OUT, { recursive: true });
-  const file = path.join(OUT, `bat_${key}.webp`);
-  await sharp(img, { raw: { width: SIZE, height: SIZE, channels: 3 } }).webp({ quality: 88 }).toFile(file);
+  const file = path.join(OUT, `${job.out}.webp`);
+  // The mask is data: lossy WebP's half-resolution chroma would bleed one region code into the
+  // next, so it is stored lossless (a few flat colours compress well anyway).
+  await sharp(img, { raw: { width: S, height: S, channels: 3 } }).webp(name === 'bat_m_mask' ? { lossless: true } : { quality: 88 }).toFile(file);
   console.log(file, ((await stat(file)).size / 1024).toFixed(0), 'KB', ((Date.now() - t0) / 1000).toFixed(1), 's');
-  if (PREVIEW) await preview(key, body.geometry, img, lm);
+  if (PREVIEW) await preview(job.out, body.geometry, img, lm, S);
 }
 
 // Software preview: orthographic renders with toon bands and depth outlines, no game needed.
-async function preview(key, geometry, tex, lm) {
+async function preview(key, geometry, tex, lm, SIZE) {
   await mkdir(PREVIEW, { recursive: true });
   const H = 1100, Wd = 640;
   const pos = geometry.attributes.position, nrm = geometry.attributes.normal, uv = geometry.attributes.uv, idx = geometry.index;
@@ -515,4 +740,4 @@ async function preview(key, geometry, tex, lm) {
   await sharp(tex, { raw: { width: SIZE, height: SIZE, channels: 3 } }).png().toFile(path.join(PREVIEW, `${key}_tex.png`));
 }
 
-for (const key of ['m', 'f']) if (!ONLY || ONLY === key) await paintBody(key);
+for (const name of ONLY ? ONLY.split(',') : DEFAULT_JOBS) await paintJob(name);

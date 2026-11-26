@@ -1,0 +1,28 @@
+frames sampled 10356 (skipped: staged 164, teleports 29)
+scenario | who            >0.25  >0.5  >1 m
+extra | hero                 0     0    0
+move | enemy                 0     0    0
+move | hero                  4     0    0
+seeded | enemy               0     0    0
+seeded | hero               35     0    0
+trav | hero                  6     0    0
+TOTAL                       45     0    0
+foot slide (planted feet moving in the world): extra | hero 0.21 m / 165 f (1.3 mm/f); move | enemy 10.33 m / 755 f (13.7 mm/f); move | hero 11.15 m / 2202 f (5.1 mm/f); seeded | enemy 34.45 m / 9615 f (3.6 mm/f); seeded | hero 13.23 m / 1613 f (8.2 mm/f); trav | hero 8.52 m / 2143 f (4.0 mm/f)
+0.41 m  x9   seeded: wave 3 | hero | Kick_Front > Punch_Uppercut  [hand_l hand_r foot_l foot_r Head] f373,374,375,376 ground/counter@0.279 ground/counter@0.308
+0.35 m  x4   seeded: wave 3 | hero | Jump_Land > Punch_Hook_L  [hand_r] f151,154,155,156 ground/strike@0.141 ground/strike@0.203
+0.32 m  x1   seeded: wave 3 | hero | Travel_FlyKick > NinjaJump_Start  [foot_r] f117 ground/dodge@0.07
+0.31 m  x4   seeded: wave 3 | hero | Punch_Hammer  [hand_l hand_r] f580,581 ground/strike@0.325 ground/strike@0.347
+0.30 m  x2   seeded: wave 1 | hero | Sprint_Loop > Punch_Uppercut  [foot_l foot_r] f204 ground/counter@0.278
+0.29 m  x2   trav: run + dodge | hero | Dodge_Roll_Run > Jump_Start  [hand_r foot_r] f77 air/external@0.053
+0.29 m  x3   move: backflip kick | hero | Jump_Start > Kick_BackFlip  [hand_l hand_r foot_l] f32,39 air/strike@0.632 air/strike@0.854
+0.29 m  x2   trav: short drop | hero | Fall_Loop > Roll  [hand_r foot_r] f38,40 roll/idle@0.045 roll/idle@0.09
+0.29 m  x1   trav: ladder | hero | Ladder_Hold > ClimbUp_1m  [hand_l] f409 air/external@0.18
+0.29 m  x1   seeded: wave 3 | hero | Knee_Strike > Punch_Cross  [hand_r] f686 ground/strike@0.353
+0.28 m  x8   seeded: wave 3 | hero | Kick_Front > Punch_Jab  [foot_r hand_l] f338,341,342,343 ground/strike@0.222 ground/strike@0.287
+0.28 m  x1   move: axe kick | hero | Kick_AirAxe  [foot_r] f96 ground/strike@1.167
+0.27 m  x2   seeded: wave 2 | hero | NinjaJump_Start > Punch_Backfist  [hand_r] f97,98 ground/strike@0.09 ground/strike@0.113
+0.26 m  x2   seeded: wave 1 | hero | Kick_Front > Sprint_Loop  [hand_r foot_l] f193,197 ground/loco@0.052 ground/loco@0.157
+0.26 m  x1   trav: dodge roll | hero | Roll  [foot_r] f4 roll/idle@0.09
+0.26 m  x1   seeded: wave 3 | hero | Punch_Jab > Kick_Front  [hand_l] f359 ground/counter@0.551
+0.26 m  x1   seeded: wave 1 | hero | Hammer_Down > Dodge_Roll_Run  [foot_r] f842 air/dodge@0.061
+no page errors

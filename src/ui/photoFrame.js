@@ -1,5 +1,6 @@
 // Draws a photo's frame, cover masthead and caption onto a 2D canvas. The same function draws
 // the on-screen preview and the saved PNG, so what you frame is what you save.
+// Logo-free: the cover's masthead is plain story text (no game logo or watermark is ever drawn).
 import { frameLayout } from '../game/photoMath.js';
 
 const INK = '#0b0b12', PAPER = '#efe6cf', SIGNAL = '#f2d24b', RED = '#c8323c';
@@ -22,7 +23,9 @@ function fitFont(g, text, family, size, maxW) {
   return s;
 }
 
-export function drawPhotoFrame(g, w, h, { frame = 'none', caption = '', issue = '' } = {}) {
+export const COVER_MASTHEAD = 'THE LONG NIGHT';
+
+export function drawPhotoFrame(g, w, h, { frame = 'none', caption = '', issue = '', masthead = COVER_MASTHEAD } = {}) {
   const L = frameLayout(frame, w, h);
   g.save();
   g.lineJoin = 'round';
@@ -43,7 +46,7 @@ export function drawPhotoFrame(g, w, h, { frame = 'none', caption = '', issue = 
     g.lineWidth = L.border;
     g.strokeStyle = INK;
     g.strokeRect(m.x, m.y, m.w, m.h);
-    const title = 'GOTHAM: THE LONG NIGHT';
+    const title = masthead;
     const size = fitFont(g, title, 'Bangers, Impact, sans-serif', m.h * 0.66, s.x - m.x - L.u * 6);
     g.textBaseline = 'middle';
     g.textAlign = 'left';

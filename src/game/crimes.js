@@ -1,7 +1,8 @@
 // Street crimes: where and when they happen, who shows up, and what the radio says. Pure.
 export const CRIME_KINDS = ['robbery', 'mugging', 'van'];
-export const DISTRICT_LABEL = { gcpd: 'GCPD', docks: 'The Docks', neon: 'Neon Row', ace: 'Ace Chemicals', clock: 'The Clock Plaza' };
-export const DISTRICT_PHRASE = { gcpd: 'outside GCPD', docks: 'at the Docks', neon: 'on Neon Row', ace: 'at Ace Chemicals', clock: 'in the Clock Plaza' };
+// District names are data from the region list (src/world/regions/data.js).
+import { DISTRICT_LABEL, DISTRICT_PHRASE, REGION_CRIME_SPOTS } from '../world/regions/data.js';
+export { DISTRICT_LABEL, DISTRICT_PHRASE };
 const KIND_TITLE = { robbery: 'Robbery', mugging: 'Civilian cornered', van: 'Van break-in' };
 
 // Street-level spots, two per district. y is the street; the director snaps it to the ground.
@@ -17,6 +18,10 @@ export const CRIME_SPOTS = [
   { id: 'plazaFountain', district: 'clock', x: -102, y: 0.15, z: -108, yaw: 0 },
   { id: 'plazaHall', district: 'clock', x: -50, y: 0.15, z: -122, yaw: 0 },
 ];
+
+// The core's spots plus every region's spawn-table spots (crimes only come up in districts the
+// player has visited, so new districts join in once explored).
+export const ALL_CRIME_SPOTS = [...CRIME_SPOTS, ...REGION_CRIME_SPOTS];
 
 export const isCrimeId = (id) => typeof id === 'string' && id.startsWith('crime:');
 export const crimeTitle = (kind, district) => `${KIND_TITLE[kind]} ${DISTRICT_PHRASE[district]}`;
@@ -42,7 +47,7 @@ export function pickSpot(spots, visited, heroPos, rng, { minDist = 35, maxDist =
 }
 
 export function createCrimeScheduler({
-  rng, minGap = 120, maxGap = 240, expiry = 180, retry = 20, spots = CRIME_SPOTS,
+  rng, minGap = 120, maxGap = 240, expiry = 180, retry = 20, spots = ALL_CRIME_SPOTS,
   minDist = 35, maxDist = 260, avoidDist = 60, abandonDist = 80, abandonTime = 10,
 } = {}) {
   const gap = () => minGap + rng.next() * (maxGap - minGap);

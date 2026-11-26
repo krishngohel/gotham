@@ -1,0 +1,24 @@
+
+Running 19 tests using 1 worker
+
+  ok  1 tests\e2e\openworld.spec.js:37:3 › protect: hostages in a store are saved when the crew goes down (12.8s)
+  ok  2 tests\e2e\openworld.spec.js:50:3 › defuse: the bomb's dial takes three strikes in the window (8.8s)
+  ok  3 tests\e2e\openworld.spec.js:69:3 › rooftop chase: the free-runner hops the roofs until a hero catches him (13.4s)
+  ok  4 tests\e2e\openworld.spec.js:91:3 › vehicle getaway: the car is stopped before it reaches the exit (8.1s)
+  ok  5 tests\e2e\openworld.spec.js:110:3 › gang war: take one crew down, leave the other be, and the street is theirs (18.6s)
+  ok  6 tests\e2e\openworld.spec.js:138:3 › El hijack: board the running train, then clear its roof (8.7s)
+  ok  7 tests\e2e\openworld.spec.js:155:3 › stealth encounters: the counting house and the Herald nests, cleared and recorded (8.6s)
+  ok  8 tests\e2e\openworld.spec.js:168:3 › side chain: Heads or Tails, all four missions and the two-faced DA (18.9s)
+  ok  9 tests\e2e\openworld.spec.js:187:3 › detective case: The Bell That Rang Twice, scanned, reconstructed on the board, triangulated (32.6s)
+  ok 10 tests\e2e\openworld.spec.js:37:3 › protect: hostages in a store are saved when the crew goes down (with a bot partner) (8.9s)
+  ok 11 tests\e2e\openworld.spec.js:50:3 › defuse: the bomb's dial takes three strikes in the window (with a bot partner) (9.2s)
+  ok 12 tests\e2e\openworld.spec.js:69:3 › rooftop chase: the free-runner hops the roofs until a hero catches him (with a bot partner) (13.4s)
+  ok 13 tests\e2e\openworld.spec.js:91:3 › vehicle getaway: the car is stopped before it reaches the exit (with a bot partner) (9.1s)
+  ok 14 tests\e2e\openworld.spec.js:110:3 › gang war: take one crew down, leave the other be, and the street is theirs (with a bot partner) (13.1s)
+  ok 15 tests\e2e\openworld.spec.js:138:3 › El hijack: board the running train, then clear its roof (with a bot partner) (9.3s)
+  ok 16 tests\e2e\openworld.spec.js:155:3 › stealth encounters: the counting house and the Herald nests, cleared and recorded (with a bot partner) (9.1s)
+  ok 17 tests\e2e\openworld.spec.js:168:3 › side chain: Heads or Tails, all four missions and the two-faced DA (with a bot partner) (19.5s)
+  ok 18 tests\e2e\openworld.spec.js:187:3 › detective case: The Bell That Rang Twice, scanned, reconstructed on the board, triangulated (with a bot partner) (32.9s)
+  ok 19 tests\e2e\openworld.spec.js:221:1 › soak: 20 simulated minutes of the director with no input stays bounded and clean (9.2s)
+
+  19 passed (4.4m)

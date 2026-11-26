@@ -14,6 +14,9 @@ varying vec3 vColor;
 varying float vFade;
 varying float vLen;
 uniform float uFogDensity;
+// [env] How wet the street is times how many lights are on (src/env/envSystem.js): 1 is the old
+// look (a rainy night); a dry street or a lamp-less day fades the reflections out.
+uniform float uWet;
 void main() {
   vec2 toCam = cameraPosition.xz - aBase.xz;
   float dist = max(length(toCam), 0.01);
@@ -29,7 +32,7 @@ void main() {
   vec4 mv = viewMatrix * world;
   gl_Position = projectionMatrix * mv;
   float d = -mv.z;
-  vFade = aShape.z * exp(-pow(uFogDensity * d / aFar, 2.0)) * (1.0 - smoothstep(70.0 * aFar, 130.0 * aFar, d)) * smoothstep(0.5, 2.5, dist);
+  vFade = uWet * aShape.z * exp(-pow(uFogDensity * d / aFar, 2.0)) * (1.0 - smoothstep(70.0 * aFar, 130.0 * aFar, d)) * smoothstep(0.5, 2.5, dist);
   vUv = position.xy;
   vColor = aColor;
   vLen = len;
@@ -80,7 +83,7 @@ export function createWetStreaks(sources, { fogDensity = 0.0062 } = {}) {
   geo.setAttribute('aFar', new THREE.InstancedBufferAttribute(aFar, 1));
   geo.instanceCount = n;
   const mat = new THREE.ShaderMaterial({
-    uniforms: { uFogDensity: { value: fogDensity } },
+    uniforms: { uFogDensity: { value: fogDensity }, uWet: { value: 1 } },
     vertexShader, fragmentShader,
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
     polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4,

@@ -1,6 +1,11 @@
 import * as THREE from 'three';
+import { registerToggle } from '../dev/perfToggles.js'; // [perf3]
 import { PALETTE } from '../config/palette.js';
 import { LAYER_FX, LAYER_XRAY } from './layers.js';
+import { createPassStats } from './passStats.js';
+import { createSkinCuller } from './skinCull.js'; // [perf2]
+import { installMrtNormals, prepareInkMaterials, INK_VIEWPORT } from './mrtNormals.js';
+import { brightnessGamma } from './brightness.js'; // [light]
 
 const vertexShader = /* glsl */ `
 varying vec2 vUv;
@@ -15,12 +20,28 @@ uniform sampler2D tNormal;
 uniform vec2 uTexel;
 uniform float uNear, uFar, uTime, uFlash, uDetective, uHalftone, uHalftoneAmount;
 uniform float uWobble, uHatch, uMidDots, uSkyDots, uColorEdges, uMisreg, uPaletteAmt, uImpact, uImpactSoft, uPaperTex, uFilter;
+// [light] The Brightness setting (src/render/brightness.js): the last step, a gamma in linear light.
+uniform float uGamma, uVignette, uToneInk;
 uniform vec2 uImpactCenter;
 uniform vec3 uPalette[6];
 uniform vec3 uInk, uPaper, uDetectiveTint, uAccent;
+// [env] Upper-tier screen-space light (quality.ao / quality.contact / quality.ssr; defines, so the
+// tiers without them compile none of it). uProj: projection x/y scale; uViewUp and uKeyView: the
+// world's up and the key light's direction in view space; uWet: street wetness 0..1.
+uniform vec2 uProj;
+uniform vec3 uViewUp, uKeyView;
+uniform float uWet, uEnvLit;
 varying vec2 vUv;
+// [perf3] The scene may fill only the bottom-left uUvScale of its targets (a dynamic-resolution step
+// renders into a sub-rect instead of reallocating them): screen uv in, target uv out, clamped to
+// the last drawn texel the way CLAMP_TO_EDGE clamps a full target (identical at scale 1).
+uniform vec2 uUvScale, uUvMax;
+vec2 inkUv(vec2 uv) { return min(uv * uUvScale, uUvMax); }
+vec4 sColor(vec2 uv) { return texture2D(tColor, inkUv(uv)); }
+vec4 sDepth(vec2 uv) { return texture2D(tDepth, inkUv(uv)); }
+vec4 sNormal(vec2 uv) { return texture2D(tNormal, inkUv(uv)); }
 
-float viewDepth(vec2 uv) { return -perspectiveDepthToViewZ(texture2D(tDepth, uv).x, uNear, uFar); }
+float viewDepth(vec2 uv) { return -perspectiveDepthToViewZ(sDepth(uv).x, uNear, uFar); }
 float luma(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
 float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 float vnoise(vec2 p) {
@@ -47,6 +68,12 @@ vec3 snapPalette(vec3 c, float amount) {
   return mix(c, best * L, k);
 }
 
+#if defined( INK_AO ) || defined( INK_SSR ) || defined( INK_CONTACT )
+// View-space position of a pixel from its uv and view depth.
+vec3 viewPos(vec2 uv, float d) { vec2 n = uv * 2.0 - 1.0; return vec3(n.x * d / uProj.x, n.y * d / uProj.y, -d); }
+vec2 toUv(vec3 p) { return vec2(p.x * uProj.x / -p.z, p.y * uProj.y / -p.z) * 0.5 + 0.5; }
+#endif
+
 void main() {
   vec2 frag = gl_FragCoord.xy;
   // Boiling line: sample positions drift a little and re-roll 8 times a second.
@@ -70,8 +97,10 @@ void main() {
       float kx = float(i) * (j == 0 ? 2.0 : 1.0);
       float ky = float(j) * (i == 0 ? 2.0 : 1.0);
       lap += 1.0 / viewDepth(uv);
-      vec3 n = texture2D(tNormal, uv).xyz * 2.0 - 1.0;
+#ifndef NORMALS_FROM_DEPTH
+      vec3 n = sNormal(uv).xyz * 2.0 - 1.0;
       gxN += n * kx; gyN += n * ky;
+#endif
     }
   }
   lap -= 9.0 * ic;
@@ -85,20 +114,77 @@ void main() {
   }
   float depthEdge = max(smoothstep(0.12, 0.3, abs(lap) / ic), thick);
   // Creases are a thinner pen line.
+#ifdef NORMALS_FROM_DEPTH
+  // No normal target (potato, low): a fold between two planes bends 1/z without a jump, so the same
+  // Laplacian finds it in a lower band than a silhouette.
+  float normalEdge = smoothstep(0.03, 0.08, abs(lap) / ic) * 0.8;
+#else
   float normalEdge = smoothstep(0.7, 1.3, length(gxN) + length(gyN)) * 0.8;
+#endif
   float edge = max(depthEdge, normalEdge) * (1.0 - smoothstep(70.0, 180.0, dc));
 
   // Colour, with a hair of print misregistration.
-  vec3 col = texture2D(tColor, vUv).rgb;
+  vec3 col = sColor(vUv).rgb;
+  bool skyPx = sDepth(vUv).x >= 1.0;
+#ifdef INK_SSR
+  // Wet-street reflections (the "ray tracing" of this project): a screen-space ray march from
+  // up-facing wet ground that accepts only bright hits (signs, windows, lamps), posterised to two
+  // levels and cut into horizontal dashes, so neon spills onto the street as painted streaks.
+  if (uWet > 0.02 && !skyPx && dc < 110.0) {
+    vec3 N = normalize(sNormal(vUv).xyz * 2.0 - 1.0);
+    if (dot(N, uViewUp) > 0.92) {
+      vec3 P = viewPos(vUv, dc);
+      vec3 R = reflect(normalize(P), N);
+      vec3 q = P;
+      float stepL = 0.35 + dc * 0.02;
+      vec3 hitCol = vec3(0.0);
+      vec2 hitUv = vUv;
+      float hit = 0.0;
+      for (int i = 0; i < 16; i++) {
+        q += R * stepL;
+        stepL *= 1.22;
+        if (q.z > -0.2) break;
+        vec2 uv2 = toUv(q);
+        if (uv2.x < 0.0 || uv2.x > 1.0 || uv2.y < 0.0 || uv2.y > 1.0) break;
+        float sd = viewDepth(uv2);
+        float behind = -q.z - sd;
+        if (behind > 0.05 && behind < 3.0 + stepL) {
+          // A watery wobble along the streak: each scanline band samples a little to the side.
+          uv2.x += (fract(sin(floor(frag.y / 3.0) * 78.233) * 43758.5453) - 0.5) * 0.012;
+          hitCol = sColor(uv2).rgb; hitUv = uv2; hit = 1.0 - float(i) / 16.0; break;
+        }
+      }
+      float lum = luma(hitCol);
+      float bright = step(0.5, lum) * hit;
+      // [polish2] Only lit AREAS reflect (a window, a sign, a lamp's glow): a bright hit a pixel or
+      // two wide is a character's rim light or an edge highlight, not a light source. Those used
+      // to be accepted, which put teal dashes on a wet roof beside the hero's own boots (the
+      // polish list's "teal hatched artefact under the hero's feet"): the ray from the roof at
+      // his feet meets his rim-lit legs within a metre. The neighbours
+      // on both diagonals 3 px out must be lit as well (four more reads, on bright hits only).
+      if (bright > 0.0) {
+        vec2 nb = uTexel * 3.0, nc = vec2(nb.x, -nb.y);
+        float around = min(min(luma(sColor(hitUv + nb).rgb), luma(sColor(hitUv - nb).rgb)), min(luma(sColor(hitUv + nc).rgb), luma(sColor(hitUv - nc).rgb)));
+        bright *= step(0.3, around);
+      }
+      // Thin horizontal pen strokes with gaps (every other scanline band, broken along x).
+      float band = floor(frag.y / 2.0);
+      float gap = step(0.5, fract(band * 0.5)) * step(0.3, fract(sin(band * 12.9898 + floor(frag.x / 17.0) * 4.1) * 43758.5453));
+      vec3 refl = hitCol / max(lum, 1e-3) * (lum > 0.85 ? 0.8 : 0.45); // two levels
+      float fadeD = 1.0 - smoothstep(60.0, 110.0, dc);
+      col += refl * bright * gap * uWet * fadeD * 0.75 * uEnvLit;
+    }
+  }
+#endif
   if (uMisreg > 0.0) {
     vec2 o = uTexel * 1.1 * uMisreg;
-    col.r = mix(col.r, texture2D(tColor, vUv + vec2(o.x, o.y * 0.5)).r, 0.6);
-    col.b = mix(col.b, texture2D(tColor, vUv - vec2(o.x, o.y * 0.5)).b, 0.6);
+    col.r = mix(col.r, sColor(vUv + vec2(o.x, o.y * 0.5)).r, 0.6);
+    col.b = mix(col.b, sColor(vUv - vec2(o.x, o.y * 0.5)).b, 0.6);
   }
   // Ink where flat colours meet (window frames, signs, road paint), close to the camera.
   if (uColorEdges > 0.0 && dc < 90.0) {
-    float lx = luma(texture2D(tColor, vUv + vec2(uTexel.x, 0.0)).rgb) - luma(texture2D(tColor, vUv - vec2(uTexel.x, 0.0)).rgb);
-    float ly = luma(texture2D(tColor, vUv + vec2(0.0, uTexel.y)).rgb) - luma(texture2D(tColor, vUv - vec2(0.0, uTexel.y)).rgb);
+    float lx = luma(sColor(vUv + vec2(uTexel.x, 0.0)).rgb) - luma(sColor(vUv - vec2(uTexel.x, 0.0)).rgb);
+    float ly = luma(sColor(vUv + vec2(0.0, uTexel.y)).rgb) - luma(sColor(vUv - vec2(0.0, uTexel.y)).rgb);
     float ce = smoothstep(0.16, 0.32, abs(lx) + abs(ly)) * (1.0 - smoothstep(30.0, 90.0, dc)) * 0.6 * uColorEdges;
     edge = max(edge, ce);
   }
@@ -106,20 +192,64 @@ void main() {
   float L = pow(max(luma(col), 0.0), 1.0 / 2.2);
 
   vec2 cell = mat2(0.7071, -0.7071, 0.7071, 0.7071) * frag / uHalftone;
-  bool sky = dc > uFar * 0.9;
+  // Sky: nothing wrote depth here (the far pass keeps the backdrop just short of 1.0, see renderFar).
+  bool sky = sDepth(vUv).x >= 1.0;
   float nearK = 1.0 - smoothstep(25.0, 80.0, dc);
   // Shadows: cross-hatching up close, Ben-Day dots further out (never both at full strength).
   float hatchZone = smoothstep(0.2, 0.1, L) * nearK * uHatch;
+#if defined( INK_AO ) || defined( INK_CONTACT )
+  float inkOcc = 0.0;
+  if (!sky && dc < 90.0) {
+#ifdef INK_AO
+    // Ambient occlusion from depth (8 taps on a ring 0.7 m wide in the world): how much nearby
+    // geometry stands in front of this pixel. Never multiplied into the colour: it becomes ink.
+    // [polish2] Occluders are measured above this pixel's own surface (along its normal), not by
+    // raw depth: seen at a steep pitch a flat roof's nearer pixels are all "in front" in depth,
+    // so half the ring counted and the whole floor went to hatching (the other half of the
+    // polish list's wet-roof artefact). A tap now counts when it stands 6 cm or more proud of the
+    // tangent plane, within 1.6 m.
+    float rad = 0.7 * uProj.y / dc * 0.5;
+    float occ = 0.0;
+    vec3 Na = normalize(sNormal(vUv).xyz * 2.0 - 1.0);
+    vec3 Pa = viewPos(vUv, dc);
+    for (int i = 0; i < 8; i++) {
+      float a = float(i) * 0.785398 + hash(frag) * 0.6;
+      vec2 o = vec2(cos(a), sin(a)) * rad * (0.5 + 0.5 * fract(float(i) * 0.618));
+      o.x *= uTexel.x / uTexel.y;
+      float sd = viewDepth(vUv + o);
+      vec3 dlt = viewPos(vUv + o, sd) - Pa;
+      occ += step(0.06, dot(Na, dlt)) * (1.0 - smoothstep(0.8, 1.6, length(dlt)));
+    }
+    inkOcc = max(inkOcc, occ / 8.0);
+#endif
+#ifdef INK_CONTACT
+    // Contact shadow: a short march toward the key light; anything in the way within 0.6 m.
+    vec3 Nc = normalize(sNormal(vUv).xyz * 2.0 - 1.0);
+    if (dc < 18.0 && dot(Nc, normalize(uKeyView)) > 0.15) {
+      vec3 P0 = viewPos(vUv, dc);
+      vec3 q = P0 + Nc * (0.04 + dc * 0.006) + normalize(uKeyView) * 0.04;
+      for (int i = 0; i < 10; i++) {
+        q += normalize(uKeyView) * 0.06;
+        float sd = viewDepth(toUv(q));
+        float behind = -q.z - sd;
+        if (behind > 0.03 + dc * 0.004 && behind < 0.4) { inkOcc = max(inkOcc, 0.75 * (1.0 - smoothstep(12.0, 18.0, dc))); break; }
+      }
+    }
+#endif
+  }
+  // Quantised into the ink: an occluded corner gets a hatch band, never a grey smudge.
+  hatchZone = max(hatchZone, step(0.42, inkOcc) * nearK * max(uHatch, 0.6) * (1.0 - smoothstep(0.28, 0.45, L)));
+#endif
   float r = (0.3 * smoothstep(0.24, 0.15, L) + 0.12 * smoothstep(0.1, 0.04, L)) * (1.0 - smoothstep(60.0, 150.0, dc)) * uHalftoneAmount * (1.0 - hatchZone * 0.8);
   float dotMask = 1.0 - smoothstep(r - 0.06, r + 0.06, length(fract(cell) - 0.5));
-  col = mix(col, uInk, dotMask * step(0.001, r) * 0.9);
+  col = mix(col, uInk, dotMask * step(0.001, r) * 0.9 * uToneInk);
   if (hatchZone > 0.0) {
     vec2 hp = frag + (uWobble > 0.0 ? vec2(vnoise(frag / 40.0 + floor(uTime * 8.0)) * 1.5, 0.0) : vec2(0.0));
     float s = uHalftone * 0.9;
     float h1 = 1.0 - smoothstep(0.12, 0.28, abs(fract((hp.x + hp.y) / s) - 0.5));
     float h2 = 1.0 - smoothstep(0.12, 0.28, abs(fract((hp.x - hp.y) / s) - 0.5));
     float hatch = max(h1, h2 * smoothstep(0.1, 0.05, L)) * hatchZone;
-    col = mix(col, uInk, hatch * 0.75);
+    col = mix(col, uInk, hatch * 0.75 * uToneInk);
   }
   // Mid tones: a light dot tint of the surface's own hue.
   float mid = smoothstep(0.18, 0.26, L) * (1.0 - smoothstep(0.42, 0.55, L)) * (1.0 - smoothstep(50.0, 120.0, dc)) * uMidDots;
@@ -193,36 +323,80 @@ void main() {
   }
   col *= 0.96 + 0.04 * hash(floor(frag / 2.0) + floor(uTime * 6.0));
   vec2 v = vUv - 0.5;
-  col *= 1.0 - 0.72 * dot(v, v);
+  col *= 1.0 - uVignette * dot(v, v);
+  // [light] Brightness: skipped at the default (uGamma 1), one pow per pixel otherwise.
+  if (uGamma != 1.0) col = pow(max(col, vec3(0.0)), vec3(uGamma));
   gl_FragColor = vec4(col, 1.0);
   #include <colorspace_fragment>
 }
 `;
 
-// The normal pass draws everything with one override material, so the usual grouping by each
-// object's own material buys nothing. Instead: one run per shader variant (plain, instanced,
-// skinned; switching variant makes three re-derive the program, ~40 us each), and front to back
-// inside each run so hidden surfaces fail the depth test early.
-const variantOf = (o) => (o.isSkinnedMesh ? 1 : 0) + (o.isInstancedMesh ? (o.instanceColor ? 4 : 2) : 0) + (o.isBatchedMesh ? 8 : 0);
-function normalPassSort(a, b) {
-  return (a.groupOrder - b.groupOrder) || (a.renderOrder - b.renderOrder)
-    || (variantOf(a.object) - variantOf(b.object)) || (a.z - b.z) || (a.id - b.id);
+
+// ---------------------------------------------------------------------------------------------
+// The pipeline. Per frame:
+//   1. shadow maps, once, whatever the number of views (scene.userData.shadows, see shadows.js);
+//   2. per view: the far pass (painted horizon) then the colour pass into the view's own target,
+//      which also writes view normals as a second attachment on 'mrt' tiers (mrtNormals.js);
+//   3. per view: the ink quad, drawn into that view's viewport + scissor rect of the canvas;
+//   4. per view, in detective vision: x-ray silhouettes over the finished frame.
+// There is no separate normal pass any more: 'mrt' tiers write normals in the colour pass, and
+// 'depth' tiers (potato, low) take creases from the depth buffer alone.
+//
+// Every skinned mesh's skeleton is computed and uploaded once per frame, not once per render call:
+// three keys that work on renderer.info.render.frame, which each renderer.render() bumps, so the
+// pipeline pins it to one value for every call of a frame (see draw() below).
+//
+// Views (split screen, contract 4.4): ink.createView() makes a view that owns its render targets
+// and per-view uniforms; ink.render(scene, views, time) draws each into its rect. With one
+// full-screen view (ink.render(scene, camera, time), the old signature) the output is unchanged.
+// ---------------------------------------------------------------------------------------------
+
+// rect: [x, y, w, h] as fractions of the canvas, origin bottom-left (GL convention). Pure.
+export function viewPixelRect(rect, width, height, out = [0, 0, 0, 0]) {
+  const x0 = Math.round(rect[0] * width), y0 = Math.round(rect[1] * height);
+  const x1 = Math.round((rect[0] + rect[2]) * width), y1 = Math.round((rect[1] + rect[3]) * height);
+  out[0] = x0; out[1] = y0; out[2] = Math.max(1, x1 - x0); out[3] = Math.max(1, y1 - y0);
+  return out;
+}
+
+// Side-by-side (landscape) or stacked (portrait) rects for n local views (1 or 2), with a gutter
+// of `gutterPx` drawing-buffer pixels between them that reads as a comic panel border. Pure.
+export function splitRects(n, width, height, gutterPx = 4, sideBySide = width >= height) {
+  if (n <= 1) return [[0, 0, 1, 1]];
+  if (sideBySide) {
+    const g = gutterPx / width / 2;
+    return [[0, 0, 0.5 - g, 1], [0.5 + g, 0, 0.5 - g, 1]];
+  }
+  const g = gutterPx / height / 2;
+  return [[0, 0.5 + g, 1, 0.5 - g], [0, 0, 1, 0.5 - g]];
 }
 
 export function createInkPipeline(renderer, quality, { gpuTime = false } = {}) {
-  // Half-float targets need EXT_color_buffer_float; fall back to 8-bit where it's missing.
+  const mrt = quality.normals !== 'depth';
+  if (mrt) installMrtNormals();
+  // Colour target: half float where the browser can render to it, else 8-bit. 'u8' tiers use an
+  // sRGB 8-bit target on purpose (half the bandwidth; blending stays linear, darks keep precision).
   const floatOK = renderer.extensions.has('EXT_color_buffer_float') || renderer.extensions.has('EXT_color_buffer_half_float');
-  const type = floatOK ? THREE.HalfFloatType : THREE.UnsignedByteType;
-  const colorRT = new THREE.WebGLRenderTarget(1, 1, { type });
-  colorRT.depthTexture = new THREE.DepthTexture(1, 1, THREE.FloatType);
-  const normalRT = new THREE.WebGLRenderTarget(1, 1, { type });
-  const normalMat = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
+  const u8 = quality.colorTarget === 'u8' || !floatOK;
+  const type = u8 ? THREE.UnsignedByteType : THREE.HalfFloatType;
+  const srgb = quality.colorTarget === 'u8';
 
+  function makeTarget() {
+    const rt = new THREE.WebGLRenderTarget(1, 1, { type, count: mrt ? 2 : 1, colorSpace: srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace });
+    // The normal attachment is data, never colour-managed.
+    if (mrt) { rt.textures[1].colorSpace = THREE.NoColorSpace; rt.textures[1].name = 'inkNormals'; }
+    rt.depthTexture = new THREE.DepthTexture(1, 1, THREE.FloatType);
+    return rt;
+  }
+
+  // Shared ink uniforms (comic weights, palette, flash, detective...): one set for every view.
+  // The per-view ones (targets, texel size, near/far) are swapped in before each view's quad.
   const uniforms = {
-    tColor: { value: colorRT.texture },
-    tDepth: { value: colorRT.depthTexture },
-    tNormal: { value: normalRT.texture },
+    tColor: { value: null },
+    tDepth: { value: null },
+    tNormal: { value: null },
     uTexel: { value: new THREE.Vector2() },
+    uUvScale: { value: new THREE.Vector2(1, 1) }, uUvMax: { value: new THREE.Vector2(1, 1) }, // [perf3]
     uNear: { value: 0.1 },
     uFar: { value: 1000 },
     uTime: { value: 0 },
@@ -235,46 +409,85 @@ export function createInkPipeline(renderer, quality, { gpuTime = false } = {}) {
     uDetectiveTint: { value: new THREE.Color(PALETTE.detective) },
     uAccent: { value: new THREE.Color(PALETTE.crimson) },
     uFilter: { value: 0 },
+    uGamma: { value: 1 }, // [light] Brightness (setBrightness)
+    // [light] Corner darkening. It was 0.72 (the corners at 64 % of the centre), which took the
+    // bottom corners of a night street, already the darkest part of the frame, to black.
+    uVignette: { value: 0.5 },
+    // [light] Strength of the shadow tone patterns (hatching, halftone dots): 1 by day, lighter in
+    // the dark, where they covered every road and wall near the camera in black (setEnv).
+    uToneInk: { value: 1 },
     uWobble: { value: 0 }, uHatch: { value: 0 }, uMidDots: { value: 0 }, uSkyDots: { value: 0 },
     uColorEdges: { value: 0 }, uMisreg: { value: 0 }, uPaletteAmt: { value: 0 }, uPaperTex: { value: 0 },
     uImpact: { value: 0 }, uImpactSoft: { value: 0 }, uImpactCenter: { value: new THREE.Vector2(0.5, 0.5) },
     uPalette: { value: Array.from({ length: 6 }, () => new THREE.Color(0.5, 0.5, 0.5)) },
+    // [env] Upper-tier screen-space light (see the shader).
+    uProj: { value: new THREE.Vector2(1, 1) }, uViewUp: { value: new THREE.Vector3(0, 1, 0) }, uKeyView: { value: new THREE.Vector3(0, 1, 0) },
+    uWet: { value: 0 }, uEnvLit: { value: 1 },
   };
-  const quad = new THREE.Mesh(
-    new THREE.PlaneGeometry(2, 2),
-    new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader, depthTest: false, depthWrite: false }),
-  );
+  // [env] Which upper-tier effects this session compiles (quality flags, fixed at boot).
+  const envDefines = {};
+  if (quality.ao && mrt) envDefines.INK_AO = '';
+  if (quality.contact && mrt) envDefines.INK_CONTACT = '';
+  if (quality.ssr && mrt) envDefines.INK_SSR = '';
+  const keyWorld = new THREE.Vector3(0, 1, 0);
+  const makeQuad = (defines) => new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader, depthTest: false, depthWrite: false, defines });
+  const quadMat = makeQuad(mrt ? { ...envDefines } : { NORMALS_FROM_DEPTH: '' });
+  // perfBench's "creases from depth" ablation on mrt tiers; built on first use.
+  let quadDepthMat = mrt ? null : quadMat;
+  const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), quadMat);
   quad.frustumCulled = false;
   const quadScene = new THREE.Scene();
   quadScene.add(quad);
   const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-  function setSize(width, height) {
-    const pr = renderer.getPixelRatio();
-    const w = Math.max(1, Math.floor(width * pr));
-    const h = Math.max(1, Math.floor(height * pr));
-    colorRT.setSize(w, h);
-    normalRT.setSize(Math.max(1, Math.floor(w * quality.normalScale)), Math.max(1, Math.floor(h * quality.normalScale)));
-    uniforms.uTexel.value.set(1 / w, 1 / h).multiplyScalar(Math.max(1, pr * 0.75));
-    uniforms.uHalftone.value = 7 * pr;
-  }
-
-  // GPU time of each frame's passes (EXT_disjoint_timer_query_webgl2, where the browser has it),
-  // read a frame or two late without stalling. Diagnostic only: dynamic resolution scales off
-  // missed-frame counts, not this (see render/dynamicRes.js); perf-ablate.mjs and dynres-check.mjs
-  // read ink.gpuMs directly. The query itself has a small but real per-frame cost, so it is only
-  // created when the URL has ?gputime=1.
-  const gl = renderer.getContext();
-  const timer = gpuTime ? (gl.getExtension?.('EXT_disjoint_timer_query_webgl2') ?? null) : null;
-  const pending = [];
-  let gpuMs = null;
-  function pollTimer() {
-    while (pending.length && gl.getQueryParameter(pending[0], gl.QUERY_RESULT_AVAILABLE)) {
-      const q = pending.shift();
-      if (!gl.getParameter(timer.GPU_DISJOINT_EXT)) gpuMs = gl.getQueryParameter(q, gl.QUERY_RESULT) / 1e6;
-      gl.deleteQuery(q);
+  let canvasW = 1, canvasH = 1, pixelRatio = 1;
+  const views = [];
+  // [perf3] A view's targets are only reallocated when it grows past them or shrinks below half
+  // of them; a dynamic-resolution step (5 % of the scale) renders into the bottom-left w x h of the
+  // existing targets instead (viewport + scissor), and the ink quad reads that sub-rect. Every step
+  // used to reallocate the colour, normal and depth targets: a 4-36 ms frame here, more on a weak
+  // machine, each time the scale moved.
+  let subRect = true;
+  registerToggle('dynresSubRect', (on) => { subRect = on; for (const v of views) { v.cw = 0; v.w = 0; fitView(v); } });
+  function fitView(v) {
+    const bw = Math.max(1, Math.floor(canvasW * pixelRatio)), bh = Math.max(1, Math.floor(canvasH * pixelRatio));
+    viewPixelRect(v.rect, bw, bh, v.px);
+    if (v.w !== v.px[2] || v.h !== v.px[3]) {
+      v.w = v.px[2]; v.h = v.px[3];
+      const fits = subRect && v.w <= v.cw && v.h <= v.ch && v.w * 2 > v.cw && v.h * 2 > v.ch;
+      if (!fits) { v.cw = v.w; v.ch = v.h; v.target.setSize(v.w, v.h); }
+      v.target.viewport.set(0, 0, v.w, v.h);
+      v.target.scissor.set(0, 0, v.w, v.h);
     }
   }
+  // A view: its camera, its rect of the canvas ([x, y, w, h] fractions, origin bottom-left), and
+  // its own colour (+normal) and depth targets. The caller keeps camera.aspect matched to the rect.
+  function createView({ camera = null, rect = [0, 0, 1, 1] } = {}) {
+    const view = { camera, rect: [...rect], target: makeTarget(), px: [0, 0, 1, 1], w: 0, h: 0, cw: 0, ch: 0, overrides: null };
+    views.push(view);
+    fitView(view);
+    return view;
+  }
+  const mainView = createView();
+  function disposeView(view) {
+    if (view === mainView) return;
+    const i = views.indexOf(view);
+    if (i >= 0) views.splice(i, 1);
+    view.target.depthTexture?.dispose();
+    view.target.dispose();
+  }
+
+  // Canvas size in CSS pixels; each view's target follows its rect of the drawing buffer.
+  function setSize(width, height) {
+    canvasW = width; canvasH = height;
+    pixelRatio = renderer.getPixelRatio();
+    for (const v of views) fitView(v);
+    uniforms.uHalftone.value = 7 * pixelRatio;
+  }
+
+  // GPU time and draw calls of each pass (see passStats.js). GPU timing only with ?gputime=1.
+  const gl = renderer.getContext();
+  const stats = createPassStats(gl, { gpuTime });
 
   function setComic(c) {
     uniforms.uWobble.value = c.wobble; uniforms.uHatch.value = c.hatch; uniforms.uMidDots.value = c.midDots;
@@ -290,68 +503,252 @@ export function createInkPipeline(renderer, quality, { gpuTime = false } = {}) {
   }
   const FILTER_INDEX = { ink: 0, noir: 1, pop: 2, sepia: 3 };
   function setFilter(name) { uniforms.uFilter.value = FILTER_INDEX[name] ?? 0; }
+  // [light] The Brightness setting (0.6..1.6, 1 = as authored). A uniform write: no new program,
+  // and one value for every view, so split screen follows it.
+  function setBrightness(b) { uniforms.uGamma.value = brightnessGamma(b); }
 
-  // Benchmark switches (src/dev/perfBench.js, ?bench=1): each one drops a piece of the frame so
-  // its cost can be measured on the player's own machine. Never set in normal play.
-  const debug = { cachedShadows: false, skipNormals: false };
+  // Benchmark switches (src/dev/perfBench.js): each drops or swaps a piece of the frame so its cost
+  // can be measured on the player's own machine. Never set in normal play.
+  //   cachedShadows: skip the shadow maps this frame (they keep last frame's content);
+  //   depthNormals: the potato/low crease variant of the ink shader on any tier;
+  //   fixedTime: hold the ink pass's time-keyed effects (boiling line, grain) still for screenshots.
+  const debug = { cachedShadows: false, skipNormals: false, depthNormals: false, fixedTime: null };
 
-  function render(scene, camera, time) {
+  // ---- the far pass (painted horizon) ----
+  // scene.userData.farScene (sky dome, backdrop towers, mist, bridge; world.js) is drawn first with
+  // the main camera's pose and screen mapping but a depth row of its own, which squeezes everything
+  // from FAR_NEAR to FAR_FAR metres into a thin band of depth just below 1.0 and just behind where
+  // the main camera's geometry ends (97% of its far plane). So:
+  // - the main camera's far plane can follow the fog (quality.drawDistance) without clipping the
+  //   skyline, and the city still draws over the backdrop wherever it is in front of it;
+  // - backdrop pixels keep a depth below 1.0, so the ink pass's sky test (depth 1, nothing drawn)
+  //   treats them as before; the sky dome writes no depth, so it stays sky;
+  // - inside the band the backdrop still sorts by distance (about a hundred float32 depth steps
+  //   across the towers' 340-980 m).
+  const FAR_NEAR = 300, FAR_FAR = 3000;
+  const farCam = new THREE.PerspectiveCamera();
+  farCam.matrixAutoUpdate = false;
+  farCam.matrixWorldAutoUpdate = false;
+  const _bg = new THREE.Color();
+  const ZERO4 = new Float32Array(4);
+
+  // Every renderer.render() of a frame runs with the same info.render.frame, so three's per-frame
+  // caches (geometry updates, skeleton.update() and the bone texture upload) run once a frame.
+  let frameKey = 0;
+  function draw(scene, camera) {
+    renderer.info.render.frame = frameKey - 1;
+    renderer.render(scene, camera);
+  }
+
+  function clearTarget(target, bg) {
+    const prevAlpha = renderer.getClearAlpha();
+    renderer.getClearColor(_bg);
+    renderer.setRenderTarget(target);
+    if (bg?.isColor) renderer.setClearColor(bg, 1);
+    renderer.clear(true, true, false);
+    renderer.setClearColor(_bg, prevAlpha);
+    // The normal attachment starts at 0 (decodes to (-1,-1,-1), the old normal pass's black).
+    if (mrt) gl.clearBufferfv(gl.COLOR, 1, ZERO4);
+  }
+
+  function renderFar(far, camera) {
+    const n = camera.near, f = camera.far;
+    // Window depth of main-camera geometry at distance z: (1 - n/z) * f / (f - n).
+    const winAt = (z) => (1 - n / z) * f / (f - n);
+    const ndc0 = 2 * winAt(0.97 * f) - 1, ndc1 = 1 - 4e-7;
+    // NDC depth of the far camera at view distance u: -e10 + e14 / u.
+    const e14 = (ndc0 - ndc1) / (1 / FAR_NEAR - 1 / FAR_FAR);
+    const e10 = e14 / FAR_FAR - ndc1;
+    farCam.projectionMatrix.copy(camera.projectionMatrix);
+    farCam.projectionMatrix.elements[10] = e10;
+    farCam.projectionMatrix.elements[14] = e14;
+    farCam.projectionMatrixInverse.copy(farCam.projectionMatrix).invert();
+    farCam.matrixWorld.copy(camera.matrixWorld);
+    farCam.matrixWorldInverse.copy(camera.matrixWorldInverse);
+    farCam.layers.mask = 0xffffffff;
+    stats.begin('far', renderer.info);
+    draw(far, farCam);
+    stats.end('far', renderer.info);
+  }
+
+  function setViewUniforms(v, camera) {
+    uniforms.tColor.value = v.target.textures[0];
+    uniforms.tDepth.value = v.target.depthTexture;
+    uniforms.tNormal.value = mrt ? v.target.textures[1] : null;
+    uniforms.uTexel.value.set(1 / v.w, 1 / v.h).multiplyScalar(Math.max(1, pixelRatio * 0.75));
+    uniforms.uUvScale.value.set(v.w / v.cw, v.h / v.ch); // [perf3] sub-rect of the targets
+    uniforms.uUvMax.value.set((v.w - 0.5) / v.cw, (v.h - 0.5) / v.ch);
     uniforms.uNear.value = camera.near;
     uniforms.uFar.value = camera.far;
-    uniforms.uTime.value = time;
+    // [env] View-space up and key light for the upper-tier passes.
+    uniforms.uProj.value.set(camera.projectionMatrix.elements[0], camera.projectionMatrix.elements[5]);
+    uniforms.uViewUp.value.set(0, 1, 0).transformDirection(camera.matrixWorldInverse);
+    uniforms.uKeyView.value.copy(keyWorld).transformDirection(camera.matrixWorldInverse);
+    // Split screen (workstream D1): a view may carry its own detective vision and impact frame
+    // (one player's x-ray or critical never covers the other player's half). Uniform writes only.
+    const o = v.overrides;
+    if (o) {
+      uniforms.uDetective.value = o.detective;
+      uniforms.uImpact.value = o.impact;
+      uniforms.uImpactSoft.value = o.impactSoft;
+      uniforms.uImpactCenter.value.set(o.cx, o.cy);
+    }
+  }
 
-    let query = null;
-    if (timer && pending.length < 4) { query = gl.createQuery(); gl.beginQuery(timer.TIME_ELAPSED_EXT, query); }
+  // [perf2] scene.updateMatrixWorld(), except that a hidden object flagged userData.parkHidden
+  // skips its whole subtree (a pooled civilian figure, an El car off its line, the GCPD lobby's
+  // goons): thousands of bones and parts no longer recompose every frame while nobody can see
+  // them. A pending parent move is remembered (matrixWorldNeedsUpdate), and the first visible
+  // frame recomputes the subtree. Objects with their own updateMatrixWorld (cameras, skinned
+  // meshes, audio) run it as before. Only flag things whose matrices nothing reads while hidden.
+  const baseUpdate = THREE.Object3D.prototype.updateMatrixWorld;
+  function updateMatrices(o, force) {
+    if (o.updateMatrixWorld !== baseUpdate) { o.updateMatrixWorld(force); return; }
+    if (o.matrixAutoUpdate) o.updateMatrix();
+    if (o.matrixWorldNeedsUpdate || force) {
+      if (o.matrixWorldAutoUpdate === true) {
+        if (o.parent === null) o.matrixWorld.copy(o.matrix);
+        else o.matrixWorld.multiplyMatrices(o.parent.matrixWorld, o.matrix);
+      }
+      o.matrixWorldNeedsUpdate = false;
+      force = true;
+    }
+    const children = o.children;
+    for (let i = 0, l = children.length; i < l; i++) {
+      const c = children[i];
+      if (!c.visible && c.userData.parkHidden) { if (force) c.matrixWorldNeedsUpdate = true; continue; }
+      updateMatrices(c, force);
+    }
+  }
 
-    camera.layers.set(0);
-    camera.layers.enable(LAYER_FX);
-    if (!debug.cachedShadows) renderer.shadowMap.needsUpdate = true;
-    renderer.setRenderTarget(colorRT);
-    renderer.render(scene, camera);
+  const skinCull = createSkinCuller();
+  const single = [null];
+  // render(scene, camera, time) for one full-screen view, or render(scene, views, time).
+  function render(scene, cameraOrViews, time) {
+    let list;
+    if (Array.isArray(cameraOrViews)) list = cameraOrViews;
+    else { mainView.camera = cameraOrViews; single[0] = mainView; list = single; }
+    uniforms.uTime.value = debug.fixedTime ?? time;
+    stats.frameStart();
+    frameKey = renderer.info.render.frame + 1;
 
-    camera.layers.set(0);
-    const { background, fog } = scene;
-    scene.background = null;
-    scene.fog = null;
-    scene.overrideMaterial = normalMat;
-    renderer.setRenderTarget(normalRT);
-    renderer.setOpaqueSort(normalPassSort);
-    // Nothing moved since the colour pass: skip the second scene-graph matrix walk.
+    // Up-to-date world matrices once for every pass of the frame (then each render skips the walk).
+    updateMatrices(scene, false); // [perf2] scene.updateMatrixWorld() minus parked hidden subtrees
+    skinCull.tick(scene); // [perf2] skinned characters frustum-cull on a posed-safe sphere (skinCull.js)
     const autoMatrices = scene.matrixWorldAutoUpdate;
     scene.matrixWorldAutoUpdate = false;
-    if (!debug.skipNormals) renderer.render(scene, camera);
-    scene.matrixWorldAutoUpdate = autoMatrices;
-    renderer.setOpaqueSort(null);
-    scene.overrideMaterial = null;
-    scene.background = background;
-    scene.fog = fog;
+    try {
+      // 1. Shadows, once per frame: armed for the first colour pass only (see shadows.js). They
+      // draw inside that render call, so their GPU time and draw calls count under 'color'.
+      const shadows = debug.cachedShadows ? null : scene.userData.shadows;
 
-    renderer.setRenderTarget(null);
-    renderer.render(quadScene, quadCam);
+      // 2. Far + colour per view.
+      const far = scene.userData.farScene;
+      const { background } = scene;
+      for (let i = 0; i < list.length; i++) {
+        const v = list[i];
+        const camera = v.camera;
+        if (v !== mainView) fitView(v);
+        camera.updateMatrixWorld();
+        camera.layers.set(0);
+        camera.layers.enable(LAYER_FX);
+        clearTarget(v.target, background);
+        INK_VIEWPORT.value.set(0, 0, v.w, v.h);
+        if (far) renderFar(far, camera);
+        scene.background = null;
+        const autoClear = renderer.autoClear;
+        renderer.autoClear = false;
+        if (i === 0) shadows?.beginFrame(renderer);
+        stats.begin('color', renderer.info);
+        try { draw(scene, camera); } finally { if (i === 0) shadows?.endFrame(); }
+        stats.end('color', renderer.info);
+        renderer.autoClear = autoClear;
+        scene.background = background;
+      }
 
-    if (uniforms.uDetective.value > 0.01) {
-      camera.layers.set(LAYER_XRAY);
-      scene.background = null;
-      renderer.autoClear = false;
-      renderer.clearDepth();
-      renderer.render(scene, camera);
-      renderer.autoClear = true;
-      scene.background = background;
+      // 3. Ink quad per view, into its viewport + scissor rect of the canvas.
+      renderer.setRenderTarget(null);
+      const bw = Math.floor(canvasW * pixelRatio), bh = Math.floor(canvasH * pixelRatio);
+      const multi = list.length > 1 || list[0].px[0] !== 0 || list[0].px[1] !== 0 || list[0].px[2] !== bw || list[0].px[3] !== bh;
+      if (multi) {
+        // Gutters between panels read as comic panel borders: clear the canvas to ink first.
+        renderer.setScissorTest(false);
+        renderer.setViewport(0, 0, canvasW, canvasH);
+        const prevAlpha = renderer.getClearAlpha();
+        renderer.getClearColor(_bg);
+        renderer.setClearColor(uniforms.uInk.value, 1);
+        renderer.clear(true, false, false);
+        renderer.setClearColor(_bg, prevAlpha);
+      }
+      quad.material = debug.depthNormals ? (quadDepthMat ??= makeQuad({ NORMALS_FROM_DEPTH: '' })) : quadMat;
+      for (let i = 0; i < list.length; i++) {
+        const v = list[i];
+        setViewUniforms(v, v.camera);
+        if (multi) {
+          const r = v.px, pr = pixelRatio;
+          renderer.setViewport(r[0] / pr, r[1] / pr, r[2] / pr, r[3] / pr);
+          renderer.setScissor(r[0] / pr, r[1] / pr, r[2] / pr, r[3] / pr);
+          renderer.setScissorTest(true);
+        }
+        stats.begin('ink', renderer.info);
+        draw(quadScene, quadCam);
+        stats.end('ink', renderer.info);
+
+        // 4. X-ray silhouettes over the finished view (detective vision).
+        if (uniforms.uDetective.value > 0.01) {
+          const camera = v.camera;
+          camera.layers.set(LAYER_XRAY);
+          scene.background = null;
+          renderer.autoClear = false;
+          renderer.clearDepth();
+          stats.begin('xray', renderer.info);
+          draw(scene, camera);
+          stats.end('xray', renderer.info);
+          renderer.autoClear = true;
+          scene.background = background;
+          camera.layers.set(0);
+          camera.layers.enable(LAYER_FX);
+        }
+      }
+      if (multi) {
+        renderer.setScissorTest(false);
+        renderer.setViewport(0, 0, canvasW, canvasH);
+        renderer.setScissor(0, 0, canvasW, canvasH);
+      }
+    } finally {
+      scene.matrixWorldAutoUpdate = autoMatrices;
     }
-    camera.layers.set(0);
-    camera.layers.enable(LAYER_FX);
-    if (query) { gl.endQuery(timer.TIME_ELAPSED_EXT); pending.push(query); }
-    if (timer) pollTimer();
   }
 
-  // Parallel shader compile for everything in `scene`. Scene materials only ever draw into the
-  // colour target, whose linear colour space is part of each program's key: compiling against
-  // the canvas (sRGB) would build programs that are never used and leave the real ones to compile
-  // synchronously on first draw.
+  // Material fix-ups for the normal attachment (see mrtNormals.js). Cheap and idempotent.
+  function prepare(root) {
+    if (!mrt) return;
+    prepareInkMaterials(root);
+    if (root.userData?.farScene) prepareInkMaterials(root.userData.farScene);
+  }
+
+  // Parallel shader compile for everything in `scene` (and its far scene). Scene materials only
+  // ever draw into the colour target, whose linear colour space is part of each program's key:
+  // compiling against the canvas (sRGB) would build programs that are never used and leave the
+  // real ones to compile synchronously on first draw.
   async function compileAsync(scene, camera) {
-    renderer.setRenderTarget(colorRT);
-    try { await renderer.compileAsync(scene, camera); } finally { renderer.setRenderTarget(null); }
+    prepare(scene);
+    renderer.setRenderTarget(mainView.target);
+    try {
+      await renderer.compileAsync(scene, camera);
+      if (scene.userData.farScene) await renderer.compileAsync(scene.userData.farScene, camera);
+    } finally { renderer.setRenderTarget(null); }
   }
 
-  return { uniforms, setSize, render, setComic, setPalette, setImpact, setFilter, compileAsync, debug, get gpuMs() { return gpuMs; } };
+  // [env] The world's key light direction (toward the light) and the street's wetness.
+  function setEnv(dir, wet, lit = 1, toneInk = 1) { if (dir) keyWorld.copy(dir).normalize(); uniforms.uWet.value = wet; uniforms.uEnvLit.value = lit; uniforms.uToneInk.value = toneInk; }
+
+  return {
+    setEnv,
+    get envEffects() { return Object.keys(envDefines); },
+    uniforms, setSize, render, setComic, setPalette, setImpact, setFilter, setBrightness, compileAsync, prepare, debug, stats,
+    createView, disposeView, mainView, views,
+    get normals() { return mrt ? 'mrt' : 'depth'; },
+    get gpuMs() { return stats.gpuMs; },
+  };
 }

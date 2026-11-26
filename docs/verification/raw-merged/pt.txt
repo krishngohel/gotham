@@ -1,0 +1,10 @@
+== pt: env BASE=http://localhost:5860/ OUT=~/AppData/Local/Temp/claude/9519414f725d5b3e/fa0efec5-d6d5-43fd-b20d-c13ef3059827/scratchpad/checks2/pt node scripts/playthrough.mjs
+night n1
+ended at {"id":"n2Recap","type":"cutscene","mode":"cutscene","site":null,"phase":4,"joker":"knocked","night":"n2","boss":null,"last":false}
+comic pages captured: 10
+no console errors
+gadgets unlocked in order: ["claw","gel","smoke","remote","launcher","freeze","flashbang"]
+abilities unlocked in order: ["grapple","zipline","batmobile","carRadio","batmobileCall","diveBomb","dodge","throw","moveStrikes","comboFinisher","aerialAttacks","groundPound","wallRun","capeStun","silentTakedown","perch","detective","policeAttention","beatdown","eject","ledgeTakedown","batwing","fastTravel","takeCar","hailTaxi","specialTakedown"]
+ABILITIES: story order OK
+saved gadget unlocks: ["claw","gel","smoke","remote","launcher","freeze","flashbang"] wayne: {"xp":2690,"level":3}
+== exit 0 after 148 s

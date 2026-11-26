@@ -1,0 +1,23 @@
+== 5201
+round 1: 64s 11150 frames, median 5.6 ms, p95 8.1 ms, max 93.7 ms, 5 frames > 25 ms; frames with JS > 25 ms: 1 (max JS 51 ms); long tasks: 2 [102, 51]
+     25.9 ms  glide null         (-135, -108)  js 11.4  programs 89  tex 254  geo 765
+     93.7 ms  glide null         (-137, -107)  js 24.8  programs 89  tex 254  geo 765
+     34.3 ms  glide null         (-138, -107)  js 15.9  programs 89  tex 254  geo 765
+     34.4 ms  glide null         (-139, -106)  js 51  programs 89  tex 254  geo 765
+     59.8 ms  glide null         (-140, -105)  js 13.3  programs 89  tex 254  geo 765
+round 2: 64s 10812 frames, median 5.9 ms, p95 7.9 ms, max 48.6 ms, 1 frames > 25 ms; frames with JS > 25 ms: 1 (max JS 49.6 ms); long tasks: 1 [51]
+     48.6 ms  drive null         (150, -27)  js 15.6  programs 89  tex 254  geo 765
+errors 0 []
+== 5850
+round 1: 64s 10499 frames, median 6 ms, p95 8.4 ms, max 50.7 ms, 2 frames > 25 ms; frames with JS > 25 ms: 2 (max JS 54.1 ms); long tasks: 1 [55]
+     50.7 ms  drive city         (0, -53)  js 4.1  programs 116  tex 336  geo 2086
+round 2: 64s 11741 frames, median 5.4 ms, p95 6.9 ms, max 16.2 ms, 0 frames > 25 ms; frames with JS > 25 ms: 0 (max JS 12.6 ms); long tasks: 0 []
+errors 0 []
+== 5850 full route
+round 1: 100.6s 16520 frames, median 6 ms, p95 8.1 ms, max 43.3 ms, 4 frames > 25 ms; frames with JS > 25 ms: 3 (max JS 43.5 ms); long tasks: 0 []
+     33.1 ms  drive gcpd         (0, -17)  js 13.4  programs 116  tex 336  geo 2086
+     37.7 ms  drive city         (0, -52)  js 5.6  programs 116  tex 336  geo 2086
+     38.2 ms  drive city         (0, -79)  js 5.1  programs 116  tex 337  geo 2088
+     43.3 ms  glide loop         (-153, -482)  js 6.6  programs 116  tex 361  geo 2111
+round 2: 100.6s 15281 frames, median 6.5 ms, p95 8.4 ms, max 22.4 ms, 0 frames > 25 ms; frames with JS > 25 ms: 0 (max JS 22 ms); long tasks: 0 []
+errors 0 []

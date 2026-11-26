@@ -1,3 +1,6 @@
+import { registerToggle } from '../dev/perfToggles.js'; // [perf3]
+let fastLen = true;
+registerToggle('clothSqrt', (on) => { fastLen = on; });
 // Position-based verlet cloth. Plain arrays, no three.js, so it is unit-testable.
 // Row 0 is pinned. The bottom row's even columns hang lower to make the cape's points.
 export function createCloth({ cols, rows, topWidth, bottomWidth, length, pointDrop = 0 }) {
@@ -84,7 +87,7 @@ export function stepCloth(cloth, dt, {
       if (!(wa + wb)) continue;
       const a = ia * 3, b = ib * 3;
       const dx = pos[b] - pos[a], dy = pos[b + 1] - pos[a + 1], dz = pos[b + 2] - pos[a + 2];
-      const d = Math.hypot(dx, dy, dz) || 1e-6;
+      const d = (fastLen ? Math.sqrt(dx * dx + dy * dy + dz * dz) : Math.hypot(dx, dy, dz)) || 1e-6; // [perf3] not Math.hypot (2-3x slower in V8)
       const s = (d - rest[k]) / d / (wa + wb);
       pos[a] += dx * s * wa; pos[a + 1] += dy * s * wa; pos[a + 2] += dz * s * wa;
       pos[b] -= dx * s * wb; pos[b + 1] -= dy * s * wb; pos[b + 2] -= dz * s * wb;

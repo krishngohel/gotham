@@ -1,14 +1,18 @@
 // Harley Quinn's look, code-painted like Nightwing (src/actors/nightwingChar.js): the female
 // hero body (hero_f.glb) via the shared character factory, painted through vertex regions rather
 // than a baked UV texture. A clean left/right harlequin split (one side red, one black), white
-// greasepaint face, a black eye mask, two pigtails (one red-tipped, one black-tipped, built from
-// primitives) and a big wooden mallet held in her right hand.
+// greasepaint face, a black eye mask, blonde hair in two pigtails (one red-tipped, one
+// black-tipped), a pointed jester ruff, split boots with white cuffs, and a big wooden mallet held
+// in her right hand. Every worn part is merged into one skinned kit mesh (src/heroes/models/kit.js),
+// so she costs a handful of draw calls instead of one per primitive.
 import * as THREE from 'three';
 import { PALETTE } from '../config/palette.js';
 import { toonMaterial, addHullOutline } from '../render/toon.js';
 import { attachRigid, bindPosition } from './rig.js';
 import { addRim } from './outfitParts.js';
-import { makeCharacter, paintRegions, rigidMesh } from './characters.js';
+import { makeCharacter, paintRegions } from './characters.js';
+import { createKit, shell, sphere, cyl } from '../heroes/models/kit.js';
+import { hairLocks } from '../heroes/models/costume.js';
 
 export const HARLEY_COLORS = {
   red: PALETTE.crimson, black: PALETTE.ink, belt: 0x2a2430, face: PALETTE.paper, mask: 0x14121a, hair: PALETTE.signal,
@@ -40,6 +44,7 @@ export function classifyHarleyVertex(p, lm) {
 export function createHarleyCharacter(assets) {
   const ch = makeCharacter(assets, 'f');
   const { body, eyes, brows, lm } = ch;
+  const src = body.geometry;
   paintRegions(body, classifyHarleyVertex, HARLEY_COLORS, lm);
   body.material = addRim(
     toonMaterial({ vertexColors: true, normalMap: body.material.normalMap, normalScale: 0.45, palette: Object.values(HARLEY_COLORS) }),
@@ -49,48 +54,60 @@ export function createHarleyCharacter(assets) {
   eyes.visible = false;
   brows.visible = false;
   addHullOutline(body, 0.011);
+  const fwd = lm.fwd, hc = lm.headCenter, r = lm.headRadius;
+  const yaw = fwd < 0 ? Math.PI : 0;
+  const C = HARLEY_COLORS;
+  const kit = createKit(ch, { lift: 0.34, rimStrength: 0.55 });
 
-  // A black domino-style band across the eyes (greasepaint, not a real mask).
-  const maskMat = addRim(toonMaterial({ color: HARLEY_COLORS.mask }));
-  const maskGeo = new THREE.SphereGeometry(lm.headRadius * 1.05, 20, 10, Math.PI * 0.05, Math.PI * 0.9, Math.PI * 0.28, Math.PI * 0.2);
-  const mask = rigidMesh(maskGeo, maskMat, lm.headCenter.clone().add(new THREE.Vector3(0, 0.01, 0.012 * lm.fwd)), new THREE.Euler(0, lm.fwd < 0 ? Math.PI : 0, 0));
-  attachRigid(body, 'Head', mask);
-  addHullOutline(mask, 0.005);
+  // A black domino-style band across the eyes, with little pointed wings.
+  kit.rigid(new THREE.SphereGeometry(r * 1.05, 20, 6, Math.PI * 0.05, Math.PI * 0.9, Math.PI * 0.4, Math.PI * 0.14), { bone: 'Head', color: C.mask, outline: 0.003, pos: [hc.x, hc.y + 0.01, hc.z + 0.012 * fwd], rot: [0, yaw, 0] });
+  for (const s of [-1, 1]) kit.rigid(new THREE.ConeGeometry(0.014, 0.05, 4), { bone: 'Head', color: C.mask, outline: 0.003, pos: [s * r * 0.88, lm.eyeY + 0.03, hc.z + r * 0.45 * fwd], rot: [0, 0, -s * 0.9] });
 
-  // Two pigtails: a blonde base tapering into a colored tip, red on one side, black on the other.
-  const hairBaseMat = toonMaterial({ color: HARLEY_COLORS.hair });
-  const tipMat = (color) => toonMaterial({ color });
-  for (const [side, tipColor] of [[1, HARLEY_COLORS.red], [-1, HARLEY_COLORS.black]]) {
-    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.045, 0.14, 10), hairBaseMat);
-    const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.014, 0.3, 10), tipMat(tipColor));
-    tip.position.y = -0.2;
-    const pigtail = new THREE.Group();
-    pigtail.add(base, tip);
-    pigtail.position.set(side * lm.headRadius * 0.98, lm.headTop - 0.08, -0.015 * lm.fwd);
-    pigtail.rotation.z = side * 0.5;
-    pigtail.rotation.x = -0.25;
-    attachRigid(body, 'Head', pigtail);
-    addHullOutline(base, 0.005);
-    addHullOutline(tip, 0.005);
+  // Blonde hair: a cap over the scalp, swept back, then the two pigtails (blonde into a coloured tip).
+  hairLocks(kit, src, lm, { color: C.hair, volume: 0.014, fringe: true, locks: 5, sweep: 0.8 });
+  for (const [side, tip] of [[1, C.red], [-1, C.black]]) {
+    const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.25 * fwd, 0, side * 0.55));
+    const at = new THREE.Vector3(side * r * 0.95, lm.headTop - 0.07 - hc.y, -0.015 * fwd);
+    const place = (geo, color, dy) => {
+      const off = new THREE.Vector3(0, dy, 0).applyQuaternion(q);
+      kit.rigid(geo, { bone: 'Head', color, outline: 0.005, pos: [hc.x + at.x + off.x, hc.y + at.y + off.y, hc.z + at.z + off.z], quat: q });
+    };
+    place(sphere(0.045, 10, 8), C.hair, 0.0);
+    place(cyl(0.05, 0.045, 0.14, 10), C.hair, -0.06);
+    place(cyl(0.045, 0.012, 0.32, 10), tip, -0.29);
   }
 
-  // A big wooden mallet, held two-handed but rigidly parented to the right hand.
-  const woodMat = toonMaterial({ color: PALETTE.wood });
-  const bandMat = toonMaterial({ color: HARLEY_COLORS.red });
-  const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.78, 8), woodMat);
-  const head = new THREE.Mesh(new THREE.CylinderGeometry(0.165, 0.165, 0.36, 10), woodMat);
-  head.rotation.z = Math.PI / 2;
-  head.position.y = 0.44;
-  const band = new THREE.Mesh(new THREE.CylinderGeometry(0.168, 0.168, 0.05, 10), bandMat);
-  band.rotation.z = Math.PI / 2;
-  band.position.y = 0.44;
-  const mallet = new THREE.Group();
-  mallet.add(handle, head, band);
-  addHullOutline(handle, 0.005);
-  addHullOutline(head, 0.006);
+  // A jester ruff: points alternating red and black round the neck, over a white band.
+  const neck = bindPosition(body, 'neck_01');
+  kit.rigid(new THREE.TorusGeometry(0.085, 0.022, 6, 18), { bone: 'spine_03', color: C.face, outline: 0.003, pos: [0, lm.neckY - 0.03, neck.z], rot: [Math.PI / 2, 0, 0] });
+  for (let k = 0; k < 10; k++) {
+    const a = (k / 10) * Math.PI * 2;
+    const dir = new THREE.Vector3(Math.sin(a), -0.55, Math.cos(a) * fwd).normalize();
+    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+    const p = new THREE.Vector3(Math.sin(a) * 0.1, lm.neckY - 0.04, neck.z + Math.cos(a) * 0.085 * fwd).addScaledVector(dir, 0.04);
+    kit.rigid(new THREE.ConeGeometry(0.03, 0.09, 4).scale(1, 1, 0.35), { bone: 'spine_03', color: k % 2 ? C.red : C.black, outline: 0.003, pos: [p.x, p.y, p.z], quat: q });
+  }
+
+  // Boots in the opposite colour to each leg, with a white cuff, and white wrist ruffles.
+  kit.skinned(shell(src, { pick: (p) => p.y < lm.kneeY - 0.02 && Math.abs(p.x) < 0.3, offset: (p) => 0.006 + (Math.abs(p.y - (lm.kneeY - 0.04)) < 0.025 ? 0.008 : 0), color: (p) => (p.y > lm.kneeY - 0.065 ? C.face : p.x >= 0 ? C.black : C.red), uv: false }), { outline: 0.004 });
+  const wristX = Math.abs(bindPosition(body, 'hand_l').x) - 0.05;
+  kit.skinned(shell(src, { pick: (p) => Math.abs(p.x) > wristX - 0.03 && Math.abs(p.x) < wristX && p.y > lm.chestY - 0.2, offset: 0.014, color: C.face, uv: false }), { outline: 0.003 });
+
+  // The mallet, two-handed in the story but bound rigidly to the right hand: part of the kit mesh.
   const handPos = bindPosition(body, 'hand_r');
-  mallet.position.copy(handPos).add(new THREE.Vector3(-0.03 * lm.fwd, 0.36, 0.02 * lm.fwd));
-  mallet.rotation.x = 0.12;
+  const mPos = handPos.clone().add(new THREE.Vector3(-0.03 * fwd, 0.36, 0.02 * fwd));
+  const mQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.12, 0, 0));
+  const onMallet = (geo, color, local, outline) => {
+    const p = local.clone().applyQuaternion(mQ).add(mPos);
+    kit.rigid(geo, { bone: 'hand_r', color, outline, pos: [p.x, p.y, p.z], quat: mQ });
+  };
+  onMallet(new THREE.CylinderGeometry(0.026, 0.026, 0.78, 8), PALETTE.wood, new THREE.Vector3(), 0.005);
+  onMallet(new THREE.CylinderGeometry(0.165, 0.165, 0.36, 12).rotateZ(Math.PI / 2), PALETTE.wood, new THREE.Vector3(0, 0.44, 0), 0.006);
+  for (const dx of [-0.12, 0.12]) onMallet(new THREE.CylinderGeometry(0.169, 0.169, 0.045, 12).rotateZ(Math.PI / 2), dx < 0 ? C.red : C.black, new THREE.Vector3(dx, 0.44, 0), 0);
+  kit.build();
+  // ch.mallet: an empty anchor at the mallet head (the mesh itself is part of the kit).
+  const mallet = new THREE.Object3D();
+  mallet.position.copy(mPos);
   attachRigid(body, 'hand_r', mallet);
   ch.mallet = mallet;
 

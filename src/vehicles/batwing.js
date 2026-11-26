@@ -3,7 +3,9 @@
 // createBatwing(deps) -> { call(), exit(), active, update(dt, real), startArmada({ balloons, onDone }) }
 // Events: wingEnter, wingExit, armadaDone { ok }. Hero control name while flying: 'fly'.
 import * as THREE from 'three';
-import { WORLD, SITES } from '../world/mapData.js';
+import { SITES } from '../world/mapData.js';
+// The playable extent of every region (src/world/regions/data.js), not just the original city.
+import { WORLD_BOUNDS as WORLD } from '../world/regions/data.js';
 import { createRng } from '../core/rng.js';
 import { buildBatwingMesh, buildBalloonMesh, buildDartMesh, WING_RADIUS, WING_HEIGHT } from './wingModel.js';
 import { createWingState, stepWing, clampToWorld, bounceWing, WING_TUNING } from './wingFlight.js';
@@ -22,13 +24,15 @@ const LAND_RADIUS = 26;    // near the GCPD roof: an easy auto-eject once ground
 // contained (src/ui/hud.js already owns the 12 Riddler trophies' counter).
 function createArmadaHud(hudRoot) {
   const el = document.createElement('div');
+  // [verify] a11y: font sizes here scale with --a11y-text (settings.access.textSize).
   el.style.cssText = [
     'position:fixed', 'left:50%', 'top:20px', 'transform:translateX(-50%) rotate(-1deg)',
     'padding:8px 18px', 'background:#f2d24b', 'color:#0b0b12', 'border:3px solid #0b0b12',
-    'box-shadow:4px 4px 0 #0b0b12', 'font:22px "Patrick Hand SC",cursive', 'z-index:6',
+    'box-shadow:4px 4px 0 #0b0b12', 'font:calc(22px * var(--a11y-text, 1)) "Patrick Hand SC",cursive', 'z-index:6',
     'display:none', 'pointer-events:none', 'text-align:center',
   ].join(';');
-  el.innerHTML = 'Pop the balloons <b style="display:block;font:30px Bangers,cursive;letter-spacing:1px;">0 / 0</b>';
+  // [verify] a11y: font sizes here scale with --a11y-text (settings.access.textSize).
+  el.innerHTML = 'Pop the balloons <b style="display:block;font:calc(30px * var(--a11y-text, 1)) Bangers,cursive;letter-spacing:1px;">0 / 0</b>';
   (hudRoot ?? document.body).appendChild(el);
   const b = el.querySelector('b');
   return {
@@ -39,7 +43,9 @@ function createArmadaHud(hudRoot) {
   };
 }
 
-export function createBatwing({ scene, camera, hero, follow, collision, events, hudRoot, audio }) {
+export function createBatwing({ scene, camera, hero: hero0, follow: follow0, collision, events, hudRoot, audio }) {
+  // The pilot (workstream D1): player 0 unless a co-op partner calls the Batwing (setPilot).
+  let hero = hero0, follow = follow0;
   const rng = createRng(747711);
   const { mesh, engines } = buildBatwingMesh();
   scene.add(mesh);
@@ -59,7 +65,7 @@ export function createBatwing({ scene, camera, hero, follow, collision, events, 
   const armada = { active: false, balloons: [], meshes: [], region: null, total: 0, onDone: null };
 
   let active = false;
-  let mode = 'idle'; // idle | boarding | flying | flyoff
+  let mode = 'idle'; // idle | boarding | flying | flyoff | drop ([move]: a fast-travel drop)
   let boardT = 0, flyoffT = 0;
 
   function canCall() {
@@ -232,8 +238,59 @@ export function createBatwing({ scene, camera, hero, follow, collision, events, 
     if (flyoffT > FLYOFF_DUR) { mesh.visible = false; mode = 'idle'; }
   }
 
+  // ---- [move] Fast-travel drop (workstream L3): the Batwing sweeps in, picks the hero up and
+  // flies a scripted arc to `target`, releasing them into a glide `altitude` metres above it. The
+  // fast-travel menu (workstream K/L) calls dropAt; a story step can too. Not while piloting.
+  const drop = { t: 0, dur: 0, from: new THREE.Vector3(), to: new THREE.Vector3(), onDone: null };
+  function dropAt(target, { altitude = 60, speed = 85, onDone = null } = {}) {
+    if (active || mode !== 'idle' || hero.control) return false;
+    drop.from.set(hero.pos.x, hero.pos.y + 45, hero.pos.z);
+    drop.to.set(target.x, (target.y ?? 0) + altitude, target.z);
+    drop.dur = Math.max(4, drop.from.distanceTo(drop.to) / speed);
+    drop.t = 0;
+    drop.onDone = onDone;
+    mode = 'drop';
+    mesh.visible = true;
+    hero.bat.root.visible = false;
+    hero.cape.mesh.visible = false;
+    hero.vel.set(0, 0, 0);
+    hero.control = { name: 'wingDrop', camera: 'fly', update: () => false };
+    events.emit('wingDropStart', { x: target.x, z: target.z });
+    return true;
+  }
+  function updateDrop(dt) {
+    drop.t += dt;
+    const k = Math.min(1, drop.t / drop.dur), e = k * k * (3 - 2 * k);
+    mesh.position.lerpVectors(drop.from, drop.to, e);
+    mesh.position.y += Math.sin(Math.PI * k) * Math.min(60, drop.dur * 8);
+    const dx = drop.to.x - drop.from.x, dz = drop.to.z - drop.from.z;
+    state.yaw = Math.atan2(dx, dz); state.pitch = Math.cos(Math.PI * k) * 0.25; state.roll = 0;
+    state.speed = drop.from.distanceTo(drop.to) / drop.dur;
+    state.x = mesh.position.x; state.y = mesh.position.y; state.z = mesh.position.z;
+    mesh.rotation.order = 'YXZ';
+    mesh.rotation.set(-state.pitch, state.yaw, 0);
+    hero.pos.copy(mesh.position);
+    follow?.setHeading?.(state.yaw, state.speed);
+    if (k >= 1) {
+      state.pitch = -0.2;
+      state.speed = 24;
+      mode = 'idle';
+      active = true; // doExit expects a flying plane
+      doExit();
+      events.emit('wingDropDone', {});
+      drop.onDone?.({ ok: true });
+    }
+  }
+
   return {
     get active() { return active; },
+    dropAt, // [move]
+    get dropping() { return mode === 'drop'; },
+    // Co-op: who flies the next sortie (only while nobody flies).
+    setPilot(d) { if (active || mode !== 'idle') return false; hero = d.hero; follow = d.follow; return true; },
+    get pilot() { return hero; },
+    // [net2] The plane's mesh (an online guest poses the host's from the wire).
+    get mesh() { return mesh; },
     // Dev/QA introspection (scripts/challenge-tune.mjs), not part of the frozen contract above:
     // the live flight state {x,y,z,yaw,pitch,roll,speed}, the same object vehicles.js exposes
     // its own driving state through (get batmobile() -> bm.v).
@@ -262,6 +319,7 @@ export function createBatwing({ scene, camera, hero, follow, collision, events, 
       const pulse = 0.75 + Math.sin(performance.now() * 0.006) * 0.25;
       for (const e of engines) e.scale.setScalar(pulse);
       if (mode === 'flyoff') updateFlyoff(dt);
+      else if (mode === 'drop') updateDrop(dt); // [move]
     },
     // startArmada({ balloons, onDone }): balloons is the count to spawn (the story contract).
     // region (optional): a fixed { cx, cy, cz, rx, ry, rz } box for the balloons, such as the

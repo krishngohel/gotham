@@ -21,7 +21,9 @@ export const STEP_GUESTS = {
 
 export const FINALE_STEP_ID = 'finale';
 
-const indexOf = (steps, id) => steps.findIndex((s) => s.id === id);
+// [story] A beat whose step was folded into the next one (storyAliases.js) moves with it.
+import { stepIndexOf } from './storyAliases.js';
+const indexOf = (steps, id) => stepIndexOf(steps, id);
 
 // Every person whose join step is at or before `stepIndex` in `steps`, in STEP_GUESTS' own order.
 // Used both for a live 'step' event (stepIndex is the step just entered) and for a resumed save's

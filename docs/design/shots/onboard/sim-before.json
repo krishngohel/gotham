@@ -1,0 +1,680 @@
+{
+ "summary": {
+  "minutes": 20.1,
+  "stepsReached": 31,
+  "lastStep": "boardBatmobileAce2",
+  "controlLostSeconds": 32.7,
+  "controlLostByReason": {
+   "cinematic": 2.4,
+   "comic": 30.2
+  },
+  "controlLostSegments": 5,
+  "storyTeleports": 2,
+  "cameraSnaps": 2,
+  "comicsShown": 4,
+  "hudHidden": 4,
+  "objectiveChanges": 30,
+  "unbridgedObjectiveChanges": [],
+  "revealedOnApproach": [
+   "signal",
+   "card",
+   "courierIntro",
+   "toDocks",
+   "boardBatmobile",
+   "batmobileChase",
+   "toRoofAfterChase",
+   "f1",
+   "toYard",
+   "f2",
+   "toShip",
+   "f3",
+   "crates",
+   "rewardCrates",
+   "toNeon",
+   "n1",
+   "toStreet",
+   "n2",
+   "toMonarch",
+   "n3",
+   "courierRooftop",
+   "monarchBalcony",
+   "rig",
+   "rewardRig",
+   "toAce",
+   "boardBatmobileAce",
+   "aceBattle",
+   "a1",
+   "toFactory",
+   "a2",
+   "boardBatmobileAce2"
+  ],
+  "abilitiesInOrder": [],
+  "learned": [],
+  "botAssists": 33
+ },
+ "steps": [
+  {
+   "t": 19.25,
+   "id": "signal",
+   "type": "reach",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 22.08,
+   "id": "card",
+   "type": "cutscene",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 27.12,
+   "id": "courierIntro",
+   "type": "courier",
+   "lines": 5,
+   "talkOver": true,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 29.72,
+   "id": "toDocks",
+   "type": "reach",
+   "lines": 1,
+   "talkOver": false,
+   "title": true,
+   "revealed": 1
+  },
+  {
+   "t": 42.7,
+   "id": "boardBatmobile",
+   "type": "board",
+   "lines": 2,
+   "talkOver": true,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 46.57,
+   "id": "batmobileChase",
+   "type": "chase",
+   "lines": 1,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 95.52,
+   "id": "toRoofAfterChase",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 157.53,
+   "id": "f1",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 160.25,
+   "id": "toYard",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 165.73,
+   "id": "f2",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 185.3,
+   "id": "toShip",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 215.93,
+   "id": "f3",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 241.17,
+   "id": "crates",
+   "type": "collect",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 243.15,
+   "id": "rewardCrates",
+   "type": "cutscene",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 248.18,
+   "id": "toNeon",
+   "type": "reach",
+   "lines": 3,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 373.13,
+   "id": "n1",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 382.18,
+   "id": "toStreet",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 387.92,
+   "id": "n2",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 419.5,
+   "id": "toMonarch",
+   "type": "reach",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 433.93,
+   "id": "n3",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 448.98,
+   "id": "courierRooftop",
+   "type": "courier",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 459.78,
+   "id": "monarchBalcony",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 470.63,
+   "id": "rig",
+   "type": "collect",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 474.82,
+   "id": "rewardRig",
+   "type": "cutscene",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 482.38,
+   "id": "toAce",
+   "type": "reach",
+   "lines": 3,
+   "talkOver": false,
+   "title": true,
+   "revealed": 1
+  },
+  {
+   "t": 496.22,
+   "id": "boardBatmobileAce",
+   "type": "board",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 498.57,
+   "id": "aceBattle",
+   "type": "battle",
+   "lines": 1,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 506.58,
+   "id": "a1",
+   "type": "fight",
+   "lines": 2,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 539.5,
+   "id": "toFactory",
+   "type": "reach",
+   "lines": 3,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 544.23,
+   "id": "a2",
+   "type": "fight",
+   "lines": 0,
+   "talkOver": false,
+   "title": false,
+   "revealed": 1
+  },
+  {
+   "t": 597.57,
+   "id": "boardBatmobileAce2",
+   "type": "board",
+   "lines": 2,
+   "talkOver": true,
+   "title": false,
+   "revealed": 1
+  }
+ ],
+ "log": [
+  {
+   "t": 6.63,
+   "type": "hudHidden",
+   "step": "intro"
+  },
+  {
+   "t": 6.63,
+   "type": "comicOn",
+   "name": "intro"
+  },
+  {
+   "t": 19.25,
+   "type": "hudShown",
+   "step": "intro"
+  },
+  {
+   "t": 19.25,
+   "type": "comicOff",
+   "name": "intro"
+  },
+  {
+   "t": 22.08,
+   "type": "hudHidden",
+   "step": "card"
+  },
+  {
+   "t": 22.08,
+   "type": "comicOn",
+   "name": "card"
+  },
+  {
+   "t": 27.12,
+   "type": "hudShown",
+   "step": "card"
+  },
+  {
+   "t": 27.12,
+   "type": "comicOff",
+   "name": "card"
+  },
+  {
+   "t": 27.12,
+   "type": "teleport",
+   "step": "courierIntro"
+  },
+  {
+   "t": 27.12,
+   "type": "cameraSnap",
+   "step": "courierIntro"
+  },
+  {
+   "t": 95.52,
+   "type": "assist",
+   "what": "vehicle debugWin",
+   "step": "batmobileChase"
+  },
+  {
+   "t": 95.6,
+   "type": "vehicleExitPlace",
+   "step": "toRoofAfterChase"
+  },
+  {
+   "t": 126.72,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toRoofAfterChase"
+  },
+  {
+   "t": 157.52,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toRoofAfterChase"
+  },
+  {
+   "t": 215.92,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toShip"
+  },
+  {
+   "t": 243.15,
+   "type": "hudHidden",
+   "step": "rewardCrates"
+  },
+  {
+   "t": 243.15,
+   "type": "comicOn",
+   "name": "crates"
+  },
+  {
+   "t": 248.18,
+   "type": "hudShown",
+   "step": "rewardCrates"
+  },
+  {
+   "t": 248.18,
+   "type": "comicOff",
+   "name": "crates"
+  },
+  {
+   "t": 269.53,
+   "type": "teleport",
+   "step": "toNeon"
+  },
+  {
+   "t": 346.12,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toNeon"
+  },
+  {
+   "t": 373.12,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "toNeon"
+  },
+  {
+   "t": 474.82,
+   "type": "hudHidden",
+   "step": "rewardRig"
+  },
+  {
+   "t": 474.82,
+   "type": "comicOn",
+   "name": "rig"
+  },
+  {
+   "t": 482.38,
+   "type": "hudShown",
+   "step": "rewardRig"
+  },
+  {
+   "t": 482.38,
+   "type": "comicOff",
+   "name": "rig"
+  },
+  {
+   "t": 506.58,
+   "type": "assist",
+   "what": "vehicle debugWin",
+   "step": "aceBattle"
+  },
+  {
+   "t": 506.58,
+   "type": "vehicleExitPlace",
+   "step": "a1"
+  },
+  {
+   "t": 508.32,
+   "type": "assist",
+   "what": "winFight (stealth)",
+   "step": "a1"
+  },
+  {
+   "t": 531.72,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "a1"
+  },
+  {
+   "t": 597.57,
+   "type": "cameraSnap",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 624.32,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 649.38,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 674.45,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 699.52,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 724.58,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 749.65,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 774.72,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 799.78,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 824.85,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 849.92,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 874.98,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 900.05,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 925.12,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 950.18,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 975.25,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 1000.32,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 1025.38,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 1050.45,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 1075.52,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 1100.58,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 1125.65,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 1150.72,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 1175.78,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  },
+  {
+   "t": 1200.85,
+   "type": "assist",
+   "what": "nudge toward goal",
+   "step": "boardBatmobileAce2"
+  }
+ ],
+ "lost": [
+  {
+   "t0": 4.2,
+   "why": "cinematic",
+   "step": "intro",
+   "secs": 2.43
+  },
+  {
+   "t0": 6.65,
+   "why": "comic",
+   "step": "intro",
+   "secs": 12.62
+  },
+  {
+   "t0": 22.1,
+   "why": "comic",
+   "step": "card",
+   "secs": 5.03
+  },
+  {
+   "t0": 243.16666666666666,
+   "why": "comic",
+   "step": "rewardCrates",
+   "secs": 5.03
+  },
+  {
+   "t0": 474.8333333333333,
+   "why": "comic",
+   "step": "rewardRig",
+   "secs": 7.57
+  }
+ ],
+ "assists": 33,
+ "frames": 72251
+}

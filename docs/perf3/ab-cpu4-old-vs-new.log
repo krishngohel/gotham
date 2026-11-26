@@ -1,0 +1,26 @@
+A=old http://localhost:5201/
+B=new http://localhost:5850/
+2 rounds, 3000 ms per site, alternating one page at a time, CPU x4
+r0 AB low:low      gcpd roof     old  57.86 ms (js 45.33) new  66.31 ms (js 47.49)  frame x0.89 js x0.81 (normalised; raw frame x1.15, cpu-speed x0.78)  calls 1/259
+r0 AB low:low      neon street   old  46.33 ms (js 34.86) new  60.33 ms (js 41.42)  frame x0.85 js x0.78 (normalised; raw frame x1.30, cpu-speed x0.66)  calls 1/194
+r0 AB low:low      clock plaza   old  52.93 ms (js 34.72) new  64.22 ms (js 41.39)  frame x1.17 js x1.15 (normalised; raw frame x1.21, cpu-speed x0.96)  calls 1/208
+r1 BA low:low      gcpd roof     old  41.90 ms (js 33.75) new  44.73 ms (js 33.59)  frame x1.04 js x0.97 (normalised; raw frame x1.07, cpu-speed x0.97)  calls 1/259
+r1 BA low:low      neon street   old  32.00 ms (js 24.57) new  45.77 ms (js 33.67)  frame x1.55 js x1.49 (normalised; raw frame x1.43, cpu-speed x1.09)  calls 1/196
+r1 BA low:low      clock plaza   old  25.45 ms (js 19.98) new  35.76 ms (js 27.28)  frame x1.42 js x1.38 (normalised; raw frame x1.41, cpu-speed x1.01)  calls 1/210
+r0 AB low:potato   gcpd roof     old  36.49 ms (js 29.69) new  27.00 ms (js 20.41)  frame x0.82 js x0.76 (normalised; raw frame x0.74, cpu-speed x1.11)  calls 1/195
+r0 AB low:potato   neon street   old  31.29 ms (js 24.26) new  43.34 ms (js 29.78)  frame x0.94 js x0.83 (normalised; raw frame x1.38, cpu-speed x0.68)  calls 1/152
+r0 AB low:potato   clock plaza   old  28.28 ms (js 21.34) new  34.76 ms (js 23.86)  frame x1.03 js x0.93 (normalised; raw frame x1.23, cpu-speed x0.83)  calls 1/167
+r1 BA low:potato   gcpd roof     old  54.06 ms (js 42.76) new  34.85 ms (js 25.37)  frame x0.85 js x0.79 (normalised; raw frame x0.64, cpu-speed x1.32)  calls 1/194
+r1 BA low:potato   neon street   old  38.25 ms (js 28.67) new  41.71 ms (js 27.92)  frame x0.92 js x0.82 (normalised; raw frame x1.09, cpu-speed x0.85)  calls 1/154
+r1 BA low:potato   clock plaza   old  38.25 ms (js 27.78) new  35.41 ms (js 24.52)  frame x1.05 js x1.00 (normalised; raw frame x0.93, cpu-speed x1.13)  calls 1/169
+
+per site, new/old (ratio < 1: new faster), median over 2 rounds [min..max]:
+  low:low      gcpd roof     frame x0.96 [0.89..1.04]  js x0.89 [0.81..0.97]  fps 20 -> 18  calls 1 -> 259
+  low:low      neon street   frame x1.20 [0.85..1.55]  js x1.13 [0.78..1.49]  fps 26 -> 19  calls 1 -> 195
+  low:low      clock plaza   frame x1.29 [1.17..1.42]  js x1.26 [1.15..1.38]  fps 26 -> 20  calls 1 -> 209
+  low:low      ALL           frame x1.10  js x1.06
+  low:potato   gcpd roof     frame x0.84 [0.82..0.85]  js x0.77 [0.76..0.79]  fps 22 -> 32  calls 1 -> 194.5
+  low:potato   neon street   frame x0.93 [0.92..0.94]  js x0.83 [0.82..0.83]  fps 29 -> 24  calls 1 -> 153
+  low:potato   clock plaza   frame x1.04 [1.03..1.05]  js x0.97 [0.93..1.00]  fps 30 -> 29  calls 1 -> 168
+  low:potato   ALL           frame x0.93  js x0.83
+(392 s)

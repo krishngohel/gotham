@@ -1,8 +1,14 @@
 name: Deploy to GitHub Pages
 
+# Unit tests, a production build and a size guard, then deploy. The browser checks (Playwright
+# e2e, playthroughs, story-walk, perf-gate) are not run here: they need a real GPU for WebGL and
+# take far longer than a CI runner allows. Run them locally (README "Checks",
+# scripts/verify/run-checks.sh). See docs/verification/hygiene.md for the decision.
+
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -11,25 +17,50 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # The design contract (docs/design/long-night-2.md, rule 7): the shipped dist/ stays under 40 MB.
+      DIST_LIMIT_MB: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # vite 8 needs ^20.19 || >=22.12, vitest 5 needs ^22.12 || ^24 || >=26: 24 (LTS) fits both.
+          node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx vitest run
-      - run: npm run build
+      - name: Unit tests
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Report and guard dist size
+        run: |
+          bytes=$(du -sb dist | cut -f1)
+          limit=$((DIST_LIMIT_MB * 1024 * 1024))
+          mb=$(awk "BEGIN { printf \"%.1f\", $bytes / 1048576 }")
+          {
+            echo "### dist size: ${mb} MB (limit ${DIST_LIMIT_MB} MB)"
+            echo ''
+            echo '| file | KB |'
+            echo '|---|---|'
+            find dist -type f -printf '%s %P\n' | sort -rn | head -15 | awk '{ printf "| %s | %d |\n", $2, $1 / 1024 }'
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "dist is ${mb} MB"
+          if [ "$bytes" -gt "$limit" ]; then
+            echo "::error::dist is ${mb} MB, over the ${DIST_LIMIT_MB} MB budget"
+            exit 1
+          fi
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
         with:
           path: dist
   deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     environment:

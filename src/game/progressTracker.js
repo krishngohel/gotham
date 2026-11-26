@@ -138,7 +138,7 @@ export const BASE_CATEGORIES = [
     id: 'districts', label: 'Districts visited', weight: 5, count: (p) => ({ done: p.districts.length, total: DISTRICT_IDS.length }),
     detail: (p) => {
       const left = DISTRICT_IDS.filter((d) => !p.districts.includes(d));
-      return left.length ? `Not yet: ${left.map((d) => DISTRICT_LABEL[d]).join(', ')}` : 'All five visited';
+      return left.length ? `Not yet: ${left.map((d) => DISTRICT_LABEL[d]).join(', ')}` : `All ${DISTRICT_IDS.length} visited`;
     },
   },
 ];

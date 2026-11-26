@@ -14,11 +14,10 @@ const views = [
 const toggles = {
   base: '() => () => {}',
   rainOff: '() => { const m = window.__game.world.rain.mesh; m.visible = false; return () => { m.visible = true; }; }',
-  shadowFrozen: `() => { const s = window.__game.renderer.shadowMap; const d = Object.getOwnPropertyDescriptor(s, 'needsUpdate');
-    Object.defineProperty(s, 'needsUpdate', { configurable: true, get: () => false, set: () => {} });
-    return () => { delete s.needsUpdate; s.needsUpdate = true; }; }`,
-  normalOff: `() => { const r = window.__game.renderer; const orig = r.render; r.render = function (sc, c) { if (sc.overrideMaterial) return; return orig.call(this, sc, c); };
-    return () => { r.render = orig; }; }`,
+  shadowFrozen: '() => { const d = window.__game.ink.debug; d.cachedShadows = true; return () => { d.cachedShadows = false; }; }',
+  // The old separate normal pass is gone (normals are an MRT attachment of the colour pass now);
+  // this swaps the ink shader to the potato/low depth-only crease variant instead.
+  depthCreases: '() => { const d = window.__game.ink.debug; d.depthNormals = true; return () => { d.depthNormals = false; }; }',
   fxLayerOff: `() => { const g = window.__game; const names = ['steam', 'wetStreaks']; const hidden = []; g.scene.traverse((o) => { if (o.isPoints || names.includes(o.name)) { hidden.push(o); o.visible = false; } }); return () => hidden.forEach((o) => { o.visible = true; }); }`,
   inkCheap: `() => { const u = window.__game.ink.uniforms; const keep = { c: u.uColorEdges.value, m: u.uMisreg.value, p: u.uPaperTex.value, w: u.uWobble.value };
     u.uColorEdges.value = 0; u.uMisreg.value = 0; u.uPaperTex.value = 0; u.uWobble.value = 0;

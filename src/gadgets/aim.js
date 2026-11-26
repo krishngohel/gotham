@@ -1,9 +1,13 @@
 // Aiming maths for gadgets. Pure: points are plain { x, y, z }; `collision` is the
 // createCollision API (raycast, groundBelow). Called when a gadget fires, not every frame.
+import { getAimConeScale } from '../ui/accessibility.js'; // [prog] a11y aim assist
 
 // Items nearest the aim line first, inside `range` and a cone of `maxAngle` radians around `dir`
 // (unit length). `lift` is added to each item's y (aim at the chest, not the feet).
-export function pickAimedMany(items, eye, dir, n, { range = 20, maxAngle = 0.35, lift = 1.1, filter = () => true, getPos = (e) => e.pos } = {}) {
+// [prog] a11y: `coneScale` widens or narrows the cone (aim assist, settings.access.aimAssist);
+// its default is the live setting, which is 1 (today's cone) at the default strength.
+export function pickAimedMany(items, eye, dir, n, { range = 20, maxAngle = 0.35, lift = 1.1, filter = () => true, getPos = (e) => e.pos, coneScale = getAimConeScale() } = {}) {
+  maxAngle *= coneScale;
   const scored = [];
   for (const it of items) {
     if (!filter(it)) continue;

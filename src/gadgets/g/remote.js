@@ -49,7 +49,9 @@ export function createRemoteHandler() {
       hero.bat.animator.play('OverhandThrow', { once: true, timeScale: 1.9, fade: 0.05 });
       // Batman stands still until it lands.
       hero.control = { name: 'remoteSteer', combat: false, canChain: () => false, update: () => !active };
-      sys.time.hold('remote', 0.3);
+      // Player-local (src/core/time.js): with one player it slows the world as always; in co-op
+      // steering never slows the other player's fight.
+      sys.time.hold('remote', 0.3, sys.player);
       sys.gfx.trail.start(pos);
       sys.cameraFocus = pos;
       sys.cameraMode = 'remote';
@@ -61,7 +63,7 @@ export function createRemoteHandler() {
       if (!active) return;
       // A pause drops every time hold each frame (gadgetSystem.halt -> time.releaseAll); this
       // reasserts it the moment play resumes and gadget updates run again.
-      sys.time.hold('remote', 0.3);
+      sys.time.hold('remote', 0.3, sys.player);
       t += real;
       whirr -= real;
       if (whirr <= 0) { whirr = WHIRR; sys.events.emit('remoteWhirr'); }

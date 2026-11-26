@@ -8,6 +8,12 @@ import { createAnimator } from './animator.js';
 import { attachRigid, measureBody, surfaceFrontZ, bindPosition } from './rig.js';
 import { wear, duotone, hideBody, addRim, isSkinMaterial } from './outfitParts.js';
 import { classifySuitVertex, classifyGoonVertex, classifyJokerVertex, SUIT_COLORS, GOON_COLORS, GOON_STRIPES, JOKER_COLORS } from './outfits.js';
+import { suitById } from '../heroes/models/suits.js';
+import { createKit, skirt as coatSkirt, shell as coatShell } from '../heroes/models/kit.js';
+import { createBatmanModel } from '../heroes/models/batman.js';
+import { ENEMY_ROLES, createEnemyLook, GANGS } from '../heroes/models/enemies.js';
+import { hairLocks } from '../heroes/models/costume.js';
+import { installFace } from './face.js';
 
 function splitMeshes(model) {
   const meshes = [];
@@ -36,7 +42,7 @@ function paintRegions(mesh, classify, colors, lm) {
 // hero suits use (paintRegions is the gold suit's own code-painting path), so a new cast member
 // can be built without duplicating the rig, foot-planting or region-painting machinery.
 export function makeCharacter(assets, bodyKey) { return buildCharacter(assets, bodyKey); }
-export { paintRegions, rigidMesh };
+export { paintRegions, rigidMesh, splitBody };
 
 function buildCharacter(assets, bodyKey) {
   const root = new THREE.Group();
@@ -91,6 +97,8 @@ function buildCharacter(assets, bodyKey) {
     face(yaw) { ch.yaw = yaw; root.rotation.y = yaw + (lm.fwd < 0 ? Math.PI : 0); },
     forward: (out = new THREE.Vector3()) => out.set(Math.sin(ch.yaw), 0, Math.cos(ch.yaw)),
     headWorld(out, lift = 0) { ch.bone('Head').getWorldPosition(out); out.y += lift; return out; },
+    // Face and life (face.js): graceful no-ops until a builder installs a face.
+    setExpression() {}, lookAt() {}, talk() {}, blink() {},
   };
   return ch;
 }
@@ -259,14 +267,28 @@ export const enemyPlantsFeet = (e) => !e.air && !e.down && !!e.alive;
 // The heroes' costume materials get a higher shadow floor than the rest of the cast, so the grey
 // suit, gold belt and gloves keep their colour on the unlit side at gameplay distance instead of
 // dropping to near-black under the night sky, plus a slightly stronger rim.
-const HERO_LIFT = 0.55;
-const heroRim = (mat) => addRim(mat, 0x9fc3ff, 0.9, [0.5, 0.62], HERO_LIFT);
+export const HERO_LIFT = 0.55;
+export const heroRim = (mat) => addRim(mat, 0x9fc3ff, 0.9, [0.5, 0.62], HERO_LIFT);
 
+// suit: any id in the suit table (src/heroes/models/suits.js): 'm', 'f', 'gold' and the
+// alternates. Unknown ids (an old or edited save) fall back to the grey suit. Batwoman ('f') keeps
+// her original look exactly; every other suit is built by src/heroes/models/batman.js.
 export function createBat(assets, suit = 'm') {
-  const ch = makeCharacter(assets, suit === 'f' ? 'f' : 'm');
+  const spec = suitById(suit);
+  const ch = spec.hero !== 'batman' ? createBatmanModel(assets, 'm') : spec.look.base === 'f' ? createBatwoman(assets) : createBatmanModel(assets, spec.id);
+  // No eyes or lids under a cowl: the face is the head turn for lookAt (talk/expressions no-op).
+  return installFace(ch, null, { blink: false });
+}
+
+// Batwoman: unchanged in look since the first suit pass. Her rigid parts (ears, fins, pouches,
+// buckle, lenses, hair) are the same shapes in the same places as before, merged into a few
+// skinned meshes by the kit instead of one mesh and one hull each (30 fewer draw calls).
+function createBatwoman(assets) {
+  const suit = 'f';
+  const ch = makeCharacter(assets, 'f');
   const { body, eyes, brows, lm } = ch;
   const colors = SUIT_COLORS[suit];
-  const paint = suit !== 'gold' ? assets.suitTex?.[suit] : null;
+  const paint = assets.suitTex?.[suit];
   if (paint) {
     body.geometry = body.geometry.clone();
     // The paint carries the muscle detail; the body's normal map only adds a little relief so it
@@ -287,105 +309,77 @@ export function createBat(assets, suit = 'm') {
   brows.visible = false;
   addHullOutline(body, 0.011);
 
+  // The cast's lift for the ears (as before), the hero lift for the rest, and the hair's warm rim.
+  const kit = createKit(ch, { lift: HERO_LIFT, rimStrength: 0.9 })
+    .slot('ears', { lift: 0.32, rim: 0x9fc3ff, rimStrength: 0.8 })
+    .slot('hair', { lift: 0.32, rim: 0xffc9a0, rimStrength: 0.4 });
+
   // White comic lenses, slanted like a frown.
-  const lensMat = new THREE.MeshBasicMaterial({ color: PALETTE.paper });
   for (const side of [-1, 1]) {
-    const lens = rigidMesh(
-      new THREE.CircleGeometry(1, 20).scale(0.02, 0.0085, 1), lensMat,
-      new THREE.Vector3(side * lm.eyeSpread, lm.eyeY + 0.003, lm.eyeFrontZ + 0.012 * lm.fwd),
-      new THREE.Euler(0, (lm.fwd < 0 ? Math.PI : 0) + side * 0.4 * lm.fwd, -side * 0.3),
-    );
-    lens.castShadow = false;
-    attachRigid(body, 'Head', lens);
+    kit.rigid(new THREE.CircleGeometry(1, 20).scale(0.02, 0.0085, 1), {
+      bone: 'Head', slot: 'unlit', color: PALETTE.paper, outline: 0,
+      pos: new THREE.Vector3(side * lm.eyeSpread, lm.eyeY + 0.003, lm.eyeFrontZ + 0.012 * lm.fwd),
+      rot: new THREE.Euler(0, (lm.fwd < 0 ? Math.PI : 0) + side * 0.4 * lm.fwd, -side * 0.3),
+    });
   }
 
-  const cowlMat = addRim(toonMaterial({ color: colors.cowl }));
   // Tall, slightly swept-back ears with a flat inner face, like the classic cowl.
   const earShape = new THREE.Shape([new THREE.Vector2(-0.03, 0), new THREE.Vector2(0.03, 0), new THREE.Vector2(0.004, 0.14)]);
   const earGeo = new THREE.ExtrudeGeometry(earShape, { depth: 0.035, bevelEnabled: true, bevelThickness: 0.006, bevelSize: 0.005, bevelSegments: 1 }).translate(0, 0, -0.0175);
   for (const side of [-1, 1]) {
-    const ear = rigidMesh(
-      earGeo, cowlMat,
-      new THREE.Vector3(side * lm.headRadius * 0.58, lm.headTop - 0.035, lm.headCenter.z - 0.01 * lm.fwd),
-      new THREE.Euler(-0.12 * lm.fwd, 0, -side * 0.1),
-    );
-    attachRigid(body, 'Head', ear);
-    addHullOutline(ear, 0.006);
+    kit.rigid(earGeo, { bone: 'Head', slot: 'ears', color: colors.cowl, outline: 0.006, smooth: false,
+      pos: new THREE.Vector3(side * lm.headRadius * 0.58, lm.headTop - 0.035, lm.headCenter.z - 0.01 * lm.fwd),
+      rot: new THREE.Euler(-0.12 * lm.fwd, 0, -side * 0.1) });
   }
 
   // Gear from the outfit pack: boots and gauntlets, recolored to the suit. The body's own
   // shins and forearms are hidden under them.
   const gear = { a: [0x0b0b12, colors.boot], b: [0x0b0b12, colors.boot] };
   const glove = { a: [0x0b0b12, colors.glove], b: [0x0b0b12, colors.glove] };
-  const female = suit === 'f';
   hideBody(body, (p) => p.y < lm.kneeY - 0.14 || Math.abs(p.x) > lm.elbowX + 0.07);
-  wear(ch, assets.outfits, female ? 'Female_Ranger_Feet' : 'Male_Ranger_Feet_Boots', (m) => duotone(m.map, m.normalMap, gear, HERO_LIFT));
-  wear(ch, assets.outfits, female ? 'Female_Ranger_Arms' : 'Male_Ranger_Arms', (m) => (isSkinMaterial(m)
+  wear(ch, assets.outfits, 'Female_Ranger_Feet', (m) => duotone(m.map, m.normalMap, gear, HERO_LIFT));
+  wear(ch, assets.outfits, 'Female_Ranger_Arms', (m) => (isSkinMaterial(m)
     ? heroRim(toonMaterial({ color: colors.glove }))
     : duotone(m.map, m.normalMap, glove, HERO_LIFT)));
   // Three fins on each gauntlet.
-  const finMat = heroRim(toonMaterial({ color: colors.glove }));
   const finGeo = new THREE.ConeGeometry(0.018, 0.075, 3).rotateZ(Math.PI / 2);
   for (const [bone, side] of [['lowerarm_l', 1], ['lowerarm_r', -1]]) {
     const elbow = bindPosition(body, bone);
     for (let k = 0; k < 3; k++) {
-      const fin = rigidMesh(finGeo, finMat, new THREE.Vector3(elbow.x + side * (0.08 + k * 0.045), elbow.y - 0.045, elbow.z - 0.01 * lm.fwd), new THREE.Euler(0, 0, side * 0.4));
-      attachRigid(body, bone, fin);
-      addHullOutline(fin, 0.004);
+      kit.rigid(finGeo, { bone, color: colors.glove, outline: 0.004, smooth: false,
+        pos: new THREE.Vector3(elbow.x + side * (0.08 + k * 0.045), elbow.y - 0.045, elbow.z - 0.01 * lm.fwd), rot: new THREE.Euler(0, 0, side * 0.4) });
     }
   }
   // Utility belt: pouches and a buckle around the waist.
-  const pouchMat = heroRim(toonMaterial({ color: colors.belt }));
   const waist = lm.beltY;
   const hipZ = bindPosition(body, 'pelvis').z;
+  const pouchGeo = new THREE.BoxGeometry(0.055, 0.07, 0.035);
   for (let k = 0; k < 8; k++) {
     const a = (k / 8) * Math.PI * 2 + Math.PI / 8;
     if (Math.abs(Math.cos(a)) > 0.9 && Math.cos(a) * lm.fwd > 0) continue;
     const r = lm.hipHalfWidth * 0.78;
-    const pouch = rigidMesh(new THREE.BoxGeometry(0.055, 0.07, 0.035), pouchMat,
-      new THREE.Vector3(Math.sin(a) * r, waist - 0.005, hipZ + Math.cos(a) * r * 0.72), new THREE.Euler(0, a, 0));
-    attachRigid(body, 'pelvis', pouch);
-    addHullOutline(pouch, 0.004);
+    kit.rigid(pouchGeo, { bone: 'pelvis', color: colors.belt, outline: 0.004, smooth: false,
+      pos: new THREE.Vector3(Math.sin(a) * r, waist - 0.005, hipZ + Math.cos(a) * r * 0.72), rot: new THREE.Euler(0, a, 0) });
   }
-  const buckle = rigidMesh(new THREE.BoxGeometry(0.075, 0.055, 0.02), pouchMat,
-    new THREE.Vector3(0, waist, surfaceFrontZ(body, waist, lm.fwd) + 0.012 * lm.fwd), new THREE.Euler(0, lm.fwd < 0 ? Math.PI : 0, 0));
-  attachRigid(body, 'pelvis', buckle);
-  addHullOutline(buckle, 0.004);
+  kit.rigid(new THREE.BoxGeometry(0.075, 0.055, 0.02), { bone: 'pelvis', color: colors.belt, outline: 0.004, smooth: false,
+    pos: new THREE.Vector3(0, waist, surfaceFrontZ(body, waist, lm.fwd) + 0.012 * lm.fwd), rot: new THREE.Euler(0, lm.fwd < 0 ? Math.PI : 0, 0) });
   body.material = heroRim(body.material);
 
-  // The painted suits carry the emblem in their texture; the gold suit (vertex regions) wears a
-  // flat emblem mesh on the chest instead.
-  if (!paint) {
-    const shape = new THREE.Shape(batOutline().map(([x, y]) => new THREE.Vector2(x, y)));
-    // The female body's emblem sits above the bust, on the flat of the upper chest.
-    const emblemY = lm.chestY + (suit === 'f' ? 0.085 : 0);
-    const emblemZ = suit === 'f' ? surfaceFrontZ(body, emblemY, lm.fwd) : lm.chestFrontZ;
-    const emblemGeo = new THREE.ShapeGeometry(shape).scale(suit === 'f' ? 0.0024 : 0.0033, suit === 'f' ? 0.0024 : 0.0033, 1);
-    const emblem = rigidMesh(
-      emblemGeo,
-      new THREE.MeshBasicMaterial({ color: colors.emblem, polygonOffset: true, polygonOffsetFactor: -2 }),
-      new THREE.Vector3(0, emblemY, emblemZ + 0.012 * lm.fwd),
-      new THREE.Euler(0, lm.fwd < 0 ? Math.PI : 0, 0),
-    );
-    emblem.castShadow = false;
-    attachRigid(body, 'spine_03', emblem);
+  // Long red hair, shrunk toward the head center so the cowl covers the crown and only the long
+  // fall shows.
+  const src = [];
+  assets.hair.traverse((o) => { if (o.isMesh) src.push(o); });
+  for (const h of src) {
+    const c = lm.headCenter;
+    const geo = h.geometry.clone().translate(-c.x, -c.y, -c.z).scale(0.9, 0.9, 0.95).translate(c.x, c.y - 0.01, c.z - 0.01 * lm.fwd);
+    kit.rigid(geo, { bone: 'Head', slot: 'hair', color: PALETTE.hairRed, outline: 0.006, smooth: false });
   }
-
-  if (suit === 'f') {
-    const src = [];
-    assets.hair.traverse((o) => { if (o.isMesh) src.push(o); });
-    for (const h of src) {
-      // Shrink toward the head center so the cowl covers the crown and only the long fall shows.
-      const c = lm.headCenter;
-      const geo = h.geometry.clone().translate(-c.x, -c.y, -c.z).scale(0.9, 0.9, 0.95).translate(c.x, c.y - 0.01, c.z - 0.01 * lm.fwd);
-      const hair = rigidMesh(geo, addRim(toonMaterial({ color: PALETTE.hairRed }), 0xffc9a0, 0.4), new THREE.Vector3());
-      attachRigid(body, 'Head', hair);
-      addHullOutline(hair, 0.006);
-    }
-  }
+  kit.build();
 
   ch.suit = suit;
   ch.colors = colors;
+  // The cape is the hero's default cloth, cut exactly as before.
+  ch.meta = { heightScale: 1, cape: { color: colors.cape, options: {} }, hands: { l: 'hand_l', r: 'hand_r' }, props: 'none', palette: colors };
   ch.animator.play('Idle_Loop');
   ch.dressed();
   return ch;
@@ -449,15 +443,25 @@ let goonBody = null;
 // a body xray plus one per clothing piece, all stacked and alpha-blended over the same pixels.
 let xrayBodyFull = null;
 
-// type: 'grunt' | 'knife' | 'brute' | 'rifle' | 'civilian' (a bystander for street crimes, never an enemy)
-export function createGoon(assets, { type = 'grunt', rng = null } = {}) {
+// type: 'grunt' | 'knife' | 'brute' | 'rifle' | 'civilian' (a bystander for street crimes, never an enemy),
+// or one of the role looks in src/heroes/models/enemies.js ('shield', 'baton', 'heavy', 'gunner',
+// 'sniper', 'ninja', 'medic'), dressed in a district gang's colours (gang: 'joker', 'penguin', ...).
+export function createGoon(assets, { type = 'grunt', rng = null, gang = 'joker' } = {}) {
+  if (ENEMY_ROLES.includes(type)) return createEnemyLook(assets, type, { gang, rng });
   const pick = (arr) => arr[Math.floor((rng ? rng.next() : Math.random()) * arr.length)];
   const ch = makeCharacter(assets, 'm');
   const { body, eyes, brows, lm } = ch;
   const brute = type === 'brute';
   const civilian = type === 'civilian';
   const look = GOON_LOOKS[civilian ? 'civilian' : brute ? 'brute' : type === 'knife' ? 'knife' : type === 'rifle' ? 'rifle' : pick(['striped', 'striped', 'hoodie'])];
-  const scheme = civilian ? CIVILIAN_SCHEME : type === 'knife' ? GOON_SCHEMES[1] : type === 'rifle' ? GOON_SCHEMES[2] : brute ? GOON_SCHEMES[3] : pick(GOON_SCHEMES);
+  const clownScheme = civilian ? CIVILIAN_SCHEME : type === 'knife' ? GOON_SCHEMES[1] : type === 'rifle' ? GOON_SCHEMES[2] : brute ? GOON_SCHEMES[3] : pick(GOON_SCHEMES);
+  // [m45] A night fight names its gang (encounters.js passes it), but only the role figures wore
+  // it: the four original types came out in the Joker's purple and green and a clown mask in every
+  // district (a Hollow Man on Park Row dressed as a clown). Any gang but the Joker's now dresses
+  // them too: its colours on the same wardrobe, and a plain mask in its head colour instead of the
+  // clown face. No gang, or the Joker's (Night One, every old call site): exactly as before.
+  const G = !civilian && gang && gang !== 'joker' ? GANGS[gang] ?? null : null;
+  const scheme = G ? { a: [G.outer, G.top], b: [G.bottom, G.vest] } : clownScheme;
   // Every goon's painted, trimmed body is identical, so they all share one geometry: a new copy
   // per goon meant megabytes of vertex upload (a 30 ms hitch) each time a wave spawned.
   if (goonBody) body.geometry = goonBody;
@@ -488,7 +492,7 @@ export function createGoon(assets, { type = 'grunt', rng = null } = {}) {
     const maskGeo = new THREE.SphereGeometry(r, 24, 16, Math.PI * 0.025, Math.PI * 0.95, Math.PI * 0.2, Math.PI * 0.55);
     const kind = brute ? 'hockey' : pick(['smile', 'smile', 'sad', 'zigzag']);
     const mask = rigidMesh(
-      maskGeo, addRim(toonMaterial({ map: maskTex(kind) }), 0xffffff, 0.35),
+      maskGeo, addRim(G ? toonMaterial({ color: G.hat }) : toonMaterial({ map: maskTex(kind) }), 0xffffff, 0.35),
       lm.headCenter.clone().add(new THREE.Vector3(0, -0.01, 0.012 * lm.fwd)),
       new THREE.Euler(0, lm.fwd < 0 ? Math.PI : 0, 0),
     );
@@ -497,7 +501,7 @@ export function createGoon(assets, { type = 'grunt', rng = null } = {}) {
   }
 
   if (look.hat === 'bandana') {
-    const band = rigidMesh(new THREE.CylinderGeometry(r * 1.03, r * 1.05, 0.06, 20, 1, true), toonMaterial({ color: PALETTE.crimson, side: THREE.DoubleSide }), lm.headCenter.clone().add(new THREE.Vector3(0, 0.045, 0)));
+    const band = rigidMesh(new THREE.CylinderGeometry(r * 1.03, r * 1.05, 0.06, 20, 1, true), toonMaterial({ color: G ? G.accent : PALETTE.crimson, side: THREE.DoubleSide }), lm.headCenter.clone().add(new THREE.Vector3(0, 0.045, 0)));
     attachRigid(body, 'Head', band);
   } else if (look.hat === 'beanie') {
     const beanie = rigidMesh(
@@ -519,6 +523,8 @@ export function createGoon(assets, { type = 'grunt', rng = null } = {}) {
     if (lm.fwd < 0) knife.rotation.y = Math.PI;
     attachRigid(body, 'hand_r', knife);
     addHullOutline(blade, 0.004);
+    // The held weapon: enemy.js hides it when the knife is dropped (disarm, fear).
+    ch.prop = knife;
   }
   if (type === 'rifle') {
     // A rifle built from blocks: receiver, barrel, wooden stock, magazine and a short scope, held
@@ -573,24 +579,34 @@ export function createJoker(assets) {
   for (const part of ['Male_Ranger_Body', 'Male_Ranger_Legs', 'Male_Peasant_Feet', 'Male_Ranger_Arms']) {
     wear(ch, assets.outfits, part, (src) => (isSkinMaterial(src) ? glove : duotone(src.map, src.normalMap, suitScheme)));
   }
-  // Spiky green hair from a crown of cones.
-  const hairMat = toonMaterial({ color: 0x3f9e34 });
-  const c = lm.headCenter;
-  const r = lm.headRadius;
-  for (let i = 0; i < 16; i++) {
-    const a = (i / 16) * Math.PI * 2;
-    const back = Math.cos(a) * lm.fwd < 0.2;
-    if (!back && i % 2) continue;
-    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.2, 6), hairMat);
-    const dir = new THREE.Vector3(Math.sin(a) * 0.8, 0.9, Math.cos(a) * 0.8 - 0.25 * lm.fwd).normalize();
-    cone.position.set(c.x + Math.sin(a) * r * 0.7, c.y + r * 0.7, c.z + Math.cos(a) * r * 0.7 - 0.02 * lm.fwd);
-    cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-    attachRigid(body, 'Head', cone);
-    addHullOutline(cone, 0.005);
+  // Green hair swept back off a high forehead: a cap lifted off the scalp and long locks,
+  // merged into one mesh by the kit (was 17 cones and a dome, each with its own hull).
+  const hairKit = createKit(ch, { lift: 0.32, rimStrength: 0.5 });
+  hairLocks(hairKit, xrayBodyFull, lm, { color: 0x3f9e34, volume: 0.02, fringe: false, sweep: 1.2 });
+  // [chars2] The long purple coat that makes his silhouette: skirts to below the knee, open in
+  // front and split behind, a high standing collar, and a floppy bow tie, all merged into the
+  // same kit mesh as the hair (no extra draw calls).
+  const fwd = lm.fwd, yaw = fwd < 0 ? Math.PI : 0, neck = bindPosition(body, 'neck_01');
+  for (const [from, to] of [[0.42, Math.PI - 0.04], [Math.PI + 0.04, Math.PI * 2 - 0.42]]) {
+    hairKit.skinned(coatSkirt(body, lm, { top: lm.beltY + 0.02, bottom: lm.kneeY - 0.12, rTop: lm.hipHalfWidth * 0.8, rBottom: lm.hipHalfWidth * 1.05, depth: 0.82, from, to, segs: 12, rows: 5, color: 0x5e3592 }), { outline: 0.005 });
   }
-  const cap = rigidMesh(new THREE.SphereGeometry(r * 1.04, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.45), hairMat, c.clone().add(new THREE.Vector3(0, 0.02, -0.01 * lm.fwd)));
-  attachRigid(body, 'Head', cap);
-  addHullOutline(cap, 0.005);
+  // The coat's body over the outfit's vest: back and sides from the shoulders to the waist, wide
+  // open in front so the green waistcoat shows.
+  hairKit.skinned(coatShell(xrayBodyFull, {
+    pick: (p, n) => {
+      const ax = Math.abs(p.x);
+      if (p.y < lm.beltY - 0.02 || p.y > lm.neckY - 0.01 || (ax > lm.shoulderX + 0.06 && p.y > lm.chestY - 0.12)) return false;
+      return !(n.z * fwd > -0.2 && ax < 0.12 + Math.max(0, p.y - lm.chestY) * 0.4);
+    },
+    offset: 0.032, color: 0x5e3592, uv: false,
+  }), { outline: 0.005 });
+  const collarGeo = new THREE.CylinderGeometry(0.12, 0.095, 0.12, 16, 1, true, Math.PI * 0.3, Math.PI * 1.4);
+  hairKit.rigid(collarGeo, { bone: 'spine_03', color: 0x5e3592, outline: 0.005, pos: [0, neck.y + 0.01, neck.z - 0.015 * fwd], rot: [-0.15 * fwd, yaw, 0] });
+  hairKit.rigid(collarGeo, { bone: 'spine_03', color: 0x3c8a2a, outline: 0, pos: [0, neck.y + 0.01, neck.z - 0.015 * fwd], rot: [-0.15 * fwd, yaw, 0], scale: [-0.97, 1, 0.97] });
+  const bow = new THREE.Shape([[-0.07, 0.03], [0, 0.006], [0.07, 0.03], [0.065, -0.03], [0, -0.006], [-0.065, -0.03]].map(([x, y]) => new THREE.Vector2(x, y)));
+  hairKit.rigid(new THREE.ExtrudeGeometry(bow, { depth: 0.02, bevelEnabled: false }).translate(0, 0, -0.01), { bone: 'spine_03', color: 0xe8923a, outline: 0.003, pos: [0, lm.neckY - 0.035, lm.chestFrontZ + 0.05 * fwd], rot: [0, yaw, 0] });
+  hairKit.rigid(new THREE.SphereGeometry(0.018, 8, 6), { bone: 'spine_03', color: 0x3c8a2a, outline: 0.002, pos: [0, lm.neckY - 0.035, lm.chestFrontZ + 0.065 * fwd] });
+  hairKit.build();
   // A flower in the lapel, naturally.
   const flower = rigidMesh(new THREE.IcosahedronGeometry(0.035, 0), new THREE.MeshBasicMaterial({ color: PALETTE.neonPink }), new THREE.Vector3(0.1, lm.chestY + 0.06, lm.chestFrontZ + 0.02 * lm.fwd));
   attachRigid(body, 'spine_03', flower);

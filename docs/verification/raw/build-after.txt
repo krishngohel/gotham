@@ -1,0 +1,42 @@
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 628 modules transformed.
+rendering chunks...
+computing gzip size...
+../gotham-ln2-verify/dist/index.html                                2.63 kB │ gzip:     1.08 kB
+../gotham-ln2-verify/dist/assets/index-B4HPXxjb.css                63.97 kB │ gzip:    13.31 kB
+../gotham-ln2-verify/dist/assets/rolldown-runtime-DK3Fl9T5.js       0.15 kB │ gzip:     0.15 kB
+../gotham-ln2-verify/dist/assets/webrtc-Ds_ksIjg.js                 0.25 kB │ gzip:     0.19 kB
+../gotham-ln2-verify/dist/assets/multiView-_oD5l7qZ.js              0.67 kB │ gzip:     0.43 kB
+../gotham-ln2-verify/dist/assets/batgirl-Bhv-SamG.js                1.70 kB │ gzip:     0.97 kB
+../gotham-ln2-verify/dist/assets/superman-yzifvMXK.js               1.96 kB │ gzip:     1.06 kB
+../gotham-ln2-verify/dist/assets/gaslightBat-siQFVUEs.js            1.99 kB │ gzip:     1.12 kB
+../gotham-ln2-verify/dist/assets/futureBat-SBILzVWl.js              2.04 kB │ gzip:     1.18 kB
+../gotham-ln2-verify/dist/assets/robin-Ci58DrKG.js                  2.87 kB │ gzip:     1.46 kB
+../gotham-ln2-verify/dist/assets/redHood-FKjDLDh2.js                4.32 kB │ gzip:     2.17 kB
+../gotham-ln2-verify/dist/assets/perfBench-ChATQXpt.js              6.06 kB │ gzip:     2.77 kB
+../gotham-ln2-verify/dist/assets/perfProbe-DFzg7c-l.js              6.83 kB │ gzip:     2.87 kB
+../gotham-ln2-verify/dist/assets/villains-BOjyndWB.js              10.71 kB │ gzip:     3.85 kB
+../gotham-ln2-verify/dist/assets/toon-BxYytmrL.js                  16.62 kB │ gzip:     5.92 kB
+../gotham-ln2-verify/dist/assets/netUi-C3uyUAuY.js                 23.69 kB │ gzip:     9.12 kB
+../gotham-ln2-verify/dist/assets/mocapData.heroes-BdoF-pnP.js      28.90 kB │ gzip:     9.89 kB
+../gotham-ln2-verify/dist/assets/mocapData.story-CJQsz-Nt.js       54.78 kB │ gzip:    11.52 kB
+../gotham-ln2-verify/dist/assets/dist-4ZQI-8Lr.js                  74.49 kB │ gzip:    26.58 kB
+../gotham-ln2-verify/dist/assets/netGame-9WdSZu5g.js               77.02 kB │ gzip:    29.17 kB
+../gotham-ln2-verify/dist/assets/mocapData.enemies-BO5I2aqQ.js     78.81 kB │ gzip:    21.02 kB
+../gotham-ln2-verify/dist/assets/mocapData.combat2-Z2xHdMM6.js     83.78 kB │ gzip:    25.21 kB
+../gotham-ln2-verify/dist/assets/characters-g4GIhgna.js           133.19 kB │ gzip:    46.76 kB
+../gotham-ln2-verify/dist/assets/mocapData.civ-cMEvPG9c.js        134.51 kB │ gzip:    27.83 kB
+../gotham-ln2-verify/dist/assets/palette-DwK0gHr0.js              277.22 kB │ gzip:    75.13 kB
+../gotham-ln2-verify/dist/assets/index-2tGDtlEf.js              2,957.36 kB │ gzip: 1,033.19 kB
+
+[33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/heroes/models/nightwing.js is dynamically imported by src/heroes/kitModels.js but also statically imported by src/actors/nightwingChar.js, dynamic import will not move module into another chunk.
+[39m
+[33m[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 1500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/net/transport/webrtc.js is dynamically imported by src/net/signal/signallers.js but also statically imported by src/net/game/netGame.js, src/net/signal/signallers.js, dynamic import will not move module into another chunk.
+[39m
+[32m✓ built in 682ms[39m

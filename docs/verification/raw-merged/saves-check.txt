@@ -1,0 +1,265 @@
+{
+ "save": "early.json",
+ "made": "5fe2c7f ?at=toYard",
+ "saved": {
+  "stepId": "toYard",
+  "finished": false,
+  "trophies": 0,
+  "wayne": {
+   "xp": 0,
+   "owned": [],
+   "medals": {}
+  }
+ },
+ "title": [
+  "Continue6% complete · Slot 1",
+  "New game",
+  "Save slots",
+  "Two players",
+  "Host online",
+  "Join with code",
+  "What's new",
+  "Settings"
+ ],
+ "slotText": [
+  "Save slots"
+ ],
+ "loaded": {
+  "step": "toYard",
+  "mode": "play",
+  "night": "n1",
+  "finished": false,
+  "trophies": 0,
+  "challenges": {},
+  "wayneOwned": [],
+  "wayneXp": 0,
+  "stats": {
+   "playTime": 411.4104000000124,
+   "kos": 60,
+   "longestCombo": 23,
+   "topGlideSpeed": 0,
+   "distanceGlided": 0,
+   "photos": 0
+  },
+  "suit": "m",
+  "abilities": [
+   "move",
+   "crouch",
+   "ledge",
+   "glide",
+   "punch",
+   "kick",
+   "counter",
+   "stomp",
+   "map",
+   "photoMode",
+   "gadgets",
+   "grapple",
+   "zipline",
+   "batmobile",
+   "batmobileCall",
+   "diveBomb",
+   "carRadio"
+  ],
+  "mode2": "story",
+  "gadgets": [
+   "claw"
+  ]
+ },
+ "errors": []
+}
+{
+ "save": "finished.json",
+ "made": "5fe2c7f ?at=credits",
+ "saved": {
+  "stepId": "credits",
+  "finished": true,
+  "trophies": 8,
+  "wayne": {
+   "xp": 4000,
+   "owned": [
+    "plating1",
+    "reflexes",
+    "kevlar",
+    "flow"
+   ],
+   "medals": {}
+  }
+ },
+ "title": [
+  "Continue45% complete · Slot 1",
+  "New game",
+  "New Game Plus",
+  "Save slots",
+  "Two players",
+  "Host online",
+  "Join with code",
+  "What's new"
+ ],
+ "slotText": [
+  "Save slots"
+ ],
+ "loaded": {
+  "step": "n2Recap",
+  "mode": "cutscene",
+  "night": "n2",
+  "finished": true,
+  "trophies": 8,
+  "challenges": {
+   "signalToSea": "gold",
+   "neonSlalom": "silver",
+   "bellTowerDive": "bronze"
+  },
+  "wayneOwned": [
+   "plating1",
+   "kevlar",
+   "reflexes",
+   "flow"
+  ],
+  "wayneXp": 4000,
+  "stats": {
+   "playTime": 5406.0666,
+   "kos": 240,
+   "longestCombo": 23,
+   "topGlideSpeed": 0,
+   "distanceGlided": 0,
+   "photos": 0
+  },
+  "suit": "f",
+  "abilities": [
+   "move",
+   "crouch",
+   "ledge",
+   "glide",
+   "punch",
+   "kick",
+   "counter",
+   "stomp",
+   "map",
+   "photoMode",
+   "gadgets",
+   "grapple",
+   "zipline",
+   "batmobile",
+   "batmobileCall",
+   "dodge",
+   "throw",
+   "moveStrikes",
+   "diveBomb",
+   "comboFinisher",
+   "aerialAttacks",
+   "groundPound",
+   "wallRun",
+   "capeStun",
+   "silentTakedown",
+   "perch",
+   "detective",
+   "beatdown",
+   "eject",
+   "ledgeTakedown",
+   "batwing",
+   "fastTravel",
+   "carRadio",
+   "policeAttention",
+   "takeCar",
+   "hailTaxi",
+   "specialTakedown"
+  ],
+  "mode2": "story",
+  "gadgets": [
+   "remote",
+   "gel",
+   "smoke",
+   "launcher",
+   "claw",
+   "freeze"
+  ]
+ },
+ "errors": []
+}
+{
+ "save": "mid.json",
+ "made": "5fe2c7f ?at=toAce",
+ "saved": {
+  "stepId": "toAce",
+  "finished": false,
+  "trophies": 0,
+  "wayne": {
+   "xp": 0,
+   "owned": [],
+   "medals": {}
+  }
+ },
+ "title": [
+  "Continue18% complete · Slot 1",
+  "New game",
+  "Save slots",
+  "Two players",
+  "Host online",
+  "Join with code",
+  "What's new",
+  "Settings"
+ ],
+ "slotText": [
+  "Save slots"
+ ],
+ "loaded": {
+  "step": "toAce",
+  "mode": "play",
+  "night": "n1",
+  "finished": false,
+  "trophies": 0,
+  "challenges": {},
+  "wayneOwned": [],
+  "wayneXp": 0,
+  "stats": {
+   "playTime": 1811.4994999999756,
+   "kos": 60,
+   "longestCombo": 23,
+   "topGlideSpeed": 0,
+   "distanceGlided": 0,
+   "photos": 0
+  },
+  "suit": "m",
+  "abilities": [
+   "move",
+   "crouch",
+   "ledge",
+   "glide",
+   "punch",
+   "kick",
+   "counter",
+   "stomp",
+   "map",
+   "photoMode",
+   "gadgets",
+   "grapple",
+   "zipline",
+   "batmobile",
+   "batmobileCall",
+   "dodge",
+   "throw",
+   "moveStrikes",
+   "diveBomb",
+   "comboFinisher",
+   "aerialAttacks",
+   "groundPound",
+   "wallRun",
+   "capeStun",
+   "silentTakedown",
+   "perch",
+   "detective",
+   "carRadio",
+   "policeAttention"
+  ],
+  "mode2": "story",
+  "gadgets": [
+   "remote",
+   "gel",
+   "smoke",
+   "launcher",
+   "claw"
+  ]
+ },
+ "errors": []
+}

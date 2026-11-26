@@ -1,0 +1,66 @@
+== 5821 14:23 gpu 69 %
+high gcpd roof      58 fps
+high docks          150 fps
+high neon street    113 fps
+high ace chemicals  105 fps
+high clock plaza    4 fps
+low  gcpd roof      52 fps
+low  docks          40 fps
+low  neon street    107 fps
+low  ace chemicals  69 fps
+low  clock plaza    157 fps
+== 5822 14:27 gpu 97 %
+high gcpd roof      73 fps
+high docks          6 fps
+high neon street    85 fps
+high ace chemicals  28 fps
+high clock plaza    112 fps
+low  gcpd roof      76 fps
+low  docks          128 fps
+low  neon street    129 fps
+low  ace chemicals  106 fps
+low  clock plaza    145 fps
+== 5823 14:32 gpu 29 %
+high gcpd roof      122 fps
+high docks          133 fps
+high neon street    139 fps
+high ace chemicals  83 fps
+high clock plaza    161 fps
+low  gcpd roof      160 fps
+low  docks          171 fps
+low  neon street    165 fps
+low  ace chemicals  130 fps
+low  clock plaza    193 fps
+== 5821 14:35 gpu 58 %
+high gcpd roof      107 fps
+high docks          92 fps
+high neon street    200 fps
+high ace chemicals  128 fps
+high clock plaza    229 fps
+low  gcpd roof      146 fps
+low  docks          212 fps
+low  neon street    194 fps
+low  ace chemicals  159 fps
+low  clock plaza    395 fps
+== 5822 14:36 gpu 37 %
+high gcpd roof      89 fps
+high docks          123 fps
+high neon street    114 fps
+high ace chemicals  83 fps
+high clock plaza    95 fps
+low  gcpd roof      103 fps
+low  docks          131 fps
+low  neon street    118 fps
+low  ace chemicals  95 fps
+low  clock plaza    83 fps
+== 5823 14:40 gpu 35 %
+high gcpd roof      120 fps
+high docks          95 fps
+high neon street    122 fps
+high ace chemicals  60 fps
+high clock plaza    153 fps
+low  gcpd roof      77 fps
+low  docks          169 fps
+low  neon street    138 fps
+low  ace chemicals  110 fps
+low  clock plaza    185 fps

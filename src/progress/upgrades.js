@@ -1,6 +1,7 @@
 // WayneTech: four trees of five upgrades, one point each, each needing the one above it. Every
 // effect is a number in one shared effects object that combat, the hero and the gadgets read. Pure.
 import { damageToHero } from '../combat/rules.js';
+import { treeEffects } from './skillTree.js';
 export const TREES = [
   { id: 'armor', name: 'Armor', upgrades: [
     { id: 'plating1', name: 'Reinforced Plating', text: 'Max health +25.' },
@@ -47,6 +48,28 @@ export const BASE_EFFECTS = Object.freeze({
   batarangCount: 1, gelRadius: 4, smokeCooldown: 12, clawTargets: 1, freezeTime: 5,
   // Traversal (hero.tuning reads these names)
   boostUp: 15, boostOut: 9, diveGain: 1, glideMax: 48, wallRunTime: 1.2, ladderSlide: 9, diveRadius: 4,
+  // ---- [prog] Wave 3 skill tree (src/progress/skillTree.js, docs/design/progression.md) ----
+  // Armor
+  coldMult: 1, fireMult: 1, gasMult: 1, sniperMult: 1, secondWind: 0,
+  // Combat (read by combat, workstream I2; partnerTakedown by co-op glue)
+  multiCounter: 1, shieldBreak: false, disarmDestroy: false, aerialDamage: 1, beatdownFinisher: false, partnerTakedown: false,
+  // New gadgets (src/gadgets/g/*)
+  disruptorCharges: 2, sonicStun: false, hackWindow: 1, shockChargeRate: 1, glueRadius: 3, trackerTags: 1,
+  droneTime: 20, bolasTargets: 1, empRadius: 6, decoyTime: 8, gadgetCombo: false,
+  // Traversal (workstream L3 reads these)
+  grappleRange: 1, grappleReel: 1, grappleBoost: false, glideReGrapple: false, grapplePull: false, wingsuit: 0,
+  elSurfer: false, updrafts: false,
+  // Predator
+  silentGlide: false, footstepNoise: 1, invertedTakedown: false, fearTakedowns: 1, fearGain: 1, ledgeTakedownPlus: false,
+  // Detective
+  detectiveRange: 1, scanSpeed: 1, trackerPersist: false, hackRange: 12,
+  // Vehicle (L3)
+  carTopSpeed: 1, carRamDamage: 1, carArmor: 1, carAfterburner: false,
+  // Wayne (bought with Standing; K reads most of these)
+  xpMult: 1, rndDelivery: false, suspicionMult: 1, pursuitModules: false, crimeForewarning: false, fatigueRecovery: 1,
+  downtownCave: false, heatRelief: 0, alliesOnCall: false,
+  // Kit branches
+  sigCooldownMult: 1, sigPower: 1, acrobatChain: false, dodgeWindow: 0, restraint: 0, heatVision: false, freezeBreath: false,
 });
 
 const APPLY = {
@@ -72,12 +95,15 @@ const APPLY = {
   seismic: (e) => { e.diveRadius = 6; },
 };
 
-// Rebuilds `out` (the live effects object) from the owned upgrades.
-export function upgradeEffects(owned, out = {}) {
-  Object.assign(out, BASE_EFFECTS);
-  for (const u of UPGRADES) if (owned.includes(u.id)) APPLY[u.id](out);
-  return out;
+// Rebuilds `out` (the live effects object) from the owned upgrades. [prog] Wave 3: any skill-tree
+// node id is welcome (src/progress/skillTree.js declares every node's ops; the old 20 keep exactly
+// the numbers APPLY gives them, checked by tests/unit/skillTree.test.js). `opts.hero` turns on that
+// hero's kit nodes; `opts.extra` adds more ops after the tree (suit perks).
+export function upgradeEffects(owned, out = {}, opts = {}) {
+  return treeEffects(owned, BASE_EFFECTS, out, opts);
 }
+// The original appliers, kept as the reference the data must match.
+export const LEGACY_APPLY = APPLY;
 
 export function canBuy(owned, id, free) {
   const u = byId.get(id);
@@ -98,9 +124,13 @@ export function upgradeStatus(owned, id, free) {
 // throws) and `buzzer` (the joy-buzzer floor tiles), and `rifle` is the rifle goon's shot: Kevlar
 // Weave covers all three, as it does knives.
 const RANGED = new Set(['gas', 'buzzer', 'rifle']);
+// [prog] Wave 3 resistances: cold (ice, freeze rays), fire, gas (and fear toxin) and long shots
+// (rifle, sniper) each have their own multiplier on top; all are 1 until a node lowers them.
+const EXTRA = { cold: 'coldMult', ice: 'coldMult', fire: 'fireMult', burn: 'fireMult', gas: 'gasMult', toxin: 'gasMult', rifle: 'sniperMult', sniper: 'sniperMult' };
 export function damageFactor(kind, e) {
   const k = kind === 'knife' ? e.knifeMult : RANGED.has(kind) ? e.rangedMult : 1;
-  return k * e.damageMult;
+  const x = EXTRA[kind] ? e[EXTRA[kind]] ?? 1 : 1;
+  return k * x * e.damageMult;
 }
 
 // Damage that reaches Batman after armor, rounded to hundredths: goon attacks (combat) and the

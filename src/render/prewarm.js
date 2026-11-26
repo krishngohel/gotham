@@ -1,5 +1,5 @@
 // First-sight hitch removal, and less per-frame shader churn (see readyObjects). The first time
-// three.js draws an object it compiles any new shader variant (colour, the normal pass override, shadow depth, x-ray), uploads its textures and
+// three.js draws an object it compiles any new shader variant (colour, shadow depth, x-ray), uploads its textures and
 // vertex buffers, and for a skinned mesh walks every vertex through its bones to find a culling
 // sphere. Mid-play that shows up as a 50 to 700 ms freeze when a district, a goon type or the
 // Joker first comes into view. These helpers move all of it under the loading screen.
@@ -65,7 +65,7 @@ export function uploadTextures(renderer, root) {
   return seen.size;
 }
 
-// Draws the whole scene once through the ink pipeline (shadow, colour, normal, x-ray and the
+// Draws the whole scene once through the ink pipeline (shadows, far, colour, x-ray and the
 // ink quad) with every object shown and culling off, then puts visibility back. Synchronous, so
 // the frame loop never sees the forced state. The final quad lands on the canvas, but the next
 // animation frame overwrites it before the browser paints.
@@ -74,6 +74,7 @@ export function drawEverything(renderer, ink, scene, camera) {
   scene.traverse((o) => { saved.push(o, o.visible, o.frustumCulled); o.visible = true; o.frustumCulled = false; });
   const det = ink.uniforms.uDetective.value;
   readyObjects(scene);
+  ink.prepare?.(scene);
   try {
     ink.uniforms.uDetective.value = 1;
     ink.render(scene, camera, 0);

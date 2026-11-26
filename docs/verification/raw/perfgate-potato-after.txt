@@ -1,0 +1,17 @@
+potato gcpd roof     calls 191  tris 253511  skinnedVis 60  lights 0  matrixWalk 3987  programs 114  gameMs 4.1  worldMs 1  renderMs 8.6  jsMs 14.1
+potato docks         calls 109  tris 152247  skinnedVis 59  lights 0  matrixWalk 4150  programs 114  gameMs 3.7  worldMs 1  renderMs 6.8  jsMs 11.8
+potato neon street   calls 160  tris 280077  skinnedVis 61  lights 0  matrixWalk 4233  programs 115  gameMs 3.5  worldMs 0.9  renderMs 8.3  jsMs 13.2
+potato ace chemicals calls 185  tris 257351  skinnedVis 59  lights 0  matrixWalk 4396  programs 115  gameMs 5.2  worldMs 1.1  renderMs 10.9  jsMs 18.8
+potato clock plaza   calls 153  tris 223243  skinnedVis 59  lights 0  matrixWalk 4560  programs 115  gameMs 3.5  worldMs 0.9  renderMs 8.1  jsMs 13
+potato loop el       calls 171  tris 250943  skinnedVis 77  lights 0  matrixWalk 4730  programs 115  gameMs 4.1  worldMs 1  renderMs 9.8  jsMs 15.5
+potato narrows       calls 199  tris 253718  skinnedVis 62  lights 0  matrixWalk 4891  programs 115  gameMs 4.5  worldMs 1  renderMs 10.6  jsMs 16.7
+
+PERF GATE FAILED (8):
+  potato docks matrixWalk 4150 > 3554 x1.15
+  potato neon street tris 280077 > 238495 x1.15
+  potato neon street matrixWalk 4233 > 3636 x1.15
+  potato ace chemicals matrixWalk 4396 > 3800 x1.15
+  potato clock plaza matrixWalk 4560 > 3964 x1.15
+  potato loop el matrixWalk 4730 > 3969 x1.15
+  potato narrows tris 253718 > 215442 x1.15
+  potato narrows matrixWalk 4891 > 4048 x1.15

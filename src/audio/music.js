@@ -1,203 +1,102 @@
-import { strings, brass, drum, snare, cymbal, bell, organ, mtof } from './synth.js';
+import { strings, brass, drum, snare, cymbal, bell, organ, pad, pluck, bass, epiano, hat, kickDrum, tick, anvil, mtof } from './synth.js';
+import { THEMES, barSeconds } from './music/themes.js';
+import { createMusicDirector, layerOn, contextOf } from './music/director.js';
 
-// Lookahead music engine. Each mode is a pattern: a step length plus a step(m, i, t)
-// function that schedules notes for step i at AudioContext time t. pump(until) is the
-// only scheduling entry point, used by the live timer and by the offline self-check.
+// Adaptive, sectioned music. The director (music/director.js) picks the cue and the section at
+// each bar line; the themes (music/themes.js) say what each section plays; this file owns time:
+// a lookahead scheduler that walks each playing cue step by step, crossfades cues on bar lines
+// and keeps the oscillator budget.
+//
+// Old API kept for game.js / sound.js / the lab: MUSIC_MODES, STINGERS, createMusic(ctx, out)
+// with setMode(mode, fade), pump(until), stinger(name, t), setIntensity(x), dispose().
+// New: setContext({ context, district, villain, threat }), mode/cue/section getters.
 
-export const MUSIC_MODES = ['title', 'explore', 'combat', 'boss', 'finale'];
-export const STINGERS = ['districtClear', 'death', 'bossPhase', 'objective'];
+export const MUSIC_MODES = ['title', 'explore', 'combat', 'boss', 'finale', 'stealth', 'chase', 'manor', 'cave'];
+export const STINGERS = ['districtClear', 'death', 'bossPhase', 'objective', 'missionComplete', 'bossIntro'];
 
-const VOICE_CAP = 64; // oscillator budget across all music layers
-const COST = { strings: 2, brass: 2, drum: 3, snare: 2, cymbal: 2, bell: 2, organ: 3 };
-const INSTRUMENTS = { strings, brass, drum, snare, cymbal, bell, organ };
+const COST = { strings: 2, brass: 2, drum: 3, snare: 2, cymbal: 2, bell: 2, organ: 3, pad: 4, pluck: 1, bass: 2, epiano: 3, hat: 1, kickDrum: 2, tick: 2, anvil: 4 };
+const INSTRUMENTS = { strings, brass, drum, snare, cymbal, bell, organ, pad, pluck, bass, epiano, hat, kickDrum, tick, anvil };
 
 const triad = (root, minor) => [root, root + (minor ? 3 : 4), root + 7];
 
-// ---- title: slow drone and a haunting four-note motif ----
-function title() {
-  const sd = 60 / 56 / 2; // eighth notes at 56 bpm
+// ---- title: slow drone and a haunting four-note motif (kept from the original score) ----
+function titleStep(m, i, t, sd) {
   const chords = [[38, true], [34, false], [31, true], [33, false]]; // Dm Bb Gm A
-  const motif = [[62, 2], [69, 2], [68, 2], [65, 6]]; // D A Ab F
+  const motif = [[62, 2], [69, 2], [68, 2], [65, 6]]; // D A Ab F: the bat motif
   const answer = [[50, 2], [53, 2], [52, 2], [45, 6]];
-  return {
-    stepDur: sd,
-    step(m, i, t) {
-      const s = i % 64;
-      if (s % 16 === 0) {
-        const [root, minor] = chords[s / 16];
-        [root, root + 7, root + (minor ? 15 : 16)].forEach((n) => m.strings(t, n, 16 * sd, { gain: 0.045, cutoff: 520, a: 1.4, r: 1.6 }));
-        if (s === 0) m.drum(t, { freq: mtof(38), d: 1.6, gain: 0.3, skin: 0.05, skinFreq: 300 });
-      }
-      let x = 0;
-      for (const [n, len] of motif) {
-        if (s === 4 + x) {
-          m.bell(t, n + 12, { gain: 0.05, d: 2.2, ratio: 3.01, index: 1.4 });
-          m.strings(t, n, len * sd, { gain: 0.03, cutoff: 1800, a: 0.12, r: 0.8, voices: 2 });
-        }
-        x += len;
-      }
-      x = 0;
-      for (const [n, len] of answer) {
-        if (s === 36 + x) m.brass(t, n, len * sd, { gain: 0.035, a: 0.25, r: 0.8, bright: 0.2 });
-        x += len;
-      }
-      if (s === 48 || s === 56) m.drum(t, { freq: mtof(38), d: 1.2, gain: 0.18, skin: 0.03, skinFreq: 300 });
-      if (s === 16) m.strings(t, 74, 14 * sd, { gain: 0.01, cutoff: 3000, a: 2, r: 2, voices: 1, type: 'triangle' });
-    },
-  };
-}
-
-// ---- explore: brooding 80 bpm pulse ----
-function explore() {
-  const sd = 60 / 80 / 4;
-  const chords = [[38, true], [34, false], [43, true], [45, false]];
-  const ost = [0, 0, 12, 0, 7, 0, 12, 7];
-  return {
-    stepDur: sd,
-    step(m, i, t) {
-      const s = i % 128;
-      const [root, minor] = chords[Math.floor(s / 32)];
-      if (s % 2 === 0) {
-        const k = (s / 2) % 8;
-        m.strings(t, root + ost[k], 0.13, { gain: k === 0 ? 0.075 : 0.055, cutoff: k === 0 ? 1100 : 800, a: 0.01, r: 0.1 });
-      }
-      if (s % 32 === 0) triad(root + 12, minor).forEach((n) => m.strings(t, n, 32 * sd, { gain: 0.022, cutoff: 1000, a: 0.9, r: 1 }));
-      if (s % 16 === 0) m.drum(t, { freq: mtof(38), d: 0.9, gain: 0.3, skin: 0.08, skinFreq: 500 });
-      if (s % 16 === 10) m.drum(t, { freq: mtof(38), d: 0.6, gain: 0.14, skin: 0.04, skinFreq: 500 });
-      if (s === 96) [57, 61, 64].forEach((n) => m.brass(t, n, 1.6, { gain: 0.028, a: 1.2, r: 0.9, bright: 0.3 }));
-      if (s === 64 && Math.floor(i / 128) % 2 === 1) [55, 58, 62].forEach((n) => m.brass(t, n, 1.8, { gain: 0.026, a: 1.3, r: 1, bright: 0.3 }));
-    },
-  };
-}
-
-// Layers shared by combat and boss that grow with combat intensity x.
-function battleLayers(m, s, t, root, minor, x, sd) {
-  const b = s % 16;
-  if (b === 0 || b === 6 || b === 11) m.drum(t, { freq: 55, d: 0.45, gain: 0.34, skin: 0.2, skinFreq: 700 });
-  if (b === 0) m.strings(t, root, 16 * sd, { gain: 0.05, cutoff: 350, a: 0.02, r: 0.2 });
-  if (s % 32 === 0) triad(root + 24, minor).forEach((n) => m.brass(t, n, 0.18, { gain: 0.03, a: 0.02, r: 0.15 }));
-  if (x > 0.25 && (b === 4 || b === 12)) m.snare(t, { gain: 0.04 + 0.07 * x });
-  if (x > 0.45) {
-    if (b === 8) m.drum(t, { freq: mtof(root + 12), d: 0.5, gain: 0.22, skin: 0.1 });
-    if (b === 6 || b === 11) triad(root + 24, minor).forEach((n) => m.brass(t, n, 0.12, { gain: 0.022, a: 0.015, r: 0.12 }));
+  const s = i % 64;
+  if (s % 16 === 0) {
+    const [root, minor] = chords[s / 16];
+    [root, root + 7, root + (minor ? 15 : 16)].forEach((n) => m.pad(t, n + 12, 16 * sd, { gain: 0.016, cutoff: 520, a: 1.4, r: 1.6, wobble: 0.1 }));
+    if (s === 0) m.drum(t, { freq: mtof(38), d: 1.6, gain: 0.3, skin: 0.05, skinFreq: 300 });
   }
-  if (x > 0.65) {
-    const tones = triad(root + 36, minor);
-    m.strings(t, tones[s % 3], 0.07, { gain: 0.012 + 0.012 * x, cutoff: 3500, a: 0.005, r: 0.05 });
+  let x = 0;
+  for (const [n, len] of motif) {
+    if (s === 4 + x) {
+      m.bell(t, n + 12, { gain: 0.05, d: 2.2, ratio: 3.01, index: 1.4 });
+      m.strings(t, n, len * sd, { gain: 0.03, cutoff: 1800, a: 0.12, r: 0.8, voices: 2 });
+    }
+    x += len;
   }
-  if (x > 0.85) {
-    if (s % 32 === 0) m.cymbal(t, { gain: 0.06, d: 1.4 });
-    if (s >= 60) m.drum(t, { freq: 70 + (s - 60) * 6, d: 0.2, gain: 0.2, skin: 0.15 });
-    if (b === 0) m.brass(t, root + 24, 15 * sd, { gain: 0.022, a: 0.3, r: 0.3, bright: 0.6 });
+  x = 0;
+  for (const [n, len] of answer) {
+    if (s === 36 + x) m.brass(t, n, len * sd, { gain: 0.035, a: 0.25, r: 0.8, bright: 0.2 });
+    x += len;
   }
+  if (s === 48 || s === 56) m.drum(t, { freq: mtof(38), d: 1.2, gain: 0.18, skin: 0.03, skinFreq: 300 });
+  if (s === 16) m.strings(t, 74, 14 * sd, { gain: 0.01, cutoff: 3000, a: 2, r: 2, voices: 1, type: 'triangle' });
 }
 
-// ---- combat: driving 130 bpm staccato strings, taiko, brass ----
-function combat() {
-  const sd = 60 / 130 / 4;
-  const chords = [[38, true], [38, true], [34, false], [36, false]]; // Dm Dm Bb C
-  const ost = [0, 0, 12, 0, 0, 7, 0, 12, 0, 0, 12, 0, 7, 0, 12, 10];
-  const accent = new Set([0, 3, 6, 8, 11, 14]);
-  return {
-    stepDur: sd,
-    step(m, i, t) {
-      const s = i % 64;
-      const [root, minor] = chords[Math.floor(s / 16)];
-      const b = s % 16;
-      const acc = accent.has(b);
-      m.strings(t, root + 12 + ost[b], 0.07, { gain: acc ? 0.07 : 0.045, cutoff: acc ? 2200 : 1300, a: 0.004, r: 0.06 });
-      battleLayers(m, s, t, root, minor, m.intensity, sd);
-    },
-  };
-}
-
-// ---- boss: manic 150 bpm, calliope circus organ over the battle layers ----
-function boss() {
-  const sd = 60 / 150 / 4;
-  const chords = [[36, true], [36, true], [32, false], [31, false]]; // Cm Cm Ab G
-  const ost = [0, 1, 0, 12, 0, 1, 0, 7, 0, 1, 0, 12, 11, 12, 7, 6];
-  const tune = [67, 66, 67, 75, 74, 73, 74, 72, 70, 69, 70, 67, 68, 67, 66, 67,
-    68, 67, 68, 72, 75, 74, 72, 71, 74, 72, 71, 69, 67, 66, 67, 71];
-  return {
-    stepDur: sd,
-    step(m, i, t) {
-      const s = i % 64;
-      const [root, minor] = chords[Math.floor(s / 16)];
-      const b = s % 16;
-      m.strings(t, root + 12 + ost[b], 0.06, { gain: b % 4 === 0 ? 0.065 : 0.04, cutoff: b % 4 === 0 ? 2400 : 1400, a: 0.004, r: 0.05 });
-      if (b === 0 || b === 8) m.organ(t, root + 12, 0.12, { gain: 0.03 });
-      if (b === 4 || b === 12) triad(root + 24, minor).slice(1).forEach((n) => m.organ(t, n, 0.1, { gain: 0.018 }));
-      if (s % 2 === 0) m.organ(t, tune[s / 2], sd * 1.6, { gain: 0.03, vib: 12 });
-      battleLayers(m, s, t, root, minor, m.intensity, sd);
-    },
-  };
-}
-
-// ---- finale: a slow, steady D minor theme for the quiet after the storm: dawn over Gotham ----
-// Eight bars at 72 bpm (16 sixteenth-note steps a bar). The intro plays the first four bars soft,
-// with a low drum and a brass swell at the turn; then it loops, strings and brass taking turns.
+// ---- finale: dawn over Gotham, eight bars at 72 bpm (kept from the original score) ----
 const PROGRESSION = ['Dm', 'Bb', 'F', 'C', 'Dm', 'Bb', 'Gm', 'A'];
 const CHORDS = {
   Dm: { tones: [62, 65, 69], bass: 38 }, Bb: { tones: [58, 62, 65], bass: 34 }, F: { tones: [65, 69, 72], bass: 41 },
   C: { tones: [60, 64, 67], bass: 36 }, Gm: { tones: [55, 58, 62], bass: 43 }, A: { tones: [57, 61, 64], bass: 33 },
 };
-// [midi note, length in steps]; every bar sums to 16.
 const THEME = [[74, 6], [72, 2], [69, 8], [70, 6], [72, 2], [74, 8], [77, 8], [76, 4], [74, 4], [72, 12], [67, 4],
   [74, 6], [72, 2], [69, 4], [72, 4], [70, 6], [74, 2], [77, 8], [79, 6], [77, 2], [74, 4], [70, 4], [69, 8], [73, 4], [76, 4]];
-const THEME_LEN = 128;
-const INTRO_LEN = 64;
-
-function finale() {
-  const sd = 60 / 72 / 4;
-  const notes = new Map();
-  let x = 0;
-  for (const [n, l] of THEME) { notes.set(x, [n, l]); x += l; }
-  return {
-    stepDur: sd,
-    step(m, i, t) {
-      const isIntro = i < INTRO_LEN;
-      const s = isIntro ? i : (i - INTRO_LEN) % THEME_LEN;
-      const pass = isIntro ? -1 : Math.floor((i - INTRO_LEN) / THEME_LEN);
-      const chord = CHORDS[PROGRESSION[Math.floor(s / 16)]];
-      const b = s % 16;
-      if (b === 0) {
-        chord.tones.forEach((n) => m.strings(t, n - 12, 16 * sd, { gain: isIntro ? 0.02 : 0.016, cutoff: 1400, a: 0.3, r: 0.6 }));
-        if (isIntro) m.brass(t, chord.bass + 12, 16 * sd, { gain: 0.03, a: 0.3, r: 0.5, bright: 0.25 });
-      }
-      if (b === 0 || b === 8) m.strings(t, chord.bass, 0.6, { gain: 0.06, cutoff: 600, a: 0.01, r: 0.3 });
-      const note = notes.get(s);
-      if (note) {
-        const [n, len] = note;
-        const dur = len * sd;
-        if (isIntro) {
-          m.bell(t, n + 12, { gain: 0.09, d: Math.max(0.9, dur * 1.6), ratio: 3.5, index: 1.6 });
-          m.strings(t, n, dur * 0.95, { gain: 0.03, cutoff: 2600, a: 0.03, r: 0.25 });
-        } else if (pass % 2 === 0) {
-          m.strings(t, n, dur * 0.95, { gain: 0.03, cutoff: 2400, a: 0.06, r: 0.3 });
-        } else {
-          m.brass(t, n, dur * 0.9, { gain: 0.022, a: 0.05, r: 0.3, bright: 0.4 });
-        }
-      }
-      if (isIntro) {
-        if (s === 0) m.cymbal(t, { gain: 0.05, a: 0.6, d: 1.6 });
-        if (s === 56) {
-          m.drum(t, { freq: mtof(38), d: 1.4, gain: 0.3, skin: 0.05 });
-          m.cymbal(t, { gain: 0.05, d: 2.2 });
-          [62, 65, 69].forEach((n) => m.brass(t, n, 1.6, { gain: 0.03, a: 0.08, r: 0.6, bright: 0.6 }));
-        }
-        return;
-      }
-      // After the intro: a slow bell arpeggio in eighths over the chord, and an occasional high glint.
-      if (b % 2 === 0) {
-        const k = b / 2;
-        m.bell(t, chord.tones[k % 3] + 12 * Math.floor(k / 3), { gain: 0.026, d: 0.8, ratio: 3.5, index: 1.1 });
-      }
-      if (Math.random() < 0.05) m.bell(t, 86 + chord.tones[Math.floor(Math.random() * 3)] % 12, { gain: 0.012, d: 0.6, ratio: 2, index: 1 });
-    },
-  };
+const FIN_NOTES = new Map();
+{ let x = 0; for (const [n, l] of THEME) { FIN_NOTES.set(x, [n, l]); x += l; } }
+function finaleStep(m, i, t, sd) {
+  const isIntro = i < 64;
+  const s = isIntro ? i : (i - 64) % 128;
+  const pass = isIntro ? -1 : Math.floor((i - 64) / 128);
+  const chord = CHORDS[PROGRESSION[Math.floor(s / 16)]];
+  const b = s % 16;
+  if (b === 0) {
+    chord.tones.forEach((n) => m.pad(t, n - 12, 16 * sd, { gain: isIntro ? 0.014 : 0.012, cutoff: 1400, a: 0.4, r: 0.8 }));
+    if (isIntro) m.brass(t, chord.bass + 12, 16 * sd, { gain: 0.03, a: 0.3, r: 0.5, bright: 0.25 });
+  }
+  if (b === 0 || b === 8) m.bass(t, chord.bass, 0.6, { gain: 0.05, cutoff: 300 });
+  const note = FIN_NOTES.get(s);
+  if (note) {
+    const [n, len] = note;
+    const dur = len * sd;
+    if (isIntro) {
+      m.bell(t, n + 12, { gain: 0.09, d: Math.max(0.9, dur * 1.6), ratio: 3.5, index: 1.6 });
+      m.strings(t, n, dur * 0.95, { gain: 0.03, cutoff: 2600, a: 0.03, r: 0.25 });
+    } else if (pass % 2 === 0) m.strings(t, n, dur * 0.95, { gain: 0.03, cutoff: 2400, a: 0.06, r: 0.3 });
+    else m.brass(t, n, dur * 0.9, { gain: 0.022, a: 0.05, r: 0.3, bright: 0.4 });
+  }
+  if (isIntro) {
+    if (s === 0) m.cymbal(t, { gain: 0.05, a: 0.6, d: 1.6 });
+    if (s === 56) {
+      m.drum(t, { freq: mtof(38), d: 1.4, gain: 0.3, skin: 0.05 });
+      m.cymbal(t, { gain: 0.05, d: 2.2 });
+      [62, 65, 69].forEach((n) => m.brass(t, n, 1.6, { gain: 0.03, a: 0.08, r: 0.6, bright: 0.6 }));
+    }
+    return;
+  }
+  if (b % 2 === 0) { const k = b / 2; m.bell(t, chord.tones[k % 3] + 12 * Math.floor(k / 3), { gain: 0.026, d: 0.8, ratio: 3.5, index: 1.1 }); }
+  if (Math.random() < 0.05) m.bell(t, 86 + chord.tones[Math.floor(Math.random() * 3)] % 12, { gain: 0.012, d: 0.6, ratio: 2, index: 1 });
 }
 
-const PATTERNS = { title, explore, combat, boss, finale };
+// Legacy patterns as themes: one long section; the step function sees the global step index.
+const LEGACY = {
+  title: { bpm: 56 * 2 / 4, beats: 4, sub: 4, legacy: titleStep, sections: { A: { bars: 4 } }, order: ['A'] }, // eighths at 56 bpm
+  finale: { bpm: 72, beats: 4, sub: 4, legacy: finaleStep, sections: { A: { bars: 8 } }, order: ['A'] },
+};
+export const ALL_THEMES = { ...THEMES, ...LEGACY };
 
 // Short musical hits, scheduled straight into the output with the layers ducked.
 const STING = {
@@ -237,66 +136,207 @@ const STING = {
     m.drum(t + 0.15, { freq: mtof(38), d: 0.6, gain: 0.2 });
     return 1.3;
   },
+  missionComplete(m, t) {
+    [0, 0.1, 0.2].forEach((d) => m.drum(t + d, { freq: mtof(38), d: 0.3, gain: 0.15, skin: 0.05 }));
+    const h = t + 0.35;
+    [50, 57, 62, 66, 69].forEach((n) => m.brass(h, n, 1.6, { gain: 0.04, a: 0.05, r: 1, bright: 0.9 }));
+    [74, 78, 81].forEach((n) => m.strings(h, n, 1.6, { gain: 0.022, cutoff: 3200, a: 0.1, r: 1 }));
+    m.cymbal(h, { gain: 0.07, d: 2.4 });
+    m.drum(h, { freq: mtof(38), d: 1.4, gain: 0.34 });
+    m.bell(h + 0.2, 90, { gain: 0.05, d: 1.8 });
+    return 3;
+  },
+  bossIntro(m, t) {
+    m.pad(t, 38, 1.4, { gain: 0.02, cutoff: 400, a: 1.2, r: 0.2 });
+    m.cymbal(t, { gain: 0.05, a: 1.3, d: 0.2 });
+    const h = t + 1.4;
+    m.drum(h, { freq: 45, d: 1.6, gain: 0.38 });
+    triad(50, true).forEach((n) => m.brass(h, n, 1.1, { gain: 0.04, a: 0.02, r: 0.9, bright: 1 }));
+    m.brass(h, 51, 1.1, { gain: 0.025, a: 0.02, r: 0.9, bright: 1 }); // the sour half-step
+    return 3.2;
+  },
 };
 
-export function createMusic(ctx, out) {
+// Stereo chorus on the music bus: two short delay lines wobbling slowly, one per ear.
+function createChorus(ctx, out) {
+  const input = ctx.createGain();
+  input.connect(out);
+  if (!ctx.createChannelMerger) return input;
+  const merger = ctx.createChannelMerger(2);
+  const wet = ctx.createGain();
+  wet.gain.value = 0.32;
+  merger.connect(wet);
+  wet.connect(out);
+  [[0.012, 0.31], [0.017, 0.43]].forEach(([base, rate], ch) => {
+    const d = ctx.createDelay(0.05);
+    d.delayTime.value = base;
+    const lfo = ctx.createOscillator();
+    lfo.frequency.value = rate;
+    const depth = ctx.createGain();
+    depth.gain.value = 0.0025;
+    lfo.connect(depth);
+    depth.connect(d.delayTime);
+    lfo.start();
+    input.connect(d);
+    d.connect(merger, 0, ch);
+  });
+  return input;
+}
+
+export function createMusic(ctx, out, { voiceCap = 72, chorus = true } = {}) {
   const duck = ctx.createGain();
   duck.connect(out);
-  const layers = [];
+  const bus = chorus ? createChorus(ctx, duck) : duck;
+  const director = createMusicDirector();
+  const players = [];
+  let current = null;
   let mode = 'none';
-  let intensity = 0;
+  let context = { context: 'none', district: null, villain: null };
   let ends = [];
+  let cap = voiceCap;
 
   // Instrument wrappers that respect the voice budget and route into a layer.
   function voices(dest) {
     const api = {};
     for (const [name, fn] of Object.entries(INSTRUMENTS)) {
       api[name] = (t, ...args) => {
-        ends = ends.filter((e) => e.end > t);
-        const used = ends.reduce((a, e) => a + e.cost, 0);
-        if (used + COST[name] > VOICE_CAP) return;
+        if (ends.length > 8) ends = ends.filter((e) => e.end > t);
+        let used = 0;
+        for (const e of ends) used += e.cost;
+        if (used + COST[name] > cap) return;
         const end = fn(ctx, dest, t, ...args);
         ends.push({ end, cost: COST[name] });
       };
     }
-    Object.defineProperty(api, 'intensity', { get: () => intensity });
+    Object.defineProperty(api, 'intensity', { get: () => director.threat });
     return api;
   }
 
-  function setMode(next, fade = 1.5) {
-    if (next === mode) return false;
-    mode = next;
-    const now = ctx.currentTime;
-    for (const l of layers) {
-      if (l.stopAt) continue;
-      l.gain.gain.cancelScheduledValues(now);
-      l.gain.gain.setValueAtTime(l.gain.gain.value, now);
-      l.gain.gain.linearRampToValueAtTime(0, now + fade);
-      l.stopAt = now + fade;
+  function makePlayer(cue, at, fadeIn) {
+    const theme = ALL_THEMES[cue];
+    if (!theme) return null;
+    const gain = ctx.createGain();
+    gain.gain.value = 0; // silent before the first event, whatever the rounding of t
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.setValueAtTime(0, at);
+    gain.gain.linearRampToValueAtTime(1, at + Math.max(0.01, fadeIn));
+    gain.connect(bus);
+    const sd = 60 / theme.bpm / theme.sub;
+    const p = {
+      cue, theme, gain, m: voices(gain), sd, steps: theme.beats * theme.sub, barDur: barSeconds(theme),
+      next: at, i: 0, section: director.section, bar: director.sectionBar, fresh: true, stopAt: 0,
+      layers: (theme.parts ?? []).map((part) => (part.min ?? 0) <= director.threat), threat: director.threat,
+    };
+    players.push(p);
+    return p;
+  }
+
+  function fadeOut(p, at, len) {
+    if (!p || p.stopAt) return;
+    const g = p.gain.gain;
+    g.cancelScheduledValues(at);
+    g.setValueAtTime(g.value, ctx.currentTime);
+    g.setValueAtTime(1, at);
+    g.linearRampToValueAtTime(0, at + Math.max(0.01, len));
+    p.stopAt = at + len;
+  }
+
+  // At a bar line of the current cue (or right away when nothing plays): ask the director.
+  function barLine(t, immediate = false) {
+    const r = immediate ? director.jump(ALL_THEMES) : director.onBar(ALL_THEMES);
+    if (r.action === 'continue' || r.action === 'outro') {
+      if (current) { current.section = r.section; current.bar = r.sectionBar; }
+      return;
     }
-    const make = PATTERNS[next];
-    if (make) {
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(1, now + Math.max(0.01, fade));
-      gain.connect(duck);
-      layers.push({ mode: next, pat: make(), gain, m: voices(gain), next: now + 0.05, i: 0, stopAt: 0 });
+    const old = current;
+    current = null;
+    if (old) fadeOut(old, t, immediate ? 1.2 : Math.min(2.5, old.barDur));
+    if (r.action === 'start' && r.cue) {
+      current = makePlayer(r.cue, t, immediate ? 1.2 : old ? 0.15 : 0.8);
+      if (current) { current.section = r.section; current.bar = r.sectionBar; }
     }
-    return true;
+  }
+
+  function updateLayers(p) {
+    // threat follows the director, smoothed per bar so layers move on bar lines
+    p.threat += (director.threat - p.threat) * 0.6;
+    const parts = p.theme.parts ?? [];
+    for (let k = 0; k < parts.length; k++) {
+      const pt = parts[k];
+      let on = layerOn(p.threat, pt.min ?? 0, p.layers[k]);
+      if (pt.max !== undefined) on = on && p.threat <= pt.max;
+      p.layers[k] = on;
+    }
+  }
+
+  function playStep(p, t) {
+    const th = p.theme;
+    const step = p.i % p.steps;
+    if (th.legacy) { th.legacy(p.m, p.i, t, p.sd); return; }
+    const sec = th.sections[p.section] ?? th.sections[th.order[0]];
+    const prog = sec.prog;
+    const ch = prog[p.bar % prog.length];
+    const nextCh = prog[(p.bar + 1) % prog.length];
+    const swing = th.swing && step % 4 === 2 ? th.swing * p.sd : 0;
+    const s = { t: t + swing, step, steps: p.steps, sd: p.sd, beat: th.sub, bar: p.bar, section: p.section, chord: ch, next: nextCh, threat: p.threat, pass: 0 };
+    const parts = th.parts;
+    for (let k = 0; k < parts.length; k++) {
+      const pt = parts[k];
+      if (pt.in && !pt.in.includes(p.section)) continue;
+      if (!p.layers[k]) continue;
+      pt.fn(p.m, s);
+    }
   }
 
   function pump(until) {
     const now = ctx.currentTime;
-    for (let k = layers.length - 1; k >= 0; k--) {
-      const l = layers[k];
-      if (l.stopAt && now > l.stopAt + 3) { l.gain.disconnect(); layers.splice(k, 1); continue; }
-      if (l.next < now - 0.05) l.next = now + 0.02; // fell behind (tab was asleep): skip, don't burst
-      while (l.next < until && !(l.stopAt && l.next >= l.stopAt)) {
-        l.pat.step(l.m, l.i, l.next);
-        l.next += l.pat.stepDur;
-        l.i++;
+    if (!current && director.wanted !== director.cue) barLine(now + 0.05, true);
+    else if (!current && director.wanted && !players.some((p) => !p.stopAt)) barLine(now + 0.05, true);
+    for (let k = 0; k < players.length; k++) {
+      const p = players[k];
+      if (p.stopAt && now > p.stopAt + 3) { p.gain.disconnect(); players.splice(k, 1); k--; continue; }
+      if (p.next < now - 0.05) {
+        // fell behind (the tab slept): skip forward on the step grid, never burst
+        const skip = Math.ceil((now - p.next) / p.sd);
+        p.next += skip * p.sd;
+        const before = Math.floor(p.i / p.steps);
+        p.i += skip;
+        if (p === current && !p.theme.legacy) for (let b = before; b < Math.floor(p.i / p.steps); b++) barLine(p.next, false);
+      }
+      while (p.next < until && !(p.stopAt && p.next >= p.stopAt)) {
+        if (p.i % p.steps === 0) {
+          if (p === current && !p.fresh) barLine(p.next);
+          p.fresh = false;
+          updateLayers(p);
+        }
+        if (!(p.stopAt && p.next >= p.stopAt)) playStep(p, p.next);
+        p.next += p.sd;
+        p.i++;
       }
     }
+  }
+
+  function setContext(c = {}) {
+    context = { ...context, ...c };
+    director.request(context);
+    if (Number.isFinite(c.threat)) director.setThreat(c.threat);
+  }
+
+  const MODE_CONTEXT = { title: 'title', explore: 'explore', combat: 'combat', boss: 'boss', finale: 'finale', stealth: 'stealth', chase: 'chase', manor: 'manor', cave: 'cave', none: 'none' };
+
+  // Legacy entry point. fade 0 (the offline check) starts the cue right away instead of on the
+  // next bar line.
+  function setMode(next, fade = 1.5) {
+    if (next === mode) return false;
+    mode = next;
+    setContext({ context: MODE_CONTEXT[next] ?? 'explore' });
+    if (fade === 0) {
+      for (const p of players) fadeOut(p, ctx.currentTime, 0.01);
+      current = null;
+      barLine(ctx.currentTime + 0.02, true);
+      if (current) { current.gain.gain.cancelScheduledValues(0); current.gain.gain.setValueAtTime(1, 0); }
+    }
+    return true;
   }
 
   const stingVoices = voices(out);
@@ -315,10 +355,17 @@ export function createMusic(ctx, out) {
 
   return {
     get mode() { return mode; },
+    get cue() { return director.cue; },
+    get section() { return director.section; },
+    get context() { return { ...context }; },
     setMode,
+    setContext,
     pump,
     stinger,
-    setIntensity(x) { intensity = Math.min(1, Math.max(0, Number(x) || 0)); },
-    dispose() { layers.forEach((l) => l.gain.disconnect()); layers.length = 0; duck.disconnect(); },
+    setIntensity(x) { director.setThreat(x); },
+    setVoiceCap(n) { cap = Math.max(16, n | 0); },
+    dispose() { players.forEach((p) => p.gain.disconnect()); players.length = 0; duck.disconnect(); },
   };
 }
+
+export { contextOf };
