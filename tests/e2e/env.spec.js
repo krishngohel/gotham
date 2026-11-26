@@ -31,14 +31,17 @@ test('time skip from night to day changes the lighting and the crowd', async ({ 
   const errors = await boot(page, 'at=start&god=1&new=1&time=3&weather=clear');
   await hold(page);
   await page.waitForTimeout(3000);
-  const night = await page.evaluate(() => { const G = window.__game; return { h: G.world.clock.hour, hemi: G.world.env.look.hemiI, day: G.world.sky.uniforms.uDay.value, signal: G.world.signal.group.visible, crowd: G.civilians.sim.active, fog: G.scene.fog.color.getHex() }; });
+  const night = await page.evaluate(() => { const G = window.__game; return { h: G.world.clock.hour, hemi: (() => { const L = G.world.env.look, lin = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4), c = L.hemiSky; const lum = (c) => 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]); return L.hemiI * lum(c) + L.keyI * lum(L.key); })(), day: G.world.sky.uniforms.uDay.value, signal: G.world.signal.group.visible, crowd: G.civilians.sim.active, fog: G.scene.fog.color.getHex() }; });
   expect(night.h).toBeGreaterThan(2.9);
   expect(night.day).toBe(0);
   expect(night.signal).toBe(true);
   await page.evaluate(() => window.__game.world.clock.skipTo(12.5));
   await page.waitForTimeout(5000);
-  const day = await page.evaluate(() => { const G = window.__game; return { h: G.world.clock.hour, hemi: G.world.env.look.hemiI, day: G.world.sky.uniforms.uDay.value, signal: G.world.signal.group.visible, crowd: G.civilians.sim.active, fog: G.scene.fog.color.getHex() }; });
+  const day = await page.evaluate(() => { const G = window.__game; return { h: G.world.clock.hour, hemi: (() => { const L = G.world.env.look, lin = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4), c = L.hemiSky; const lum = (c) => 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]); return L.hemiI * lum(c) + L.keyI * lum(L.key); })(), day: G.world.sky.uniforms.uDay.value, signal: G.world.signal.group.visible, crowd: G.civilians.sim.active, fog: G.scene.fog.color.getHex() }; });
   expect(day.h).toBeGreaterThan(12.4);
+  // The light a lit surface receives (fill + key, each intensity x its colour's luminance): the
+  // readability floor lifts the night's fill against a dark navy sky colour, so the fill's intensity
+  // number alone no longer orders night and day; the sun does.
   expect(day.hemi).toBeGreaterThan(night.hemi * 1.5);
   expect(day.day).toBe(1);
   expect(day.signal).toBe(false);

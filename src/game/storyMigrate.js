@@ -1,5 +1,6 @@
-// Places a loaded save on the story. A save's position comes only from its own stepId; nothing
-// ever falls back to reading a numeric index against an old step list.
+// Places a loaded save on the story. A save's position comes from its own stepId. The numeric
+// index is never read against the *current* step list (inserting a step would shift every save);
+// a save that has only an index is read against the frozen list it was written for (LEGACY_STEP_IDS).
 import { STEPS } from './story.js';
 import { registerProgressField } from '../core/save.js';
 
@@ -14,8 +15,31 @@ registerProgressField('stepId', { sanitize: (v) => (typeof v === 'string' && ID.
 import { ALIASES } from './storyAliases.js';
 export const RETIRED = { armadaRun: 'nightwingTagRadio', ...ALIASES };
 
+// [m1] The step list of the original game (the pre-overhaul build, commit 5fe2c7f), frozen. A save
+// that carries only `step` (no stepId) can only have come from a build with this list, so its index
+// means the id at that place here; the id then resolves like any saved id (retired ones through
+// RETIRED). Never edit this list: new steps go in the story, not here.
+export const LEGACY_STEP_IDS = Object.freeze([
+  'intro', 'signal', 'card', 'gordonRadio', 'courierIntro', 'actOneTitle', 'toDocks', 'alfredRadio', 'boardBatmobile', 'batmobileChase',
+  'toRoofAfterChase', 'f1', 'toYard', 'f2', 'toShip', 'f3', 'crates', 'rewardCrates', 'toNeon', 'n1', 'toStreet', 'n2', 'toMonarch', 'n3',
+  'courierRooftop', 'monarchBalcony', 'rig', 'rewardRig', 'aceClueRadio', 'actTwoTitle', 'toAce', 'boardBatmobileAce', 'aceBattle',
+  'toBruteFight', 'a1', 'toFactory', 'a2', 'aceVanRadio', 'boardBatmobileAce2', 'aceVanChase', 'harleyRadio', 'toHarleyDoor', 'harleyFight',
+  'toVat', 'a3', 'toCatwalks', 'aceCatwalks', 'antidote', 'rewardAntidote', 'courierReveal', 'actThreeTitle', 'nightwingTagRadio',
+  'nightwingAlly', 'toPlaza', 'plazaFight', 'toFunhouse', 'funhouseFight', 'rescueGuestsRadio', 'toTower', 'boss', 'finale', 'credits',
+]);
+
+// The step id an index-only save stands on: its index in the legacy list (past the end: the
+// credits). null when the save has an id of its own, or no usable index.
+export function legacyStepId(progress) {
+  if (progress?.stepId != null) return null;
+  const i = progress?.step;
+  if (!Number.isInteger(i) || i <= 0) return null;
+  return LEGACY_STEP_IDS[Math.min(i, LEGACY_STEP_IDS.length - 1)];
+}
+
 export function resolveStep(progress, steps = STEPS) {
-  const id = RETIRED[progress?.stepId] ?? progress?.stepId;
+  const saved = progress?.stepId ?? legacyStepId(progress);
+  const id = RETIRED[saved] ?? saved;
   if (id) {
     const i = steps.findIndex((s) => s.id === id);
     if (i >= 0) return i;

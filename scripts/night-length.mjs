@@ -68,7 +68,7 @@ export function nightLength(night) {
       t.fight += 0.7 * (10 + f.waves.flat().reduce((a, e) => a + (SEC_PER_GOON[e.type] ?? 4), 0) * HUMAN_K);
     }
     if (s.type === 'fight') {
-      const def = night.id === 'n1' ? FIGHTS[s.fight] : night.fights?.[s.fight];
+      const def = (night.id === 'n1' ? FIGHTS[s.fight] : null) ?? night.fights?.[s.fight]; // [m1] Night One's added fights are the night's own
       if (!def) continue;
       const room = def.stealth ? (night.rooms?.[def.stealth] ?? null) : null;
       if (def.stealth || def.squad) { t.stealth += ((room?.squad ?? def.squad ?? def.waves?.[0] ?? []).length || 4) * 30; continue; }

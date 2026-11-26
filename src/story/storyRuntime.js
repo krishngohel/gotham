@@ -86,7 +86,8 @@ export function createStoryRuntime(f) {
     return night?.sites?.[id] ?? SITES[id] ?? REGION_SITES[id] ?? null;
   }
   function fight(id) {
-    if (night.id === 'n1' || !night.fights?.[id]) return FIGHTS[id] ?? null;
+    // [m1] Night One's original fights are FIGHTS; the missions added to it are the night's own.
+    if (!night.fights?.[id]) return FIGHTS[id] ?? null;
     const key = `${night.id}.${id}.${difficulty()}`;
     if (fightCache.has(key)) return fightCache.get(key);
     const def = night.fights[id];
@@ -97,6 +98,14 @@ export function createStoryRuntime(f) {
     const out = { ...built, site: site(built.site) ?? built.site, ...(built.entry ? { entry: built.entry } : {}) };
     fightCache.set(key, out);
     return out;
+  }
+  // [m1] A night's fill lights join the shared light pool once (no light is added or removed).
+  const filled = new Set();
+  function addFills(n) {
+    const pool = theGame()?.world?.lightPool;
+    if (!n?.fills?.length || filled.has(n.id) || !pool?.addSpots) return;
+    filled.add(n.id);
+    pool.addSpots(n.fills);
   }
   const scenePages = (name) => night?.scenes?.[name]?.(stage) ?? [];
 
@@ -451,7 +460,9 @@ export function createStoryRuntime(f) {
       } else if (!progress.finished) {
         // Night One in play: night and a storm for its whole length (the look it always had).
         clockPin(night);
+        registerNightRooms(night); // [m1] its added predator rooms' cover and lamp posts
       }
+      addFills(nightById('n1'));
     },
     // Night One finished: the campaign carries on into the next night. boot: a save that was
     // already past the credits when it loaded (no day scene; straight into the next night's opening).

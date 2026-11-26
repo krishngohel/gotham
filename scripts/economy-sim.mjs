@@ -28,7 +28,7 @@ export function nightXp(night) {
     if (s.mission) missions.add(s.mission);
     if (s.type === 'boss') bosses += 1;
     if (s.type !== 'fight') continue;
-    const def = night.id === 'n1' ? FIGHTS[s.fight] : night.fights?.[s.fight];
+    const def = (night.id === 'n1' ? FIGHTS[s.fight] : null) ?? night.fights?.[s.fight]; // [m1] Night One's added fights are the night's own
     if (!def) continue;
     fights += 1;
     if (def.stealth || def.squad) { const n = (night.rooms?.[def.stealth]?.squad ?? def.squad ?? def.waves?.[0] ?? []).length || 4; stealthGoons += n; continue; }

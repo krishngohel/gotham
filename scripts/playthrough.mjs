@@ -94,7 +94,7 @@ let lastNight = null;
 let stopAt = null; // [m45] UNTIL
 // [net2] The nights the guest page was on, in order (it must follow the host into each one).
 const guestNights = [];
-for (let guard = 0; guard < (campaign ? 2400 : 600); guard++) {
+for (let guard = 0; guard < (campaign ? 2400 : 1000); guard++) {
   await page.waitForTimeout(400);
   await skipTalk();
   const s = await state();

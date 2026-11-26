@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import '../../src/gadgets/gadgetSave.js'; // registers progress.gadgets, as game.js does before loading
 import { STEPS, tutorialFor, CATCH_UP } from '../../src/game/story.js';
 import { PROMPT_IDS } from '../../src/ui/prompts.js';
-import { resolveStep, migrateProgress } from '../../src/game/storyMigrate.js';
+import { resolveStep, migrateProgress, legacyStepId, LEGACY_STEP_IDS, RETIRED } from '../../src/game/storyMigrate.js';
+import { readFileSync } from 'node:fs';
 import { sanitizeProgress, loadProgress, saveProgress, newGameProgress, registerProgressField } from '../../src/core/save.js';
 import { GADGETS, isUnlocked } from '../../src/gadgets/gadgetDefs.js';
 import { tracker } from '../../src/game/progressTracker.js';
@@ -16,11 +17,11 @@ const memStorage = (init = {}) => {
 // What the game does on start: read localStorage, then place the save on the story.
 const loadRaw = (raw) => migrateProgress(loadProgress(memStorage({ [KEY]: JSON.stringify(raw) })));
 
-// Part S is a full reset: progress now lives under gotham-progress-v1, and a save's place in
-// the story comes only from its own stepId. There is no old data under this key, so there is
-// nothing to migrate from a numeric index; a save with no id (or an id that no longer exists, say
-// after some future step is renamed) simply starts over at the top.
-describe('resolveStep: stepId only, no numeric fallback', () => {
+// A save's place in the story comes from its own stepId; an id that no longer exists (say after
+// some future step is renamed) starts over at the top. The numeric index is never read against the
+// current step list. [m1] A save with only an index is read against the original game's frozen
+// list (LEGACY_STEP_IDS): see the index-only block below.
+describe('resolveStep: stepId first, never the index against the current list', () => {
   it('uses the saved step id when there is one', () => {
     expect(resolveStep({ step: 3, stepId: 'rig' })).toBe(idx('rig'));
     expect(resolveStep({ step: 0, stepId: 'aceCatwalks' })).toBe(idx('aceCatwalks'));
@@ -32,9 +33,11 @@ describe('resolveStep: stepId only, no numeric fallback', () => {
   it('a save on a retired step lands on the step that replaced it', () => {
     expect(resolveStep({ stepId: 'armadaRun' })).toBe(idx('nightwingTagRadio'));
   });
-  it('no id at all starts over', () => {
+  it('no id and no index starts over', () => {
     expect(resolveStep({})).toBe(0);
-    expect(resolveStep({ step: 25 })).toBe(0);
+    expect(resolveStep({ step: 0 })).toBe(0);
+    expect(resolveStep({ step: -3 })).toBe(0);
+    expect(resolveStep({ step: 2.5 })).toBe(0);
   });
   it('stepId is a saved field that survives sanitizing and rejects junk', () => {
     expect(sanitizeProgress({ stepId: 'rig' }).stepId).toBe('rig');
@@ -122,5 +125,53 @@ describe('tutorialFor and CATCH_UP', () => {
     expect(tutorialFor(STEPS[idx('monarchBalcony')], [])).toEqual(['crouch', 'silent', 'perch', 'perchDrop']);
     expect(tutorialFor(STEPS[idx('boss')], [])).toBe(null);
     for (const tips of Object.values(CATCH_UP)) for (const c of tips) for (const id of c.tips) expect(PROMPT_IDS).toContain(id);
+  });
+});
+
+// [m1] Night One grew by four missions, so every index moved. Saves resolve by step id; a save with
+// only an index (the original game wrote the index alone) is read against that game's frozen list.
+describe('index-only saves (the original game) after steps were inserted', () => {
+  const fixture = (name) => JSON.parse(readFileSync(new URL(`../../docs/verification/saves/${name}.json`, import.meta.url), 'utf8')).progress;
+  const indexOnly = (p) => { const q = { ...p }; delete q.stepId; return q; };
+  it('the frozen list is the pre-overhaul story: 62 steps, the three real saves sit where they say', () => {
+    expect(LEGACY_STEP_IDS).toHaveLength(62);
+    expect(Object.isFrozen(LEGACY_STEP_IDS)).toBe(true);
+    for (const name of ['early', 'mid', 'finished']) { const p = fixture(name); expect(LEGACY_STEP_IDS[p.step], name).toBe(p.stepId); }
+  });
+  it('every legacy id still resolves to a step of the story (itself, or the step that absorbed it)', () => {
+    for (const id of LEGACY_STEP_IDS) expect(STEPS.some((s) => s.id === (RETIRED[id] ?? id)), id).toBe(true);
+  });
+  it('the three real pre-overhaul saves resume on their own step, with or without a step id', () => {
+    for (const [name, id] of [['early', 'toYard'], ['mid', 'toAce'], ['finished', 'credits']]) {
+      const p = fixture(name);
+      expect(loadRaw(p), name).toMatchObject({ step: idx(id), stepId: id, finished: p.finished });
+      expect(loadRaw(indexOnly(p)), `${name} index only`).toMatchObject({ step: idx(id), stepId: id, finished: p.finished });
+      // The index alone would now land somewhere else: that is what the migration is for.
+      if (name !== 'early') expect(STEPS[p.step]?.id, name).not.toBe(id);
+    }
+  });
+  it('an index means the legacy step at that place, then resolves like any id', () => {
+    for (let i = 1; i < LEGACY_STEP_IDS.length; i++) {
+      const id = LEGACY_STEP_IDS[i];
+      expect(legacyStepId({ step: i })).toBe(id);
+      expect(resolveStep({ step: i }), id).toBe(idx(RETIRED[id] ?? id));
+    }
+    expect(resolveStep({ step: 3 })).toBe(idx('courierIntro')); // gordonRadio, folded into the courier chase
+    expect(resolveStep({ step: 57 })).toBe(idx('toTower')); // rescueGuestsRadio
+    expect(resolveStep({ step: 999 })).toBe(idx('credits')); // past the end: the credits
+  });
+  it('a saved id always wins over the index, and a migrated save is stable on reload', () => {
+    expect(legacyStepId({ step: 12, stepId: 'rig' })).toBe(null);
+    expect(resolveStep({ step: 12, stepId: 'rig' })).toBe(idx('rig'));
+    const once = loadRaw({ step: 30 });
+    expect(once).toMatchObject({ step: idx('toAce'), stepId: 'toAce' });
+    const storage = memStorage();
+    saveProgress(storage, once);
+    expect(migrateProgress(loadProgress(storage))).toEqual(once);
+  });
+  it('an index-only save never lands inside a mission that did not exist when it was written', () => {
+    const added = new Set(STEPS.filter((s) => /^m1(Short|Booth|Encore|Clocks)$/.test(s.mission)).map((s) => s.id));
+    expect(added.size).toBeGreaterThan(15);
+    for (let i = 0; i < LEGACY_STEP_IDS.length + 5; i++) expect(added.has(STEPS[resolveStep({ step: i })].id), String(i)).toBe(false);
   });
 });

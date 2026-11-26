@@ -26,6 +26,9 @@
 // story always reaches credits even with none of Vehicles, Batwing, Nightwing or Interiors merged
 // in yet.
 import { HARLEY_FIGHT } from './fights.js';
+// [m1] Four added missions (src/story/missions/n1/index.js), spliced in after the original mission
+// each one follows. The original steps below keep their ids, order and teaching beats.
+import { withMissions } from '../story/missions/n1/index.js';
 
 const g = (speaker, text) => ({ speaker, portrait: speaker, text });
 const c = (who, text) => ({ who, text });
@@ -46,7 +49,7 @@ const CINEMATIC = {
   finale: { shots: [{ from: { x: -6, y: 50, z: 26 }, to: { x: 6, y: 43.5, z: 12 }, look: { x: 6, y: 42, z: 6 }, dur: 5 }], lines: [c('gordon', 'Quiet night, for once. Thank you, Batman.')] },
 };
 
-export const STEPS = [
+const ORIGINAL = [
   // ---------------------------------------------------------------- Prologue: GCPD roof
   { id: 'intro', type: 'cutscene', scene: 'intro', cinematic: CINEMATIC.intro },
   { id: 'signal', text: 'Walk to the Batsignal and see what is stuck to it.', nudge: g('alfred', 'The Batsignal, sir. The large lamp behind you with something taped to it.'), site: 'signal', radius: 4.5, tutorial: ['move', 'look'], checkpoint: 'start' },
@@ -319,7 +322,7 @@ export const STEPS = [
     title: { text: 'ACT THREE: THE CLOCK PLAZA', sub: 'Hostages, a funhouse, and the Joker' },
     lines: [
       g('gordon', 'The clock plaza. Midnight is close, and so is he.'),
-      g('nightwing', "The Batwing's cleared for you. Call it whenever you like. Just not for this bit."),
+      g('nightwing', "The Batwing's cleared for you. Call it whenever you like. It beats walking back."),
       g('gordon', 'GCPD has the plaza sealed. Every goon the Joker has left is inside it, and your hostages are past them.'),
       g('nightwing', "I'm going in the front. Come down and join me. Let's finish this together."),
     ],
@@ -353,6 +356,11 @@ export const STEPS = [
   { id: 'finale', type: 'cutscene', scene: 'finale', cinematic: CINEMATIC.finale },
   { id: 'credits', type: 'credits' },
 ];
+
+// The story in play order: the original night with the added missions in their places.
+export const STEPS = withMissions(ORIGINAL);
+// The original steps' ids, in order (tests: they keep their relative order and their meaning).
+export const ORIGINAL_IDS = ORIGINAL.map((s) => s.id);
 
 // [story] Retired step ids (folded into the step that follows them) -> where they live now:
 // src/game/storyAliases.js (pure, so roofStory.js and caseFile.js can read it without this file).
